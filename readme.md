@@ -4,7 +4,7 @@
 
 # Aether
 
-> 基于 Beszel 二次开发的服务器与容器监控平台。代码与功能已切换为 Aether 品牌，下载源与镜像来自本仓库。
+基于 Beszel 二次开发的服务器与容器监控平台。代码和功能已切换为 Aether 品牌，下载源与镜像来自本仓库。
 
 ## 特性速览
 
@@ -42,6 +42,12 @@ services:
 
 启动后访问 `http://localhost:19090`。
 
+## 发布与镜像
+
+- Hub 镜像：`loboyanzy/aether`  
+- Agent 镜像：`loboyanzy/aether-agent`  
+- Releases：`https://github.com/LuBoyanzy/Aether/releases`
+
 ## 安装脚本（推荐）
 
 Hub：
@@ -58,16 +64,20 @@ curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/sc
 ./install-agent.sh -k "ssh-ed25519 ...你的公钥..." -url "http://<hub地址>:19090"
 ```
 
-> macOS 可使用 `install-agent-brew.sh`（直接从 GitHub Releases 下载），Windows 使用 PowerShell 版本：`supplemental/scripts/install-agent.ps1`。
+提示：  
+- macOS 使用 `supplemental/scripts/install-agent-brew.sh`（直接从 GitHub Releases 下载）。  
+- Windows 使用 PowerShell 版本 `supplemental/scripts/install-agent.ps1`。
 
 ## 本地开发
 
-1. 启动前端（默认 19091，可改 `PORT`）：  
-   `PORT=19091 make dev-server`
-2. 启动 Hub（默认 19090）：  
-   `APP_URL=http://localhost:19090 make dev-hub`
-3. 启动 Agent（示例参数请替换）：  
-   `KEY="ssh-ed25519 xxx" TOKEN="xxx" HUB_URL="http://localhost:19090" make dev-agent`
+1) 启动前端（默认 19091，可改 `PORT`）：  
+`PORT=19091 make dev-server`
+
+2) 启动 Hub（默认 19090）：  
+`APP_URL=http://localhost:19090 make dev-hub`
+
+3) 启动 Agent（示例参数请替换）：  
+`KEY="ssh-ed25519 xxx" TOKEN="xxx" HUB_URL="http://localhost:19090" make dev-agent`
 
 > 若端口冲突，请先释放 19090/19091 或调整上述变量。
 
@@ -78,4 +88,4 @@ curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/sc
 
 ## 许可
 
-沿用原项目许可证，遵循本仓库附带的开源授权文件。***
+沿用原项目许可证，遵循本仓库附带的开源授权文件。
