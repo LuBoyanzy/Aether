@@ -1,0 +1,26 @@
+services:
+  aether-hub:
+    image: 'henrygd/beszel' # legacy image, rename pending
+    container_name: 'aether-hub'
+    restart: unless-stopped
+    ports:
+      - '19090:19090'
+    volumes:
+      - ./aether_data:/aether_data
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  aether-agent:
+    image: 'henrygd/beszel-agent' # Add -nvidia for nvidia gpus (legacy image)
+    container_name: 'aether-agent'
+    restart: unless-stopped
+    network_mode: host
+    # runtime: nvidia # when using beszel-agent-nvidia
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PORT: 45876
+      KEY: '' # set to your SSH public key
+      # FILESYSTEM: /dev/sda1 # set to the correct filesystem for disk I/O stats
+      # NVIDIA_VISIBLE_DEVICES: all # when using beszel-agent-nvidia
+      # NVIDIA_DRIVER_CAPABILITIES: utility # when using beszel-agent-nvidia

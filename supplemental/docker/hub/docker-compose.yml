@@ -1,0 +1,9 @@
+services:
+  aether-hub:
+    image: 'henrygd/beszel' # legacy image, rename pending
+    container_name: 'aether-hub'
+    restart: unless-stopped
+    ports:
+      - '19090:19090'
+    volumes:
+      - ./aether_data:/aether_data

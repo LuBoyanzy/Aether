@@ -1,0 +1,5 @@
+Template: aether-agent/key
+Type: string
+Description: SSH public key provided by Aether hub:
+ If you leave this blank, you will need to configure it in 
+ /etc/aether-agent.conf before starting Aether.

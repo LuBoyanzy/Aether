@@ -1,0 +1,27 @@
+[Unit]
+Description=Aether Agent Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment="PORT=45876"
+# Port number can be overridden in aether-agent.conf if needed
+EnvironmentFile=/etc/aether-agent.conf
+ExecStart=/usr/bin/aether-agent
+User=aether
+Restart=on-failure
+StateDirectory=aether-agent
+
+# Security/sandboxing settings
+KeyringMode=private
+LockPersonality=yes
+ProtectClock=yes
+ProtectHome=read-only
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectSystem=strict
+RemoveIPC=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

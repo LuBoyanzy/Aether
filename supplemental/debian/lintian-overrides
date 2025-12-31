@@ -1,0 +1,11 @@
+# No changelog in the repo at the moment. This would be good to fix
+aether-agent: no-changelog
+# Current unable to fix these due to Goreleaser bug
+# https://github.com/goreleaser/goreleaser/issues/5487
+aether-agent: no-debconf-config
+aether-agent: postinst-uses-db-input
+# Needs to be fixed in Aether build
+aether-agent: hardening-no-pie
+aether-agent: hardening-no-relro
+# Maybe one day
+aether-agent: no-manual-page

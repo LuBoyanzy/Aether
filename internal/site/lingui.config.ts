@@ -1,0 +1,46 @@
+import { defineConfig } from "@lingui/cli"
+
+export default defineConfig({
+	locales: [
+		"en",
+		"ar",
+		"bg",
+		"cs",
+		"da",
+		"de",
+		"es",
+		"fa",
+		"fr",
+		"he",
+		"hr",
+		"hu",
+		"it",
+		"ja",
+		"ko",
+		"nl",
+		"no",
+		"pl",
+		"pt",
+		"tr",
+		"ru",
+		"sl",
+		"sr",
+		"sv",
+		"uk",
+		"vi",
+		"zh",
+		"zh-CN",
+		"zh-HK",
+	],
+	sourceLocale: "en",
+	compileNamespace: "ts",
+	formatOptions: {
+		lineNumbers: false,
+	},
+	catalogs: [
+		{
+			path: "<rootDir>/src/locales/{locale}/{locale}",
+			include: ["src"],
+		},
+	],
+})
