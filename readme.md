@@ -5,10 +5,24 @@
 <p align="center">基于 Beszel 二次开发的服务器与容器监控平台</p>
 
 <p align="center">
+  <strong>Top-Rated Web-based Linux Server Monitoring</strong> · <strong>New-Gen Ops Panel</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/LuBoyanzy/Aether/releases"><img src="https://img.shields.io/github/v/release/LuBoyanzy/Aether?label=Release" alt="GitHub Release"></a>
+  <a href="https://github.com/LuBoyanzy/Aether"><img src="https://img.shields.io/github/stars/LuBoyanzy/Aether?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/LuBoyanzy/Aether/blob/main/LICENSE"><img src="https://img.shields.io/github/license/LuBoyanzy/Aether" alt="License"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/LuBoyanzy/Aether/releases">下载</a> ·
   <a href="#快速体验docker-compose">快速体验</a> ·
   <a href="#安装脚本推荐">安装脚本</a> ·
   <a href="#本地开发">本地开发</a>
+</p>
+
+<p align="center">
+  English · 中文(简体) · 日本語 · Português (Brasil) · العربية · Deutsch · Español · français · 한국어 · Bahasa Indonesia · 中文(繁體) · Türkçe · Русский · Bahasa Melayu
 </p>
 
 > Aether 继承 Beszel 的核心能力并进行品牌与功能增强；镜像与安装脚本全部指向本仓库的发布版本。
