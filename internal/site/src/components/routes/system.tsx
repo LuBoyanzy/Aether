@@ -194,7 +194,7 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 			const sys = newSystems[id]
 			if (sys) {
 				setSystem(sys)
-				document.title = `${sys?.name} / ${BRAND_NAME}`
+				// document.title = `${sys?.name} / ${BRAND_NAME}`
 			}
 		})
 	}, [id, systems.length])

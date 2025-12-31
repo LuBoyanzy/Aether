@@ -6,7 +6,7 @@ import { BRAND_NAME } from "@/lib/utils"
 
 export default function Smart() {
 	useEffect(() => {
-		document.title = `S.M.A.R.T. / ${BRAND_NAME}`
+		// document.title = `S.M.A.R.T. / ${BRAND_NAME}`
 	}, [])
 
 	return (

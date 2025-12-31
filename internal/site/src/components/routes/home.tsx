@@ -9,7 +9,7 @@ export default memo(() => {
 	const { t } = useLingui()
 
 	useEffect(() => {
-		document.title = `${t`All Systems`} / ${BRAND_NAME}`
+		// document.title = `${t`All Systems`} / ${BRAND_NAME}`
 	}, [t])
 
 	return useMemo(

@@ -95,7 +95,7 @@ export default function SettingsLayout() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: no dependencies
 	useEffect(() => {
-		document.title = `${t`Settings`} / ${BRAND_NAME}`
+		// document.title = `${t`Settings`} / ${BRAND_NAME}`
 		// @ts-expect-error redirect to account page if no page is specified
 		if (!page?.params?.name) {
 			redirectPage($router, "settings", { name: "general" })

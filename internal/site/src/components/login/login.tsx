@@ -19,7 +19,7 @@ export default function () {
 	const { theme } = useTheme()
 
 	useEffect(() => {
-		document.title = t`Login` + ` / ${BRAND_NAME}`
+		// document.title = t`Login` + ` / ${BRAND_NAME}`
 
 		pb.send("/api/aether/first-run", {}).then(({ firstRun }) => {
 			setFirstRun(firstRun)
@@ -62,7 +62,7 @@ export default function () {
 				</div>
 				<div className="text-center">
 					<h1 className="mb-3">
-						<Logo className="h-7 fill-foreground mx-auto" />
+						<Logo className="h-20 fill-foreground mx-auto" variant="icon" />
 						<span className="sr-only">{BRAND_NAME}</span>
 					</h1>
 					<p className="text-sm text-muted-foreground">{subtitle}</p>

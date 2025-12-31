@@ -42,10 +42,10 @@ export default function Navbar() {
 			<Link
 				href={basePath}
 				aria-label="Home"
-				className="p-2 ps-0 me-3 group"
+				className="py-0 pe-1 ps-0 me-1 group"
 				onMouseEnter={runOnce(() => import("@/components/routes/home"))}
 			>
-				<Logo className="h-[1.1rem] md:h-5 fill-foreground" />
+				<Logo className="h-14 md:h-16 fill-foreground invert dark:invert-0" />
 			</Link>
 			<SearchButton />
 
