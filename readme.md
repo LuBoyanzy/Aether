@@ -12,10 +12,9 @@ Aether 是一款轻量化的服务器监控平台，基于 Beszel 开发。当�
 ## 本地开发启动
 
 1. 启动 Hub  
-   `APP_URL=http://localhost:19090 make dev-hub`
-2. 启动前端（可自定义端口，如 19091）  
-   `PORT=19091 make dev-server`
+   `APP_URL=http://192.168.140.2:19090 make dev-hub`
+2. 启动前端  
+   `make dev-server`
 3. 启动 Agent（示例：请填入实际 KEY/TOKEN/HUB_URL）  
    `KEY="..." TOKEN="..." HUB_URL="http://localhost:19090" make dev-agent`
 
-> 安装与在线安装脚本仍指向原 Beszel 下载源，后续 Aether 专属下载源与官网将另行提供。
