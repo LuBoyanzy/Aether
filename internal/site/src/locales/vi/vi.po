@@ -45,6 +45,10 @@ msgid "{threads, plural, one {# thread} other {# threads}}"
 msgstr ""
 
 #: src/lib/utils.ts
+msgid "<1 minute"
+msgstr ""
+
+#: src/lib/utils.ts
 msgid "1 hour"
 msgstr "1 giờ"
 
@@ -136,6 +140,22 @@ msgstr "Điều chỉnh chiều rộng bố cục chính"
 msgid "Admin"
 msgstr "Quản trị viên"
 
+#: src/components/login/auth-form.tsx
+#~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
+#~ msgstr "Aether hỗ trợ OpenID Connect và nhiều nhà cung cấp xác thực OAuth2."
+
+#: src/components/routes/settings/general.tsx
+msgid "Aether translations are being set up; contribution details will be shared soon."
+msgstr ""
+
+#: src/components/routes/settings/notifications.tsx
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
+#~ msgstr "Aether sử dụng <0>Shoutrrr</0> để tích hợp với các dịch vụ thông báo phổ biến."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
 msgstr "Sau"
@@ -157,13 +177,11 @@ msgstr "Cảnh báo"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
-#: src/components/routes/containers.tsx
 msgid "All Containers"
 msgstr "Tất cả container"
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/home.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -255,14 +273,6 @@ msgstr "Trước"
 #: src/components/active-alerts.tsx
 msgid "Below {0}{1} in last {2, plural, one {# minute} other {# minutes}}"
 msgstr ""
-
-#: src/components/login/auth-form.tsx
-msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
-msgstr "Aether hỗ trợ OpenID Connect và nhiều nhà cung cấp xác thực OAuth2."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
-msgstr "Aether sử dụng <0>Shoutrrr</0> để tích hợp với các dịch vụ thông báo phổ biến."
 
 #: src/components/add-system.tsx
 msgid "Binary"
@@ -397,6 +407,11 @@ msgstr "Xung đột"
 msgid "Connection is down"
 msgstr "Mất kết nối"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Containers"
+msgstr ""
+
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -515,6 +530,10 @@ msgstr "Trạng thái hiện tại"
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
 msgstr "Chu kỳ"
+
+#: src/lib/utils.ts
+msgid "d"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -793,9 +812,13 @@ msgstr "Sử dụng GPU"
 msgid "Grid"
 msgstr "Lưới"
 
+#: src/lib/utils.ts
+msgid "h"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "Health"
-msgstr "Sức khỏe"
+#~ msgid "Health"
+#~ msgstr "Sức khỏe"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -834,6 +857,7 @@ msgstr "Địa chỉ email không hợp lệ."
 #~ msgid "Kernel"
 #~ msgstr "Nhân"
 
+#: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Ngôn ngữ"
@@ -889,8 +913,8 @@ msgid "Log Out"
 msgstr "Đăng xuất"
 
 #: src/components/login/login.tsx
-msgid "Login"
-msgstr "Đăng nhập"
+#~ msgid "Login"
+#~ msgstr "Đăng nhập"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -906,6 +930,10 @@ msgstr "Nhật ký"
 #: src/components/routes/settings/notifications.tsx
 msgid "Looking instead for where to create alerts? Click the bell <0/> icons in the systems table."
 msgstr "Thay vào đó, bạn đang tìm nơi để tạo cảnh báo? Nhấp vào biểu tượng chuông <0/> trong bảng hệ thống."
+
+#: src/lib/utils.ts
+msgid "m"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -1140,8 +1168,8 @@ msgid "Please log in again"
 msgstr "Vui lòng đăng nhập lại"
 
 #: src/components/login/auth-form.tsx
-msgid "Please see <0>the documentation</0> for instructions."
-msgstr "Vui lòng xem <0>tài liệu</0> để biết hướng dẫn."
+#~ msgid "Please see <0>the documentation</0> for instructions."
+#~ msgstr "Vui lòng xem <0>tài liệu</0> để biết hướng dẫn."
 
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
@@ -1320,7 +1348,8 @@ msgstr "Đặt ngưỡng cho màu sắc đồng hồ."
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/settings/layout.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "Cài đặt"
@@ -1472,6 +1501,7 @@ msgid "Toggle grid"
 msgstr "Chuyển đổi lưới"
 
 #: src/components/mode-toggle.tsx
+#: src/components/navbar.tsx
 msgid "Toggle theme"
 msgstr "Chuyển đổi chủ đề"
 
@@ -1643,6 +1673,11 @@ msgstr "Sử dụng phân vùng gốc"
 msgid "Used"
 msgstr "Đã sử dụng"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "User Actions"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Users"
@@ -1674,8 +1709,8 @@ msgid "Waiting for enough records to display"
 msgstr "Đang chờ đủ bản ghi để hiển thị"
 
 #: src/components/routes/settings/general.tsx
-msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
-msgstr "Muốn giúp chúng tôi cải thiện bản dịch của mình? Xem <0>Crowdin</0> để biết thêm chi tiết."
+#~ msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
+#~ msgstr "Muốn giúp chúng tôi cải thiện bản dịch của mình? Xem <0>Crowdin</0> để biết thêm chi tiết."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Wants"
@@ -1726,3 +1761,7 @@ msgstr "Có"
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Cài đặt người dùng của bạn đã được cập nhật."
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "运行时间"
+msgstr ""

@@ -45,6 +45,10 @@ msgid "{threads, plural, one {# thread} other {# threads}}"
 msgstr ""
 
 #: src/lib/utils.ts
+msgid "<1 minute"
+msgstr ""
+
+#: src/lib/utils.ts
 msgid "1 hour"
 msgstr "1시간"
 
@@ -136,6 +140,22 @@ msgstr "메인 레이아웃 너비 조정"
 msgid "Admin"
 msgstr "관리자"
 
+#: src/components/login/auth-form.tsx
+#~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
+#~ msgstr "Aether은 OpenID Connect 및 많은 OAuth2 인증 제공자를 지원합니다."
+
+#: src/components/routes/settings/general.tsx
+msgid "Aether translations are being set up; contribution details will be shared soon."
+msgstr ""
+
+#: src/components/routes/settings/notifications.tsx
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
+#~ msgstr "Aether은 여러 인기 있는 알림 서비스와 연동하기 위해 <0>Shoutrrr</0>을 이용합니다."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
 msgstr "이후"
@@ -157,13 +177,11 @@ msgstr "알림"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
-#: src/components/routes/containers.tsx
 msgid "All Containers"
 msgstr "모든 컨테이너"
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/home.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -255,14 +273,6 @@ msgstr "이전"
 #: src/components/active-alerts.tsx
 msgid "Below {0}{1} in last {2, plural, one {# minute} other {# minutes}}"
 msgstr ""
-
-#: src/components/login/auth-form.tsx
-msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
-msgstr "Aether은 OpenID Connect 및 많은 OAuth2 인증 제공자를 지원합니다."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
-msgstr "Aether은 여러 인기 있는 알림 서비스와 연동하기 위해 <0>Shoutrrr</0>을 이용합니다."
 
 #: src/components/add-system.tsx
 msgid "Binary"
@@ -397,6 +407,11 @@ msgstr "충돌"
 msgid "Connection is down"
 msgstr "연결이 끊겼습니다"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Containers"
+msgstr ""
+
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -515,6 +530,10 @@ msgstr "현재 상태"
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
 msgstr "사이클"
+
+#: src/lib/utils.ts
+msgid "d"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -793,9 +812,13 @@ msgstr "GPU 사용량"
 msgid "Grid"
 msgstr "그리드"
 
+#: src/lib/utils.ts
+msgid "h"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "Health"
-msgstr "상태"
+#~ msgid "Health"
+#~ msgstr "상태"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -834,6 +857,7 @@ msgstr "잘못된 이메일 주소입니다."
 #~ msgid "Kernel"
 #~ msgstr "커널"
 
+#: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "언어"
@@ -889,8 +913,8 @@ msgid "Log Out"
 msgstr "로그아웃"
 
 #: src/components/login/login.tsx
-msgid "Login"
-msgstr "로그인"
+#~ msgid "Login"
+#~ msgstr "로그인"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -906,6 +930,10 @@ msgstr "로그"
 #: src/components/routes/settings/notifications.tsx
 msgid "Looking instead for where to create alerts? Click the bell <0/> icons in the systems table."
 msgstr "알림을 생성하려 하시나요? 시스템 테이블의 종 <0/> 아이콘을 클릭하세요."
+
+#: src/lib/utils.ts
+msgid "m"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -1140,8 +1168,8 @@ msgid "Please log in again"
 msgstr "다시 로그인하세요."
 
 #: src/components/login/auth-form.tsx
-msgid "Please see <0>the documentation</0> for instructions."
-msgstr "사용법은 <0>문서</0>를 참조하세요."
+#~ msgid "Please see <0>the documentation</0> for instructions."
+#~ msgstr "사용법은 <0>문서</0>를 참조하세요."
 
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
@@ -1320,7 +1348,8 @@ msgstr "그래프 미터 색상의 백분율 임계값을 설정합니다."
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/settings/layout.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "설정"
@@ -1472,6 +1501,7 @@ msgid "Toggle grid"
 msgstr "그리드 전환"
 
 #: src/components/mode-toggle.tsx
+#: src/components/navbar.tsx
 msgid "Toggle theme"
 msgstr "테마 전환"
 
@@ -1643,6 +1673,11 @@ msgstr "루트 파티션의 사용량"
 msgid "Used"
 msgstr "사용됨"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "User Actions"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Users"
@@ -1674,8 +1709,8 @@ msgid "Waiting for enough records to display"
 msgstr "표시할 충분한 기록을 기다리는 중"
 
 #: src/components/routes/settings/general.tsx
-msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
-msgstr "번역을 개선하는데 도움을 주시겠습니까? 자세한 내용은 <0>Crowdin</0>을 확인해 주세요."
+#~ msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
+#~ msgstr "번역을 개선하는데 도움을 주시겠습니까? 자세한 내용은 <0>Crowdin</0>을 확인해 주세요."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Wants"
@@ -1726,3 +1761,7 @@ msgstr "예"
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "사용자 설정이 업데이트되었습니다."
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "运行时间"
+msgstr ""

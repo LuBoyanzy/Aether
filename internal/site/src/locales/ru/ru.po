@@ -45,6 +45,10 @@ msgid "{threads, plural, one {# thread} other {# threads}}"
 msgstr ""
 
 #: src/lib/utils.ts
+msgid "<1 minute"
+msgstr ""
+
+#: src/lib/utils.ts
 msgid "1 hour"
 msgstr "1 час"
 
@@ -136,6 +140,22 @@ msgstr "Настроить ширину основного макета"
 msgid "Admin"
 msgstr "Администратор"
 
+#: src/components/login/auth-form.tsx
+#~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
+#~ msgstr "Aether поддерживает OpenID Connect и множество поставщиков аутентификации OAuth2."
+
+#: src/components/routes/settings/general.tsx
+msgid "Aether translations are being set up; contribution details will be shared soon."
+msgstr ""
+
+#: src/components/routes/settings/notifications.tsx
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
+#~ msgstr "Aether использует <0>Shoutrrr</0> для интеграции с популярными сервисами уведомлений."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
 msgstr "После"
@@ -157,13 +177,11 @@ msgstr "Оповещения"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
-#: src/components/routes/containers.tsx
 msgid "All Containers"
 msgstr "Все контейнеры"
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/home.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -255,14 +273,6 @@ msgstr "До"
 #: src/components/active-alerts.tsx
 msgid "Below {0}{1} in last {2, plural, one {# minute} other {# minutes}}"
 msgstr ""
-
-#: src/components/login/auth-form.tsx
-msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
-msgstr "Aether поддерживает OpenID Connect и множество поставщиков аутентификации OAuth2."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
-msgstr "Aether использует <0>Shoutrrr</0> для интеграции с популярными сервисами уведомлений."
 
 #: src/components/add-system.tsx
 msgid "Binary"
@@ -397,6 +407,11 @@ msgstr "Конфликты"
 msgid "Connection is down"
 msgstr "Нет соединения"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Containers"
+msgstr ""
+
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -515,6 +530,10 @@ msgstr "Текущее состояние"
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
 msgstr "Циклы"
+
+#: src/lib/utils.ts
+msgid "d"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -793,9 +812,13 @@ msgstr "Использование GPU"
 msgid "Grid"
 msgstr "Сетка"
 
+#: src/lib/utils.ts
+msgid "h"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "Health"
-msgstr "Здоровье"
+#~ msgid "Health"
+#~ msgstr "Здоровье"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -834,6 +857,7 @@ msgstr "Неверный адрес электронной почты."
 #~ msgid "Kernel"
 #~ msgstr "Ядро"
 
+#: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Язык"
@@ -889,8 +913,8 @@ msgid "Log Out"
 msgstr "Выйти"
 
 #: src/components/login/login.tsx
-msgid "Login"
-msgstr "Вход"
+#~ msgid "Login"
+#~ msgstr "Вход"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -906,6 +930,10 @@ msgstr "Журналы"
 #: src/components/routes/settings/notifications.tsx
 msgid "Looking instead for where to create alerts? Click the bell <0/> icons in the systems table."
 msgstr "Ищете, где создать оповещения? Нажмите на значки колокольчика <0/> в таблице систем."
+
+#: src/lib/utils.ts
+msgid "m"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -1140,8 +1168,8 @@ msgid "Please log in again"
 msgstr "Пожалуйста, войдите снова"
 
 #: src/components/login/auth-form.tsx
-msgid "Please see <0>the documentation</0> for instructions."
-msgstr "Пожалуйста, смотрите <0>документацию</0> для получения инструкций."
+#~ msgid "Please see <0>the documentation</0> for instructions."
+#~ msgstr "Пожалуйста, смотрите <0>документацию</0> для получения инструкций."
 
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
@@ -1320,7 +1348,8 @@ msgstr "Установите процентные пороги для цвето
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/settings/layout.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "Настройки"
@@ -1472,6 +1501,7 @@ msgid "Toggle grid"
 msgstr "Переключить сетку"
 
 #: src/components/mode-toggle.tsx
+#: src/components/navbar.tsx
 msgid "Toggle theme"
 msgstr "Переключить тему"
 
@@ -1643,6 +1673,11 @@ msgstr "Использование корневого раздела"
 msgid "Used"
 msgstr "Использовано"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "User Actions"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Users"
@@ -1674,8 +1709,8 @@ msgid "Waiting for enough records to display"
 msgstr "Ожидание достаточного количества записей для отображения"
 
 #: src/components/routes/settings/general.tsx
-msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
-msgstr "Хотите помочь нам улучшить наши переводы? Посетите <0>Crowdin</0> для получения более подробной информации."
+#~ msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
+#~ msgstr "Хотите помочь нам улучшить наши переводы? Посетите <0>Crowdin</0> для получения более подробной информации."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Wants"
@@ -1726,3 +1761,7 @@ msgstr "Да"
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Ваши настройки пользователя были обновлены."
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "运行时间"
+msgstr ""

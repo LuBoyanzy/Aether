@@ -23,6 +23,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { isAdmin, isReadOnlyUser, logOut, pb } from "@/lib/api"
 import { cn, runOnce } from "@/lib/utils"
 import { AddSystemButton } from "./add-system"
@@ -50,35 +51,81 @@ export default function Navbar() {
 			<SearchButton />
 
 			<div className="flex items-center ms-auto" onMouseEnter={() => import("@/components/routes/settings/general")}>
-				<Link
-					href={getPagePath($router, "containers")}
-					className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-					aria-label="Containers"
-				>
-					<ContainerIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
-				</Link>
-				<Link
-					href={getPagePath($router, "smart")}
-					className={cn("hidden md:grid", buttonVariants({ variant: "ghost", size: "icon" }))}
-					aria-label="S.M.A.R.T."
-				>
-					<HardDriveIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
-				</Link>
-				<LangToggle />
-				<ModeToggle />
-				<Link
-					href={getPagePath($router, "settings", { name: "general" })}
-					aria-label="Settings"
-					className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-				>
-					<SettingsIcon className="h-[1.2rem] w-[1.2rem]" />
-				</Link>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "containers")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label={t`Containers`}
+						>
+							<ContainerIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p><Trans>Containers</Trans></p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "smart")}
+							className={cn("hidden md:grid", buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label="S.M.A.R.T."
+						>
+							<HardDriveIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>S.M.A.R.T.</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<div>
+							<LangToggle />
+						</div>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p><Trans>Language</Trans></p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<div>
+							<ModeToggle />
+						</div>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p><Trans>Toggle theme</Trans></p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "settings", { name: "general" })}
+							aria-label={t`Settings`}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+						>
+							<SettingsIcon className="h-[1.2rem] w-[1.2rem]" />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p><Trans>Settings</Trans></p>
+					</TooltipContent>
+				</Tooltip>
 				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<button aria-label="User Actions" className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}>
-							<UserIcon className="h-[1.2rem] w-[1.2rem]" />
-						</button>
-					</DropdownMenuTrigger>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<DropdownMenuTrigger asChild>
+								<button aria-label={t`User Actions`} className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}>
+									<UserIcon className="h-[1.2rem] w-[1.2rem]" />
+								</button>
+							</DropdownMenuTrigger>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p><Trans>User Actions</Trans></p>
+						</TooltipContent>
+					</Tooltip>
 					<DropdownMenuContent align={isReadOnlyUser() ? "end" : "center"} className="min-w-44">
 						<DropdownMenuLabel>{pb.authStore.record?.email}</DropdownMenuLabel>
 						<DropdownMenuSeparator />

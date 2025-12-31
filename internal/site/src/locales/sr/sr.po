@@ -40,6 +40,10 @@ msgid "{threads, plural, one {# thread} other {# threads}}"
 msgstr ""
 
 #: src/lib/utils.ts
+msgid "<1 minute"
+msgstr ""
+
+#: src/lib/utils.ts
 msgid "1 hour"
 msgstr "1 сат"
 
@@ -131,6 +135,22 @@ msgstr "Подесите ширину главног распореда"
 msgid "Admin"
 msgstr "Администратор"
 
+#: src/components/login/auth-form.tsx
+#~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
+#~ msgstr "Aether подржава OpenID Connect и многе OAuth2 провајдере аутентификације."
+
+#: src/components/routes/settings/general.tsx
+msgid "Aether translations are being set up; contribution details will be shared soon."
+msgstr ""
+
+#: src/components/routes/settings/notifications.tsx
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
+#~ msgstr "Aether користи <0>Shoutrrr</0> за интеграцију са популарним сервисима за обавештавања."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
 msgstr "После"
@@ -152,13 +172,11 @@ msgstr "Упозорења"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
-#: src/components/routes/containers.tsx
 msgid "All Containers"
 msgstr "Сви контејнери"
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/home.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
@@ -250,14 +268,6 @@ msgstr "Пре"
 #: src/components/active-alerts.tsx
 msgid "Below {0}{1} in last {2, plural, one {# minute} other {# minutes}}"
 msgstr ""
-
-#: src/components/login/auth-form.tsx
-msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
-msgstr "Aether подржава OpenID Connect и многе OAuth2 провајдере аутентификације."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
-msgstr "Aether користи <0>Shoutrrr</0> за интеграцију са популарним сервисима за обавештавања."
 
 #: src/components/add-system.tsx
 msgid "Binary"
@@ -392,6 +402,11 @@ msgstr "Конфликти"
 msgid "Connection is down"
 msgstr "Веза је прекинута"
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Containers"
+msgstr ""
+
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -510,6 +525,10 @@ msgstr "Тренутно стање"
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
 msgstr "Циклуси"
+
+#: src/lib/utils.ts
+msgid "d"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -788,9 +807,13 @@ msgstr "GPU употреба"
 msgid "Grid"
 msgstr "Мрежа"
 
+#: src/lib/utils.ts
+msgid "h"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "Health"
-msgstr "Здравље"
+#~ msgid "Health"
+#~ msgstr "Здравље"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -829,6 +852,7 @@ msgstr "Неважећа имејл адреса."
 #~ msgid "Kernel"
 #~ msgstr "Кернел"
 
+#: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Језик"
@@ -884,8 +908,8 @@ msgid "Log Out"
 msgstr "Одјави се"
 
 #: src/components/login/login.tsx
-msgid "Login"
-msgstr "Пријава"
+#~ msgid "Login"
+#~ msgstr "Пријава"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -901,6 +925,10 @@ msgstr "Логови"
 #: src/components/routes/settings/notifications.tsx
 msgid "Looking instead for where to create alerts? Click the bell <0/> icons in the systems table."
 msgstr "Тражите где да креирате упозорења? Кликните на звона <0/> иконе у табели система."
+
+#: src/lib/utils.ts
+msgid "m"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -1135,8 +1163,8 @@ msgid "Please log in again"
 msgstr "Молимо вас пријавите се поново"
 
 #: src/components/login/auth-form.tsx
-msgid "Please see <0>the documentation</0> for instructions."
-msgstr "Молимо вас погледајте <0>документацију</0> за упутства."
+#~ msgid "Please see <0>the documentation</0> for instructions."
+#~ msgstr "Молимо вас погледајте <0>документацију</0> за упутства."
 
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
@@ -1315,7 +1343,8 @@ msgstr "Подесите процентуалне прагове за боје �
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
-#: src/components/routes/settings/layout.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "Подешавања"
@@ -1467,6 +1496,7 @@ msgid "Toggle grid"
 msgstr "Укључи/искључи мрежу"
 
 #: src/components/mode-toggle.tsx
+#: src/components/navbar.tsx
 msgid "Toggle theme"
 msgstr "Промени тему"
 
@@ -1638,6 +1668,11 @@ msgstr "Употреба root партиције"
 msgid "Used"
 msgstr ""
 
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "User Actions"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Users"
@@ -1669,8 +1704,8 @@ msgid "Waiting for enough records to display"
 msgstr "Чека се довољно записа за приказ"
 
 #: src/components/routes/settings/general.tsx
-msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
-msgstr "Желите да помогнете у побољшању наших превода? Проверите <0>Crowdin</0> за детаље."
+#~ msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
+#~ msgstr "Желите да помогнете у побољшању наших превода? Проверите <0>Crowdin</0> за детаље."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Wants"
@@ -1721,3 +1756,7 @@ msgstr ""
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Ваша корисничка подешавања су ажурирана."
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "运行时间"
+msgstr ""
