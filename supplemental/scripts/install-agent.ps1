@@ -12,9 +12,9 @@ param (
 
 $ServiceName = "aether-agent"
 $ProgramDisplayName = "Aether Agent"
-$LegacyPackageName = "beszel-agent"
-$LegacyBucketName = "beszel"
-$LegacyWingetId = "henrygd.beszel-agent"
+$LegacyPackageName = "aether-agent"
+$LegacyBucketName = "aether"
+$LegacyWingetId = "loboyanzy.aether-agent"
 
 # Check if required parameters are provided
 if ([string]::IsNullOrWhiteSpace($Key)) {
@@ -127,7 +127,7 @@ function Install-Scoop {
     
     # Check if running as admin - Scoop should not be installed as admin
     if (Test-Admin) {
-        throw "Scoop cannot be installed with administrator privileges. Please run this script as a regular user first to install Scoop and the agent (legacy package $LegacyPackageName), then run as admin to configure the service."
+        throw "Scoop cannot be installed with administrator privileges. Please run this script as a regular user first to install Scoop and the agent (package $LegacyPackageName), then run as admin to configure the service."
     }
     
     try {
@@ -188,10 +188,10 @@ function Install-NSSM {
     }
 }
 
-# Function to install agent via Scoop (legacy beszel bucket/package)
+# Function to install agent via Scoop (aether bucket/package)
 function Install-AetherAgentWithScoop {
-    Write-Host "Adding legacy beszel bucket for agent binaries..."
-    scoop bucket add $LegacyBucketName https://github.com/henrygd/beszel-scoops | Out-Null
+    Write-Host "Adding aether bucket for agent binaries..."
+    scoop bucket add $LegacyBucketName https://github.com/LuBoyanzy/aether-scoops | Out-Null
     
     Write-Host "Installing / updating $LegacyPackageName..."
     scoop install $LegacyPackageName | Out-Null
@@ -264,7 +264,7 @@ function Install-WithScoop {
         # Install NSSM
         Install-NSSM -Method "Scoop" | Out-Null
         
-        # Install agent from legacy beszel bucket
+        # Install agent from aether bucket
         $agentPath = Install-AetherAgentWithScoop
         
         return $agentPath

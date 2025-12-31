@@ -3,7 +3,7 @@ param (
 )
 
 # Aether Agent Upgrade Wrapper
-# This script downloads and executes the latest upgrade script from GitHub (legacy source)
+# This script downloads and executes the latest upgrade script from the Aether repository
 
 $ErrorActionPreference = "Stop"
 
@@ -13,7 +13,7 @@ try {
     Write-Host ""
     
     # Define the URL for the latest upgrade script
-    $scriptUrl = "https://raw.githubusercontent.com/henrygd/beszel/main/supplemental/scripts/upgrade-agent.ps1"
+    $scriptUrl = "https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/upgrade-agent.ps1"
     $tempScriptPath = "$env:TEMP\aether-upgrade-agent-$(Get-Date -Format 'yyyyMMdd-HHmmss').ps1"
     
     Write-Host "Downloading latest upgrade script..." -ForegroundColor Yellow

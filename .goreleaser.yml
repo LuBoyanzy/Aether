@@ -1,6 +1,6 @@
 version: 2
 
-project_name: beszel
+project_name: aether
 
 before:
   hooks:
@@ -8,8 +8,8 @@ before:
     - go generate -run fetchsmartctl ./agent
 
 builds:
-  - id: beszel
-    binary: beszel
+  - id: aether
+    binary: aether
     main: internal/cmd/hub/hub.go
     env:
       - CGO_ENABLED=0
@@ -32,8 +32,8 @@ builds:
       - goos: freebsd
         goarch: arm
 
-  - id: beszel-agent
-    binary: beszel-agent
+  - id: aether-agent
+    binary: aether-agent
     main: internal/cmd/agent/agent.go
     env:
       - CGO_ENABLED=0
@@ -77,10 +77,10 @@ builds:
         goarch: riscv64
 
 archives:
-  - id: beszel-agent
+  - id: aether-agent
     formats: [tar.gz]
     ids:
-      - beszel-agent
+      - aether-agent
     name_template: >-
       {{ .Binary }}_
       {{- .Os }}_
@@ -89,10 +89,10 @@ archives:
       - goos: windows
         formats: [zip]
 
-  - id: beszel
+  - id: aether
     formats: [tar.gz]
     ids:
-      - beszel
+      - aether
     name_template: >-
       {{ .Binary }}_
       {{- .Os }}_
@@ -102,30 +102,27 @@ archives:
         formats: [zip]
 
 nfpms:
-  - id: beszel-agent
-    package_name: beszel-agent
+  - id: aether-agent
+    package_name: aether-agent
     description: |-
-      Agent for Beszel
-      Beszel is a lightweight server monitoring platform that includes Docker
-      statistics, historical data, and alert functions. It has a friendly web
-      interface, simple configuration, and is ready to use out of the box.
-      It supports automatic backup, multi-user, OAuth authentication, and
-      API access.
-    maintainer: henrygd <hank@henrygd.me>
+      Agent for Aether
+      Aether 是基于 Beszel 二次开发的轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
+      具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
+    maintainer: loboyanzy
     section: net
     ids:
-      - beszel-agent
+      - aether-agent
     formats:
       - deb
     contents:
-      - src: ./supplemental/debian/beszel-agent.service
-        dst: lib/systemd/system/beszel-agent.service
+      - src: ./supplemental/debian/aether-agent.service
+        dst: lib/systemd/system/aether-agent.service
         packager: deb
       - src: ./supplemental/debian/copyright
-        dst: usr/share/doc/beszel-agent/copyright
+        dst: usr/share/doc/aether-agent/copyright
         packager: deb
       - src: ./supplemental/debian/lintian-overrides
-        dst: usr/share/lintian/overrides/beszel-agent
+        dst: usr/share/lintian/overrides/aether-agent
         packager: deb
     scripts:
       postinstall: ./supplemental/debian/postinstall.sh
@@ -142,95 +139,70 @@ nfpms:
         #config: ./supplemental/debian/config.sh
 
 scoops:
-  - ids: [beszel-agent]
-    name: beszel-agent
+  - ids: [aether-agent]
+    name: aether-agent
     repository:
-      owner: henrygd
-      name: beszel-scoops
-    homepage: "https://beszel.dev"
-    description: "Agent for Beszel, a lightweight server monitoring platform."
+      owner: LuBoyanzy
+      name: aether-scoops
+    homepage: "https://github.com/LuBoyanzy/Aether"
+    description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
     license: MIT
     skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
 
-# # Needs choco installed, so doesn't build on linux / default gh workflow :(
-# chocolateys:
-#   - title: Beszel Agent
-#     ids: [beszel-agent]
-#     package_source_url: https://github.com/henrygd/beszel-chocolatey
-#     owners: henrygd
-#     authors: henrygd
-#     summary: 'Agent for Beszel, a lightweight server monitoring platform.'
-#     description: |
-#       Beszel is a lightweight server monitoring platform that includes Docker statistics, historical data, and alert functions.
-
-#       It has a friendly web interface, simple configuration, and is ready to use out of the box. It supports automatic backup, multi-user, OAuth authentication, and API access.
-#     license_url: https://github.com/henrygd/beszel/blob/main/LICENSE
-#     project_url: https://beszel.dev
-#     project_source_url: https://github.com/henrygd/beszel
-#     docs_url: https://beszel.dev/guide/getting-started
-#     icon_url: https://cdn.jsdelivr.net/gh/selfhst/icons/png/beszel.png
-#     bug_tracker_url: https://github.com/henrygd/beszel/issues
-#     copyright: 2025 henrygd
-#     tags: foss cross-platform admin monitoring
-#     require_license_acceptance: false
-#     release_notes: 'https://github.com/henrygd/beszel/releases/tag/v{{ .Version }}'
 
 brews:
-  - ids: [beszel-agent]
-    name: beszel-agent
+  - ids: [aether-agent]
+    name: aether-agent
     repository:
-      owner: henrygd
-      name: homebrew-beszel
-    homepage: "https://beszel.dev"
-    description: "Agent for Beszel, a lightweight server monitoring platform."
+      owner: LuBoyanzy
+      name: homebrew-aether
+    homepage: "https://github.com/LuBoyanzy/Aether"
+    description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
     license: MIT
     skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
     extra_install: |
-      (bin/"beszel-agent-launcher").write <<~EOS
+      (bin/"aether-agent-launcher").write <<~EOS
         #!/bin/bash
         set -a
-        if [ -f "$HOME/.config/beszel/beszel-agent.env" ]; then
-          source "$HOME/.config/beszel/beszel-agent.env"
+        if [ -f "$HOME/.config/aether/aether-agent.env" ]; then
+          source "$HOME/.config/aether/aether-agent.env"
         fi
         set +a
-        exec #{bin}/beszel-agent "$@"
+        exec #{bin}/aether-agent "$@"
       EOS
-      (bin/"beszel-agent-launcher").chmod 0755
+      (bin/"aether-agent-launcher").chmod 0755
     service: |
-      run ["#{bin}/beszel-agent-launcher"]
-      log_path "#{Dir.home}/.cache/beszel/beszel-agent.log"
-      error_log_path "#{Dir.home}/.cache/beszel/beszel-agent.log"
+      run ["#{bin}/aether-agent-launcher"]
+      log_path "#{Dir.home}/.cache/aether/aether-agent.log"
+      error_log_path "#{Dir.home}/.cache/aether/aether-agent.log"
       keep_alive true
       restart_delay 5
       process_type :background
 
 winget:
-  - ids: [beszel-agent]
-    name: beszel-agent
-    package_identifier: henrygd.beszel-agent
-    publisher: henrygd
+  - ids: [aether-agent]
+    name: aether-agent
+    package_identifier: loboyanzy.aether-agent
+    publisher: loboyanzy
     license: MIT
-    license_url: "https://github.com/henrygd/beszel/blob/main/LICENSE"
-    copyright: "2025 henrygd"
-    homepage: "https://beszel.dev"
-    release_notes_url: "https://github.com/henrygd/beszel/releases/tag/v{{ .Version }}"
-    publisher_support_url: "https://github.com/henrygd/beszel/issues"
-    short_description: "Agent for Beszel, a lightweight server monitoring platform."
+    license_url: "https://github.com/LuBoyanzy/Aether/blob/main/LICENSE"
+    copyright: "2025 loboyanzy"
+    homepage: "https://github.com/LuBoyanzy/Aether"
+    release_notes_url: "https://github.com/LuBoyanzy/Aether/releases/tag/v{{ .Version }}"
+    publisher_support_url: "https://github.com/LuBoyanzy/Aether/issues"
+    short_description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
     skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
     description: |
-      Beszel is a lightweight server monitoring platform that includes Docker
-      statistics, historical data, and alert functions. It has a friendly web
-      interface, simple configuration, and is ready to use out of the box.
-      It supports automatic backup, multi-user, OAuth authentication, and
-      API access.
+      Aether 是基于 Beszel 二次开发的轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
+      具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
     tags:
       - homelab
       - monitoring
       - self-hosted
     repository:
-      owner: henrygd
-      name: beszel-winget
-      branch: henrygd.beszel-agent-{{ .Version }}
+      owner: LuBoyanzy
+      name: aether-winget
+      branch: loboyanzy.aether-agent-{{ .Version }}
       token: "{{ .Env.WINGET_TOKEN }}"
       # pull_request:
       #   enabled: true

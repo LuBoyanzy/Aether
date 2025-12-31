@@ -15,12 +15,12 @@ services:
     container_name: 'aether-agent'
     restart: unless-stopped
     network_mode: host
-    # runtime: nvidia # when using beszel-agent-nvidia
+    # runtime: nvidia # when using aether-agent-nvidia
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       PORT: 45876
       KEY: '' # set to your SSH public key
       # FILESYSTEM: /dev/sda1 # set to the correct filesystem for disk I/O stats
-      # NVIDIA_VISIBLE_DEVICES: all # when using beszel-agent-nvidia
-      # NVIDIA_DRIVER_CAPABILITIES: utility # when using beszel-agent-nvidia
+      # NVIDIA_VISIBLE_DEVICES: all # when using aether-agent-nvidia
+      # NVIDIA_DRIVER_CAPABILITIES: utility # when using aether-agent-nvidia

@@ -38,10 +38,10 @@ jobs:
 
       - name: Build .NET LHM executable for Windows sensors
         run: |
-          dotnet build -c Release ./agent/lhm/beszel_lhm.csproj
+          dotnet build -c Release ./agent/lhm/aether_lhm.csproj
         shell: bash
 
-      - name: GoReleaser beszel
+      - name: GoReleaser Aether
         uses: goreleaser/goreleaser-action@v6
         with:
           workdir: ./
@@ -51,4 +51,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN || secrets.GITHUB_TOKEN }}
           WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
-          IS_FORK: ${{ github.repository_owner != 'henrygd' }}
+          IS_FORK: ${{ github.repository_owner != 'LuBoyanzy' }}

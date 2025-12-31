@@ -76,7 +76,7 @@
 
 - Fix `intel_gpu_top` parsing when engine instance id is in column. (#1230)
 
-- Update `henrygd/beszel-agent-nvidia` Dockerfile to build latest smartmontools. (#1335)
+- Update `loboyanzy/aether-agent-nvidia` Dockerfile to build latest smartmontools. (#1335)
 
 ## 0.15.3
 
@@ -122,7 +122,7 @@
 
 - Add initial S.M.A.R.T. support for disk health monitoring. (#962)
 
-- Add `henrygd/beszel-agent:alpine` Docker image and include `smartmontools` in all non-base agent images.
+- Add `loboyanzy/aether-agent:alpine` Docker image and include `smartmontools` in all non-base agent images.
 
 - Remove environment variables from container details (#1305)
 
@@ -188,7 +188,7 @@
 
 - Add `SKIP_GPU` environment variable to skip GPU data collection. (#1203)
 
-- Add fallback cache/buff memory calculation when cache/buff isn't available ([#1198](https://github.com/henrygd/beszel/issues/1198))
+- Add fallback cache/buff memory calculation when cache/buff isn't available (legacy upstream #1198)
 
 - Fix automatic agent update / restart on OpenRC. (#1199)
 
@@ -210,7 +210,7 @@ Note that the default memory calculation changed in this release, which may caus
 
 - Fix temperature unit and bytes / bits settings. (#1180)
 
-- Add `henrygd/beszel-agent-intel` image for Intel GPUs (experimental).
+- Add `loboyanzy/aether-agent-intel` image for Intel GPUs (experimental).
 
 - Update Go dependencies. Shoutrrr now supports notifications for Signal and WeChat Work (WeCom).
 
@@ -282,11 +282,11 @@ Note that the default memory calculation changed in this release, which may caus
 
 - Allow opening internal router links in new tab.
 
-- Add `/api/beszel/user-alerts` endpoint. Remove use of batch API for alerts in hub.
+- Add `/api/aether/user-alerts` endpoint. Remove use of batch API for alerts in hub.
 
-- Require auth for `/api/beszel/getkey` endpoint that returns the public key.
+- Require auth for `/api/aether/getkey` endpoint that returns the public key.
 
-- Change `GET /api/beszel/send-test-notification` endpoint to `POST /api/beszel/test-notification`.
+- Change `GET /api/aether/send-test-notification` endpoint to `POST /api/aether/test-notification`.
 
 - Update Go and JS dependencies.
 
@@ -294,4 +294,4 @@ Note that the default memory calculation changed in this release, which may caus
 
 ## Older
 
-Release notes are available at https://github.com/henrygd/beszel/releases
+Release notes are available at https://github.com/LuBoyanzy/Aether/releases

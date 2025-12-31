@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Aether
-Upstream-Contact: henrygd <hank@henrygd.me>
-Source: Derived from legacy Beszel (https://beszel.dev/)
+Upstream-Contact: loboyanzy
+Source: https://github.com/LuBoyanzy/Aether
 
 Files: *
 Copyright: 2024 henrygd

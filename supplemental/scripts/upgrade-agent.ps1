@@ -4,8 +4,8 @@ param (
 
 $ServiceName = "aether-agent"
 $ProgramDisplayName = "Aether Agent"
-$LegacyPackageName = "beszel-agent"
-$LegacyWingetId = "henrygd.beszel-agent"
+$LegacyPackageName = "aether-agent"
+$LegacyWingetId = "loboyanzy.aether-agent"
 
 # Stop on first error
 $ErrorActionPreference = "Stop"
