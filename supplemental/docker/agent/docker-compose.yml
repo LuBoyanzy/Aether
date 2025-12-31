@@ -1,6 +1,6 @@
 services:
   aether-agent:
-    image: 'henrygd/beszel-agent' # legacy image, rename pending
+    image: 'loboyanzy/aether-agent'
     container_name: 'aether-agent'
     restart: unless-stopped
     network_mode: host

@@ -51,7 +51,8 @@ func getBaseApp() *pocketbase.PocketBase {
 		Short: "Update " + aether.AppName + " to the latest version",
 		Run:   hub.Update,
 	}
-	updateCmd.Flags().Bool("china-mirrors", false, "Use mirror (gh.beszel.dev) instead of GitHub")
+	// Mirror flag retained for compatibility but unused (no mirror configured)
+	updateCmd.Flags().Bool("china-mirrors", false, "Mirror not available; always uses GitHub")
 	baseApp.RootCmd.AddCommand(updateCmd)
 	// add health command
 	baseApp.RootCmd.AddCommand(newHealthCmd())

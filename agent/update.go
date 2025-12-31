@@ -86,7 +86,7 @@ func Update(useMirror bool) error {
 		dataDir = os.TempDir()
 	}
 	updated, err := ghupdate.Update(ghupdate.Config{
-		ArchiveExecutable: "beszel-agent", // legacy archive name; renamed locally after update
+		ArchiveExecutable: "aether-agent",
 		DataDir:           dataDir,
 		UseMirror:         useMirror,
 	})

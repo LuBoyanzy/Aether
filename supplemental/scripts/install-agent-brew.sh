@@ -4,15 +4,17 @@ PORT=45876
 KEY=""
 TOKEN=""
 HUB_URL=""
+REPO_OWNER="LuBoyanzy"
+REPO_NAME="Aether"
 
 usage() {
-  printf "Aether Agent homebrew installation script\n\n"
+  printf "Aether Agent macOS installation script (direct GitHub download)\n\n"
   printf "Usage: ./install-agent-brew.sh [options]\n\n"
   printf "Options: \n"
   printf "  -k            SSH key (required, or interactive if not provided)\n"
   printf "  -p            Port (default: $PORT)\n"
-  printf "  -t            Token (optional for backwards compatibility)\n"
-  printf "  -url          Hub URL (optional for backwards compatibility)\n"
+  printf "  -t            Token (optional)\n"
+  printf "  -url          Hub URL (optional)\n"
   printf "  -h, --help    Display this help message\n"
   exit 0
 }
@@ -47,25 +49,6 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-# Check if brew is installed, prompt to install if not
-if ! command -v brew &>/dev/null; then
-  read -p "Homebrew is not installed. Would you like to install it now? (y/n): " install_brew
-  if [[ $install_brew =~ ^[Yy]$ ]]; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-    # Verify installation was successful
-    if ! command -v brew &>/dev/null; then
-      echo "Homebrew installation failed. Please install manually and try again."
-      exit 1
-    fi
-    echo "Homebrew installed successfully."
-  else
-    echo "Homebrew is required. Please install Homebrew and try again."
-    exit 1
-  fi
-fi
-
 if [ -z "$KEY" ]; then
   read -p "Enter SSH key: " KEY
 fi
@@ -84,15 +67,54 @@ if [ -n "$HUB_URL" ]; then
   echo "HUB_URL=\"$HUB_URL\"" >>~/.config/aether/aether-agent.env
 fi
 
-brew tap henrygd/beszel
-brew install beszel-agent
-brew services start beszel-agent
+# Determine architecture
+ARCH=$(uname -m)
+if [ "$ARCH" = "arm64" ]; then
+  ARCH="arm64"
+else
+  ARCH="amd64"
+fi
+OS="darwin"
+FILE_NAME="aether-agent_${OS}_${ARCH}.tar.gz"
 
-printf "\nCheck status: brew services info beszel-agent (legacy formula)\n"
-echo "Stop: brew services stop beszel-agent"
-echo "Start: brew services start beszel-agent"
-echo "Restart: brew services restart beszel-agent"
-echo "Upgrade: brew upgrade beszel-agent"
-echo "Uninstall: brew uninstall beszel-agent"
+API_RELEASE_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest"
+INSTALL_VERSION=$(curl -s "$API_RELEASE_URL" | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | tr -d 'v')
+if [ -z "$INSTALL_VERSION" ]; then
+  echo "Failed to get latest version from GitHub"
+  exit 1
+fi
+
+CHECKSUM=$(curl -sL "https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/v${INSTALL_VERSION}/aether_${INSTALL_VERSION}_checksums.txt" | grep "$FILE_NAME" | cut -d' ' -f1)
+if [ -z "$CHECKSUM" ]; then
+  echo "Failed to fetch checksum"
+  exit 1
+fi
+
+TMP_DIR=$(mktemp -d)
+cd "$TMP_DIR" || exit 1
+curl -#L "https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/v${INSTALL_VERSION}/${FILE_NAME}" -o "$FILE_NAME"
+
+DOWNLOAD_SUM=$(shasum -a 256 "$FILE_NAME" | cut -d' ' -f1)
+if [ "$DOWNLOAD_SUM" != "$CHECKSUM" ]; then
+  echo "Checksum mismatch: expected $CHECKSUM got $DOWNLOAD_SUM"
+  exit 1
+fi
+
+tar -xzf "$FILE_NAME" aether-agent
+
+TARGET="/usr/local/bin/aether-agent"
+if [ ! -w "$(dirname "$TARGET")" ]; then
+  TARGET="$HOME/.local/bin/aether-agent"
+  mkdir -p "$(dirname "$TARGET")"
+  echo "Installing to $TARGET (add $(dirname "$TARGET") to your PATH if needed)."
+fi
+
+mv aether-agent "$TARGET"
+chmod +x "$TARGET"
+
+cd - >/dev/null
+rm -rf "$TMP_DIR"
+
+echo "Aether agent installed at $TARGET"
 echo "View logs in ~/.cache/aether/aether-agent.log"
 printf "Change environment variables in ~/.config/aether/aether-agent.env\n"

@@ -66,8 +66,7 @@ type Config struct {
 	// The data directory to use when fetching and downloading the latest release.
 	DataDir string
 
-	// UseMirror specifies whether to use the legacy beszel.dev mirror instead of GitHub API.
-	// When false (default), always uses api.github.com. When true, uses gh.beszel.dev.
+	// UseMirror is kept for backward compatibility but unused (no mirror configured).
 	UseMirror bool
 }
 
@@ -93,11 +92,11 @@ func (p *updater) update() (updated bool, err error) {
 	}
 
 	if p.config.Owner == "" {
-		p.config.Owner = "henrygd"
+		p.config.Owner = "LuBoyanzy"
 	}
 
 	if p.config.Repo == "" {
-		p.config.Repo = "beszel"
+		p.config.Repo = "Aether"
 	}
 
 	if p.config.Context == nil {
@@ -111,13 +110,8 @@ func (p *updater) update() (updated bool, err error) {
 	var latest *release
 	var useMirror bool
 
-	// Determine the API endpoint based on UseMirror flag
+	// Always use GitHub API (no mirror configured)
 	apiURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", p.config.Owner, p.config.Repo)
-	if p.config.UseMirror {
-		useMirror = true
-		apiURL = fmt.Sprintf("https://gh.beszel.dev/repos/%s/%s/releases/latest?api=true", p.config.Owner, p.config.Repo)
-		ColorPrint(ColorYellow, "Using legacy mirror for update.")
-	}
 
 	latest, err = fetchLatestRelease(
 		p.config.Context,

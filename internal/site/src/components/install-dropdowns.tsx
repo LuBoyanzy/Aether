@@ -12,20 +12,14 @@ import { DropdownMenuContent, DropdownMenuItem } from "./ui/dropdown-menu"
  * @returns The URL for the script.
  */
 const getScriptUrl = (path: string = "") => {
-	return `https://get.beszel.dev${path}`
-	// no beta for now
-	// const url = new URL("https://get.beszel.dev")
-	// url.pathname = path
-	// if (isBeta) {
-	// 	url.searchParams.set("beta", "1")
-	// }
-	// return url.toString()
+	const suffix = path === "/brew" ? "-brew" : ""
+	return `https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent${suffix}.sh`
 }
 
 export function copyDockerCompose(port = "45876", publicKey: string, token: string) {
 	copyToClipboard(`services:
   aether-agent:
-    image: henrygd/beszel-agent
+    image: loboyanzy/aether-agent
     container_name: aether-agent
     restart: unless-stopped
     network_mode: host
@@ -43,7 +37,7 @@ export function copyDockerCompose(port = "45876", publicKey: string, token: stri
 
 export function copyDockerRun(port = "45876", publicKey: string, token: string) {
 	copyToClipboard(
-		`docker run -d --name aether-agent --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v ./aether_agent_data:/var/lib/aether-agent -e KEY="${publicKey}" -e LISTEN=${port} -e TOKEN="${token}" -e HUB_URL="${getHubURL()}" henrygd/beszel-agent`
+		`docker run -d --name aether-agent --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v ./aether_agent_data:/var/lib/aether-agent -e KEY="${publicKey}" -e LISTEN=${port} -e TOKEN="${token}" -e HUB_URL="${getHubURL()}" loboyanzy/aether-agent`
 	)
 }
 

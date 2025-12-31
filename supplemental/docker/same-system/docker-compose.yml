@@ -1,6 +1,6 @@
 services:
   aether-hub:
-    image: 'henrygd/beszel' # legacy image, rename pending
+    image: 'loboyanzy/aether'
     container_name: 'aether-hub'
     restart: unless-stopped
     ports:
@@ -11,7 +11,7 @@ services:
       - 'host.docker.internal:host-gateway'
 
   aether-agent:
-    image: 'henrygd/beszel-agent' # Add -nvidia for nvidia gpus (legacy image)
+    image: 'loboyanzy/aether-agent' # Add -nvidia for nvidia gpus
     container_name: 'aether-agent'
     restart: unless-stopped
     network_mode: host

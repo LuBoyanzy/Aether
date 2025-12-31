@@ -15,10 +15,10 @@ If you need to edit the service -- for instance, to change an environment variab
 
 ### Hub
 
-Download the script (legacy source URL retained for now):
+Download the script:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/henrygd/beszel/main/supplemental/scripts/install-hub.sh -o install-hub.sh && chmod +x install-hub.sh
+curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-hub.sh -o install-hub.sh && chmod +x install-hub.sh
 ```
 
 #### Install
@@ -43,10 +43,10 @@ sudo /opt/aether/aether update && sudo systemctl restart aether-hub
 
 ### Agent
 
-Download the script (legacy source URL retained for now):
+Download the script:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/henrygd/beszel/main/supplemental/scripts/install-agent.sh -o install-agent.sh && chmod +x install-agent.sh
+curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent.sh -o install-agent.sh && chmod +x install-agent.sh
 ```
 
 #### Install

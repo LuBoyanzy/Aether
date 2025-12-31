@@ -233,8 +233,7 @@ case "$1" in
   printf "  -u                    : Uninstall Aether Agent\n"
   printf "  --auto-update [VALUE] : Control automatic daily updates\n"
   printf "                          VALUE can be true (enable) or false (disable). If not specified, will prompt.\n"
-  printf "  --mirror [URL]        : Use GitHub proxy to resolve network timeout issues in mainland China\n"
-  printf "                          URL: optional custom proxy URL (default: https://gh.beszel.dev)\n"
+  printf "  --mirror [URL]        : (Optional) Use a custom GitHub proxy URL\n"
   printf "  -h, --help            : Display this help message\n"
   exit 0
   ;;
@@ -301,8 +300,7 @@ while [ $# -gt 0 ]; do
         GITHUB_PROXY_URL="$CUSTOM_PROXY"
         GITHUB_URL="$(ensure_trailing_slash "$CUSTOM_PROXY")https://github.com"
       else
-        GITHUB_PROXY_URL="https://gh.beszel.dev"
-        GITHUB_URL="$GITHUB_PROXY_URL"
+        echo "No proxy URL provided; using default GitHub"
       fi
     elif [ "$2" != "" ] && ! echo "$2" | grep -q '^-'; then
       # use custom proxy URL provided as next argument
@@ -310,9 +308,7 @@ while [ $# -gt 0 ]; do
       GITHUB_URL="$(ensure_trailing_slash "$2")https://github.com"
       shift
     else
-      # No value specified, use default
-      GITHUB_PROXY_URL="https://gh.beszel.dev"
-      GITHUB_URL="$GITHUB_PROXY_URL"
+      echo "No proxy URL provided; using default GitHub"
     fi
     ;;
   --auto-update*)
@@ -597,18 +593,14 @@ echo "Downloading and installing the agent..."
 
 OS=$(uname -s | sed -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/')
 ARCH=$(detect_architecture)
-FILE_NAME="beszel-agent_${OS}_${ARCH}.tar.gz"
+FILE_NAME="aether-agent_${OS}_${ARCH}.tar.gz"
 
 # Determine version to install
 if [ "$VERSION" = "latest" ]; then
-  INSTALL_VERSION=$(curl -s "https://get.beszel.dev/latest-version")
+  API_RELEASE_URL="https://api.github.com/repos/LuBoyanzy/Aether/releases/latest"
+  INSTALL_VERSION=$(curl -s "$API_RELEASE_URL" | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | tr -d 'v')
   if [ -z "$INSTALL_VERSION" ]; then
-    # Fallback to GitHub API
-    API_RELEASE_URL="https://api.github.com/repos/henrygd/beszel/releases/latest"
-    INSTALL_VERSION=$(curl -s "$API_RELEASE_URL" | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | tr -d 'v')
-  fi
-  if [ -z "$INSTALL_VERSION" ]; then
-    echo "Failed to get latest version"
+    echo "Failed to get latest version from GitHub"
     exit 1
   fi
 else
@@ -622,14 +614,14 @@ echo "Downloading and installing agent version ${INSTALL_VERSION} from ${GITHUB_
 # Download checksums file
 TEMP_DIR=$(mktemp -d)
 cd "$TEMP_DIR" || exit 1
-CHECKSUM=$(curl -sL "$GITHUB_URL/henrygd/beszel/releases/download/v${INSTALL_VERSION}/beszel_${INSTALL_VERSION}_checksums.txt" | grep "$FILE_NAME" | cut -d' ' -f1)
+CHECKSUM=$(curl -sL "$GITHUB_URL/LuBoyanzy/Aether/releases/download/v${INSTALL_VERSION}/aether_${INSTALL_VERSION}_checksums.txt" | grep "$FILE_NAME" | cut -d' ' -f1)
 if [ -z "$CHECKSUM" ] || ! echo "$CHECKSUM" | grep -qE "^[a-fA-F0-9]{64}$"; then
   echo "Failed to get checksum or invalid checksum format"
   exit 1
 fi
 
-if ! curl -#L "$GITHUB_URL/henrygd/beszel/releases/download/v${INSTALL_VERSION}/$FILE_NAME" -o "$FILE_NAME"; then
-  echo "Failed to download the agent from ""$GITHUB_URL/henrygd/beszel/releases/download/v${INSTALL_VERSION}/$FILE_NAME"
+if ! curl -#L "$GITHUB_URL/LuBoyanzy/Aether/releases/download/v${INSTALL_VERSION}/$FILE_NAME" -o "$FILE_NAME"; then
+  echo "Failed to download the agent from ""$GITHUB_URL/LuBoyanzy/Aether/releases/download/v${INSTALL_VERSION}/$FILE_NAME"
   rm -rf "$TEMP_DIR"
   exit 1
 fi
@@ -640,13 +632,13 @@ if [ "$($CHECK_CMD "$FILE_NAME" | cut -d' ' -f1)" != "$CHECKSUM" ]; then
   exit 1
 fi
 
-if ! tar -xzf "$FILE_NAME" beszel-agent; then
+if ! tar -xzf "$FILE_NAME" aether-agent; then
   echo "Failed to extract the agent"
   rm -rf "$TEMP_DIR"
   exit 1
 fi
 
-mv beszel-agent "$BIN_PATH"
+mv aether-agent "$BIN_PATH"
 chown aether:aether "$BIN_PATH"
 chmod 755 "$BIN_PATH"
 

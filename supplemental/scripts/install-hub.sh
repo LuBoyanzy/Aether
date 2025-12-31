@@ -156,7 +156,7 @@ fi
 
 # Define default values
 PORT=19090
-GITHUB_PROXY_URL="https://ghfast.top/"
+GITHUB_PROXY_URL=""
 AUTO_UPDATE_FLAG="false"
 UNINSTALL=false
 
@@ -173,7 +173,7 @@ while [ $# -gt 0 ]; do
       printf "Options: \n"
       printf "  -u           : Uninstall the Aether Hub\n"
       printf "  -p <port>    : Specify a port number (default: 19090)\n"
-      printf "  -c <url>     : Use a custom GitHub mirror URL (e.g., https://ghfast.top/)\n"
+      printf "  -c <url>     : (Optional) Use a custom GitHub mirror URL\n"
       printf "  --auto-update : Enable automatic daily updates (disabled by default)\n"
       printf "  -h, --help   : Display this help message\n"
       exit 0
@@ -323,7 +323,7 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(detect_architecture)
 FILE_NAME="aether_${OS}_${ARCH}.tar.gz"
 
-curl -sL "${GITHUB_PROXY_URL}https://github.com/henrygd/aether/releases/latest/download/$FILE_NAME" | tar -xz -O aether | tee ./aether >/dev/null
+curl -sL "${GITHUB_PROXY_URL}https://github.com/LuBoyanzy/Aether/releases/latest/download/$FILE_NAME" | tar -xz -O aether | tee ./aether >/dev/null
 chmod +x ./aether
 mv ./aether "$BIN_PATH"
 chown aether:aether "$BIN_PATH"

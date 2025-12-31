@@ -1,6 +1,6 @@
 services:
   aether-hub:
-    image: 'henrygd/beszel' # legacy image, rename pending
+    image: 'loboyanzy/aether'
     container_name: 'aether-hub'
     restart: unless-stopped
     ports:
