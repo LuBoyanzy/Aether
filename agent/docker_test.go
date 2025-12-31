@@ -883,47 +883,52 @@ func TestParseDockerStatus(t *testing.T) {
 		name           string
 		input          string
 		expectedStatus string
-		expectedHealth container.DockerHealth
 	}{
 		{
 			name:           "status with About an removed",
 			input:          "Up About an hour (healthy)",
 			expectedStatus: "Up an hour",
-			expectedHealth: container.DockerHealthHealthy,
 		},
 		{
 			name:           "status without About an unchanged",
 			input:          "Up 2 hours (healthy)",
 			expectedStatus: "Up 2 hours",
-			expectedHealth: container.DockerHealthHealthy,
 		},
 		{
 			name:           "status with About and no parentheses",
 			input:          "Up About an hour",
 			expectedStatus: "Up an hour",
-			expectedHealth: container.DockerHealthNone,
 		},
 		{
 			name:           "status without parentheses",
 			input:          "Created",
 			expectedStatus: "Created",
-			expectedHealth: container.DockerHealthNone,
 		},
 		{
 			name:           "empty status",
 			input:          "",
 			expectedStatus: "",
-			expectedHealth: container.DockerHealthNone,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			status, health := parseDockerStatus(tt.input)
+			status := parseDockerStatus(tt.input)
 			assert.Equal(t, tt.expectedStatus, status)
-			assert.Equal(t, tt.expectedHealth, health)
 		})
 	}
+}
+
+func TestCalculateUptimeSeconds(t *testing.T) {
+	now := time.Now()
+
+	// prefer startedAt over created
+	startedAt := now.Add(-5*time.Hour - 30*time.Minute)
+	uptime := calculateUptimeSeconds(startedAt)
+	assert.InDelta(t, 5.5*3600, float64(uptime), 5, "uptime should be ~5.5 hours")
+
+	// zero startedAt should return 0
+	assert.Equal(t, uint64(0), calculateUptimeSeconds(time.Time{}))
 }
 
 func TestConstantsAndUtilityFunctions(t *testing.T) {

@@ -20,8 +20,7 @@ import { pb } from "@/lib/api"
 import type { ContainerRecord } from "@/types"
 import { containerChartCols } from "@/components/containers-table/containers-table-columns"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { type ContainerHealth, ContainerHealthLabels } from "@/lib/enums"
-import { cn, useBrowserStorage } from "@/lib/utils"
+import { cn, formatSecondsToHuman, useBrowserStorage } from "@/lib/utils"
 import { Sheet, SheetTitle, SheetHeader, SheetContent, SheetDescription } from "../ui/sheet"
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -49,11 +48,11 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 
 	useEffect(() => {
 		function fetchData(systemId?: string) {
-			pb.collection<ContainerRecord>("containers")
-				.getList(0, 2000, {
-					fields: "id,name,image,cpu,memory,net,health,status,system,updated",
-					filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
-				})
+				pb.collection<ContainerRecord>("containers")
+					.getList(0, 2000, {
+						fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
+						filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
+					})
 				.then(
 					({ items }) => {
 						if (items.length === 0) {
@@ -125,13 +124,13 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 		onGlobalFilterChange: setGlobalFilter,
 		globalFilterFn: (row, _columnId, filterValue) => {
 			const container = row.original
-			const systemName = $allSystemsById.get()[container.system]?.name ?? ""
-			const id = container.id ?? ""
-			const name = container.name ?? ""
-			const status = container.status ?? ""
-			const healthLabel = ContainerHealthLabels[container.health as ContainerHealth] ?? ""
-			const image = container.image ?? ""
-			const searchString = `${systemName} ${id} ${name} ${healthLabel} ${status} ${image}`.toLowerCase()
+				const systemName = $allSystemsById.get()[container.system]?.name ?? ""
+				const id = container.id ?? ""
+				const name = container.name ?? ""
+				const status = container.status ?? ""
+				const uptimeLabel = formatSecondsToHuman(container.uptime ?? 0)
+				const image = container.image ?? ""
+				const searchString = `${systemName} ${id} ${name} ${uptimeLabel} ${status} ${image}`.toLowerCase()
 
 			return (filterValue as string)
 				.toLowerCase()
@@ -365,19 +364,19 @@ function ContainerSheet({
 				<SheetContent className="w-full sm:max-w-220 p-2">
 					<SheetHeader>
 						<SheetTitle>{container.name}</SheetTitle>
-						<SheetDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
-							<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
-								{$allSystemsById.get()[container.system]?.name ?? ""}
-							</Link>
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+							<SheetDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
+								<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
+									{$allSystemsById.get()[container.system]?.name ?? ""}
+								</Link>
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
 							{container.status}
 							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
 							{container.image}
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{container.id}
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{ContainerHealthLabels[container.health as ContainerHealth]}
-						</SheetDescription>
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{container.id}
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{formatSecondsToHuman(container.uptime ?? 0) || "—"}
+							</SheetDescription>
 					</SheetHeader>
 					<div className="px-3 pb-3 -mt-4 flex flex-col gap-3 h-full items-start">
 						<div className="flex items-center w-full">

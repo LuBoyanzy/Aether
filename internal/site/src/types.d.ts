@@ -268,8 +268,8 @@ export interface ContainerRecord extends RecordModel {
 	cpu: number
 	memory: number
 	net: number
-	health: number
 	status: string
+	uptime: number
 	updated: number
 }
 

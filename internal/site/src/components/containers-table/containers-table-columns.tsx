@@ -1,8 +1,7 @@
 import type { Column, ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
-import { cn, decimalString, formatBytes, hourWithSeconds } from "@/lib/utils"
+import { cn, decimalString, formatBytes, formatSecondsToHuman, hourWithSeconds } from "@/lib/utils"
 import type { ContainerRecord } from "@/types"
-import { ContainerHealth, ContainerHealthLabels } from "@/lib/enums"
 import {
 	ArrowUpDownIcon,
 	ClockIcon,
@@ -11,27 +10,12 @@ import {
 	LayersIcon,
 	MemoryStickIcon,
 	ServerIcon,
-	ShieldCheckIcon,
+	TimerIcon,
 } from "lucide-react"
 import { EthernetIcon, HourglassIcon } from "../ui/icons"
-import { Badge } from "../ui/badge"
 import { t } from "@lingui/core/macro"
 import { $allSystemsById } from "@/lib/stores"
 import { useStore } from "@nanostores/react"
-
-// Unit names and their corresponding number of seconds for converting docker status strings
-const unitSeconds = [["s", 1], ["mi", 60], ["h", 3600], ["d", 86400], ["w", 604800], ["mo", 2592000]] as const
-// Convert docker status string to number of seconds ("Up X minutes", "Up X hours", etc.)
-function getStatusValue(status: string): number {
-	const [_, num, unit] = status.split(" ")
-	const numValue = Number(num)
-	for (const [unitName, value] of unitSeconds) {
-		if (unit.startsWith(unitName)) {
-			return numValue * value
-		}
-	}
-	return 0
-}
 
 export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 	{
@@ -104,28 +88,6 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 		},
 	},
 	{
-		id: "health",
-		invertSorting: true,
-		accessorFn: (record) => record.health,
-		header: ({ column }) => <HeaderButton column={column} name={t`Health`} Icon={ShieldCheckIcon} />,
-		cell: ({ getValue }) => {
-			const healthValue = getValue() as number
-			const healthStatus = ContainerHealthLabels[healthValue] || "Unknown"
-			return (
-				<Badge variant="outline" className="dark:border-white/12">
-					<span className={cn("size-2 me-1.5 rounded-full", {
-						"bg-green-500": healthValue === ContainerHealth.Healthy,
-						"bg-red-500": healthValue === ContainerHealth.Unhealthy,
-						"bg-yellow-500": healthValue === ContainerHealth.Starting,
-						"bg-zinc-500": healthValue === ContainerHealth.None,
-					})}>
-					</span>
-					{healthStatus}
-				</Badge>
-			)
-		},
-	},
-	{
 		id: "image",
 		sortingFn: (a, b) => a.original.image.localeCompare(b.original.image),
 		accessorFn: (record) => record.image,
@@ -138,10 +100,21 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 		id: "status",
 		accessorFn: (record) => record.status,
 		invertSorting: true,
-		sortingFn: (a, b) => getStatusValue(a.original.status) - getStatusValue(b.original.status),
+		sortingFn: (a, b) => (a.original.uptime ?? 0) - (b.original.uptime ?? 0),
 		header: ({ column }) => <HeaderButton column={column} name={t`Status`} Icon={HourglassIcon} />,
 		cell: ({ getValue }) => {
 			return <span className="ms-1.5 w-25 block truncate">{getValue() as string}</span>
+		},
+	},
+	{
+		id: "uptime",
+		accessorFn: (record) => record.uptime,
+		invertSorting: true,
+		header: ({ column }) => <HeaderButton column={column} name={t`运行时间`} Icon={TimerIcon} />,
+		cell: ({ getValue }) => {
+			const uptimeSeconds = getValue() as number
+			const formatted = formatSecondsToHuman(uptimeSeconds)
+			return <span className="ms-1.5 tabular-nums">{formatted || "—"}</span>
 		},
 	},
 	{

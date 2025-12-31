@@ -308,20 +308,27 @@ export const chartMargin = { top: 12, right: 5 }
  */
 export const getHostDisplayValue = (system: SystemRecord): string => system.host.slice(system.host.lastIndexOf("/") + 1)
 
-// export function formatUptimeString(uptimeSeconds: number): string {
-// 	if (!uptimeSeconds || isNaN(uptimeSeconds)) return ""
-// 	if (uptimeSeconds < 3600) {
-// 		const minutes = Math.trunc(uptimeSeconds / 60)
-// 		return plural({ minutes }, { one: "# minute", other: "# minutes" })
-// 	} else if (uptimeSeconds < 172800) {
-// 		const hours = Math.trunc(uptimeSeconds / 3600)
-// 		console.log(hours)
-// 		return plural({ hours }, { one: "# hour", other: "# hours" })
-// 	} else {
-// 		const days = Math.trunc(uptimeSeconds / 86400)
-// 		return plural({ days }, { one: "# day", other: "# days" })
-// 	}
-// }
+/** 将秒数格式化为可读字符串（天/时/分），不限制层级，秒数直接忽略，文本走 i18n */
+export function formatSecondsToHuman(uptimeSeconds: number): string {
+	if (!Number.isFinite(uptimeSeconds) || uptimeSeconds <= 0) return ""
+	const totalSeconds = Math.floor(uptimeSeconds)
+
+	const days = Math.floor(totalSeconds / 86400)
+	const hours = Math.floor((totalSeconds % 86400) / 3600)
+	const minutes = Math.floor((totalSeconds % 3600) / 60)
+
+	// 若不足 1 分钟，用特例提示
+	if (days === 0 && hours === 0 && minutes === 0) {
+		return t`<1 minute`
+	}
+
+	const dayLabel = t`d`
+	const hourLabel = t`h`
+	const minuteLabel = t`m`
+
+	// 始终输出天/时/分，缺省补 0，便于一眼看全量时间
+	return `${days}${dayLabel}${hours}${hourLabel}${minutes}${minuteLabel}`
+}
 
 /** Generate a random token for the agent */
 export const generateToken = () => {

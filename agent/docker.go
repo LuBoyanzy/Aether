@@ -61,6 +61,7 @@ type dockerManager struct {
 	apiStats            *container.ApiStats         // Reusable API stats object
 	excludeContainers   []string                    // Patterns to exclude containers by name
 	usingPodman         bool                        // Whether the Docker Engine API is running on Podman
+	startedAtCache      map[string]time.Time        // Cache for container StartedAt to avoid repeated detail calls
 
 	// Cache-time-aware tracking for CPU stats (similar to cpu.go)
 	// Maps cache time intervals to container-specific CPU usage tracking
@@ -125,6 +126,10 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 	dm.apiContainerList = dm.apiContainerList[:0]
 	if err := dm.decode(resp, &dm.apiContainerList); err != nil {
 		return nil, err
+	}
+
+	if dm.startedAtCache == nil {
+		dm.startedAtCache = make(map[string]time.Time)
 	}
 
 	dm.isWindows = strings.Contains(resp.Header.Get("Server"), "windows")
@@ -340,39 +345,80 @@ func updateContainerStatsValues(stats *container.Stats, cpuPct float64, usedMemo
 	stats.PrevReadTime = readTime
 }
 
-func parseDockerStatus(status string) (string, container.DockerHealth) {
+func parseDockerStatus(status string) string {
 	trimmed := strings.TrimSpace(status)
 	if trimmed == "" {
-		return "", container.DockerHealthNone
+		return ""
 	}
 
 	// Remove "About " from status
 	trimmed = strings.Replace(trimmed, "About ", "", 1)
 
 	openIdx := strings.LastIndex(trimmed, "(")
-	if openIdx == -1 || !strings.HasSuffix(trimmed, ")") {
-		return trimmed, container.DockerHealthNone
-	}
-
-	statusText := strings.TrimSpace(trimmed[:openIdx])
-	if statusText == "" {
-		statusText = trimmed
-	}
-
-	healthText := strings.ToLower(strings.TrimSpace(strings.TrimSuffix(trimmed[openIdx+1:], ")")))
-	// Some Docker statuses include a "health:" prefix inside the parentheses.
-	// Strip it so it maps correctly to the known health states.
-	if colonIdx := strings.IndexRune(healthText, ':'); colonIdx != -1 {
-		prefix := strings.TrimSpace(healthText[:colonIdx])
-		if prefix == "health" || prefix == "health status" {
-			healthText = strings.TrimSpace(healthText[colonIdx+1:])
+	statusText := trimmed
+	if openIdx != -1 && strings.HasSuffix(trimmed, ")") {
+		statusText = strings.TrimSpace(trimmed[:openIdx])
+		if statusText == "" {
+			statusText = trimmed
 		}
 	}
-	if health, ok := container.DockerHealthStrings[healthText]; ok {
-		return statusText, health
+
+	return statusText
+}
+
+// calculateUptimeSeconds computes uptime using startedAt only.
+// If startedAt is zero or invalid/future, returns 0 to indicate unknown.
+func calculateUptimeSeconds(startedAt time.Time) uint64 {
+	now := time.Now()
+
+	if !startedAt.IsZero() {
+		if startedAt.After(now) {
+			return 0
+		}
+		return uint64(now.Sub(startedAt).Seconds())
 	}
 
-	return trimmed, container.DockerHealthNone
+	return 0
+}
+
+// getStartedAt returns cached StartedAt, falling back to container detail fetch once.
+func (dm *dockerManager) getStartedAt(ctr *container.ApiInfo) time.Time {
+	if ctr.StateInfo.StartedAt != "" {
+		if parsed, err := time.Parse(time.RFC3339Nano, ctr.StateInfo.StartedAt); err == nil {
+			// cache and return
+			dm.startedAtCache[ctr.IdShort] = parsed
+			return parsed
+		}
+	}
+
+	if val, ok := dm.startedAtCache[ctr.IdShort]; ok && !val.IsZero() {
+		return val
+	}
+
+	// fetch once and cache
+	resp, err := dm.client.Get(fmt.Sprintf("http://localhost/containers/%s/json", ctr.Id))
+	if err != nil {
+		slog.Debug("Failed to fetch container details", "id", ctr.IdShort, "err", err)
+		return time.Time{}
+	}
+	defer resp.Body.Close()
+
+	var details struct {
+		State struct {
+			StartedAt string `json:"StartedAt"`
+		} `json:"State"`
+	}
+	if err := dm.decode(resp, &details); err != nil {
+		slog.Debug("Failed to decode container details", "id", ctr.IdShort, "err", err)
+		return time.Time{}
+	}
+	startedAt, err := time.Parse(time.RFC3339Nano, details.State.StartedAt)
+	if err != nil {
+		slog.Debug("Failed to parse StartedAt", "id", ctr.IdShort, "startedAt", details.State.StartedAt, "err", err)
+		return time.Time{}
+	}
+	dm.startedAtCache[ctr.IdShort] = startedAt
+	return startedAt
 }
 
 // Updates stats for individual container with cache-time-aware delta tracking
@@ -396,9 +442,10 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 
 	stats.Id = ctr.IdShort
 
-	statusText, health := parseDockerStatus(ctr.Status)
+	statusText := parseDockerStatus(ctr.Status)
 	stats.Status = statusText
-	stats.Health = health
+	startedAt := dm.getStartedAt(ctr)
+	stats.Uptime = calculateUptimeSeconds(startedAt)
 
 	// reset current stats
 	stats.Cpu = 0
