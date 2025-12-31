@@ -1,10 +1,17 @@
 <p align="center">
   <img src="internal/site/public/static/logo.svg" alt="Aether" width="140" />
 </p>
+<h1 align="center">Aether</h1>
+<p align="center">基于 Beszel 二次开发的服务器与容器监控平台</p>
 
-# Aether
+<p align="center">
+  <a href="https://github.com/LuBoyanzy/Aether/releases">下载</a> ·
+  <a href="#快速体验docker-compose">快速体验</a> ·
+  <a href="#安装脚本推荐">安装脚本</a> ·
+  <a href="#本地开发">本地开发</a>
+</p>
 
-基于 Beszel 二次开发的服务器与容器监控平台。代码和功能已切换为 Aether 品牌，下载源与镜像来自本仓库。
+> Aether 继承 Beszel 的核心能力并进行品牌与功能增强；镜像与安装脚本全部指向本仓库的发布版本。
 
 ## 特性速览
 
