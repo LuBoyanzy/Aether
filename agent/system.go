@@ -131,11 +131,11 @@ func detectCudaVersion() string {
 	out, err := cmd.Output()
 	if err != nil {
 		slog.Debug("nvidia-smi cuda_version failed", "err", err)
-		return ""
+		return "N/A"
 	}
 	line := strings.TrimSpace(strings.SplitN(string(out), "\n", 2)[0])
 	if line == "" || strings.EqualFold(line, "N/A") {
-		return ""
+		return "N/A"
 	}
 	return line
 }
@@ -146,13 +146,17 @@ func detectNvidiaContainerToolkitVersion() string {
 	out, err := cmd.Output()
 	if err != nil {
 		slog.Debug("nvidia-container-toolkit version failed", "err", err)
-		return ""
+		return "N/A"
 	}
 	re := regexp.MustCompile(`([0-9]+\.[0-9]+\.[0-9]+)`) // 捕获语义化版本
 	if match := re.FindString(string(out)); match != "" {
 		return match
 	}
-	return strings.TrimSpace(string(out))
+	val := strings.TrimSpace(string(out))
+	if val == "" {
+		return "N/A"
+	}
+	return val
 }
 
 // detectCudaVersion tries to read CUDA version via nvidia-smi (best effort).
