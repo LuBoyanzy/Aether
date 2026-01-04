@@ -370,18 +370,20 @@ function ContainerSheet({
 				<SheetContent className="w-full sm:max-w-220 p-2">
 					<SheetHeader>
 						<SheetTitle>{container.name}</SheetTitle>
-						<SheetDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
-							<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
-								{$allSystemsById.get()[container.system]?.name ?? ""}
-							</Link>
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{container.status}
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{container.image}
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{container.id}
-							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-							{formatSecondsToHuman(container.uptime ?? 0) || "—"}
+						<SheetDescription asChild>
+							<div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+								<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
+									{$allSystemsById.get()[container.system]?.name ?? ""}
+								</Link>
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{container.status}
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{container.image}
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{container.id}
+								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+								{formatSecondsToHuman(container.uptime ?? 0) || "—"}
+							</div>
 						</SheetDescription>
 					</SheetHeader>
 					<div className="px-3 pb-3 -mt-4 flex flex-col gap-3 h-full items-start">
