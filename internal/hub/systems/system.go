@@ -239,19 +239,21 @@ func (sys *System) createRecords(data *system.CombinedData) (*core.Record, error
 func createSystemDetailsRecord(app core.App, data *system.Details, systemId string) error {
 	collectionName := "system_details"
 	params := dbx.Params{
-		"id":       systemId,
-		"system":   systemId,
-		"hostname": data.Hostname,
-		"kernel":   data.Kernel,
-		"cores":    data.Cores,
-		"threads":  data.Threads,
-		"cpu":      data.CpuModel,
-		"os":       data.Os,
-		"os_name":  data.OsName,
-		"arch":     data.Arch,
-		"memory":   data.MemoryTotal,
-		"podman":   data.Podman,
-		"updated":  time.Now().UTC(),
+		"id":           systemId,
+		"system":       systemId,
+		"hostname":     data.Hostname,
+		"kernel":       data.Kernel,
+		"cores":        data.Cores,
+		"threads":      data.Threads,
+		"cpu":          data.CpuModel,
+		"os":           data.Os,
+		"os_name":      data.OsName,
+		"arch":         data.Arch,
+		"memory":       data.MemoryTotal,
+		"podman":       data.Podman,
+		"cuda_version": data.CudaVersion,
+		"nvidia_ctk":   data.NvidiaCTK,
+		"updated":      time.Now().UTC(),
 	}
 	result, err := app.DB().Update(collectionName, params, dbx.HashExp{"id": systemId}).Execute()
 	rowsAffected, _ := result.RowsAffected()

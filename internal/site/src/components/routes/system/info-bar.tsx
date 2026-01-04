@@ -10,6 +10,7 @@ import {
 	MemoryStickIcon,
 	MonitorIcon,
 	Rows,
+	LayoutGridIcon,
 } from "lucide-react"
 import { useMemo } from "react"
 import ChartTimeSelect from "@/components/charts/chart-time-select"
@@ -53,6 +54,8 @@ export default function InfoBar({
 		const osName = details?.os_name
 		const arch = details?.arch
 		const memory = details?.memory
+		const cudaVersion = details?.cuda_version
+		const nvidiaCTK = details?.nvidia_ctk
 
 		const osInfo = {
 			[Os.Linux]: {
@@ -116,6 +119,22 @@ export default function InfoBar({
 				Icon: MemoryStickIcon,
 				hide: !memory,
 				label: t`Memory`,
+			})
+		}
+
+		if (cudaVersion) {
+			info.push({
+				value: `CUDA ${cudaVersion}`,
+				Icon: LayoutGridIcon,
+				label: "CUDA",
+			})
+		}
+
+		if (nvidiaCTK) {
+			info.push({
+				value: `CTK ${nvidiaCTK}`,
+				Icon: Rows,
+				label: "NVIDIA Container Toolkit",
 			})
 		}
 

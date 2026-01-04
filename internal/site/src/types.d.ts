@@ -391,6 +391,8 @@ export interface SystemDetailsRecord extends RecordModel {
 	os_name: string
 	memory: number
 	podman: boolean
+	cuda_version?: string
+	nvidia_ctk?: string
 }
 
 export interface SmartDeviceRecord extends RecordModel {
