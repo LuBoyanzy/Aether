@@ -120,13 +120,16 @@ func (dm *dockerManager) shouldExcludeContainer(name string) bool {
 func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats, error) {
 	resp, err := dm.client.Get("http://localhost/containers/json")
 	if err != nil {
+		slog.Error("Failed to list containers", "err", err)
 		return nil, err
 	}
 
 	dm.apiContainerList = dm.apiContainerList[:0]
 	if err := dm.decode(resp, &dm.apiContainerList); err != nil {
+		slog.Error("Failed to decode containers list", "err", err)
 		return nil, err
 	}
+	slog.Info("Found containers", "count", len(dm.apiContainerList))
 
 	if dm.startedAtCache == nil {
 		dm.startedAtCache = make(map[string]time.Time)
@@ -167,6 +170,7 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 			err := dm.updateContainerStats(ctr, cacheTimeMs)
 			// if error, delete from map and add to failed list to retry
 			if err != nil {
+				slog.Error("Failed to update stats for container", "name", ctr.Names[0], "err", err)
 				dm.containerStatsMutex.Lock()
 				delete(dm.containerStatsMap, ctr.IdShort)
 				failedContainers = append(failedContainers, ctr)
@@ -383,8 +387,8 @@ func calculateUptimeSeconds(startedAt time.Time) uint64 {
 
 // getStartedAt returns cached StartedAt, falling back to container detail fetch once.
 func (dm *dockerManager) getStartedAt(ctr *container.ApiInfo) time.Time {
-	if ctr.StateInfo.StartedAt != "" {
-		if parsed, err := time.Parse(time.RFC3339Nano, ctr.StateInfo.StartedAt); err == nil {
+	if ctr.StartedAt != "" {
+		if parsed, err := time.Parse(time.RFC3339Nano, ctr.StartedAt); err == nil {
 			// cache and return
 			dm.startedAtCache[ctr.IdShort] = parsed
 			return parsed

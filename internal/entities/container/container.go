@@ -1,6 +1,9 @@
 package container
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // Docker container info from /containers/json
 type ApiInfo struct {
@@ -10,10 +13,8 @@ type ApiInfo struct {
 	Status    string
 	State     string
 	Image     string
-	Created   int64 `json:"Created"` // unix seconds when container was created
-	StateInfo struct {
-		StartedAt string `json:"StartedAt"`
-	} `json:"State"`
+	Created   int64  `json:"Created"` // unix seconds when container was created
+	StartedAt string `json:"-"`
 	// ImageID string
 	// Command string
 	// Created int64
@@ -27,6 +28,45 @@ type ApiInfo struct {
 	// }
 	// NetworkSettings *SummaryNetworkSettings
 	// Mounts          []MountPoint
+}
+
+// UnmarshalJSON handles Docker API variations where State may be a string or an object.
+// It also extracts StartedAt when State is an object to avoid an extra inspect call.
+func (a *ApiInfo) UnmarshalJSON(data []byte) error {
+	type alias ApiInfo
+	var aux struct {
+		alias
+		StateRaw json.RawMessage `json:"State"`
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	*a = ApiInfo(aux.alias)
+
+	if len(aux.StateRaw) == 0 {
+		return nil
+	}
+
+	// Try State as string (most Docker versions)
+	var stateStr string
+	if err := json.Unmarshal(aux.StateRaw, &stateStr); err == nil {
+		a.State = stateStr
+		return nil
+	}
+
+	// Try State as object
+	var stateObj struct {
+		Status    string `json:"Status"`
+		StartedAt string `json:"StartedAt"`
+	}
+	if err := json.Unmarshal(aux.StateRaw, &stateObj); err == nil {
+		if stateObj.Status != "" {
+			a.State = stateObj.Status
+		}
+		a.StartedAt = stateObj.StartedAt
+	}
+
+	return nil
 }
 
 // Docker container resources from /containers/{id}/stats
