@@ -469,7 +469,6 @@ msgstr "Kopirajte sadržaj <0>docker-compose.yml</0> datoteke za opisanog agenta
 msgid "Copy YAML"
 msgstr "Kopiraj YAML"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "CPU"
@@ -534,8 +533,13 @@ msgid "Cycles"
 msgstr "Ciklusi"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "d"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "d"
+#~ msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -773,6 +777,10 @@ msgstr ""
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "Za <0>{min}</0> {min, plural, one {minutu} other {minute}}"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "Forbidden"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
 msgstr "Zaboravljena lozinka?"
@@ -815,8 +823,13 @@ msgid "Grid"
 msgstr "Mreža"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "h"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "h"
+#~ msgstr ""
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
@@ -934,8 +947,13 @@ msgid "Looking instead for where to create alerts? Click the bell <0/> icons in 
 msgstr "Tražite gdje stvoriti upozorenja? Kliknite ikonu zvona <0/> u tablici sustava."
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "m"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "m"
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -955,7 +973,6 @@ msgstr "Upute za ručno postavljanje"
 msgid "Max 1 min"
 msgstr "Maksimalno 1 minuta"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -993,7 +1010,6 @@ msgstr ""
 msgid "Name"
 msgstr "Ime"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "Mreža"
@@ -1073,6 +1089,14 @@ msgstr "Jednokratna lozinka"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Open menu"
 msgstr "Otvori menu"
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "Operation failed"
+msgstr ""
+
+#: src/components/containers-table/containers-table.tsx
+msgid "Operation success"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1380,12 +1404,12 @@ msgstr "Vrijeme početka"
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
-#: src/components/systemd-table/systemd-table-columns.tsx
 msgid "State"
 msgstr "Stanje"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/smart-table.tsx
+#: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/lib/alerts.ts
@@ -1393,8 +1417,8 @@ msgid "Status"
 msgstr "Status"
 
 #: src/components/systemd-table/systemd-table-columns.tsx
-msgid "Sub State"
-msgstr "Podstanje"
+#~ msgid "Sub State"
+#~ msgstr "Podstanje"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1654,10 +1678,12 @@ msgstr "Ažurirano svakih 10 minuta."
 msgid "Upload"
 msgstr "Otpremi"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "Vrijeme rada"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
@@ -1760,10 +1786,14 @@ msgstr "YAML Konfiguracija"
 msgid "Yes"
 msgstr "Da"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "You have read-only access"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Vaše korisničke postavke su ažurirane."
 
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "运行时间"
-msgstr ""
+#~ msgid "运行时间"
+#~ msgstr ""

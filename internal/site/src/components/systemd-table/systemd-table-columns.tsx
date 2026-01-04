@@ -4,7 +4,6 @@ import { cn, decimalString, formatBytes, hourWithSeconds, getMeterState } from "
 import type { SystemdRecord } from "@/types"
 import { ServiceStatus, ServiceStatusLabels, ServiceSubState, ServiceSubStateLabels, MeterState } from "@/lib/enums"
 import { ActivityIcon, ArrowUpDownIcon, ClockIcon, CpuIcon, MemoryStickIcon, TerminalSquareIcon } from "lucide-react"
-import { Badge } from "../ui/badge"
 import { t } from "@lingui/core/macro"
 // import { $allSystemsById } from "@/lib/stores"
 // import { useStore } from "@nanostores/react"
@@ -15,19 +14,6 @@ const STATUS_COLORS = {
 	pending: "bg-yellow-500",
 	paused: "bg-primary/40",
 } as const
-
-function getSubStateColor(subState: ServiceSubState) {
-	switch (subState) {
-		case ServiceSubState.Running:
-			return "bg-green-500"
-		case ServiceSubState.Failed:
-			return "bg-red-500"
-		case ServiceSubState.Dead:
-			return "bg-yellow-500"
-		default:
-			return "bg-zinc-500"
-	}
-}
 
 export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 	{
@@ -42,52 +28,16 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 	{
 		id: "state",
 		accessorFn: (record) => record.state,
-		header: ({ column }) => <HeaderButton column={column} name={t`State`} Icon={ActivityIcon} />,
-		cell: ({ getValue }) => {
-			const state = getValue() as ServiceStatus
-			const label = ServiceStatusLabels[state] || "Unknown"
-			const color =
-				state === ServiceStatus.Active
-					? STATUS_COLORS.up
-					: state === ServiceStatus.Inactive
-						? STATUS_COLORS.down
-						: STATUS_COLORS.pending
+		header: ({ column }) => <HeaderButton column={column} name={t`Status`} Icon={ActivityIcon} />,
+		cell: ({ row }) => {
+			const { state, sub } = row.original
+			const label = ServiceSubStateLabels[sub] || ServiceStatusLabels[state] || "Unknown"
+			const color = getStatusColor(state)
 			return (
 				<div className="flex items-center gap-2 ms-1.5 w-32">
 					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", color)} />
 					<span className="truncate capitalize text-sm">{label}</span>
 				</div>
-			)
-		},
-	},
-	// {
-	// 	id: "system",
-	// 	accessorFn: (record) => record.system,
-	// 	sortingFn: (a, b) => {
-	// 		const allSystems = $allSystemsById.get()
-	// 		const systemNameA = allSystems[a.original.system]?.name ?? ""
-	// 		const systemNameB = allSystems[b.original.system]?.name ?? ""
-	// 		return systemNameA.localeCompare(systemNameB)
-	// 	},
-	// 	header: ({ column }) => <HeaderButton column={column} name={t`System`} Icon={ServerIcon} />,
-	// 	cell: ({ getValue }) => {
-	// 		const allSystems = useStore($allSystemsById)
-	// 		return <span className="ms-1.5 xl:w-34 block truncate">{allSystems[getValue() as string]?.name ?? ""}</span>
-	// 	},
-	// },
-
-	{
-		id: "sub",
-		accessorFn: (record) => record.sub,
-		header: ({ column }) => <HeaderButton column={column} name={t`Sub State`} Icon={ActivityIcon} />,
-		cell: ({ getValue }) => {
-			const subState = getValue() as ServiceSubState
-			const subStateLabel = ServiceSubStateLabels[subState] || "Unknown"
-			return (
-				<Badge variant="outline" className="dark:border-white/12 text-xs capitalize">
-					<span className={cn("size-2 me-1.5 rounded-full", getSubStateColor(subState))} />
-					{subStateLabel}
-				</Badge>
 			)
 		},
 	},
@@ -183,13 +133,11 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 		accessorFn: (record) => record.updated,
 		header: ({ column }) => <HeaderButton column={column} name={t`Updated`} Icon={ClockIcon} />,
 		cell: ({ row }) => {
-			const status = row.original.state
 			const timestamp = row.original.updated
 			return (
-				<div className="flex items-center gap-2 ms-1.5">
-					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", getStatusColor(status))} />
-					<span className="tabular-nums truncate">{hourWithSeconds(new Date(timestamp).toISOString())}</span>
-				</div>
+				<span className="ms-1.5 tabular-nums truncate text-muted-foreground">
+					{hourWithSeconds(new Date(timestamp).toISOString())}
+				</span>
 			)
 		},
 	},

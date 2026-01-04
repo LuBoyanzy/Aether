@@ -1,4 +1,4 @@
-import type { Column, ColumnDef } from "@tanstack/react-table"
+import type { Column, ColumnDef, Row } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { cn, decimalString, formatBytes, formatSecondsToHuman, hourWithSeconds, getMeterState } from "@/lib/utils"
 import type { ContainerRecord } from "@/types"
@@ -30,6 +30,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
+import { useRef, useState, useEffect } from "react"
 import { toast } from "../ui/use-toast"
 
 const STATUS_COLORS = {
@@ -43,7 +44,13 @@ function getStatusColor(status: string) {
 	status = status.toLowerCase()
 	if (status === "running" || status === "healthy" || status === "up") return STATUS_COLORS.up
 	if (status === "exited" || status === "dead" || status === "unhealthy") return STATUS_COLORS.down
-	if (status === "created" || status === "restarting" || status === "starting" || status === "recreating" || status === "creating")
+	if (
+		status === "created" ||
+		status === "restarting" ||
+		status === "starting" ||
+		status === "recreating" ||
+		status === "creating"
+	)
 		return STATUS_COLORS.pending
 	if (status === "removing") return STATUS_COLORS.pending
 	return STATUS_COLORS.paused
@@ -75,7 +82,8 @@ function getAvailableOps(statusRaw: string): ContainerOp[] {
 	if (status === "running" || status === "healthy") return ["stop", "restart", "kill", "pause"]
 	if (status === "paused") return ["unpause", "stop", "kill"]
 	if (status === "exited" || status === "dead" || status === "created") return ["start", "kill"]
-	if (status === "restarting" || status === "starting" || status === "creating" || status === "recreating") return ["kill"]
+	if (status === "restarting" || status === "starting" || status === "creating" || status === "recreating")
+		return ["kill"]
 	return ["start", "kill"]
 }
 
@@ -98,7 +106,9 @@ function opIcon(op: ContainerOp) {
 	}
 }
 
-export const buildContainerChartCols = (onOperate: (record: ContainerRecord, op: ContainerOp) => Promise<void>): ColumnDef<ContainerRecord>[] => [
+export const buildContainerChartCols = (
+	onOperate: (record: ContainerRecord, op: ContainerOp) => Promise<void>
+): ColumnDef<ContainerRecord>[] => [
 	{
 		id: "name",
 		sortingFn: (a, b) => a.original.name.localeCompare(b.original.name),
@@ -204,46 +214,7 @@ export const buildContainerChartCols = (onOperate: (record: ContainerRecord, op:
 		id: "state",
 		accessorFn: (record) => record.status,
 		header: ({ column }) => <HeaderButton column={column} name={t`Status`} Icon={HourglassIcon} />,
-		cell: ({ row }) => {
-			const status = row.original.status ?? ""
-			const ops = getAvailableOps(status)
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<button className="flex items-center gap-2 ms-1.5 w-36 px-2 py-1 rounded-md hover:bg-muted/60 transition">
-							<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", getStatusColor(status))} />
-							<span className="truncate capitalize text-left flex-1">{getStatusLabel(status)}</span>
-						</button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start" className="min-w-40">
-						<DropdownMenuLabel className="text-xs text-muted-foreground">容器操作</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						{ops.map((op) => {
-							const Icon = opIcon(op)
-							return (
-								<DropdownMenuItem
-									key={op}
-									onSelect={async (e) => {
-										e.preventDefault()
-										try {
-											await onOperate(row.original, op)
-										} catch (err: any) {
-											toast({
-												title: t`Operation failed`,
-												description: err?.message || String(err),
-												variant: "destructive",
-											})
-										}
-									}}
-								>
-									<Icon className="size-4 me-2" /> {op.toUpperCase()}
-								</DropdownMenuItem>
-							)
-						})}
-					</DropdownMenuContent>
-				</DropdownMenu>
-			)
-		},
+		cell: ({ row }) => <ContainerStatusCell row={row} onOperate={onOperate} />,
 	},
 	{
 		id: "uptime",
@@ -271,6 +242,96 @@ export const buildContainerChartCols = (onOperate: (record: ContainerRecord, op:
 		},
 	},
 ]
+
+function ContainerStatusCell({
+	row,
+	onOperate,
+}: {
+	row: Row<ContainerRecord>
+	onOperate: (record: ContainerRecord, op: ContainerOp) => Promise<void>
+}) {
+	const status = row.original.status ?? ""
+	const ops = getAvailableOps(status)
+	const [open, setOpen] = useState(false)
+	const timeoutRef = useRef<number | null>(null)
+
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current)
+			}
+		}
+	}, [])
+
+	const handleMouseEnter = () => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current)
+			timeoutRef.current = null
+		}
+		setOpen(true)
+	}
+
+	const handleMouseLeave = () => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current)
+		}
+		timeoutRef.current = window.setTimeout(() => {
+			setOpen(false)
+		}, 150)
+	}
+
+	return (
+		<DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
+			<DropdownMenuTrigger asChild>
+				<Button
+					variant="ghost"
+					className="flex items-center gap-2 ms-0.5 h-8 w-fit max-w-36 px-2 rounded-md justify-start font-normal hover:bg-muted/50 data-[state=open]:bg-muted/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+					onClick={(e) => {
+						e.preventDefault()
+						e.stopPropagation()
+					}}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+				>
+					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", getStatusColor(status))} />
+					<span className="truncate capitalize text-left flex-1">{getStatusLabel(status)}</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				align="start"
+				className="min-w-40"
+				onClick={(e) => e.stopPropagation()}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+			>
+				<DropdownMenuLabel className="text-xs text-muted-foreground">容器操作</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				{ops.map((op) => {
+					const Icon = opIcon(op)
+					return (
+						<DropdownMenuItem
+							key={op}
+							onSelect={async (e) => {
+								e.preventDefault()
+								try {
+									await onOperate(row.original, op)
+								} catch (err: any) {
+									toast({
+										title: t`Operation failed`,
+										description: err?.message || String(err),
+										variant: "destructive",
+									})
+								}
+							}}
+						>
+							<Icon className="size-4 me-2" /> {op.toUpperCase()}
+						</DropdownMenuItem>
+					)
+				})}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
+}
 
 function HeaderButton({
 	column,

@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/lib/utils.ts
 msgid "<1 minute"
-msgstr ""
+msgstr "< 1 分钟"
 
 #: src/lib/utils.ts
 msgid "1 hour"
@@ -183,7 +183,9 @@ msgstr "所有容器"
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
+#: src/components/navbar.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "All Systems"
 msgstr "所有客户端"
@@ -467,7 +469,6 @@ msgstr "复制下面的客户端<0>docker-compose.yml</0>内容，或使用<1>�
 msgid "Copy YAML"
 msgstr "复制 YAML"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "CPU"
@@ -532,8 +533,9 @@ msgid "Cycles"
 msgstr "循环次数"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "d"
-msgstr ""
+msgstr "天"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -771,6 +773,10 @@ msgstr "固件"
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "持续<0>{min}</0> {min, plural, one {分钟} other {分钟}}"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "Forbidden"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
 msgstr "忘记密码？"
@@ -813,8 +819,9 @@ msgid "Grid"
 msgstr "网格"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "h"
-msgstr ""
+msgstr "时"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
@@ -932,8 +939,9 @@ msgid "Looking instead for where to create alerts? Click the bell <0/> icons in 
 msgstr "在寻找创建警报的位置吗？点击系统表中的铃铛<0/>图标。"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "m"
-msgstr ""
+msgstr "分"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -953,7 +961,6 @@ msgstr "手动设置说明"
 msgid "Max 1 min"
 msgstr "1分钟内最大值"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -991,7 +998,6 @@ msgstr "型号"
 msgid "Name"
 msgstr "名称"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "网络"
@@ -1071,6 +1077,14 @@ msgstr "一次性密码"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Open menu"
 msgstr "打开菜单"
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "Operation failed"
+msgstr ""
+
+#: src/components/containers-table/containers-table.tsx
+msgid "Operation success"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1378,12 +1392,12 @@ msgstr "开始时间"
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
-#: src/components/systemd-table/systemd-table-columns.tsx
 msgid "State"
 msgstr "状态"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/smart-table.tsx
+#: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/lib/alerts.ts
@@ -1391,8 +1405,8 @@ msgid "Status"
 msgstr "状态"
 
 #: src/components/systemd-table/systemd-table-columns.tsx
-msgid "Sub State"
-msgstr "子状态"
+#~ msgid "Sub State"
+#~ msgstr "子状态"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1652,10 +1666,12 @@ msgstr "每 10 分钟更新一次。"
 msgid "Upload"
 msgstr "上传"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "正常运行时间"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
@@ -1758,10 +1774,14 @@ msgstr "YAML 配置"
 msgid "Yes"
 msgstr "是"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "You have read-only access"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "您的用户设置已更新。"
 
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "运行时间"
-msgstr ""
+#~ msgid "运行时间"
+#~ msgstr ""

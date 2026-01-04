@@ -322,9 +322,9 @@ export function formatSecondsToHuman(uptimeSeconds: number): string {
 		return t`<1 minute`
 	}
 
-	const dayLabel = t`d`
-	const hourLabel = t`h`
-	const minuteLabel = t`m`
+	const dayLabel = t({ message: "d", context: "unit" })
+	const hourLabel = t({ message: "h", context: "unit" })
+	const minuteLabel = t({ message: "m", context: "unit" })
 
 	// 始终输出天/时/分，缺省补 0，便于一眼看全量时间
 	return `${days}${dayLabel}${hours}${hourLabel}${minutes}${minuteLabel}`

@@ -469,7 +469,6 @@ msgstr "انسخ محتوى <0>docker-compose.yml</0> للوكيل أدناه، 
 msgid "Copy YAML"
 msgstr "نسخ YAML"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "CPU"
@@ -534,8 +533,13 @@ msgid "Cycles"
 msgstr "الدورات"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "d"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "d"
+#~ msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -773,6 +777,10 @@ msgstr "البرمجيات الثابتة"
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "لمدة <0>{min}</0> {min, plural, one {دقيقة} other {دقائق}}"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "Forbidden"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
 msgstr "هل نسيت كلمة المرور؟"
@@ -815,8 +823,13 @@ msgid "Grid"
 msgstr "شبكة"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "h"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "h"
+#~ msgstr ""
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
@@ -934,8 +947,13 @@ msgid "Looking instead for where to create alerts? Click the bell <0/> icons in 
 msgstr "هل تبحث عن مكان لإنشاء التنبيهات؟ انقر على أيقونات الجرس <0/> في جدول الأنظمة."
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "m"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "m"
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -955,7 +973,6 @@ msgstr "تعليمات الإعداد اليدوي"
 msgid "Max 1 min"
 msgstr "الحد الأقصى دقيقة"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -993,7 +1010,6 @@ msgstr "الموديل"
 msgid "Name"
 msgstr "الاسم"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "الشبكة"
@@ -1073,6 +1089,14 @@ msgstr "كلمة مرور لمرة واحدة"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Open menu"
 msgstr "فتح القائمة"
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "Operation failed"
+msgstr ""
+
+#: src/components/containers-table/containers-table.tsx
+msgid "Operation success"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1380,12 +1404,12 @@ msgstr "وقت البدء"
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
-#: src/components/systemd-table/systemd-table-columns.tsx
 msgid "State"
 msgstr "الحالة"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/smart-table.tsx
+#: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/lib/alerts.ts
@@ -1393,8 +1417,8 @@ msgid "Status"
 msgstr "الحالة"
 
 #: src/components/systemd-table/systemd-table-columns.tsx
-msgid "Sub State"
-msgstr "الحالة الفرعية"
+#~ msgid "Sub State"
+#~ msgstr "الحالة الفرعية"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1654,10 +1678,12 @@ msgstr "يتم التحديث كل 10 دقائق."
 msgid "Upload"
 msgstr "رفع"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "مدة التشغيل"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
@@ -1760,10 +1786,14 @@ msgstr "تكوين YAML"
 msgid "Yes"
 msgstr "نعم"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "You have read-only access"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "تم تحديث إعدادات المستخدم الخاصة بك."
 
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "运行时间"
-msgstr ""
+#~ msgid "运行时间"
+#~ msgstr ""

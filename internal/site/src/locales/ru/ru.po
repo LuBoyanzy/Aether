@@ -469,7 +469,6 @@ msgstr "Скопируйте содержимое <0>docker-compose.yml</0> дл
 msgid "Copy YAML"
 msgstr "Скопировать YAML"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "CPU"
@@ -534,8 +533,13 @@ msgid "Cycles"
 msgstr "Циклы"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "d"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "d"
+#~ msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -773,6 +777,10 @@ msgstr "Прошивка"
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "На <0>{min}</0> {min, plural, one {минуту} other {минут}}"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "Forbidden"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
 msgstr "Забыли пароль?"
@@ -815,8 +823,13 @@ msgid "Grid"
 msgstr "Сетка"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "h"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "h"
+#~ msgstr ""
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
@@ -934,8 +947,13 @@ msgid "Looking instead for where to create alerts? Click the bell <0/> icons in 
 msgstr "Ищете, где создать оповещения? Нажмите на значки колокольчика <0/> в таблице систем."
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "m"
 msgstr ""
+
+#: src/lib/utils.ts
+#~ msgid "m"
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -955,7 +973,6 @@ msgstr "Инструкции по ручной настройке"
 msgid "Max 1 min"
 msgstr "Макс 1 мин"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -993,7 +1010,6 @@ msgstr "Модель"
 msgid "Name"
 msgstr "Имя"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "Сеть"
@@ -1073,6 +1089,14 @@ msgstr "Одноразовый пароль"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Open menu"
 msgstr "Открыть меню"
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "Operation failed"
+msgstr ""
+
+#: src/components/containers-table/containers-table.tsx
+msgid "Operation success"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1380,12 +1404,12 @@ msgstr "Время начала"
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
-#: src/components/systemd-table/systemd-table-columns.tsx
 msgid "State"
 msgstr "Состояние"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/smart-table.tsx
+#: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/lib/alerts.ts
@@ -1393,8 +1417,8 @@ msgid "Status"
 msgstr "Статус"
 
 #: src/components/systemd-table/systemd-table-columns.tsx
-msgid "Sub State"
-msgstr "Подсостояние"
+#~ msgid "Sub State"
+#~ msgstr "Подсостояние"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1654,10 +1678,12 @@ msgstr "Обновляется каждые 10 минут."
 msgid "Upload"
 msgstr "Отдача"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "Время работы"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
@@ -1760,10 +1786,14 @@ msgstr "YAML конфигурация"
 msgid "Yes"
 msgstr "Да"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "You have read-only access"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Ваши настройки пользователя были обновлены."
 
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "运行时间"
-msgstr ""
+#~ msgid "运行时间"
+#~ msgstr ""

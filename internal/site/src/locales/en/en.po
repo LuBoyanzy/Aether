@@ -464,7 +464,6 @@ msgstr "Copy the<0>docker-compose.yml</0> content for the agent below, or regist
 msgid "Copy YAML"
 msgstr "Copy YAML"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "CPU"
@@ -529,8 +528,13 @@ msgid "Cycles"
 msgstr "Cycles"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "d"
 msgstr "d"
+
+#: src/lib/utils.ts
+#~ msgid "d"
+#~ msgstr "d"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -768,6 +772,10 @@ msgstr "Firmware"
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "Forbidden"
+msgstr "Forbidden"
+
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
 msgstr "Forgot password?"
@@ -810,8 +818,13 @@ msgid "Grid"
 msgstr "Grid"
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "h"
 msgstr "h"
+
+#: src/lib/utils.ts
+#~ msgid "h"
+#~ msgstr "h"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
@@ -929,8 +942,13 @@ msgid "Looking instead for where to create alerts? Click the bell <0/> icons in 
 msgstr "Looking instead for where to create alerts? Click the bell <0/> icons in the systems table."
 
 #: src/lib/utils.ts
+msgctxt "unit"
 msgid "m"
 msgstr "m"
+
+#: src/lib/utils.ts
+#~ msgid "m"
+#~ msgstr "m"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -950,7 +968,6 @@ msgstr "Manual setup instructions"
 msgid "Max 1 min"
 msgstr "Max 1 min"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -988,7 +1005,6 @@ msgstr "Model"
 msgid "Name"
 msgstr "Name"
 
-#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "Net"
@@ -1068,6 +1084,14 @@ msgstr "One-time password"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Open menu"
 msgstr "Open menu"
+
+#: src/components/containers-table/containers-table-columns.tsx
+msgid "Operation failed"
+msgstr "Operation failed"
+
+#: src/components/containers-table/containers-table.tsx
+msgid "Operation success"
+msgstr "Operation success"
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1375,12 +1399,12 @@ msgstr "Start Time"
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
-#: src/components/systemd-table/systemd-table-columns.tsx
 msgid "State"
 msgstr "State"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/smart-table.tsx
+#: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systems-table/systems-table.tsx
 #: src/lib/alerts.ts
@@ -1388,8 +1412,8 @@ msgid "Status"
 msgstr "Status"
 
 #: src/components/systemd-table/systemd-table-columns.tsx
-msgid "Sub State"
-msgstr "Sub State"
+#~ msgid "Sub State"
+#~ msgstr "Sub State"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1649,10 +1673,12 @@ msgstr "Updated every 10 minutes."
 msgid "Upload"
 msgstr "Upload"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "Uptime"
 
+#: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
@@ -1755,10 +1781,14 @@ msgstr "YAML Configuration"
 msgid "Yes"
 msgstr "Yes"
 
+#: src/components/containers-table/containers-table.tsx
+msgid "You have read-only access"
+msgstr "You have read-only access"
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Your user settings have been updated."
 
 #: src/components/containers-table/containers-table-columns.tsx
-msgid "运行时间"
-msgstr "运行时间"
+#~ msgid "运行时间"
+#~ msgstr "运行时间"
