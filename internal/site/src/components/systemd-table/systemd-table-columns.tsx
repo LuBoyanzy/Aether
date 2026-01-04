@@ -1,20 +1,20 @@
 import type { Column, ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
-import { cn, decimalString, formatBytes, hourWithSeconds } from "@/lib/utils"
+import { cn, decimalString, formatBytes, hourWithSeconds, getMeterState } from "@/lib/utils"
 import type { SystemdRecord } from "@/types"
-import { ServiceStatus, ServiceStatusLabels, ServiceSubState, ServiceSubStateLabels } from "@/lib/enums"
-import {
-	ActivityIcon,
-	ArrowUpDownIcon,
-	ClockIcon,
-	CpuIcon,
-	MemoryStickIcon,
-	TerminalSquareIcon,
-} from "lucide-react"
+import { ServiceStatus, ServiceStatusLabels, ServiceSubState, ServiceSubStateLabels, MeterState } from "@/lib/enums"
+import { ActivityIcon, ArrowUpDownIcon, ClockIcon, CpuIcon, MemoryStickIcon, TerminalSquareIcon } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { t } from "@lingui/core/macro"
 // import { $allSystemsById } from "@/lib/stores"
 // import { useStore } from "@nanostores/react"
+
+const STATUS_COLORS = {
+	up: "bg-green-500",
+	down: "bg-red-500",
+	pending: "bg-yellow-500",
+	paused: "bg-primary/40",
+} as const
 
 function getSubStateColor(subState: ServiceSubState) {
 	switch (subState) {
@@ -28,7 +28,6 @@ function getSubStateColor(subState: ServiceSubState) {
 			return "bg-zinc-500"
 	}
 }
-
 
 export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 	{
@@ -100,7 +99,21 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 			if (val < 0) {
 				return <span className="ms-1.5 text-muted-foreground">N/A</span>
 			}
-			return <span className="ms-1.5 tabular-nums">{`${decimalString(val, val >= 10 ? 1 : 2)}%`}</span>
+			const threshold = getMeterState(val)
+			const meterClass = cn(
+				"h-full rounded-full",
+				(threshold === MeterState.Good && STATUS_COLORS.up) ||
+					(threshold === MeterState.Warn && STATUS_COLORS.pending) ||
+					STATUS_COLORS.down
+			)
+			return (
+				<div className="flex items-center gap-2 ms-1.5 w-full max-w-[120px]">
+					<span className="tabular-nums w-10 text-right">{`${decimalString(val, val >= 10 ? 1 : 2)}%`}</span>
+					<div className="h-1.5 flex-1 bg-muted/30 rounded-full overflow-hidden">
+						<div className={meterClass} style={{ width: `${Math.min(val, 100)}%` }} />
+					</div>
+				</div>
+			)
 		},
 	},
 	{
@@ -133,7 +146,9 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 			}
 			const formatted = formatBytes(val, false, undefined, false)
 			return (
-				<span className="ms-1.5 tabular-nums">{`${decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)} ${formatted.unit}`}</span>
+				<span className="ms-1.5 tabular-nums">{`${decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)} ${
+					formatted.unit
+				}`}</span>
 			)
 		},
 	},
@@ -149,7 +164,9 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 			}
 			const formatted = formatBytes(val, false, undefined, false)
 			return (
-				<span className="ms-1.5 tabular-nums">{`${decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)} ${formatted.unit}`}</span>
+				<span className="ms-1.5 tabular-nums">{`${decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)} ${
+					formatted.unit
+				}`}</span>
 			)
 		},
 	},
@@ -160,20 +177,24 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 		header: ({ column }) => <HeaderButton column={column} name={t`Updated`} Icon={ClockIcon} />,
 		cell: ({ getValue }) => {
 			const timestamp = getValue() as number
-			return (
-				<span className="ms-1.5 tabular-nums">
-					{hourWithSeconds(new Date(timestamp).toISOString())}
-				</span>
-			)
+			return <span className="ms-1.5 tabular-nums">{hourWithSeconds(new Date(timestamp).toISOString())}</span>
 		},
 	},
 ]
 
-function HeaderButton({ column, name, Icon }: { column: Column<SystemdRecord>; name: string; Icon: React.ElementType }) {
+function HeaderButton({
+	column,
+	name,
+	Icon,
+}: {
+	column: Column<SystemdRecord>
+	name: string
+	Icon: React.ElementType
+}) {
 	const isSorted = column.getIsSorted()
 	return (
 		<Button
-			className={cn("h-9 px-3 flex items-center gap-2 duration-50", isSorted && "bg-accent/70 light:bg-accent text-accent-foreground/90")}
+			className={cn("h-9 px-3 flex items-center gap-2 duration-50 justify-start", isSorted && "text-foreground")}
 			variant="ghost"
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 		>

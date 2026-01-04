@@ -26,10 +26,31 @@ const STATUS_COLORS = {
 
 function getStatusColor(status: string) {
 	status = status.toLowerCase()
-	if (status.startsWith("up") || status === "running") return STATUS_COLORS.up
-	if (status.startsWith("exit") || status === "dead") return STATUS_COLORS.down
-	if (status === "created" || status === "restarting") return STATUS_COLORS.pending
+	if (status === "running" || status === "healthy" || status === "up") return STATUS_COLORS.up
+	if (status === "exited" || status === "dead" || status === "unhealthy") return STATUS_COLORS.down
+	if (status === "created" || status === "restarting" || status === "starting" || status === "recreating" || status === "creating")
+		return STATUS_COLORS.pending
+	if (status === "removing") return STATUS_COLORS.pending
 	return STATUS_COLORS.paused
+}
+
+function getStatusLabel(status: string) {
+	const labels: Record<string, string> = {
+		running: "已启动",
+		created: "已创建",
+		restarting: "重启中",
+		removing: "移除中",
+		paused: "已暂停",
+		exited: "已停止",
+		dead: "已结束",
+		starting: "启动中",
+		recreating: "重建中",
+		creating: "创建中",
+		healthy: "正常",
+		unhealthy: "异常",
+	}
+	const key = status.toLowerCase()
+	return labels[key] || status || "未知"
 }
 
 export const containerChartCols: ColumnDef<ContainerRecord>[] = [
@@ -55,7 +76,7 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 		cell: ({ getValue }) => {
 			const allSystems = useStore($allSystemsById)
 			return (
-				<span className="ms-1.5 xl:w-34 block truncate text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md text-xs border border-muted/50">
+				<span className="ms-0 w-fit max-w-36 block truncate text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md text-xs border border-muted/50">
 					{allSystems[getValue() as string]?.name ?? ""}
 				</span>
 			)
@@ -135,17 +156,15 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 		},
 	},
 	{
-		id: "status",
+		id: "state",
 		accessorFn: (record) => record.status,
-		invertSorting: true,
-		sortingFn: (a, b) => (a.original.uptime ?? 0) - (b.original.uptime ?? 0),
 		header: ({ column }) => <HeaderButton column={column} name={t`Status`} Icon={HourglassIcon} />,
-		cell: ({ getValue }) => {
-			const status = getValue() as string
+		cell: ({ row }) => {
+			const status = row.original.status ?? ""
 			return (
-				<div className="flex items-center gap-2 ms-1.5 w-25">
+				<div className="flex items-center gap-2 ms-1.5 w-30">
 					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", getStatusColor(status))} />
-					<span className="truncate capitalize">{status}</span>
+					<span className="truncate capitalize">{getStatusLabel(status)}</span>
 				</div>
 			)
 		},
@@ -154,11 +173,11 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 		id: "uptime",
 		accessorFn: (record) => record.uptime,
 		invertSorting: true,
-		header: ({ column }) => <HeaderButton column={column} name={t`运行时间`} Icon={TimerIcon} />,
-		cell: ({ getValue }) => {
-			const uptimeSeconds = getValue() as number
-			const formatted = formatSecondsToHuman(uptimeSeconds)
-			return <span className="ms-1.5 tabular-nums text-muted-foreground">{formatted || "—"}</span>
+		header: ({ column }) => <HeaderButton column={column} name={t`Uptime`} Icon={TimerIcon} />,
+		cell: ({ row }) => {
+			const uptime = row.original.uptime ?? 0
+			const formatted = formatSecondsToHuman(uptime)
+			return <span className="ms-1.5 tabular-nums">{formatted || "—"}</span>
 		},
 	},
 	{
@@ -189,10 +208,7 @@ function HeaderButton({
 	const isSorted = column.getIsSorted()
 	return (
 		<Button
-			className={cn(
-				"h-9 px-3 flex items-center gap-2 duration-50",
-				isSorted && "bg-accent/70 light:bg-accent text-accent-foreground/90"
-			)}
+			className={cn("h-9 px-3 flex items-center gap-2 duration-50 justify-start", isSorted && "text-foreground")}
 			variant="ghost"
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 		>

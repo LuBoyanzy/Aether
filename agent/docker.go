@@ -370,6 +370,31 @@ func parseDockerStatus(status string) string {
 	return statusText
 }
 
+func normalizeContainerState(state string, statusText string) string {
+	s := strings.ToLower(strings.TrimSpace(state))
+	if s != "" {
+		return s
+	}
+
+	text := strings.ToLower(statusText)
+	switch {
+	case strings.HasPrefix(text, "up"):
+		return "running"
+	case strings.HasPrefix(text, "exited"):
+		return "exited"
+	case strings.HasPrefix(text, "created"):
+		return "created"
+	case strings.HasPrefix(text, "paused"):
+		return "paused"
+	case strings.HasPrefix(text, "restarting"):
+		return "restarting"
+	case strings.HasPrefix(text, "dead"):
+		return "dead"
+	default:
+		return text
+	}
+}
+
 // calculateUptimeSeconds computes uptime using startedAt only.
 // If startedAt is zero or invalid/future, returns 0 to indicate unknown.
 func calculateUptimeSeconds(startedAt time.Time) uint64 {
@@ -447,7 +472,7 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 	stats.Id = ctr.IdShort
 
 	statusText := parseDockerStatus(ctr.Status)
-	stats.Status = statusText
+	stats.Status = normalizeContainerState(ctr.State, statusText)
 	startedAt := dm.getStartedAt(ctr)
 	stats.Uptime = calculateUptimeSeconds(startedAt)
 
