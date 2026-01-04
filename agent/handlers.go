@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/fxamacker/cbor/v2"
 	"aether/internal/common"
 	"aether/internal/entities/smart"
+
+	"github.com/fxamacker/cbor/v2"
 
 	"golang.org/x/exp/slog"
 )
@@ -49,6 +51,7 @@ func NewHandlerRegistry() *HandlerRegistry {
 	registry.Register(common.CheckFingerprint, &CheckFingerprintHandler{})
 	registry.Register(common.GetContainerLogs, &GetContainerLogsHandler{})
 	registry.Register(common.GetContainerInfo, &GetContainerInfoHandler{})
+	registry.Register(common.OperateContainer, &OperateContainerHandler{})
 	registry.Register(common.GetSmartData, &GetSmartDataHandler{})
 	registry.Register(common.GetSystemdInfo, &GetSystemdInfoHandler{})
 
@@ -156,6 +159,35 @@ func (h *GetContainerInfoHandler) Handle(hctx *HandlerContext) error {
 	}
 
 	return hctx.SendResponse(string(info), hctx.RequestID)
+}
+
+// //////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////
+// OperateContainerHandler handles start/stop/restart/kill/pause/unpause
+type OperateContainerHandler struct{}
+
+func (h *OperateContainerHandler) Handle(hctx *HandlerContext) error {
+	if hctx.Agent.dockerManager == nil {
+		return errors.New("docker not available")
+	}
+
+	var req common.ContainerOperateRequest
+	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
+		return err
+	}
+	if req.ContainerID == "" || req.Operation == "" {
+		return errors.New("container id and operation are required")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
+	defer cancel()
+
+	if err := hctx.Agent.dockerManager.operateContainer(ctx, req.ContainerID, req.Operation, req.Signal); err != nil {
+		return err
+	}
+
+	ack := fmt.Sprintf("%s ok", req.Operation)
+	return hctx.SendResponse(ack, hctx.RequestID)
 }
 
 ////////////////////////////////////////////////////////////////////////////

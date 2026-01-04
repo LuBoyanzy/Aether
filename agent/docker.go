@@ -46,6 +46,15 @@ const (
 	maxTotalLogSize = 5 * 1024 * 1024
 )
 
+var containerOps = map[string]string{
+	"start":   "start",
+	"stop":    "stop",
+	"restart": "restart",
+	"kill":    "kill",
+	"pause":   "pause",
+	"unpause": "unpause",
+}
+
 type dockerManager struct {
 	client              *http.Client                // Client to query Docker API
 	wg                  sync.WaitGroup              // WaitGroup to wait for all goroutines to finish
@@ -55,6 +64,7 @@ type dockerManager struct {
 	containerStatsMap   map[string]*container.Stats // Keeps track of container stats
 	validIds            map[string]struct{}         // Map of valid container ids, used to prune invalid containers from containerStatsMap
 	goodDockerVersion   bool                        // Whether docker version is at least 25.0.0 (one-shot works correctly)
+	decodeMu            sync.Mutex                  // Serialize decode use (buffer/decoder not thread-safe)
 	isWindows           bool                        // Whether the Docker Engine API is running on Windows
 	buf                 *bytes.Buffer               // Buffer to store and read response bodies
 	decoder             *json.Decoder               // Reusable JSON decoder that reads from buf
@@ -118,7 +128,7 @@ func (dm *dockerManager) shouldExcludeContainer(name string) bool {
 
 // Returns stats for all running containers with cache-time-aware delta tracking
 func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats, error) {
-	resp, err := dm.client.Get("http://localhost/containers/json")
+	resp, err := dm.client.Get("http://localhost/containers/json?all=1")
 	if err != nil {
 		slog.Error("Failed to list containers", "err", err)
 		return nil, err
@@ -395,6 +405,15 @@ func normalizeContainerState(state string, statusText string) string {
 	}
 }
 
+func isRunningState(state string) bool {
+	switch state {
+	case "running", "healthy", "paused":
+		return true
+	default:
+		return false
+	}
+}
+
 // calculateUptimeSeconds computes uptime using startedAt only.
 // If startedAt is zero or invalid/future, returns 0 to indicate unknown.
 func calculateUptimeSeconds(startedAt time.Time) uint64 {
@@ -454,9 +473,20 @@ func (dm *dockerManager) getStartedAt(ctr *container.ApiInfo) time.Time {
 func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeMs uint16) error {
 	name := ctr.Names[0][1:]
 
-	resp, err := dm.client.Get(fmt.Sprintf("http://localhost/containers/%s/stats?stream=0&one-shot=1", ctr.IdShort))
-	if err != nil {
-		return err
+	statusText := parseDockerStatus(ctr.Status)
+	state := normalizeContainerState(ctr.State, statusText)
+	startedAt := dm.getStartedAt(ctr)
+	running := isRunningState(state)
+	now := time.Now()
+
+	// stats response (only for running/paused containers)
+	var resp *http.Response
+	var err error
+	if running {
+		resp, err = dm.client.Get(fmt.Sprintf("http://localhost/containers/%s/stats?stream=0&one-shot=1", ctr.IdShort))
+		if err != nil {
+			return err
+		}
 	}
 
 	dm.containerStatsMutex.Lock()
@@ -465,15 +495,13 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 	// add empty values if they doesn't exist in map
 	stats, initialized := dm.containerStatsMap[ctr.IdShort]
 	if !initialized {
-		stats = &container.Stats{Name: name, Id: ctr.IdShort, Image: ctr.Image}
+		stats = &container.Stats{Name: name, Id: ctr.IdShort, Image: ctr.Image, PrevReadTime: now}
 		dm.containerStatsMap[ctr.IdShort] = stats
 	}
 
 	stats.Id = ctr.IdShort
 
-	statusText := parseDockerStatus(ctr.Status)
-	stats.Status = normalizeContainerState(ctr.State, statusText)
-	startedAt := dm.getStartedAt(ctr)
+	stats.Status = state
 	stats.Uptime = calculateUptimeSeconds(startedAt)
 
 	// reset current stats
@@ -481,6 +509,26 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 	stats.Mem = 0
 	stats.NetworkSent = 0
 	stats.NetworkRecv = 0
+
+	// If container is not running/paused, skip expensive stats call and keep entry with status.
+	if !running {
+		lastSeen := stats.PrevReadTime
+		if lastSeen.IsZero() {
+			lastSeen = now
+			stats.PrevReadTime = now
+		}
+		stats.Uptime = calculateUptimeSeconds(startedAt)
+		// prune stale non-running containers beyond TTL
+		if time.Since(lastSeen) > 10*time.Minute {
+			dm.deleteContainerStatsSync(ctr.IdShort)
+		}
+		return nil
+	}
+
+	// For running/paused containers, update read time for delta calculations.
+	stats.PrevReadTime = now
+
+	defer resp.Body.Close()
 
 	res := dm.apiStats
 	res.Networks = nil
@@ -551,6 +599,16 @@ func (dm *dockerManager) deleteContainerStatsSync(id string) {
 	}
 	for ct := range dm.lastCpuReadTime {
 		delete(dm.lastCpuReadTime[ct], id)
+	}
+	for ct := range dm.networkSentTrackers {
+		if dm.networkSentTrackers[ct] != nil {
+			dm.networkSentTrackers[ct].Delete(id)
+		}
+	}
+	for ct := range dm.networkRecvTrackers {
+		if dm.networkRecvTrackers[ct] != nil {
+			dm.networkRecvTrackers[ct].Delete(id)
+		}
 	}
 }
 
@@ -693,6 +751,8 @@ func (dm *dockerManager) checkDockerVersion() {
 
 // Decodes Docker API JSON response using a reusable buffer and decoder. Not thread safe.
 func (dm *dockerManager) decode(resp *http.Response, d any) error {
+	dm.decodeMu.Lock()
+	defer dm.decodeMu.Unlock()
 	if dm.buf == nil {
 		// initialize buffer with 256kb starting size
 		dm.buf = bytes.NewBuffer(make([]byte, 0, 1024*256))
@@ -748,6 +808,36 @@ func (dm *dockerManager) getContainerInfo(ctx context.Context, containerID strin
 	}
 
 	return json.Marshal(containerInfo)
+}
+
+// operateContainer performs start/stop/restart/kill/pause/unpause on a container.
+func (dm *dockerManager) operateContainer(ctx context.Context, containerID, operation, signal string) error {
+	op := strings.ToLower(operation)
+	target, ok := containerOps[op]
+	if !ok {
+		return fmt.Errorf("unsupported operation: %s", operation)
+	}
+
+	endpoint := fmt.Sprintf("http://localhost/containers/%s/%s", containerID, target)
+	if target == "kill" && signal != "" {
+		endpoint = fmt.Sprintf("%s?signal=%s", endpoint, url.QueryEscape(signal))
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, nil)
+	if err != nil {
+		return err
+	}
+	resp, err := dm.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		return fmt.Errorf("%s failed: %s - %s", target, resp.Status, strings.TrimSpace(string(body)))
+	}
+	return nil
 }
 
 // getLogs fetches the logs for a container

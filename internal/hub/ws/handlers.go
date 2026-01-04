@@ -113,6 +113,11 @@ func (ws *WsConn) RequestContainerInfo(ctx context.Context, containerID string) 
 	return ws.requestContainerStringViaWS(ctx, common.GetContainerInfo, common.ContainerInfoRequest{ContainerID: containerID}, "no info in response")
 }
 
+// RequestContainerOperate executes a container operation (start/stop/restart/kill/pause/unpause) via WebSocket.
+func (ws *WsConn) RequestContainerOperate(ctx context.Context, req common.ContainerOperateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.OperateContainer, req, "operation failed")
+}
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

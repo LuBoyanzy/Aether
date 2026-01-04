@@ -1,7 +1,7 @@
 import { defineConfig } from "vite"
 import path from "path"
 import tailwindcss from "@tailwindcss/vite"
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react"
 import { lingui } from "@lingui/vite-plugin"
 
 export default defineConfig({
@@ -9,7 +9,9 @@ export default defineConfig({
 	server: { host: "0.0.0.0", port: 19091 },
 	plugins: [
 		react({
-			plugins: [["@lingui/swc-plugin", {}]],
+			babel: {
+				plugins: ["macros"],
+			},
 		}),
 		lingui(),
 		tailwindcss(),

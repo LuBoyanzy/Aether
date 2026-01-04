@@ -39,6 +39,27 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 			return <span className="ms-1.5 xl:w-50 block truncate">{getValue() as string}</span>
 		},
 	},
+	{
+		id: "state",
+		accessorFn: (record) => record.state,
+		header: ({ column }) => <HeaderButton column={column} name={t`State`} Icon={ActivityIcon} />,
+		cell: ({ getValue }) => {
+			const state = getValue() as ServiceStatus
+			const label = ServiceStatusLabels[state] || "Unknown"
+			const color =
+				state === ServiceStatus.Active
+					? STATUS_COLORS.up
+					: state === ServiceStatus.Inactive
+						? STATUS_COLORS.down
+						: STATUS_COLORS.pending
+			return (
+				<div className="flex items-center gap-2 ms-1.5 w-32">
+					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", color)} />
+					<span className="truncate capitalize text-sm">{label}</span>
+				</div>
+			)
+		},
+	},
 	// {
 	// 	id: "system",
 	// 	accessorFn: (record) => record.system,
@@ -54,21 +75,7 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 	// 		return <span className="ms-1.5 xl:w-34 block truncate">{allSystems[getValue() as string]?.name ?? ""}</span>
 	// 	},
 	// },
-	{
-		id: "state",
-		accessorFn: (record) => record.state,
-		header: ({ column }) => <HeaderButton column={column} name={t`State`} Icon={ActivityIcon} />,
-		cell: ({ getValue }) => {
-			const statusValue = getValue() as ServiceStatus
-			const statusLabel = ServiceStatusLabels[statusValue] || "Unknown"
-			return (
-				<Badge variant="outline" className="dark:border-white/12">
-					<span className={cn("size-2 me-1.5 rounded-full", getStatusColor(statusValue))} />
-					{statusLabel}
-				</Badge>
-			)
-		},
-	},
+
 	{
 		id: "sub",
 		accessorFn: (record) => record.sub,
@@ -175,9 +182,15 @@ export const systemdTableCols: ColumnDef<SystemdRecord>[] = [
 		invertSorting: true,
 		accessorFn: (record) => record.updated,
 		header: ({ column }) => <HeaderButton column={column} name={t`Updated`} Icon={ClockIcon} />,
-		cell: ({ getValue }) => {
-			const timestamp = getValue() as number
-			return <span className="ms-1.5 tabular-nums">{hourWithSeconds(new Date(timestamp).toISOString())}</span>
+		cell: ({ row }) => {
+			const status = row.original.state
+			const timestamp = row.original.updated
+			return (
+				<div className="flex items-center gap-2 ms-1.5">
+					<span className={cn("size-2.5 rounded-full shrink-0 shadow-sm", getStatusColor(status))} />
+					<span className="tabular-nums truncate">{hourWithSeconds(new Date(timestamp).toISOString())}</span>
+				</div>
+			)
 		},
 	},
 ]

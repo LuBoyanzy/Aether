@@ -98,3 +98,11 @@ func (t *DeltaTracker[K, V]) Cycle() {
 	t.previous = t.current
 	t.current = make(map[K]V)
 }
+
+// Delete removes a key from both current and previous maps.
+func (t *DeltaTracker[K, V]) Delete(id K) {
+	t.Lock()
+	defer t.Unlock()
+	delete(t.current, id)
+	delete(t.previous, id)
+}

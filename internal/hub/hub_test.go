@@ -293,6 +293,15 @@ func TestApiRoutesAuthentication(t *testing.T) {
 	userToken, err := user.NewAuthToken()
 	require.NoError(t, err, "Failed to create auth token")
 
+	readonlyUser, err := aetherTests.CreateRecord(hub, "users", map[string]any{
+		"email":    "readonly@example.com",
+		"password": "password123",
+		"role":     "readonly",
+	})
+	require.NoError(t, err, "Failed to create readonly user")
+	readonlyToken, err := readonlyUser.NewAuthToken()
+	require.NoError(t, err, "Failed to create readonly auth token")
+
 	// Create test system for user-alerts endpoints
 	system, err := aetherTests.CreateRecord(hub, "systems", map[string]any{
 		"name":  "test-system",
@@ -304,6 +313,16 @@ func TestApiRoutesAuthentication(t *testing.T) {
 	testAppFactory := func(t testing.TB) *pbTests.TestApp {
 		return hub.TestApp
 	}
+
+	// Prepare a fake system in manager for operate success path
+	sm := hub.GetSystemManager()
+	opSystem := sm.NewSystem("op-system")
+	opSystem.Host = "127.0.0.1"
+	opSystem.Status = "up"
+	require.NoError(t, sm.AddSystem(opSystem))
+
+	var opCalled bool
+	var refreshCalled bool
 
 	scenarios := []aetherTests.ApiScenario{
 		// Auth Protected Routes - Should require authentication
@@ -489,6 +508,99 @@ func TestApiRoutesAuthentication(t *testing.T) {
 			ExpectedStatus:  404,
 			ExpectedContent: []string{"system not found"},
 			TestAppFactory:  testAppFactory,
+		},
+		{
+			Name:            "POST /containers/operate - no auth should fail",
+			Method:          http.MethodPost,
+			URL:             "/api/aether/containers/operate",
+			ExpectedStatus:  401,
+			ExpectedContent: []string{"requires valid"},
+			TestAppFactory:  testAppFactory,
+			Body: jsonReader(map[string]any{
+				"system":    "test-system",
+				"container": "c1",
+				"operation": "stop",
+			}),
+		},
+		{
+			Name:   "POST /containers/operate - missing params should fail",
+			Method: http.MethodPost,
+			URL:    "/api/aether/containers/operate",
+			Headers: map[string]string{
+				"Authorization": userToken,
+			},
+			ExpectedStatus:  400,
+			ExpectedContent: []string{"system, container and operation are required"},
+			TestAppFactory:  testAppFactory,
+			Body:            jsonReader(map[string]any{}),
+		},
+		{
+			Name:   "POST /containers/operate - readonly should be forbidden",
+			Method: http.MethodPost,
+			URL:    "/api/aether/containers/operate",
+			Headers: map[string]string{
+				"Authorization": readonlyToken,
+			},
+			ExpectedStatus:  403,
+			ExpectedContent: []string{"forbidden"},
+			TestAppFactory:  testAppFactory,
+			Body: jsonReader(map[string]any{
+				"system":    "test-system",
+				"container": "c1",
+				"operation": "stop",
+			}),
+		},
+		{
+			Name:   "POST /containers/operate - invalid system should 404",
+			Method: http.MethodPost,
+			URL:    "/api/aether/containers/operate",
+			Headers: map[string]string{
+				"Authorization": userToken,
+			},
+			ExpectedStatus:  404,
+			ExpectedContent: []string{"system not found"},
+			TestAppFactory:  testAppFactory,
+			Body: jsonReader(map[string]any{
+				"system":    "invalid-system",
+				"container": "c1",
+				"operation": "stop",
+			}),
+		},
+		{
+			Name:   "POST /containers/operate - success path",
+			Method: http.MethodPost,
+			URL:    "/api/aether/containers/operate",
+			Headers: map[string]string{
+				"Authorization": userToken,
+			},
+			ExpectedStatus:  200,
+			ExpectedContent: []string{"\"status\":\"ok\""},
+			TestAppFactory:  testAppFactory,
+			BeforeTestFunc: func(t testing.TB, app *pbTests.TestApp, e *core.ServeEvent) {
+				opCalled = false
+				refreshCalled = false
+				opSystem.SetOperateOverride(
+					func(containerID, op, signal string) error {
+						opCalled = true
+						return nil
+					},
+				)
+				opSystem.SetUpdateNowOverride(
+					func() error {
+						refreshCalled = true
+						return nil
+					},
+				)
+			},
+			AfterTestFunc: func(t testing.TB, app *pbTests.TestApp, res *http.Response) {
+				assert.True(t, opCalled, "operate should be called")
+				assert.True(t, refreshCalled, "update should be called")
+			},
+			Body: jsonReader(map[string]any{
+				"system":    "op-system",
+				"container": "c1",
+				"operation": "stop",
+			}),
 		},
 
 		// Auth Optional Routes - Should work without authentication

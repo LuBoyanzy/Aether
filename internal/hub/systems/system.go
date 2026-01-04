@@ -29,22 +29,25 @@ import (
 )
 
 type System struct {
-	Id             string               `db:"id"`
-	Host           string               `db:"host"`
-	Port           string               `db:"port"`
-	Status         string               `db:"status"`
-	manager        *SystemManager       // Manager that this system belongs to
-	client         *ssh.Client          // SSH client for fetching data
-	data           *system.CombinedData // system data from agent
-	ctx            context.Context      // Context for stopping the updater
-	cancel         context.CancelFunc   // Stops and removes system from updater
-	WsConn         *ws.WsConn           // Handler for agent WebSocket connection
-	agentVersion   semver.Version       // Agent version
-	updateTicker   *time.Ticker         // Ticker for updating the system
-	detailsFetched atomic.Bool          // True if static system details have been fetched and saved
-	smartFetching  atomic.Bool          // True if SMART devices are currently being fetched
-	smartInterval  time.Duration        // Interval for periodic SMART data updates
-	lastSmartFetch atomic.Int64         // Unix milliseconds of last SMART data fetch
+	Id      string               `db:"id"`
+	Host    string               `db:"host"`
+	Port    string               `db:"port"`
+	Status  string               `db:"status"`
+	manager *SystemManager       // Manager that this system belongs to
+	client  *ssh.Client          // SSH client for fetching data
+	data    *system.CombinedData // system data from agent
+	ctx     context.Context      // Context for stopping the updater
+	cancel  context.CancelFunc   // Stops and removes system from updater
+	// test overrides (set only in tests)
+	operateOverride   func(containerID, op, signal string) error
+	updateNowOverride func() error
+	WsConn            *ws.WsConn     // Handler for agent WebSocket connection
+	agentVersion      semver.Version // Agent version
+	updateTicker      *time.Ticker   // Ticker for updating the system
+	detailsFetched    atomic.Bool    // True if static system details have been fetched and saved
+	smartFetching     atomic.Bool    // True if SMART devices are currently being fetched
+	smartInterval     time.Duration  // Interval for periodic SMART data updates
+	lastSmartFetch    atomic.Int64   // Unix milliseconds of last SMART data fetch
 }
 
 func (sm *SystemManager) NewSystem(systemId string) *System {
@@ -449,6 +452,78 @@ func (sys *System) FetchContainerLogsFromAgent(containerID string) (string, erro
 	}
 	// fetch via SSH
 	return sys.fetchStringFromAgentViaSSH(common.GetContainerLogs, common.ContainerLogsRequest{ContainerID: containerID}, "no logs in response")
+}
+
+// UpdateNow triggers an immediate system update (containers/stats/etc).
+func (sys *System) UpdateNow() error {
+	if sys.updateNowOverride != nil {
+		return sys.updateNowOverride()
+	}
+	data, err := sys.fetchDataFromAgent(common.DataRequestOptions{CacheTimeMs: 0})
+	if err != nil {
+		return err
+	}
+	_, err = sys.createRecords(data)
+	return err
+}
+
+// OperateContainer sends start/stop/restart/kill/pause/unpause to agent.
+func (sys *System) OperateContainer(containerID, op, signal string) error {
+	if sys.operateOverride != nil {
+		return sys.operateOverride(containerID, op, signal)
+	}
+	req := common.ContainerOperateRequest{ContainerID: containerID, Operation: op, Signal: signal}
+
+	// websocket preferred
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestContainerOperate(ctx, req)
+		return err
+	}
+
+	// SSH fallback
+	return sys.runSSHOperation(12*time.Second, 1, func(session *ssh.Session) (bool, error) {
+		stdout, err := session.StdoutPipe()
+		if err != nil {
+			return false, err
+		}
+		stdin, stdinErr := session.StdinPipe()
+		if stdinErr != nil {
+			return false, stdinErr
+		}
+
+		if err := session.Start("aether-agent cbor"); err != nil {
+			return false, err
+		}
+
+		encoder := cbor.NewEncoder(stdin)
+		decoder := cbor.NewDecoder(stdout)
+
+		if err := encoder.Encode(common.HubRequest[any]{Action: common.OperateContainer, Data: req}); err != nil {
+			return false, err
+		}
+
+		var resp common.AgentResponse
+		if err := decoder.Decode(&resp); err != nil {
+			return false, err
+		}
+
+		if resp.Error != "" {
+			return false, errors.New(resp.Error)
+		}
+		return true, nil
+	})
+}
+
+// SetOperateOverride sets a test hook to override container operations.
+func (sys *System) SetOperateOverride(fn func(containerID, op, signal string) error) {
+	sys.operateOverride = fn
+}
+
+// SetUpdateNowOverride sets a test hook to override UpdateNow.
+func (sys *System) SetUpdateNowOverride(fn func() error) {
+	sys.updateNowOverride = fn
 }
 
 // FetchSystemdInfoFromAgent fetches detailed systemd service information from the agent

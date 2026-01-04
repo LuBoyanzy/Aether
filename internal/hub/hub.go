@@ -3,6 +3,7 @@ package hub
 
 import (
 	"crypto/ed25519"
+	"encoding/json"
 	"encoding/pem"
 	"fmt"
 	"net/http"
@@ -278,6 +279,8 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 		apiAuth.GET("/containers/logs", h.getContainerLogs)
 		// get container info
 		apiAuth.GET("/containers/info", h.getContainerInfo)
+		// operate container
+		apiAuth.POST("/containers/operate", h.operateContainer)
 	}
 	return nil
 }
@@ -342,6 +345,44 @@ func (h *Hub) getContainerInfo(e *core.RequestEvent) error {
 	return h.containerRequestHandler(e, func(system *systems.System, containerID string) (string, error) {
 		return system.FetchContainerInfoFromAgent(containerID)
 	}, "info")
+}
+
+// operateContainer handles POST /api/aether/containers/operate requests
+func (h *Hub) operateContainer(e *core.RequestEvent) error {
+	// RBAC: only admin / non-readonly allowed
+	if e.Auth == nil || e.Auth.GetString("role") == "readonly" {
+		return e.JSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
+	}
+
+	var payload struct {
+		System    string `json:"system"`
+		Container string `json:"container"`
+		Operation string `json:"operation"`
+		Signal    string `json:"signal"`
+	}
+	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
+	}
+	if payload.System == "" || payload.Container == "" || payload.Operation == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system, container and operation are required"})
+	}
+
+	system, err := h.sm.GetSystem(payload.System)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "system not found"})
+	}
+
+	if err := system.OperateContainer(payload.Container, payload.Operation, payload.Signal); err != nil {
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": err.Error()})
+	}
+
+	// trigger an immediate refresh so status/Uptime update quickly
+	if err := system.UpdateNow(); err != nil {
+		h.Logger().Error("operateContainer refresh failed", "system", payload.System, "container", payload.Container, "op", payload.Operation, "err", err)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": "operation succeeded but refresh failed"})
+	}
+
+	return e.JSON(http.StatusOK, map[string]string{"status": "ok"})
 }
 
 // getSystemdInfo handles GET /api/aether/systemd/info requests

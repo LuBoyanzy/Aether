@@ -14,11 +14,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gliderlabs/ssh"
 	"aether"
 	"aether/agent/deltatracker"
 	"aether/internal/common"
 	"aether/internal/entities/system"
+	"github.com/gliderlabs/ssh"
 	"github.com/shirou/gopsutil/v4/host"
 	gossh "golang.org/x/crypto/ssh"
 )
@@ -166,8 +166,9 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	defer a.Unlock()
 
 	cacheTimeMs := options.CacheTimeMs
+	useCache := cacheTimeMs > 0
 	data, isCached := a.cache.Get(cacheTimeMs)
-	if isCached {
+	if useCache && isCached {
 		slog.Debug("Cached data", "cacheTimeMs", cacheTimeMs)
 		return data
 	}
@@ -224,7 +225,9 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	}
 	slog.Debug("Extra FS", "data", data.Stats.ExtraFs)
 
-	a.cache.Set(data, cacheTimeMs)
+	if useCache {
+		a.cache.Set(data, cacheTimeMs)
+	}
 	return data
 }
 

@@ -21,6 +21,8 @@ const (
 	GetSmartData
 	// Request detailed systemd service info from agent
 	GetSystemdInfo
+	// Operate a container (start/stop/restart/kill/pause/unpause)
+	OperateContainer
 	// Add new actions here...
 )
 
@@ -68,6 +70,12 @@ type ContainerLogsRequest struct {
 
 type ContainerInfoRequest struct {
 	ContainerID string `cbor:"0,keyasint"`
+}
+
+type ContainerOperateRequest struct {
+	ContainerID string `cbor:"0,keyasint"`
+	Operation   string `cbor:"1,keyasint"`
+	Signal      string `cbor:"2,keyasint,omitempty"`
 }
 
 type SystemdInfoRequest struct {

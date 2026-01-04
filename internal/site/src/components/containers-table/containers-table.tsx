@@ -16,9 +16,9 @@ import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual"
 import { memo, RefObject, useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { pb } from "@/lib/api"
+import { pb, isReadOnlyUser } from "@/lib/api"
 import type { ContainerRecord } from "@/types"
-import { containerChartCols } from "@/components/containers-table/containers-table-columns"
+import { buildContainerChartCols } from "@/components/containers-table/containers-table-columns"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn, formatSecondsToHuman, useBrowserStorage } from "@/lib/utils"
 import { Sheet, SheetTitle, SheetHeader, SheetContent, SheetDescription } from "../ui/sheet"
@@ -30,6 +30,8 @@ import { Separator } from "../ui/separator"
 import { $router, Link } from "../router"
 import { listenKeys } from "nanostores"
 import { getPagePath } from "@nanostores/router"
+import { toast } from "../ui/use-toast"
+import { useCallback } from "react"
 
 const syntaxTheme = "github-dark-dimmed"
 
@@ -46,47 +48,52 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 	const [rowSelection, setRowSelection] = useState({})
 	const [globalFilter, setGlobalFilter] = useState("")
 
-	useEffect(() => {
-		function fetchData(systemId?: string) {
-			pb.collection<ContainerRecord>("containers")
-				.getList(0, 2000, {
-					fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
-					filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
-				})
-				.then(({ items }) => {
-					if (items.length === 0) {
-						setData([])
-						return
+	const fetchData = useCallback((systemId?: string) => {
+		pb.collection<ContainerRecord>("containers")
+			.getList(0, 2000, {
+				fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
+				filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
+			})
+			.then(({ items }) => {
+				if (items.length === 0) {
+					setData([])
+					return
+				}
+				setData((curItems) => {
+					const lastUpdated = Math.max(items[0].updated, items.at(-1)?.updated ?? 0)
+					const containerIds = new Set<string>()
+					const newItems: ContainerRecord[] = []
+					for (const item of items) {
+						if (Math.abs(lastUpdated - item.updated) < 70_000) {
+							containerIds.add(item.id)
+							newItems.push(item)
+						}
 					}
-					setData((curItems) => {
-						const lastUpdated = Math.max(items[0].updated, items.at(-1)?.updated ?? 0)
-						const containerIds = new Set()
-						const newItems = []
-						for (const item of items) {
-							if (Math.abs(lastUpdated - item.updated) < 70_000) {
-								containerIds.add(item.id)
-								newItems.push(item)
-							}
+					for (const item of curItems ?? []) {
+						if (!containerIds.has(item.id) && lastUpdated - item.updated < 70_000) {
+							newItems.push(item)
 						}
-						for (const item of curItems ?? []) {
-							if (!containerIds.has(item.id) && lastUpdated - item.updated < 70_000) {
-								newItems.push(item)
-							}
-						}
-						return newItems
-					})
+					}
+					return newItems
 				})
-		}
+			})
+			.catch((err) => {
+				// PocketBase auto-cancels in-flight identical requests; swallow AbortError
+				if (err?.name === "AbortError" || err?.isAbort) return
+				console.error("fetch containers", err)
+			})
+	}, [])
 
+	useEffect(() => {
 		// initial load
 		fetchData(systemId)
 
 		// if no systemId, pull system containers after every system update
 		if (!systemId) {
-			return $allSystemsById.listen((_value, _oldValue, systemId) => {
+			return $allSystemsById.listen((_value, _oldValue, sysId) => {
 				// exclude initial load of systems
 				if (Date.now() - loadTime > 500) {
-					fetchData(systemId)
+					fetchData(sysId)
 				}
 			})
 		}
@@ -95,11 +102,37 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 		return listenKeys($allSystemsById, [systemId], (_newSystems) => {
 			fetchData(systemId)
 		})
-	}, [])
+	}, [fetchData, systemId])
+
+	const handleOperate = useCallback(
+		async (record: ContainerRecord, op: "start" | "stop" | "restart" | "kill" | "pause" | "unpause") => {
+			if (isReadOnlyUser()) {
+				toast({ title: t`Forbidden`, description: t`You have read-only access`, variant: "destructive" })
+				return
+			}
+			try {
+				await pb.send("/api/aether/containers/operate", {
+					method: "POST",
+					body: {
+						system: record.system,
+						container: record.id,
+						operation: op,
+					},
+				})
+				toast({ title: t`Operation success`, description: `${op} ${record.name}` })
+				fetchData(systemId)
+				// 再次刷新以兜底同步（处理 Hub 更新的短暂延迟）
+				setTimeout(() => fetchData(systemId), 1500)
+			} catch (err: any) {
+				throw err
+			}
+		},
+		[systemId, fetchData]
+	)
 
 	const table = useReactTable({
 		data: data ?? [],
-		columns: containerChartCols.filter((col) => (systemId ? col.id !== "system" : true)),
+		columns: buildContainerChartCols(handleOperate).filter((col) => (systemId ? col.id !== "system" : true)),
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
