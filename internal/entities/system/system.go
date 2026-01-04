@@ -166,6 +166,8 @@ type Details struct {
 	Podman        bool          `cbor:"8,keyasint,omitempty"`
 	MemoryTotal   uint64        `cbor:"9,keyasint"`
 	SmartInterval time.Duration `cbor:"10,keyasint,omitempty"`
+	CudaVersion   string        `cbor:"11,keyasint,omitempty"`
+	NvidiaCTK     string        `cbor:"12,keyasint,omitempty"`
 }
 
 // Final data structure to return to the hub

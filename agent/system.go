@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/exec"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -106,12 +108,82 @@ func (a *Agent) refreshSystemDetails() {
 		}
 	}
 
+	// detect CUDA/NVIDIA Container Toolkit 版本（可选）
+	a.systemDetails.CudaVersion = detectCudaVersion()
+	a.systemDetails.NvidiaCTK = detectNvidiaContainerToolkitVersion()
+
+	// detect CUDA/NVIDIA Container Toolkit 版本（可选）
+	a.systemDetails.CudaVersion = detectCudaVersion()
+	a.systemDetails.NvidiaCTK = detectNvidiaContainerToolkitVersion()
+
 	// zfs
 	if _, err := getARCSize(); err != nil {
 		slog.Debug("Not monitoring ZFS ARC", "err", err)
 	} else {
 		a.zfs = true
 	}
+}
+
+// detectCudaVersion tries to read CUDA version via nvidia-smi (best effort).
+func detectCudaVersion() string {
+	cmd := exec.Command("nvidia-smi", "--query-gpu=cuda_version", "--format=csv,noheader")
+	cmd.Env = append(os.Environ(), "CUDA_CACHE_DISABLE=1")
+	out, err := cmd.Output()
+	if err != nil {
+		slog.Debug("nvidia-smi cuda_version failed", "err", err)
+		return ""
+	}
+	line := strings.TrimSpace(strings.SplitN(string(out), "\n", 2)[0])
+	if line == "" || strings.EqualFold(line, "N/A") {
+		return ""
+	}
+	return line
+}
+
+// detectNvidiaContainerToolkitVersion reads container toolkit version (best effort).
+func detectNvidiaContainerToolkitVersion() string {
+	cmd := exec.Command("nvidia-container-toolkit", "--version")
+	out, err := cmd.Output()
+	if err != nil {
+		slog.Debug("nvidia-container-toolkit version failed", "err", err)
+		return ""
+	}
+	re := regexp.MustCompile(`([0-9]+\.[0-9]+\.[0-9]+)`) // 捕获语义化版本
+	if match := re.FindString(string(out)); match != "" {
+		return match
+	}
+	return strings.TrimSpace(string(out))
+}
+
+// detectCudaVersion tries to read CUDA version via nvidia-smi (best effort).
+func detectCudaVersion() string {
+	cmd := exec.Command("nvidia-smi", "--query-gpu=cuda_version", "--format=csv,noheader")
+	cmd.Env = append(os.Environ(), "CUDA_CACHE_DISABLE=1")
+	out, err := cmd.Output()
+	if err != nil {
+		slog.Debug("nvidia-smi cuda_version failed", "err", err)
+		return ""
+	}
+	line := strings.TrimSpace(strings.SplitN(string(out), "\n", 2)[0])
+	if line == "" || strings.EqualFold(line, "N/A") {
+		return ""
+	}
+	return line
+}
+
+// detectNvidiaContainerToolkitVersion reads container toolkit version (best effort).
+func detectNvidiaContainerToolkitVersion() string {
+	cmd := exec.Command("nvidia-container-toolkit", "--version")
+	out, err := cmd.Output()
+	if err != nil {
+		slog.Debug("nvidia-container-toolkit version failed", "err", err)
+		return ""
+	}
+	re := regexp.MustCompile(`([0-9]+\.[0-9]+\.[0-9]+)`) // 捕获语义化版本
+	if match := re.FindString(string(out)); match != "" {
+		return match
+	}
+	return strings.TrimSpace(string(out))
 }
 
 // Returns current info, stats about the host system
