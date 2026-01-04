@@ -304,7 +304,7 @@ export function SystemsTableColumns(viewMode: "table" | "grid"): ColumnDef<Syste
 				}
 
 				const stateLabel =
-					state !== undefined ? (batteryStateTranslations[state as BatteryState]?.() ?? undefined) : undefined
+					state !== undefined ? batteryStateTranslations[state as BatteryState]?.() ?? undefined : undefined
 
 				return (
 					<Link
@@ -446,8 +446,8 @@ function TableCellWithMeter(info: CellContext<SystemRecord, unknown>) {
 	return (
 		<div className="flex gap-2 items-center tabular-nums tracking-tight w-full">
 			<span className="min-w-8 shrink-0">{decimalString(val, val >= 10 ? 1 : 2)}%</span>
-			<span className="flex-1 min-w-8 grid bg-muted h-[1em] rounded-sm overflow-hidden">
-				<span className={meterClass} style={{ width: `${val}%` }}></span>
+			<span className="flex-1 min-w-8 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
+				<span className={cn(meterClass, "rounded-full")} style={{ width: `${val}%` }}></span>
 			</span>
 		</div>
 	)
@@ -497,10 +497,10 @@ function DiskCellWithMultiple(info: CellContext<SystemRecord, unknown>) {
 				>
 					<div className="flex gap-2 items-center tabular-nums tracking-tight">
 						<span className="min-w-8 shrink-0">{decimalString(rootDiskPct, rootDiskPct >= 10 ? 1 : 2)}%</span>
-						<span className="flex-1 min-w-8 flex items-center gap-0.5 px-1 justify-end bg-muted h-[1em] rounded-sm overflow-hidden relative">
+						<span className="flex-1 min-w-8 flex items-center gap-0.5 px-1 justify-end bg-muted/50 h-2.5 rounded-full overflow-hidden relative">
 							{/* Root disk */}
 							<span
-								className={cn("absolute inset-0", getMeterClass(rootDiskPct))}
+								className={cn("absolute inset-0 rounded-full", getMeterClass(rootDiskPct))}
 								style={{ width: `${rootDiskPct}%` }}
 							></span>
 							{/* Extra disk indicators */}
@@ -522,8 +522,11 @@ function DiskCellWithMultiple(info: CellContext<SystemRecord, unknown>) {
 						</div>
 						<div className="flex gap-2 items-center tabular-nums text-xs">
 							<span className="min-w-7">{decimalString(rootDiskPct, rootDiskPct >= 10 ? 1 : 2)}%</span>
-							<span className="flex-1 min-w-12 grid bg-muted h-2.5 rounded-sm overflow-hidden">
-								<span className={getMeterClass(rootDiskPct)} style={{ width: `${rootDiskPct}%` }}></span>
+							<span className="flex-1 min-w-12 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
+								<span
+									className={cn(getMeterClass(rootDiskPct), "rounded-full")}
+									style={{ width: `${rootDiskPct}%` }}
+								></span>
 							</span>
 						</div>
 					</div>
@@ -535,8 +538,8 @@ function DiskCellWithMultiple(info: CellContext<SystemRecord, unknown>) {
 								</div>
 								<div className="flex gap-2 items-center tabular-nums text-xs">
 									<span className="min-w-7">{decimalString(pct, pct >= 10 ? 1 : 2)}%</span>
-									<span className="flex-1 min-w-12 grid bg-muted h-2.5 rounded-sm overflow-hidden">
-										<span className={getMeterClass(pct)} style={{ width: `${pct}%` }}></span>
+									<span className="flex-1 min-w-12 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
+										<span className={cn(getMeterClass(pct), "rounded-full")} style={{ width: `${pct}%` }}></span>
 									</span>
 								</div>
 							</div>
@@ -552,7 +555,7 @@ export function IndicatorDot({ system, className }: { system: SystemRecord; clas
 	className ||= STATUS_COLORS[system.status as keyof typeof STATUS_COLORS] || ""
 	return (
 		<span
-			className={cn("shrink-0 size-2 rounded-full", className)}
+			className={cn("shrink-0 size-2.5 rounded-full shadow-sm", className)}
 			// style={{ marginBottom: "-1px" }}
 		/>
 	)

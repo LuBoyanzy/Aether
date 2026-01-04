@@ -336,7 +336,7 @@ const AllSystemsTable = memo(
 
 		const virtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
 			count: rows.length,
-			estimateSize: () => (rows.length > 10 ? 56 : 60),
+			estimateSize: () => (rows.length > 10 ? 60 : 64),
 			getScrollElement: () => scrollRef.current,
 			overscan: 5,
 		})
@@ -369,6 +369,7 @@ const AllSystemsTable = memo(
 											virtualRow={virtualRow}
 											length={rows.length}
 											colLength={colLength}
+											index={virtualRow.index}
 										/>
 									)
 								})
@@ -411,11 +412,13 @@ const SystemTableRow = memo(
 		row,
 		virtualRow,
 		colLength,
+		index,
 	}: {
 		row: Row<SystemRecord>
 		virtualRow: VirtualItem
 		length: number
 		colLength: number
+		index: number
 	}) => {
 		const system = row.original
 		const { t } = useLingui()
@@ -423,8 +426,11 @@ const SystemTableRow = memo(
 			return (
 				<TableRow
 					// data-state={row.getIsSelected() && "selected"}
-					className={cn("cursor-pointer transition-opacity relative safari:transform-3d", {
+					className={cn("cursor-pointer transition-colors relative safari:transform-3d", {
 						"opacity-50": system.status === SystemStatus.Paused,
+						"bg-muted/30": index % 2 === 1,
+						"hover:bg-muted/50": index % 2 === 0,
+						"hover:bg-muted/60": index % 2 === 1,
 					})}
 				>
 					{row.getVisibleCells().map((cell) => (
@@ -434,14 +440,14 @@ const SystemTableRow = memo(
 								width: cell.column.getSize(),
 								height: virtualRow.size,
 							}}
-							className="py-0"
+							className="py-1"
 						>
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
 						</TableCell>
 					))}
 				</TableRow>
 			)
-		}, [system, system.status, colLength, t])
+		}, [system, system.status, colLength, t, index])
 	}
 )
 

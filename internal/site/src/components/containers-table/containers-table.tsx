@@ -48,36 +48,34 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 
 	useEffect(() => {
 		function fetchData(systemId?: string) {
-				pb.collection<ContainerRecord>("containers")
-					.getList(0, 2000, {
-						fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
-						filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
-					})
-				.then(
-					({ items }) => {
-						if (items.length === 0) {
-							setData([]);
-							return;
-						}
-						setData((curItems) => {
-							const lastUpdated = Math.max(items[0].updated, items.at(-1)?.updated ?? 0)
-							const containerIds = new Set()
-							const newItems = []
-							for (const item of items) {
-								if (Math.abs(lastUpdated - item.updated) < 70_000) {
-									containerIds.add(item.id)
-									newItems.push(item)
-								}
-							}
-							for (const item of curItems ?? []) {
-								if (!containerIds.has(item.id) && lastUpdated - item.updated < 70_000) {
-									newItems.push(item)
-								}
-							}
-							return newItems
-						})
+			pb.collection<ContainerRecord>("containers")
+				.getList(0, 2000, {
+					fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
+					filter: systemId ? pb.filter("system={:system}", { system: systemId }) : undefined,
+				})
+				.then(({ items }) => {
+					if (items.length === 0) {
+						setData([])
+						return
 					}
-				)
+					setData((curItems) => {
+						const lastUpdated = Math.max(items[0].updated, items.at(-1)?.updated ?? 0)
+						const containerIds = new Set()
+						const newItems = []
+						for (const item of items) {
+							if (Math.abs(lastUpdated - item.updated) < 70_000) {
+								containerIds.add(item.id)
+								newItems.push(item)
+							}
+						}
+						for (const item of curItems ?? []) {
+							if (!containerIds.has(item.id) && lastUpdated - item.updated < 70_000) {
+								newItems.push(item)
+							}
+						}
+						return newItems
+					})
+				})
 		}
 
 		// initial load
@@ -124,13 +122,13 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 		onGlobalFilterChange: setGlobalFilter,
 		globalFilterFn: (row, _columnId, filterValue) => {
 			const container = row.original
-				const systemName = $allSystemsById.get()[container.system]?.name ?? ""
-				const id = container.id ?? ""
-				const name = container.name ?? ""
-				const status = container.status ?? ""
-				const uptimeLabel = formatSecondsToHuman(container.uptime ?? 0)
-				const image = container.image ?? ""
-				const searchString = `${systemName} ${id} ${name} ${uptimeLabel} ${status} ${image}`.toLowerCase()
+			const systemName = $allSystemsById.get()[container.system]?.name ?? ""
+			const id = container.id ?? ""
+			const name = container.name ?? ""
+			const status = container.status ?? ""
+			const uptimeLabel = formatSecondsToHuman(container.uptime ?? 0)
+			const image = container.image ?? ""
+			const searchString = `${systemName} ${id} ${name} ${uptimeLabel} ${status} ${image}`.toLowerCase()
 
 			return (filterValue as string)
 				.toLowerCase()
@@ -205,7 +203,7 @@ const AllContainersTable = memo(function AllContainersTable({
 
 	const virtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
 		count: rows.length,
-		estimateSize: () => 54,
+		estimateSize: () => 58,
 		getScrollElement: () => scrollRef.current,
 		overscan: 5,
 	})
@@ -231,7 +229,15 @@ const AllContainersTable = memo(function AllContainersTable({
 						{rows.length ? (
 							virtualRows.map((virtualRow) => {
 								const row = rows[virtualRow.index]
-								return <ContainerTableRow key={row.id} row={row} virtualRow={virtualRow} openSheet={openSheet} />
+								return (
+									<ContainerTableRow
+										key={row.id}
+										row={row}
+										virtualRow={virtualRow}
+										openSheet={openSheet}
+										index={virtualRow.index}
+									/>
+								)
 							})
 						) : (
 							<TableRow>
@@ -336,12 +342,12 @@ function ContainerSheet({
 		setLogsDisplay("")
 		setInfoDisplay("")
 		if (!container) return
-			;(async () => {
-				const [logsHtml, infoHtml] = await Promise.all([getLogsHtml(container), getInfoHtml(container)])
-				setLogsDisplay(logsHtml)
-				setInfoDisplay(infoHtml)
-				setTimeout(scrollLogsToBottom, 20)
-			})()
+		;(async () => {
+			const [logsHtml, infoHtml] = await Promise.all([getLogsHtml(container), getInfoHtml(container)])
+			setLogsDisplay(logsHtml)
+			setInfoDisplay(infoHtml)
+			setTimeout(scrollLogsToBottom, 20)
+		})()
 	}, [container])
 
 	return (
@@ -364,19 +370,19 @@ function ContainerSheet({
 				<SheetContent className="w-full sm:max-w-220 p-2">
 					<SheetHeader>
 						<SheetTitle>{container.name}</SheetTitle>
-							<SheetDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
-								<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
-									{$allSystemsById.get()[container.system]?.name ?? ""}
-								</Link>
-								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+						<SheetDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
+							<Link className="hover:underline" href={getPagePath($router, "system", { id: container.system })}>
+								{$allSystemsById.get()[container.system]?.name ?? ""}
+							</Link>
+							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
 							{container.status}
 							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
 							{container.image}
-								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-								{container.id}
-								<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
-								{formatSecondsToHuman(container.uptime ?? 0) || "—"}
-							</SheetDescription>
+							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+							{container.id}
+							<Separator orientation="vertical" className="h-2.5 bg-muted-foreground opacity-70" />
+							{formatSecondsToHuman(container.uptime ?? 0) || "—"}
+						</SheetDescription>
 					</SheetHeader>
 					<div className="px-3 pb-3 -mt-4 flex flex-col gap-3 h-full items-start">
 						<div className="flex items-center w-full">
@@ -453,21 +459,27 @@ const ContainerTableRow = memo(function ContainerTableRow({
 	row,
 	virtualRow,
 	openSheet,
+	index,
 }: {
 	row: Row<ContainerRecord>
 	virtualRow: VirtualItem
 	openSheet: (container: ContainerRecord) => void
+	index: number
 }) {
 	return (
 		<TableRow
 			data-state={row.getIsSelected() && "selected"}
-			className="cursor-pointer transition-opacity"
+			className={cn("cursor-pointer transition-colors", {
+				"bg-muted/30": index % 2 === 1,
+				"hover:bg-muted/50": index % 2 === 0,
+				"hover:bg-muted/60": index % 2 === 1,
+			})}
 			onClick={() => openSheet(row.original)}
 		>
 			{row.getVisibleCells().map((cell) => (
 				<TableCell
 					key={cell.id}
-					className="py-0"
+					className="py-1"
 					style={{
 						height: virtualRow.size,
 					}}
