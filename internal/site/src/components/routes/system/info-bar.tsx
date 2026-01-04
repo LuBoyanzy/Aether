@@ -7,10 +7,11 @@ import {
 	CpuIcon,
 	GlobeIcon,
 	LayoutGridIcon,
+	ZapIcon,
 	MemoryStickIcon,
 	MonitorIcon,
+	PackageIcon,
 	Rows,
-	LayoutGridIcon,
 } from "lucide-react"
 import { useMemo } from "react"
 import ChartTimeSelect from "@/components/charts/chart-time-select"
@@ -103,7 +104,10 @@ export default function InfoBar({
 				value: cpuModel,
 				Icon: CpuIcon,
 				hide: !cpuModel,
-				label: `${plural(cores, { one: "# core", other: "# cores" })} / ${plural(threads, { one: "# thread", other: "# threads" })}${arch ? ` / ${arch}` : ""}`,
+				label: `${plural(cores, { one: "# core", other: "# cores" })} / ${plural(threads, {
+					one: "# thread",
+					other: "# threads",
+				})}${arch ? ` / ${arch}` : ""}`,
 			},
 		] as {
 			value: string | number | undefined
@@ -125,15 +129,15 @@ export default function InfoBar({
 		if (cudaVersion) {
 			info.push({
 				value: `CUDA ${cudaVersion}`,
-				Icon: LayoutGridIcon,
-				label: "CUDA",
+				Icon: ZapIcon,
+				label: "CUDA Version",
 			})
 		}
 
 		if (nvidiaCTK) {
 			info.push({
 				value: `CTK ${nvidiaCTK}`,
-				Icon: Rows,
+				Icon: PackageIcon,
 				label: "NVIDIA Container Toolkit",
 			})
 		}
@@ -197,13 +201,13 @@ export default function InfoBar({
 								return null
 							}
 							const content = (
-								<div className="flex gap-1.5 items-center">
-									<Icon className="h-4 w-4" /> {value}
+								<div className="flex gap-1.5 items-center px-2.5 py-1 rounded-md bg-muted/40 border border-primary/10 text-muted-foreground/90 hover:text-primary transition-colors hover:bg-muted/60 hover:border-primary/20">
+									<Icon className="h-3.5 w-3.5 opacity-70" />
+									<span className="font-medium text-foreground/90">{value}</span>
 								</div>
 							)
 							return (
 								<div key={value} className="contents">
-									<Separator orientation="vertical" className="h-4 bg-primary/30" />
 									{label ? (
 										<TooltipProvider>
 											<Tooltip delayDuration={150}>

@@ -27,3 +27,4 @@ local-dev.pids
 
 .trae/
 .vscode/
+.codex/
