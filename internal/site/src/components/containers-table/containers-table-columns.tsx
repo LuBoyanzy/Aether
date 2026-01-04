@@ -3,16 +3,15 @@ import { Button } from "@/components/ui/button"
 import { cn, decimalString, formatBytes, formatSecondsToHuman, hourWithSeconds, getMeterState } from "@/lib/utils"
 import type { ContainerRecord } from "@/types"
 import {
+	ActivityIcon,
 	ArrowUpDownIcon,
 	ClockIcon,
 	ContainerIcon,
-	CpuIcon,
-	LayersIcon,
-	MemoryStickIcon,
 	ServerIcon,
+	LayersIcon,
 	TimerIcon,
 } from "lucide-react"
-import { EthernetIcon, HourglassIcon } from "../ui/icons"
+import { HourglassIcon } from "../ui/icons"
 import { t } from "@lingui/core/macro"
 import { $allSystemsById } from "@/lib/stores"
 import { useStore } from "@nanostores/react"
@@ -72,58 +71,55 @@ export const containerChartCols: ColumnDef<ContainerRecord>[] = [
 	// 	},
 	// },
 	{
-		id: "cpu",
+		id: "usage",
 		accessorFn: (record) => record.cpu,
 		invertSorting: true,
-		header: ({ column }) => <HeaderButton column={column} name={t`CPU`} Icon={CpuIcon} />,
-		cell: ({ getValue }) => {
-			const val = getValue() as number
-			const threshold = getMeterState(val)
+		header: ({ column }) => <HeaderButton column={column} name={t`Usage`} Icon={ActivityIcon} />,
+		cell: ({ row }) => {
+			const { cpu, memory, net } = row.original
+			// CPU
+			const threshold = getMeterState(cpu)
 			const meterClass = cn(
 				"h-full rounded-full",
 				(threshold === MeterState.Good && STATUS_COLORS.up) ||
 					(threshold === MeterState.Warn && STATUS_COLORS.pending) ||
 					STATUS_COLORS.down
 			)
+			// Memory
+			const memFormatted = formatBytes(memory, false, undefined, true)
+			// Net
+			const netFormatted = formatBytes(net, true, undefined, true)
+
 			return (
-				<div className="flex gap-2 items-center tabular-nums tracking-tight w-full ms-1.5">
-					<span className="min-w-[3.5em] shrink-0">{`${decimalString(val, val >= 10 ? 1 : 2)}%`}</span>
-					<span className="flex-1 min-w-12 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
-						<span className={meterClass} style={{ width: `${val}%` }}></span>
-					</span>
+				<div className="flex flex-col gap-1.5 w-full max-w-[200px] text-xs">
+					{/* CPU */}
+					<div className="flex items-center gap-2">
+						<span className="font-semibold text-muted-foreground/70 w-8">CPU</span>
+						<span className="tabular-nums font-medium w-12 text-foreground/90">
+							{decimalString(cpu, cpu >= 10 ? 1 : 2)}%
+						</span>
+						<div className="h-1.5 flex-1 bg-muted/30 rounded-full overflow-hidden">
+							<div className={meterClass} style={{ width: `${cpu}%` }} />
+						</div>
+					</div>
+					{/* Mem & Net */}
+					<div className="grid grid-cols-2 gap-4">
+						<div className="flex items-center gap-2 overflow-hidden">
+							<span className="font-semibold text-muted-foreground/70 w-8">MEM</span>
+							<span className="tabular-nums truncate text-foreground/90">
+								{decimalString(memFormatted.value, memFormatted.value >= 10 ? 1 : 2)}
+								<span className="text-muted-foreground/60 text-[10px] ms-0.5">{memFormatted.unit}</span>
+							</span>
+						</div>
+						<div className="flex items-center gap-2 overflow-hidden">
+							<span className="font-semibold text-muted-foreground/70 w-8">NET</span>
+							<span className="tabular-nums truncate text-foreground/90">
+								{decimalString(netFormatted.value, netFormatted.value >= 10 ? 1 : 2)}
+								<span className="text-muted-foreground/60 text-[10px] ms-0.5">{netFormatted.unit}</span>
+							</span>
+						</div>
+					</div>
 				</div>
-			)
-		},
-	},
-	{
-		id: "memory",
-		accessorFn: (record) => record.memory,
-		invertSorting: true,
-		header: ({ column }) => <HeaderButton column={column} name={t`Memory`} Icon={MemoryStickIcon} />,
-		cell: ({ getValue }) => {
-			const val = getValue() as number
-			const formatted = formatBytes(val, false, undefined, true)
-			return (
-				<span className="ms-1.5 tabular-nums">
-					<span className="font-medium">{decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)}</span>
-					<span className="text-muted-foreground text-xs ms-1">{formatted.unit}</span>
-				</span>
-			)
-		},
-	},
-	{
-		id: "net",
-		accessorFn: (record) => record.net,
-		invertSorting: true,
-		header: ({ column }) => <HeaderButton column={column} name={t`Net`} Icon={EthernetIcon} />,
-		cell: ({ getValue }) => {
-			const val = getValue() as number
-			const formatted = formatBytes(val, true, undefined, true)
-			return (
-				<span className="ms-1.5 tabular-nums">
-					<span className="font-medium">{decimalString(formatted.value, formatted.value >= 10 ? 1 : 2)}</span>
-					<span className="text-muted-foreground text-xs ms-1">{formatted.unit}</span>
-				</span>
 			)
 		},
 	},
