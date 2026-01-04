@@ -54,6 +54,22 @@ export default function Navbar() {
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Link
+							href={basePath}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label={t`All Systems`}
+						>
+							<ServerIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>
+							<Trans>All Systems</Trans>
+						</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
 							href={getPagePath($router, "containers")}
 							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
 							aria-label={t`Containers`}
@@ -62,7 +78,9 @@ export default function Navbar() {
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p><Trans>Containers</Trans></p>
+						<p>
+							<Trans>Containers</Trans>
+						</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>
@@ -86,7 +104,9 @@ export default function Navbar() {
 						</div>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p><Trans>Language</Trans></p>
+						<p>
+							<Trans>Language</Trans>
+						</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>
@@ -96,7 +116,9 @@ export default function Navbar() {
 						</div>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p><Trans>Toggle theme</Trans></p>
+						<p>
+							<Trans>Toggle theme</Trans>
+						</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>
@@ -110,7 +132,9 @@ export default function Navbar() {
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p><Trans>Settings</Trans></p>
+						<p>
+							<Trans>Settings</Trans>
+						</p>
 					</TooltipContent>
 				</Tooltip>
 				<DropdownMenu>
@@ -123,7 +147,9 @@ export default function Navbar() {
 							</DropdownMenuTrigger>
 						</TooltipTrigger>
 						<TooltipContent>
-							<p><Trans>User Actions</Trans></p>
+							<p>
+								<Trans>User Actions</Trans>
+							</p>
 						</TooltipContent>
 					</Tooltip>
 					<DropdownMenuContent align={isReadOnlyUser() ? "end" : "center"} className="min-w-44">

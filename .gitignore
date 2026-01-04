@@ -24,3 +24,6 @@ dockerfile_agent_dev
 local-dev.sh
 local-dev.*.log
 local-dev.pids
+
+.trae/
+.vscode/
