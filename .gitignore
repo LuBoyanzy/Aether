@@ -28,3 +28,4 @@ local-dev.pids
 .trae/
 .vscode/
 .codex/
+Agent.md
