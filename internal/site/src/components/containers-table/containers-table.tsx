@@ -37,6 +37,7 @@ const syntaxTheme = "github-dark-dimmed"
 
 export default function ContainersTable({ systemId }: { systemId?: string }) {
 	const loadTime = Date.now()
+	const CONTAINER_FRESH_WINDOW_MS = 70_000
 	const [data, setData] = useState<ContainerRecord[] | undefined>(undefined)
 	const [sorting, setSorting] = useBrowserStorage<SortingState>(
 		`sort-c-${systemId ? 1 : 0}`,
@@ -84,6 +85,85 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 			})
 	}, [])
 
+	const refreshContainer = useCallback(
+		async (containerId: string) => {
+			try {
+				const latestList = await pb.collection<ContainerRecord>("containers").getList(1, 1, {
+					fields: "id,name,image,cpu,memory,net,uptime,status,system,updated",
+					filter: pb.filter("id={:id}", { id: containerId }),
+				})
+				const latest = latestList.items[0]
+				if (!latest) {
+					setData((curItems) => {
+						let mutated = false
+						const next = curItems?.filter((item) => {
+							const keep = item.id !== containerId
+							if (!keep) mutated = true
+							return keep
+						})
+						return next
+					})
+					return true
+				}
+\t\t\t\tconst normalizeTimestamp = (ts: number) => (ts < 1e11 ? ts * 1000 : ts)
+				const latestUpdated = normalizeTimestamp(latest.updated)
+				let mutated = false
+				let skipped = false
+				setData((curItems) => {
+					const items = curItems ?? []
+					const prev = items.find((item) => item.id === latest.id)
+					const prevUpdated = normalizeTimestamp(prev?.updated ?? 0)
+					const now = Date.now()
+					const staleByWindow = now - latestUpdated >= CONTAINER_FRESH_WINDOW_MS
+					const regressing = !!prev && latestUpdated < prevUpdated
+					// 若是回退数据或新记录且超出窗口，则跳过，避免引入过期数据
+					if (staleByWindow && (!prev || regressing)) {
+						skipped = true
+						return curItems
+					}
+					let replaced = false
+					const next = items.map((item) => {
+						if (item.id === latest.id) {
+							replaced = true
+							mutated = true
+							return latest
+						}
+						return item
+					})
+					if (!replaced && (!systemId || latest.system === systemId)) {
+						mutated = true
+						next.push(latest)
+					}
+					return next
+				})
+				if (skipped) {
+					return false
+				}
+				return mutated
+			} catch (err: any) {
+				if (err?.status === 404) {
+					setData((curItems) => curItems?.filter((item) => item.id !== containerId))
+					return true
+				}
+				if (err?.name === "AbortError" || err?.isAbort) return false
+				console.error("refresh container", err)
+				return false
+			}
+		},
+		[systemId]
+	)
+
+	const fallbackTimer = useRef<number | null>(null)
+
+	useEffect(() => {
+		return () => {
+			if (fallbackTimer.current) {
+				clearTimeout(fallbackTimer.current)
+				fallbackTimer.current = null
+			}
+		}
+	}, [])
+
 	useEffect(() => {
 		// initial load
 		fetchData(systemId)
@@ -111,6 +191,10 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 				return
 			}
 			try {
+				if (fallbackTimer.current) {
+					clearTimeout(fallbackTimer.current)
+					fallbackTimer.current = null
+				}
 				await pb.send("/api/aether/containers/operate", {
 					method: "POST",
 					body: {
@@ -120,14 +204,19 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 					},
 				})
 				toast({ title: t`Operation success`, description: `${op} ${record.name}` })
-				fetchData(systemId)
-				// 再次刷新以兜底同步（处理 Hub 更新的短暂延迟）
-				setTimeout(() => fetchData(systemId), 1500)
+				const updated = await refreshContainer(record.id)
+				if (!updated) {
+					// 若首次刷新未拿到新状态，延迟兜底再尝试单容器刷新
+					fallbackTimer.current = window.setTimeout(() => {
+						void refreshContainer(record.id)
+						fallbackTimer.current = null
+					}, 1000)
+				}
 			} catch (err: any) {
 				throw err
 			}
 		},
-		[systemId, fetchData]
+		[systemId, refreshContainer]
 	)
 
 	const table = useReactTable({
