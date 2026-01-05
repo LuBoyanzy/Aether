@@ -105,7 +105,7 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 					})
 					return true
 				}
-\t\t\t\tconst normalizeTimestamp = (ts: number) => (ts < 1e11 ? ts * 1000 : ts)
+				const normalizeTimestamp = (ts: number) => (ts < 1e11 ? ts * 1000 : ts)
 				const latestUpdated = normalizeTimestamp(latest.updated)
 				let mutated = false
 				let skipped = false
