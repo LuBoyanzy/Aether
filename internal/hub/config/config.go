@@ -3,12 +3,11 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/google/uuid"
 	"aether/internal/entities/system"
+	"github.com/google/uuid"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
@@ -44,7 +43,7 @@ func SyncSystems(e *core.ServeEvent) error {
 	}
 
 	if len(config.Systems) == 0 {
-		log.Println("No systems defined in config.yml.")
+		h.Logger().Info("No systems defined in config.yml.", "logger", "config")
 		return nil
 	}
 
@@ -79,7 +78,7 @@ func SyncSystems(e *core.ServeEvent) error {
 				if id, ok := userEmailToID[email]; ok {
 					userIDs = append(userIDs, id)
 				} else {
-					log.Printf("User %s not found", email)
+					h.Logger().Warn("User not found in config.yml", "logger", "config", "email", email)
 				}
 			}
 			system.Users = userIDs
@@ -156,7 +155,7 @@ func SyncSystems(e *core.ServeEvent) error {
 		}
 	}
 
-	log.Println("Systems synced with config.yml")
+	h.Logger().Info("Systems synced with config.yml", "logger", "config")
 	return nil
 }
 

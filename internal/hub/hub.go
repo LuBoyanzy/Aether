@@ -16,6 +16,7 @@ import (
 	"aether"
 	"aether/internal/alerts"
 	"aether/internal/hub/config"
+	"aether/internal/hub/logging"
 	"aether/internal/hub/systems"
 	"aether/internal/records"
 	"aether/internal/users"
@@ -235,6 +236,8 @@ func (h *Hub) registerMiddlewares(se *core.ServeEvent) {
 			return authorizeRequestWithEmail(e, e.Request.Header.Get(trustedHeader))
 		})
 	}
+
+	se.Router.Bind(logging.RequestMetaMiddleware())
 }
 
 // custom api routes
@@ -378,7 +381,19 @@ func (h *Hub) operateContainer(e *core.RequestEvent) error {
 
 	// trigger an immediate refresh so status/Uptime update quickly
 	if err := system.UpdateNow(); err != nil {
-		h.Logger().Error("operateContainer refresh failed", "system", payload.System, "container", payload.Container, "op", payload.Operation, "err", err)
+		h.Logger().Error(
+			"operateContainer refresh failed",
+			"logger",
+			"hub",
+			"system",
+			payload.System,
+			"container",
+			payload.Container,
+			"op",
+			payload.Operation,
+			"err",
+			err,
+		)
 		return e.JSON(http.StatusBadGateway, map[string]string{"error": "operation succeeded but refresh failed"})
 	}
 
@@ -473,8 +488,8 @@ func (h *Hub) GetSSHKey(dataDir string) (ssh.Signer, error) {
 	pubKeyBytes := ssh.MarshalAuthorizedKey(sshPrivate.PublicKey())
 	h.pubKey = strings.TrimSuffix(string(pubKeyBytes), "\n")
 
-	h.Logger().Info("ed25519 key pair generated successfully.")
-	h.Logger().Info("Saved to: " + privateKeyPath)
+	h.Logger().Info("ed25519 key pair generated successfully.", "logger", "hub")
+	h.Logger().Info("Saved to: "+privateKeyPath, "logger", "hub")
 
 	return sshPrivate, err
 }

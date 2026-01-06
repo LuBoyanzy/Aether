@@ -7,11 +7,14 @@ require (
 	github.com/coreos/go-systemd/v22 v22.6.0
 	github.com/distatus/battery v0.11.0
 	github.com/ebitengine/purego v0.9.1
+	github.com/fatih/color v1.18.0
 	github.com/fxamacker/cbor/v2 v2.9.0
 	github.com/gliderlabs/ssh v0.3.8
 	github.com/google/uuid v1.6.0
 	github.com/lxzan/gws v1.8.9
+	github.com/mattn/go-isatty v0.0.20
 	github.com/nicholas-fedor/shoutrrr v0.12.1
+	github.com/petermattis/goid v0.0.0-20251121121749-a11dd1a45f9a
 	github.com/pocketbase/dbx v1.11.0
 	github.com/pocketbase/pocketbase v0.34.0
 	github.com/shirou/gopsutil/v4 v4.25.10
@@ -33,7 +36,6 @@ require (
 	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/domodwyer/mailyak/v3 v3.6.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/fatih/color v1.18.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.11 // indirect
 	github.com/ganigeorgiev/fexpr v0.5.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
@@ -45,7 +47,6 @@ require (
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20251013123823-9fd1530e3ec3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect

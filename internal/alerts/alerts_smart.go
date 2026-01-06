@@ -25,7 +25,7 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 	// Fetch the system record to get the name and users
 	systemRecord, err := e.App.FindRecordById("systems", systemID)
 	if err != nil {
-		e.App.Logger().Error("Failed to find system for SMART alert", "err", err, "systemID", systemID)
+		e.App.Logger().Error("Failed to find system for SMART alert", "logger", "alerts", "err", err, "systemID", systemID)
 		return e.Next()
 	}
 
@@ -58,10 +58,9 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 			Link:     am.hub.MakeLink("system", systemID),
 			LinkText: "View " + systemName,
 		}); err != nil {
-			e.App.Logger().Error("Failed to send SMART alert", "err", err, "userID", userID)
+			e.App.Logger().Error("Failed to send SMART alert", "logger", "alerts", "err", err, "userID", userID)
 		}
 	}
 
 	return e.Next()
 }
-

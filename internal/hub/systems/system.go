@@ -161,7 +161,7 @@ func (sys *System) handlePaused() {
 	} else {
 		// Send a ping to the agent to keep the connection alive if the system is paused
 		if err := sys.WsConn.Ping(); err != nil {
-			sys.manager.hub.Logger().Warn("Failed to ping agent", "system", sys.Id, "err", err)
+			sys.manager.hub.Logger().Warn("Failed to ping agent", "logger", "systems", "system", sys.Id, "err", err)
 			_ = sys.manager.RemoveSystem(sys.Id)
 		}
 	}
@@ -351,7 +351,7 @@ func (sys *System) setDown(originalError error) error {
 		return err
 	}
 	if originalError != nil {
-		sys.manager.hub.Logger().Error("System down", "system", record.GetString("name"), "err", originalError)
+		sys.manager.hub.Logger().Error("System down", "logger", "systems", "system", record.GetString("name"), "err", originalError)
 	}
 	record.Set("status", down)
 	return sys.manager.hub.SaveNoValidate(record)
@@ -650,7 +650,7 @@ func (sys *System) runSSHOperation(timeout time.Duration, retries int, operation
 			if attempt >= retries {
 				return err
 			}
-			sys.manager.hub.Logger().Warn("Session closed. Retrying...", "host", sys.Host, "port", sys.Port, "err", err)
+			sys.manager.hub.Logger().Warn("Session closed. Retrying...", "logger", "systems", "host", sys.Host, "port", sys.Port, "err", err)
 			sys.closeSSHConnection()
 			continue
 		}

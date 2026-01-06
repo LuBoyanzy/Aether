@@ -2,7 +2,6 @@
 package users
 
 import (
-	"log"
 	"net/http"
 
 	"aether/internal/migrations"
@@ -48,7 +47,7 @@ func (um *UserManager) InitializeUserSettings(e *core.RecordEvent) error {
 		"id": record.GetString("user"),
 	}).One(&user)
 	if err != nil {
-		log.Println("failed to get user email", "err", err)
+		e.App.Logger().Error("failed to get user email", "logger", "users", "err", err)
 		return err
 	}
 	settings.Emails = []string{user.Email}

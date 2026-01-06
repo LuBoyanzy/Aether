@@ -9,6 +9,7 @@ import (
 
 	"aether"
 	"aether/internal/hub"
+	"aether/internal/hub/logging"
 	_ "aether/internal/migrations"
 
 	"github.com/pocketbase/pocketbase"
@@ -28,6 +29,7 @@ func main() {
 	}
 
 	baseApp := getBaseApp()
+	logging.Init(baseApp)
 	h := hub.NewHub(baseApp)
 	if err := h.StartHub(); err != nil {
 		log.Fatal(err)

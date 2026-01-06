@@ -179,7 +179,7 @@ func (am *AlertManager) IsNotificationSilenced(userID, systemID string) bool {
 func (am *AlertManager) SendAlert(data AlertMessageData) error {
 	// Check if alert is silenced
 	if am.IsNotificationSilenced(data.UserID, data.SystemID) {
-		am.hub.Logger().Info("Notification silenced", "user", data.UserID, "system", data.SystemID, "title", data.Title)
+		am.hub.Logger().Info("Notification silenced", "logger", "alerts", "user", data.UserID, "system", data.SystemID, "title", data.Title)
 		return nil
 	}
 
@@ -197,12 +197,12 @@ func (am *AlertManager) SendAlert(data AlertMessageData) error {
 		Webhooks: []string{},
 	}
 	if err := record.UnmarshalJSONField("settings", &userAlertSettings); err != nil {
-		am.hub.Logger().Error("Failed to unmarshal user settings", "err", err)
+		am.hub.Logger().Error("Failed to unmarshal user settings", "logger", "alerts", "err", err)
 	}
 	// send alerts via webhooks
 	for _, webhook := range userAlertSettings.Webhooks {
 		if err := am.SendShoutrrrAlert(webhook, data.Title, data.Message, data.Link, data.LinkText); err != nil {
-			am.hub.Logger().Error("Failed to send shoutrrr alert", "err", err)
+			am.hub.Logger().Error("Failed to send shoutrrr alert", "logger", "alerts", "err", err)
 		}
 	}
 	// send alerts via email
@@ -226,7 +226,7 @@ func (am *AlertManager) SendAlert(data AlertMessageData) error {
 	if err != nil {
 		return err
 	}
-	am.hub.Logger().Info("Sent email alert", "to", message.To, "subj", message.Subject)
+	am.hub.Logger().Info("Sent email alert", "logger", "alerts", "to", message.To, "subj", message.Subject)
 	return nil
 }
 
@@ -276,9 +276,9 @@ func (am *AlertManager) SendShoutrrrAlert(notificationUrl, title, message, link,
 	err = shoutrrr.Send(parsedURL.String(), message)
 
 	if err == nil {
-		am.hub.Logger().Info("Sent shoutrrr alert", "title", title)
+		am.hub.Logger().Info("Sent shoutrrr alert", "logger", "alerts", "title", title)
 	} else {
-		am.hub.Logger().Error("Error sending shoutrrr alert", "err", err)
+		am.hub.Logger().Error("Error sending shoutrrr alert", "logger", "alerts", "err", err)
 		return err
 	}
 	return nil

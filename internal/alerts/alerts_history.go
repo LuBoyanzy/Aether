@@ -49,7 +49,7 @@ func resolveAlertHistoryRecord(app core.App, alertRecordID string) error {
 	alertHistoryRecord.Set("resolved", time.Now().UTC())
 	err = app.Save(alertHistoryRecord)
 	if err != nil {
-		app.Logger().Error("Failed to resolve alert history", "err", err)
+		app.Logger().Error("Failed to resolve alert history", "logger", "alerts", "err", err)
 	}
 	return err
 }
@@ -68,7 +68,7 @@ func createAlertHistoryRecord(app core.App, alertRecord *core.Record) (alertHist
 	alertHistoryRecord.Set("value", alertRecord.GetFloat("value"))
 	err = app.Save(alertHistoryRecord)
 	if err != nil {
-		app.Logger().Error("Failed to save alert history", "err", err)
+		app.Logger().Error("Failed to save alert history", "logger", "alerts", "err", err)
 	}
 	return alertHistoryRecord, err
 }

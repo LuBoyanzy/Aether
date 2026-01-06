@@ -4,7 +4,6 @@ package records
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math"
 	"strings"
 	"time"
@@ -154,7 +153,7 @@ func (rm *RecordManager) CreateLongerRecords() {
 						longerRecord.Set("stats", rm.AverageContainerStats(db, recordIds))
 					}
 					if err := txApp.SaveNoValidate(longerRecord); err != nil {
-						log.Println("failed to save longer record", "err", err)
+						txApp.Logger().Error("failed to save longer record", "logger", "records", "err", err)
 					}
 				}
 			}

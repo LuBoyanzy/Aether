@@ -149,7 +149,7 @@ func (sm *SystemManager) onRecordCreate(e *core.RecordEvent) error {
 // It adds the new system to the manager to begin monitoring.
 func (sm *SystemManager) onRecordAfterCreateSuccess(e *core.RecordEvent) error {
 	if err := sm.AddRecord(e.Record, nil); err != nil {
-		e.App.Logger().Error("Error adding record", "err", err)
+		e.App.Logger().Error("Error adding record", "logger", "systems", "err", err)
 	}
 	return e.Next()
 }
@@ -195,7 +195,7 @@ func (sm *SystemManager) onRecordAfterUpdateSuccess(e *core.RecordEvent) error {
 		}
 		// Start new monitoring session
 		if err := sm.AddRecord(e.Record, nil); err != nil {
-			e.App.Logger().Error("Error adding record", "err", err)
+			e.App.Logger().Error("Error adding record", "logger", "systems", "err", err)
 		}
 		_ = deactivateAlerts(e.App, e.Record.Id)
 		return e.Next()
@@ -209,14 +209,14 @@ func (sm *SystemManager) onRecordAfterUpdateSuccess(e *core.RecordEvent) error {
 	// Trigger system alerts when system comes online
 	if newStatus == up {
 		if err := sm.hub.HandleSystemAlerts(e.Record, system.data); err != nil {
-			e.App.Logger().Error("Error handling system alerts", "err", err)
+			e.App.Logger().Error("Error handling system alerts", "logger", "systems", "err", err)
 		}
 	}
 
 	// Trigger status change alerts for up/down transitions
 	if (newStatus == down && prevStatus == up) || (newStatus == up && prevStatus == down) {
 		if err := sm.hub.HandleStatusAlerts(newStatus, e.Record); err != nil {
-			e.App.Logger().Error("Error handling status alerts", "err", err)
+			e.App.Logger().Error("Error handling status alerts", "logger", "systems", "err", err)
 		}
 	}
 	return e.Next()
