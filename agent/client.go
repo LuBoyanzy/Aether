@@ -112,7 +112,7 @@ func (client *WebSocketClient) getOptions() *gws.ClientOption {
 		RequestHeader: http.Header{
 			"User-Agent": []string{getUserAgent()},
 			"X-Token":    []string{client.token},
-			"X-Aether":  []string{aether.Version},
+			"X-Aether":   []string{aether.Version},
 		},
 	}
 	return client.options
@@ -163,15 +163,23 @@ func (client *WebSocketClient) OnMessage(conn *gws.Conn, message *gws.Message) {
 
 	var HubRequest common.HubRequest[cbor.RawMessage]
 
-	err := cbor.Unmarshal(message.Data.Bytes(), &HubRequest)
+	data := message.Data.Bytes()
+	err := cbor.Unmarshal(data, &HubRequest)
 	if err != nil {
 		slog.Error("Error parsing message", "err", err)
 		return
 	}
 
+	requestID := formatRequestID(HubRequest.Id)
+	start := time.Now()
+	slog.Debug("WS request received", "action", HubRequest.Action, "requestID", requestID, "size", len(data))
+
 	if err := client.handleHubRequest(&HubRequest, HubRequest.Id); err != nil {
-		slog.Error("Error handling message", "err", err)
+		slog.Error("Error handling message", "action", HubRequest.Action, "requestID", requestID, "err", err)
+		slog.Debug("WS request done", "action", HubRequest.Action, "requestID", requestID, "durationMs", time.Since(start).Milliseconds(), "status", "error")
+		return
 	}
+	slog.Debug("WS request done", "action", HubRequest.Action, "requestID", requestID, "durationMs", time.Since(start).Milliseconds(), "status", "ok")
 }
 
 // OnPing handles WebSocket ping frames.
@@ -233,6 +241,7 @@ func (client *WebSocketClient) Close() {
 
 // handleHubRequest routes the request to the appropriate handler using the handler registry.
 func (client *WebSocketClient) handleHubRequest(msg *common.HubRequest[cbor.RawMessage], requestID *uint32) error {
+	slog.Debug("WS request dispatch", "action", msg.Action, "requestID", formatRequestID(requestID))
 	ctx := &HandlerContext{
 		Client:       client,
 		Agent:        client.agent,
@@ -242,6 +251,13 @@ func (client *WebSocketClient) handleHubRequest(msg *common.HubRequest[cbor.RawM
 		SendResponse: client.sendResponse,
 	}
 	return client.agent.handlerRegistry.Handle(ctx)
+}
+
+func formatRequestID(requestID *uint32) string {
+	if requestID == nil {
+		return "none"
+	}
+	return fmt.Sprintf("%d", *requestID)
 }
 
 // sendMessage encodes the given data to CBOR and sends it as a binary message over the WebSocket connection to the hub.

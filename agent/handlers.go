@@ -97,7 +97,24 @@ func (h *GetDataHandler) Handle(hctx *HandlerContext) error {
 	var options common.DataRequestOptions
 	_ = cbor.Unmarshal(hctx.Request.Data, &options)
 
+	requestID := formatRequestID(hctx.RequestID)
+	start := time.Now()
+	slog.Debug("GetData start", "requestID", requestID, "cacheTimeMs", options.CacheTimeMs, "includeDetails", options.IncludeDetails)
+
 	sysStats := hctx.Agent.gatherStats(options)
+	slog.Info(
+		"GetData done",
+		"requestID",
+		requestID,
+		"cacheTimeMs",
+		options.CacheTimeMs,
+		"durationMs",
+		time.Since(start).Milliseconds(),
+		"containers",
+		len(sysStats.Containers),
+		"systemdServices",
+		len(sysStats.SystemdServices),
+	)
 	return hctx.SendResponse(sysStats, hctx.RequestID)
 }
 
@@ -182,10 +199,14 @@ func (h *OperateContainerHandler) Handle(hctx *HandlerContext) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
 	defer cancel()
 
+	operateStart := time.Now()
+	slog.Info("Operate container start", "operation", req.Operation, "containerID", req.ContainerID)
 	if err := hctx.Agent.dockerManager.operateContainer(ctx, req.ContainerID, req.Operation, req.Signal); err != nil {
+		slog.Error("Operate container failed", "operation", req.Operation, "containerID", req.ContainerID, "durationMs", time.Since(operateStart).Milliseconds(), "err", err)
 		return err
 	}
 
+	slog.Info("Operate container done", "operation", req.Operation, "containerID", req.ContainerID, "durationMs", time.Since(operateStart).Milliseconds())
 	ack := fmt.Sprintf("%s ok", req.Operation)
 	return hctx.SendResponse(ack, hctx.RequestID)
 }

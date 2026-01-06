@@ -128,6 +128,9 @@ func (dm *dockerManager) shouldExcludeContainer(name string) bool {
 
 // Returns stats for all running containers with cache-time-aware delta tracking
 func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats, error) {
+	start := time.Now()
+	slog.Debug("Docker stats start", "cacheTimeMs", cacheTimeMs)
+	slog.Debug("Docker list start", "cacheTimeMs", cacheTimeMs)
 	resp, err := dm.client.Get("http://localhost/containers/json?all=1")
 	if err != nil {
 		slog.Error("Failed to list containers", "err", err)
@@ -139,7 +142,7 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 		slog.Error("Failed to decode containers list", "err", err)
 		return nil, err
 	}
-	slog.Info("Found containers", "count", len(dm.apiContainerList))
+	slog.Debug("Found containers", "count", len(dm.apiContainerList))
 
 	if dm.startedAtCache == nil {
 		dm.startedAtCache = make(map[string]time.Time)
@@ -189,11 +192,24 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 		}(ctr)
 	}
 
+	waitStart := time.Now()
+	slog.Debug("Docker stats wait", "cacheTimeMs", cacheTimeMs, "count", containersLength)
 	dm.wg.Wait()
+	slog.Debug(
+		"Docker stats wait done",
+		"cacheTimeMs",
+		cacheTimeMs,
+		"failed",
+		len(failedContainers),
+		"durationMs",
+		time.Since(waitStart).Milliseconds(),
+	)
 
 	// retry failed containers separately so we can run them in parallel (docker 24 bug)
 	if len(failedContainers) > 0 {
 		slog.Debug("Retrying failed containers", "count", len(failedContainers))
+		retryStart := time.Now()
+		slog.Debug("Docker stats retry start", "cacheTimeMs", cacheTimeMs, "count", len(failedContainers))
 		for i := range failedContainers {
 			ctr := failedContainers[i]
 			dm.queue()
@@ -205,6 +221,15 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 			}(ctr)
 		}
 		dm.wg.Wait()
+		slog.Debug(
+			"Docker stats retry done",
+			"cacheTimeMs",
+			cacheTimeMs,
+			"count",
+			len(failedContainers),
+			"durationMs",
+			time.Since(retryStart).Milliseconds(),
+		)
 	}
 
 	// populate final stats and remove old / invalid container stats
@@ -220,6 +245,7 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 	// prepare network trackers for next interval for this cache time
 	dm.cycleNetworkDeltasForCacheTime(cacheTimeMs)
 
+	slog.Debug("Docker stats done", "cacheTimeMs", cacheTimeMs, "count", len(stats), "durationMs", time.Since(start).Milliseconds())
 	return stats, nil
 }
 
@@ -478,6 +504,19 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 	startedAt := dm.getStartedAt(ctr)
 	running := isRunningState(state)
 	now := time.Now()
+	start := time.Now()
+
+	slog.Debug(
+		"Container stats start",
+		"container",
+		name,
+		"id",
+		ctr.IdShort,
+		"state",
+		state,
+		"cacheTimeMs",
+		cacheTimeMs,
+	)
 
 	// stats response (only for running/paused containers)
 	var resp *http.Response
@@ -520,8 +559,19 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 		stats.Uptime = calculateUptimeSeconds(startedAt)
 		// prune stale non-running containers beyond TTL
 		if time.Since(lastSeen) > 10*time.Minute {
-			dm.deleteContainerStatsSync(ctr.IdShort)
+			dm.deleteContainerStatsLocked(ctr.IdShort)
 		}
+		slog.Debug(
+			"Container stats skip",
+			"container",
+			name,
+			"id",
+			ctr.IdShort,
+			"state",
+			state,
+			"durationMs",
+			time.Since(start).Milliseconds(),
+		)
 		return nil
 	}
 
@@ -583,13 +633,21 @@ func (dm *dockerManager) updateContainerStats(ctr *container.ApiInfo, cacheTimeM
 	// store per-cache-time read time for Windows CPU percent calc
 	dm.lastCpuReadTime[cacheTimeMs][ctr.IdShort] = res.Read
 
+	slog.Debug(
+		"Container stats done",
+		"container",
+		name,
+		"id",
+		ctr.IdShort,
+		"durationMs",
+		time.Since(start).Milliseconds(),
+	)
 	return nil
 }
 
-// Delete container stats from map using mutex
-func (dm *dockerManager) deleteContainerStatsSync(id string) {
-	dm.containerStatsMutex.Lock()
-	defer dm.containerStatsMutex.Unlock()
+// deleteContainerStatsLocked 删除容器统计缓存。
+// 注意：调用方必须已持有 containerStatsMutex。
+func (dm *dockerManager) deleteContainerStatsLocked(id string) {
 	delete(dm.containerStatsMap, id)
 	for ct := range dm.lastCpuContainer {
 		delete(dm.lastCpuContainer[ct], id)
@@ -610,6 +668,13 @@ func (dm *dockerManager) deleteContainerStatsSync(id string) {
 			dm.networkRecvTrackers[ct].Delete(id)
 		}
 	}
+}
+
+// Delete container stats from map using mutex
+func (dm *dockerManager) deleteContainerStatsSync(id string) {
+	dm.containerStatsMutex.Lock()
+	defer dm.containerStatsMutex.Unlock()
+	dm.deleteContainerStatsLocked(id)
 }
 
 // Creates a new http client for Docker or Podman API

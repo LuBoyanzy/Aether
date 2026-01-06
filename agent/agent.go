@@ -162,14 +162,36 @@ func GetEnv(key string) (value string, exists bool) {
 }
 
 func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedData {
+	waitStart := time.Now()
+	slog.Debug("Gather stats requested", "cacheTimeMs", options.CacheTimeMs, "includeDetails", options.IncludeDetails)
 	a.Lock()
 	defer a.Unlock()
 
+	slog.Debug(
+		"Gather stats start",
+		"cacheTimeMs",
+		options.CacheTimeMs,
+		"includeDetails",
+		options.IncludeDetails,
+		"waitMs",
+		time.Since(waitStart).Milliseconds(),
+	)
+
+	processStart := time.Now()
 	cacheTimeMs := options.CacheTimeMs
 	useCache := cacheTimeMs > 0
 	data, isCached := a.cache.Get(cacheTimeMs)
 	if useCache && isCached {
 		slog.Debug("Cached data", "cacheTimeMs", cacheTimeMs)
+		slog.Debug(
+			"Gather stats done",
+			"cacheTimeMs",
+			cacheTimeMs,
+			"cached",
+			true,
+			"durationMs",
+			time.Since(processStart).Milliseconds(),
+		)
 		return data
 	}
 
@@ -186,11 +208,14 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	// slog.Info("System data", "data", data, "cacheTimeMs", cacheTimeMs)
 
 	if a.dockerManager != nil {
+		slog.Debug("Docker stats request", "cacheTimeMs", cacheTimeMs)
 		if containerStats, err := a.dockerManager.getDockerStats(cacheTimeMs); err == nil {
 			data.Containers = containerStats
 			slog.Debug("Containers", "data", data.Containers)
+			slog.Debug("Docker stats done", "cacheTimeMs", cacheTimeMs, "containers", len(containerStats))
 		} else {
 			slog.Debug("Containers", "err", err)
+			slog.Warn("Docker stats failed", "cacheTimeMs", cacheTimeMs, "err", err)
 		}
 	}
 
@@ -228,6 +253,19 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	if useCache {
 		a.cache.Set(data, cacheTimeMs)
 	}
+	slog.Debug(
+		"Gather stats done",
+		"cacheTimeMs",
+		cacheTimeMs,
+		"cached",
+		false,
+		"durationMs",
+		time.Since(processStart).Milliseconds(),
+		"containers",
+		len(data.Containers),
+		"systemdServices",
+		len(data.SystemdServices),
+	)
 	return data
 }
 
