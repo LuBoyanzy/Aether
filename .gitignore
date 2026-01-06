@@ -29,3 +29,4 @@ local-dev.pids
 .vscode/
 .codex/
 Agent.md
+helloagents/
