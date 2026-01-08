@@ -1789,6 +1789,538 @@ msgstr "You have read-only access"
 msgid "Your user settings have been updated."
 msgstr "Your user settings have been updated."
 
+#: src/components/docker/docker-tabs.tsx
+msgid "Overview"
+msgstr "Overview"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose"
+msgstr "Compose"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Images"
+msgstr "Images"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Networks"
+msgstr "Networks"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Volumes"
+msgstr "Volumes"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Registries"
+msgstr "Registries"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose Templates"
+msgstr "Compose Templates"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Config"
+msgstr "Config"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr "运行时间"
+
+msgid "API Version"
+msgstr "API Version"
+
+msgid "Architecture"
+msgstr "Architecture"
+
+msgid "Attachable"
+msgstr "Attachable"
+
+msgid "CPUs"
+msgstr "CPUs"
+
+msgid "Cgroup Driver"
+msgstr "Cgroup Driver"
+
+msgid "Compose Content"
+msgstr "Compose Content"
+
+msgid "Compose Logs"
+msgstr "Compose Logs"
+
+msgid "Compose project name"
+msgstr "Compose project name"
+
+msgid "Compose templates can be reused to deploy stacks quickly."
+msgstr "Compose templates can be reused to deploy stacks quickly."
+
+msgid "Config Content"
+msgstr "Config Content"
+
+msgid "Config Path"
+msgstr "Config Path"
+
+msgid "Config content is required"
+msgstr "Config content is required"
+
+msgid "Configure a new Docker network."
+msgstr "Configure a new Docker network."
+
+msgid "Configure a new Docker volume."
+msgstr "Configure a new Docker volume."
+
+msgid "Container Details"
+msgstr "Container Details"
+
+msgid "Container Logs"
+msgstr "Container Logs"
+
+msgid "Create Compose"
+msgstr "Create Compose"
+
+msgid "Create Network"
+msgstr "Create Network"
+
+msgid "Create Registry"
+msgstr "Create Registry"
+
+msgid "Create Template"
+msgstr "Create Template"
+
+msgid "Create Volume"
+msgstr "Create Volume"
+
+msgid "Daemon Configuration"
+msgstr "Daemon Configuration"
+
+msgid "Default daemon.json path"
+msgstr "Default daemon.json path"
+
+msgid "Delete Compose Project"
+msgstr "Delete Compose Project"
+
+msgid "Delete Image"
+msgstr "Delete Image"
+
+msgid "Delete Network"
+msgstr "Delete Network"
+
+msgid "Delete Registry"
+msgstr "Delete Registry"
+
+msgid "Delete Template"
+msgstr "Delete Template"
+
+msgid "Delete Volume"
+msgstr "Delete Volume"
+
+msgid "Docker"
+msgstr "Docker"
+
+msgid "Docker Root Dir"
+msgstr "Docker Root Dir"
+
+msgid "Docker config updated"
+msgstr "Docker config updated"
+
+msgid "Docker engine summary for the selected system."
+msgstr "Docker engine summary for the selected system."
+
+msgid "Driver"
+msgstr "Driver"
+
+msgid "Edit Registry"
+msgstr "Edit Registry"
+
+msgid "Edit Template"
+msgstr "Edit Template"
+
+msgid "Enable IPv6"
+msgstr "Enable IPv6"
+
+msgid "Engine Details"
+msgstr "Engine Details"
+
+msgid "Environment"
+msgstr "Environment"
+
+msgid "Failed to create network"
+msgstr "Failed to create network"
+
+msgid "Failed to create volume"
+msgstr "Failed to create volume"
+
+msgid "Failed to delete compose project"
+msgstr "Failed to delete compose project"
+
+msgid "Failed to delete compose template"
+msgstr "Failed to delete compose template"
+
+msgid "Failed to delete network"
+msgstr "Failed to delete network"
+
+msgid "Failed to delete registry"
+msgstr "Failed to delete registry"
+
+msgid "Failed to delete volume"
+msgstr "Failed to delete volume"
+
+msgid "Failed to load Docker config"
+msgstr "Failed to load Docker config"
+
+msgid "Failed to load Docker overview"
+msgstr "Failed to load Docker overview"
+
+msgid "Failed to load compose projects"
+msgstr "Failed to load compose projects"
+
+msgid "Failed to load compose templates"
+msgstr "Failed to load compose templates"
+
+msgid "Failed to load container details"
+msgstr "Failed to load container details"
+
+msgid "Failed to load container logs"
+msgstr "Failed to load container logs"
+
+msgid "Failed to load containers"
+msgstr "Failed to load containers"
+
+msgid "Failed to load images"
+msgstr "Failed to load images"
+
+msgid "Failed to load networks"
+msgstr "Failed to load networks"
+
+msgid "Failed to load registries"
+msgstr "Failed to load registries"
+
+msgid "Failed to load volumes"
+msgstr "Failed to load volumes"
+
+msgid "Failed to operate compose project"
+msgstr "Failed to operate compose project"
+
+msgid "Failed to operate container"
+msgstr "Failed to operate container"
+
+msgid "Failed to process image"
+msgstr "Failed to process image"
+
+msgid "Failed to remove image"
+msgstr "Failed to remove image"
+
+msgid "Failed to save compose project"
+msgstr "Failed to save compose project"
+
+msgid "Failed to save compose template"
+msgstr "Failed to save compose template"
+
+msgid "Failed to save registry"
+msgstr "Failed to save registry"
+
+msgid "Failed to update Docker config"
+msgstr "Failed to update Docker config"
+
+msgid "Filter containers..."
+msgstr "Filter containers..."
+
+msgid "Filter images..."
+msgstr "Filter images..."
+
+msgid "Filter networks..."
+msgstr "Filter networks..."
+
+msgid "Filter projects..."
+msgstr "Filter projects..."
+
+msgid "Filter registries..."
+msgstr "Filter registries..."
+
+msgid "Filter templates..."
+msgstr "Filter templates..."
+
+msgid "Filter volumes..."
+msgstr "Filter volumes..."
+
+msgid "Force removal"
+msgstr "Force removal"
+
+msgid "IPv6"
+msgstr "IPv6"
+
+msgid "Image ID"
+msgstr "Image ID"
+
+msgid "Image Logs"
+msgstr "Image Logs"
+
+msgid "Image name is required"
+msgstr "Image name is required"
+
+msgid "Image name or tag"
+msgstr "Image name or tag"
+
+msgid "Inspect"
+msgstr "Inspect"
+
+msgid "Internal"
+msgstr "Internal"
+
+msgid "Kernel Version"
+msgstr "Kernel Version"
+
+msgid "Kill"
+msgstr "Kill"
+
+msgid "Labels (JSON)"
+msgstr "Labels (JSON)"
+
+msgid "Latest output from compose."
+msgstr "Latest output from compose."
+
+msgid "Leave blank to keep unchanged"
+msgstr "Leave blank to keep unchanged"
+
+msgid "Loading"
+msgstr "Loading"
+
+msgid "Logging Driver"
+msgstr "Logging Driver"
+
+msgid "Maintain reusable Docker Compose templates."
+msgstr "Maintain reusable Docker Compose templates."
+
+msgid "Manage Docker Compose projects for the selected system."
+msgstr "Manage Docker Compose projects for the selected system."
+
+msgid "Manage Docker networks on the selected system."
+msgstr "Manage Docker networks on the selected system."
+
+msgid "Manage Docker volumes for persistent storage."
+msgstr "Manage Docker volumes for persistent storage."
+
+msgid "Manage local images and registries."
+msgstr "Manage local images and registries."
+
+msgid "Manage registry credentials for image pull and push."
+msgstr "Manage registry credentials for image pull and push."
+
+msgid "Manage running and stopped containers."
+msgstr "Manage running and stopped containers."
+
+msgid "Mountpoint"
+msgstr "Mountpoint"
+
+msgid "Name and content are required"
+msgstr "Name and content are required"
+
+msgid "Name and server are required"
+msgstr "Name and server are required"
+
+msgid "Network name"
+msgstr "Network name"
+
+msgid "Network name is required"
+msgstr "Network name is required"
+
+msgid "No compose projects found."
+msgstr "No compose projects found."
+
+msgid "No containers found."
+msgstr "No containers found."
+
+msgid "No details available."
+msgstr "No details available."
+
+msgid "No images found."
+msgstr "No images found."
+
+msgid "No logs available."
+msgstr "No logs available."
+
+msgid "No networks found."
+msgstr "No networks found."
+
+msgid "No registries found."
+msgstr "No registries found."
+
+msgid "No templates found."
+msgstr "No templates found."
+
+msgid "No volumes found."
+msgstr "No volumes found."
+
+msgid "None"
+msgstr "None"
+
+msgid "Operating System"
+msgstr "Operating System"
+
+msgid "Optional .env content"
+msgstr "Optional .env content"
+
+msgid "Optional description"
+msgstr "Optional description"
+
+msgid "Optional driver name"
+msgstr "Optional driver name"
+
+msgid "Optional driver options as JSON"
+msgstr "Optional driver options as JSON"
+
+msgid "Optional labels as JSON"
+msgstr "Optional labels as JSON"
+
+msgid "Optional registry"
+msgstr "Optional registry"
+
+msgid "Options (JSON)"
+msgstr "Options (JSON)"
+
+msgid "Paste daemon.json content"
+msgstr "Paste daemon.json content"
+
+msgid "Paste docker-compose.yml content"
+msgstr "Paste docker-compose.yml content"
+
+msgid "Please select a system to continue."
+msgstr "Please select a system to continue."
+
+msgid "Ports"
+msgstr "Ports"
+
+msgid "Provide a full docker-compose.yml content for deployment."
+msgstr "Provide a full docker-compose.yml content for deployment."
+
+msgid "Pull"
+msgstr "Pull"
+
+msgid "Pull Image"
+msgstr "Pull Image"
+
+msgid "Push"
+msgstr "Push"
+
+msgid "Push Image"
+msgstr "Push Image"
+
+msgid "Registry"
+msgstr "Registry"
+
+msgid "Registry name"
+msgstr "Registry name"
+
+msgid "Registry server"
+msgstr "Registry server"
+
+msgid "Registry username"
+msgstr "Registry username"
+
+msgid "Remove project files"
+msgstr "Remove project files"
+
+msgid "Restart Docker after update"
+msgstr "Restart Docker after update"
+
+msgid "Scope"
+msgstr "Scope"
+
+msgid "Select a registry if authentication is required."
+msgstr "Select a registry if authentication is required."
+
+msgid "Select a system to manage Docker resources."
+msgstr "Select a system to manage Docker resources."
+
+msgid "Server"
+msgstr "Server"
+
+msgid "Server Version"
+msgstr "Server Version"
+
+msgid "Show all"
+msgstr "Show all"
+
+msgid "Show stopped"
+msgstr "Show stopped"
+
+msgid "Size"
+msgstr "Size"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Stop"
+msgstr "Stop"
+
+msgid "Stopped"
+msgstr "Stopped"
+
+msgid "Storage Driver"
+msgstr "Storage Driver"
+
+msgid "Store credentials for private registries."
+msgstr "Store credentials for private registries."
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Template name"
+msgstr "Template name"
+
+msgid "This will remove the selected compose template."
+msgstr "This will remove the selected compose template."
+
+msgid "This will remove the selected image from the host."
+msgstr "This will remove the selected image from the host."
+
+msgid "This will remove the selected network."
+msgstr "This will remove the selected network."
+
+msgid "This will remove the selected registry credentials."
+msgstr "This will remove the selected registry credentials."
+
+msgid "This will remove the selected volume."
+msgstr "This will remove the selected volume."
+
+msgid "This will stop and remove the selected compose project."
+msgstr "This will stop and remove the selected compose project."
+
+msgid "Total Memory"
+msgstr "Total Memory"
+
+msgid "Unpause"
+msgstr "Unpause"
+
+msgid "Update Compose"
+msgstr "Update Compose"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "View and update Docker daemon configuration."
+msgstr "View and update Docker daemon configuration."
+
+msgid "Volume name"
+msgstr "Volume name"
+
+msgid "Volume name is required"
+msgstr "Volume name is required"
+
+msgid "Workdir"
+msgstr "Workdir"
+
+msgid "daemon.json not found; a new file will be created on save."
+msgstr "daemon.json not found; a new file will be created on save."
+
+msgid "Select a system"
+msgstr "Select a system"
+
+
+msgid "Restart"
+msgstr "Restart"
+
+msgid "Running"
+msgstr "Running"
+
+msgid "Save"
+msgstr "Save"
+

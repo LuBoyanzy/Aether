@@ -1,3 +1,5 @@
+// navbar.tsx 渲染顶部导航栏与快捷入口。
+// 包含系统、Docker、设置与用户操作入口。
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
@@ -72,14 +74,14 @@ export default function Navbar() {
 						<Link
 							href={getPagePath($router, "containers")}
 							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-							aria-label={t`Containers`}
+							aria-label={t`Docker`}
 						>
 							<ContainerIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
 						<p>
-							<Trans>Containers</Trans>
+							<Trans>Docker</Trans>
 						</p>
 					</TooltipContent>
 				</Tooltip>

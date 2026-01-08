@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fxamacker/cbor/v2"
 	"aether/internal/common"
+	"aether/internal/entities/docker"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
+	"github.com/fxamacker/cbor/v2"
 	"github.com/lxzan/gws"
 	"golang.org/x/crypto/ssh"
 )
@@ -122,6 +123,280 @@ func (ws *WsConn) RequestContainerOperate(ctx context.Context, req common.Contai
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
+// RequestDockerOverview requests Docker overview information via WebSocket.
+func (ws *WsConn) RequestDockerOverview(ctx context.Context) (docker.Overview, error) {
+	if !ws.IsConnected() {
+		return docker.Overview{}, gws.ErrConnClosed
+	}
+	req, err := ws.requestManager.SendRequest(ctx, common.GetDockerOverview, common.DockerOverviewRequest{})
+	if err != nil {
+		return docker.Overview{}, err
+	}
+	var result docker.Overview
+	handler := &dockerOverviewHandler{result: &result}
+	if err := ws.handleAgentRequest(req, handler); err != nil {
+		return docker.Overview{}, err
+	}
+	return result, nil
+}
+
+type dockerOverviewHandler struct {
+	BaseHandler
+	result *docker.Overview
+}
+
+func (h *dockerOverviewHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerInfo == nil {
+		return errors.New("no docker overview in response")
+	}
+	*h.result = *agentResponse.DockerInfo
+	return nil
+}
+
+// RequestDockerContainers requests Docker container list via WebSocket.
+func (ws *WsConn) RequestDockerContainers(ctx context.Context, req common.DockerContainerListRequest) ([]docker.Container, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.ListDockerContainers, req)
+	if err != nil {
+		return nil, err
+	}
+	var result []docker.Container
+	handler := &dockerContainersHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type dockerContainersHandler struct {
+	BaseHandler
+	result *[]docker.Container
+}
+
+func (h *dockerContainersHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerContainers == nil {
+		return errors.New("no docker containers in response")
+	}
+	*h.result = agentResponse.DockerContainers
+	return nil
+}
+
+// RequestDockerImages requests Docker image list via WebSocket.
+func (ws *WsConn) RequestDockerImages(ctx context.Context, req common.DockerImageListRequest) ([]docker.Image, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.ListDockerImages, req)
+	if err != nil {
+		return nil, err
+	}
+	var result []docker.Image
+	handler := &dockerImagesHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type dockerImagesHandler struct {
+	BaseHandler
+	result *[]docker.Image
+}
+
+func (h *dockerImagesHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerImages == nil {
+		return errors.New("no docker images in response")
+	}
+	*h.result = agentResponse.DockerImages
+	return nil
+}
+
+// RequestDockerNetworks requests Docker network list via WebSocket.
+func (ws *WsConn) RequestDockerNetworks(ctx context.Context) ([]docker.Network, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.ListDockerNetworks, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []docker.Network
+	handler := &dockerNetworksHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type dockerNetworksHandler struct {
+	BaseHandler
+	result *[]docker.Network
+}
+
+func (h *dockerNetworksHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerNetworks == nil {
+		return errors.New("no docker networks in response")
+	}
+	*h.result = agentResponse.DockerNetworks
+	return nil
+}
+
+// RequestDockerVolumes requests Docker volume list via WebSocket.
+func (ws *WsConn) RequestDockerVolumes(ctx context.Context) ([]docker.Volume, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.ListDockerVolumes, nil)
+	if err != nil {
+		return nil, err
+	}
+	var result []docker.Volume
+	handler := &dockerVolumesHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type dockerVolumesHandler struct {
+	BaseHandler
+	result *[]docker.Volume
+}
+
+func (h *dockerVolumesHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerVolumes == nil {
+		return errors.New("no docker volumes in response")
+	}
+	*h.result = agentResponse.DockerVolumes
+	return nil
+}
+
+// RequestDockerComposeProjects requests Docker compose projects via WebSocket.
+func (ws *WsConn) RequestDockerComposeProjects(ctx context.Context) ([]docker.ComposeProject, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.ListDockerComposeProjects, common.DockerComposeProjectListRequest{})
+	if err != nil {
+		return nil, err
+	}
+	var result []docker.ComposeProject
+	handler := &dockerComposeProjectsHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type dockerComposeProjectsHandler struct {
+	BaseHandler
+	result *[]docker.ComposeProject
+}
+
+func (h *dockerComposeProjectsHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerComposeProjects == nil {
+		return errors.New("no docker compose projects in response")
+	}
+	*h.result = agentResponse.DockerComposeProjects
+	return nil
+}
+
+// RequestDockerConfig requests Docker daemon config via WebSocket.
+func (ws *WsConn) RequestDockerConfig(ctx context.Context) (docker.DaemonConfig, error) {
+	if !ws.IsConnected() {
+		return docker.DaemonConfig{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.GetDockerConfig, common.DockerConfigRequest{})
+	if err != nil {
+		return docker.DaemonConfig{}, err
+	}
+	var result docker.DaemonConfig
+	handler := &dockerConfigHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return docker.DaemonConfig{}, err
+	}
+	return result, nil
+}
+
+type dockerConfigHandler struct {
+	BaseHandler
+	result *docker.DaemonConfig
+}
+
+func (h *dockerConfigHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.DockerConfig == nil {
+		return errors.New("no docker config in response")
+	}
+	*h.result = *agentResponse.DockerConfig
+	return nil
+}
+
+// RequestDockerImagePull triggers docker image pull via WebSocket.
+func (ws *WsConn) RequestDockerImagePull(ctx context.Context, req common.DockerImagePullRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.PullDockerImage, req, "docker image pull failed")
+}
+
+// RequestDockerImagePush triggers docker image push via WebSocket.
+func (ws *WsConn) RequestDockerImagePush(ctx context.Context, req common.DockerImagePushRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.PushDockerImage, req, "docker image push failed")
+}
+
+// RequestDockerImageRemove removes docker image via WebSocket.
+func (ws *WsConn) RequestDockerImageRemove(ctx context.Context, req common.DockerImageRemoveRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.RemoveDockerImage, req, "docker image remove failed")
+}
+
+// RequestDockerNetworkCreate creates docker network via WebSocket.
+func (ws *WsConn) RequestDockerNetworkCreate(ctx context.Context, req common.DockerNetworkCreateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.CreateDockerNetwork, req, "docker network create failed")
+}
+
+// RequestDockerNetworkRemove removes docker network via WebSocket.
+func (ws *WsConn) RequestDockerNetworkRemove(ctx context.Context, req common.DockerNetworkRemoveRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.RemoveDockerNetwork, req, "docker network remove failed")
+}
+
+// RequestDockerVolumeCreate creates docker volume via WebSocket.
+func (ws *WsConn) RequestDockerVolumeCreate(ctx context.Context, req common.DockerVolumeCreateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.CreateDockerVolume, req, "docker volume create failed")
+}
+
+// RequestDockerVolumeRemove removes docker volume via WebSocket.
+func (ws *WsConn) RequestDockerVolumeRemove(ctx context.Context, req common.DockerVolumeRemoveRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.RemoveDockerVolume, req, "docker volume remove failed")
+}
+
+// RequestDockerComposeCreate creates compose project via WebSocket.
+func (ws *WsConn) RequestDockerComposeCreate(ctx context.Context, req common.DockerComposeProjectCreateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.CreateDockerComposeProject, req, "docker compose create failed")
+}
+
+// RequestDockerComposeUpdate updates compose project via WebSocket.
+func (ws *WsConn) RequestDockerComposeUpdate(ctx context.Context, req common.DockerComposeProjectUpdateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.UpdateDockerComposeProject, req, "docker compose update failed")
+}
+
+// RequestDockerComposeOperate operates compose project via WebSocket.
+func (ws *WsConn) RequestDockerComposeOperate(ctx context.Context, req common.DockerComposeProjectOperateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.OperateDockerComposeProject, req, "docker compose operation failed")
+}
+
+// RequestDockerComposeDelete deletes compose project via WebSocket.
+func (ws *WsConn) RequestDockerComposeDelete(ctx context.Context, req common.DockerComposeProjectDeleteRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.DeleteDockerComposeProject, req, "docker compose delete failed")
+}
+
+// RequestDockerConfigUpdate updates docker daemon config via WebSocket.
+func (ws *WsConn) RequestDockerConfigUpdate(ctx context.Context, req common.DockerConfigUpdateRequest) (string, error) {
+	return ws.requestContainerStringViaWS(ctx, common.UpdateDockerConfig, req, "docker config update failed")
+}
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
 // RequestSystemdInfo requests detailed information about a systemd service via WebSocket.
 func (ws *WsConn) RequestSystemdInfo(ctx context.Context, serviceName string) (systemd.ServiceDetails, error) {
 	if !ws.IsConnected() {
@@ -152,7 +427,7 @@ func (h *systemdInfoHandler) Handle(agentResponse common.AgentResponse) error {
 	if agentResponse.ServiceInfo == nil {
 		return errors.New("no systemd info in response")
 	}
-	*h.result = agentResponse.ServiceInfo
+	*h.result = *agentResponse.ServiceInfo
 	return nil
 }
 

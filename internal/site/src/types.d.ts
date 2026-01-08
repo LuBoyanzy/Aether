@@ -246,6 +246,145 @@ export interface AlertsHistoryRecord extends RecordModel {
 	resolved?: string | null
 }
 
+// Docker types: see internal/entities/docker/docker.go
+export interface DockerOverview {
+	serverVersion: string
+	apiVersion: string
+	operatingSystem: string
+	kernelVersion: string
+	architecture: string
+	containers: number
+	containersRunning: number
+	containersPaused: number
+	containersStopped: number
+	images: number
+	storageDriver: string
+	loggingDriver: string
+	cgroupDriver: string
+	dockerRootDir: string
+	cpus: number
+	memTotal: number
+}
+
+export interface DockerPort {
+	ip?: string
+	privatePort: number
+	publicPort?: number
+	type: string
+}
+
+export interface DockerContainer {
+	id: string
+	name: string
+	image: string
+	state: string
+	status: string
+	created: number
+	ports?: DockerPort[]
+	labels?: Record<string, string>
+	networks?: string[]
+	command?: string
+	createdBy?: string
+}
+
+export interface DockerImage {
+	id: string
+	repoTags?: string[]
+	repoDigests?: string[]
+	created: number
+	size: number
+	sharedSize: number
+	virtualSize: number
+	containers: number
+	labels?: Record<string, string>
+}
+
+export interface DockerNetwork {
+	id: string
+	name: string
+	driver: string
+	scope: string
+	internal: boolean
+	attachable: boolean
+	ingress: boolean
+	enableIPv6: boolean
+	labels?: Record<string, string>
+	subnets?: string[]
+	gateways?: string[]
+	created?: string
+}
+
+export interface DockerVolume {
+	name: string
+	driver: string
+	mountpoint: string
+	createdAt: string
+	scope: string
+	labels?: Record<string, string>
+	options?: Record<string, string>
+}
+
+export interface DockerComposeContainer {
+	id: string
+	name: string
+	image: string
+	state: string
+	status: string
+	created: number
+	ports?: DockerPort[]
+}
+
+export interface DockerComposeProject {
+	name: string
+	workdir: string
+	configFiles?: string[]
+	containerCount: number
+	runningCount: number
+	status: string
+	services?: string[]
+	containers?: DockerComposeContainer[]
+	createdAt?: number
+	updatedAt?: number
+	labels?: Record<string, string>
+}
+
+export interface DockerDaemonConfig {
+	path: string
+	content: string
+	exists: boolean
+}
+
+export interface DockerRegistryItem {
+	id: string
+	name: string
+	server: string
+	username: string
+	created: string
+	updated: string
+}
+
+export interface DockerComposeTemplateItem {
+	id: string
+	name: string
+	description: string
+	content: string
+	env: string
+	created: string
+	updated: string
+}
+
+export interface DockerAuditItem {
+	id: string
+	system: string
+	user: string
+	action: string
+	resource_type: string
+	resource_id: string
+	status: string
+	detail: string
+	created: string
+}
+
 export interface QuietHoursRecord extends RecordModel {
 	id: string
 	user: string

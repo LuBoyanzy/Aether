@@ -1,3 +1,5 @@
+// command-palette.tsx 提供全局命令面板快捷导航。
+// 用于快速访问系统列表与设置入口。
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
@@ -104,7 +106,7 @@ export default memo(function CommandPalette({ open, setOpen }: { open: boolean; 
 						>
 							<ContainerIcon className="me-2 size-4" />
 							<span>
-								<Trans>All Containers</Trans>
+								<Trans>Docker</Trans>
 							</span>
 							<CommandShortcut>
 								<Trans>Page</Trans>

@@ -37,6 +37,8 @@ type Agent struct {
 	netIoStats                map[uint16]system.NetIoStats                          // Keeps track of bandwidth usage per cache interval
 	netInterfaceDeltaTrackers map[uint16]*deltatracker.DeltaTracker[string, uint64] // Per-cache-time NIC delta trackers
 	dockerManager             *dockerManager                                        // Manages Docker API requests
+	dockerSDKManager          *dockerSDKManager                                     // Manages Docker SDK requests
+	dockerSDKErr              error                                                 // Docker SDK initialization error
 	sensorConfig              *SensorConfig                                         // Sensors config
 	systemInfo                system.Info                                           // Host system info (dynamic)
 	systemDetails             system.Details                                        // Host system details (static, once-per-connection)
@@ -102,6 +104,10 @@ func NewAgent(dataDir ...string) (agent *Agent, err error) {
 
 	// initialize docker manager
 	agent.dockerManager = newDockerManager()
+	agent.dockerSDKManager, agent.dockerSDKErr = newDockerSDKManager()
+	if agent.dockerSDKErr != nil {
+		slog.Error("Docker SDK init failed", "err", agent.dockerSDKErr)
+	}
 
 	// initialize system info
 	agent.refreshSystemDetails()

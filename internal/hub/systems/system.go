@@ -16,6 +16,7 @@ import (
 	"aether/internal/hub/ws"
 
 	"aether/internal/entities/container"
+	"aether/internal/entities/docker"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
 
@@ -430,6 +431,37 @@ func (sys *System) fetchStringFromAgentViaSSH(action common.WebSocketAction, req
 	return result, err
 }
 
+// fetchDockerResponseViaSSH fetches a docker response via SSH and returns the raw AgentResponse.
+func (sys *System) fetchDockerResponseViaSSH(action common.WebSocketAction, requestData any, timeout time.Duration) (common.AgentResponse, error) {
+	var response common.AgentResponse
+	err := sys.runSSHOperation(timeout, 1, func(session *ssh.Session) (bool, error) {
+		stdout, err := session.StdoutPipe()
+		if err != nil {
+			return false, err
+		}
+		stdin, stdinErr := session.StdinPipe()
+		if stdinErr != nil {
+			return false, stdinErr
+		}
+		if err := session.Shell(); err != nil {
+			return false, err
+		}
+		req := common.HubRequest[any]{Action: action, Data: requestData}
+		if err := cbor.NewEncoder(stdin).Encode(req); err != nil {
+			return false, err
+		}
+		_ = stdin.Close()
+		if err := cbor.NewDecoder(stdout).Decode(&response); err != nil {
+			return false, err
+		}
+		if response.Error != "" {
+			return false, errors.New(response.Error)
+		}
+		return false, nil
+	})
+	return response, err
+}
+
 // FetchContainerInfoFromAgent fetches container info from the agent
 func (sys *System) FetchContainerInfoFromAgent(containerID string) (string, error) {
 	// fetch via websocket
@@ -516,6 +548,259 @@ func (sys *System) OperateContainer(containerID, op, signal string) error {
 	})
 }
 
+// FetchDockerOverviewFromAgent fetches docker overview info from the agent.
+func (sys *System) FetchDockerOverviewFromAgent() (docker.Overview, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerOverview(ctx)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.GetDockerOverview, common.DockerOverviewRequest{}, 5*time.Second)
+	if err != nil {
+		return docker.Overview{}, err
+	}
+	if resp.DockerInfo == nil {
+		return docker.Overview{}, errors.New("no docker overview in response")
+	}
+	return *resp.DockerInfo, nil
+}
+
+// FetchDockerContainersFromAgent fetches docker container list from the agent.
+func (sys *System) FetchDockerContainersFromAgent(all bool) ([]docker.Container, error) {
+	req := common.DockerContainerListRequest{All: all}
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerContainers(ctx, req)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.ListDockerContainers, req, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	if resp.DockerContainers == nil {
+		return nil, errors.New("no docker containers in response")
+	}
+	return resp.DockerContainers, nil
+}
+
+// FetchDockerImagesFromAgent fetches docker image list from the agent.
+func (sys *System) FetchDockerImagesFromAgent(all bool) ([]docker.Image, error) {
+	req := common.DockerImageListRequest{All: all}
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerImages(ctx, req)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.ListDockerImages, req, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	if resp.DockerImages == nil {
+		return nil, errors.New("no docker images in response")
+	}
+	return resp.DockerImages, nil
+}
+
+// PullDockerImageFromAgent triggers docker image pull on the agent.
+func (sys *System) PullDockerImageFromAgent(req common.DockerImagePullRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerImagePull(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.PullDockerImage, req, "docker image pull failed")
+}
+
+// PushDockerImageFromAgent triggers docker image push on the agent.
+func (sys *System) PushDockerImageFromAgent(req common.DockerImagePushRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerImagePush(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.PushDockerImage, req, "docker image push failed")
+}
+
+// RemoveDockerImageFromAgent removes a docker image on the agent.
+func (sys *System) RemoveDockerImageFromAgent(req common.DockerImageRemoveRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerImageRemove(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.RemoveDockerImage, req, "docker image remove failed")
+	return err
+}
+
+// FetchDockerNetworksFromAgent fetches docker network list from the agent.
+func (sys *System) FetchDockerNetworksFromAgent() ([]docker.Network, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerNetworks(ctx)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.ListDockerNetworks, nil, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	if resp.DockerNetworks == nil {
+		return nil, errors.New("no docker networks in response")
+	}
+	return resp.DockerNetworks, nil
+}
+
+// CreateDockerNetworkFromAgent creates a docker network on the agent.
+func (sys *System) CreateDockerNetworkFromAgent(req common.DockerNetworkCreateRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerNetworkCreate(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.CreateDockerNetwork, req, "docker network create failed")
+	return err
+}
+
+// RemoveDockerNetworkFromAgent removes a docker network on the agent.
+func (sys *System) RemoveDockerNetworkFromAgent(req common.DockerNetworkRemoveRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerNetworkRemove(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.RemoveDockerNetwork, req, "docker network remove failed")
+	return err
+}
+
+// FetchDockerVolumesFromAgent fetches docker volume list from the agent.
+func (sys *System) FetchDockerVolumesFromAgent() ([]docker.Volume, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerVolumes(ctx)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.ListDockerVolumes, nil, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	if resp.DockerVolumes == nil {
+		return nil, errors.New("no docker volumes in response")
+	}
+	return resp.DockerVolumes, nil
+}
+
+// CreateDockerVolumeFromAgent creates a docker volume on the agent.
+func (sys *System) CreateDockerVolumeFromAgent(req common.DockerVolumeCreateRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerVolumeCreate(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.CreateDockerVolume, req, "docker volume create failed")
+	return err
+}
+
+// RemoveDockerVolumeFromAgent removes a docker volume on the agent.
+func (sys *System) RemoveDockerVolumeFromAgent(req common.DockerVolumeRemoveRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerVolumeRemove(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.RemoveDockerVolume, req, "docker volume remove failed")
+	return err
+}
+
+// FetchDockerComposeProjectsFromAgent fetches compose projects from the agent.
+func (sys *System) FetchDockerComposeProjectsFromAgent() ([]docker.ComposeProject, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerComposeProjects(ctx)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.ListDockerComposeProjects, common.DockerComposeProjectListRequest{}, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	if resp.DockerComposeProjects == nil {
+		return nil, errors.New("no docker compose projects in response")
+	}
+	return resp.DockerComposeProjects, nil
+}
+
+// CreateDockerComposeProjectFromAgent creates a compose project on the agent.
+func (sys *System) CreateDockerComposeProjectFromAgent(req common.DockerComposeProjectCreateRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerComposeCreate(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.CreateDockerComposeProject, req, "docker compose create failed")
+}
+
+// UpdateDockerComposeProjectFromAgent updates a compose project on the agent.
+func (sys *System) UpdateDockerComposeProjectFromAgent(req common.DockerComposeProjectUpdateRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerComposeUpdate(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.UpdateDockerComposeProject, req, "docker compose update failed")
+}
+
+// OperateDockerComposeProjectFromAgent operates a compose project on the agent.
+func (sys *System) OperateDockerComposeProjectFromAgent(req common.DockerComposeProjectOperateRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerComposeOperate(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.OperateDockerComposeProject, req, "docker compose operation failed")
+}
+
+// DeleteDockerComposeProjectFromAgent deletes a compose project on the agent.
+func (sys *System) DeleteDockerComposeProjectFromAgent(req common.DockerComposeProjectDeleteRequest) (string, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+		defer cancel()
+		return sys.WsConn.RequestDockerComposeDelete(ctx, req)
+	}
+	return sys.fetchStringFromAgentViaSSH(common.DeleteDockerComposeProject, req, "docker compose delete failed")
+}
+
+// FetchDockerConfigFromAgent fetches docker daemon config from the agent.
+func (sys *System) FetchDockerConfigFromAgent() (docker.DaemonConfig, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		return sys.WsConn.RequestDockerConfig(ctx)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.GetDockerConfig, common.DockerConfigRequest{}, 5*time.Second)
+	if err != nil {
+		return docker.DaemonConfig{}, err
+	}
+	if resp.DockerConfig == nil {
+		return docker.DaemonConfig{}, errors.New("no docker config in response")
+	}
+	return *resp.DockerConfig, nil
+}
+
+// UpdateDockerConfigFromAgent updates docker daemon config on the agent.
+func (sys *System) UpdateDockerConfigFromAgent(req common.DockerConfigUpdateRequest) error {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		_, err := sys.WsConn.RequestDockerConfigUpdate(ctx, req)
+		return err
+	}
+	_, err := sys.fetchStringFromAgentViaSSH(common.UpdateDockerConfig, req, "docker config update failed")
+	return err
+}
+
 // SetOperateOverride sets a test hook to override container operations.
 func (sys *System) SetOperateOverride(fn func(containerID, op, signal string) error) {
 	sys.operateOverride = fn
@@ -565,7 +850,7 @@ func (sys *System) FetchSystemdInfoFromAgent(serviceName string) (systemd.Servic
 			}
 			return false, errors.New("no systemd info in response")
 		}
-		result = resp.ServiceInfo
+		result = *resp.ServiceInfo
 		return false, nil
 	})
 

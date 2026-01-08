@@ -26,7 +26,7 @@ func TestSystemdInfoHandlerSuccess(t *testing.T) {
 	}
 
 	response := common.AgentResponse{
-		ServiceInfo: testDetails,
+		ServiceInfo: &testDetails,
 	}
 
 	err := handler.Handle(response)

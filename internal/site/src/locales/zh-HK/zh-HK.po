@@ -1794,6 +1794,538 @@ msgstr ""
 msgid "Your user settings have been updated."
 msgstr "您的用戶設置已更新。"
 
+#: src/components/docker/docker-tabs.tsx
+msgid "Overview"
+msgstr "概覽"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose"
+msgstr "編排"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Images"
+msgstr "鏡像"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Networks"
+msgstr "網絡"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Volumes"
+msgstr "儲存卷"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Registries"
+msgstr "倉庫"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose Templates"
+msgstr "編排模板"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Config"
+msgstr "配置"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
+
+msgid "API Version"
+msgstr "API 版本"
+
+msgid "Architecture"
+msgstr "架構"
+
+msgid "Attachable"
+msgstr "可附加"
+
+msgid "CPUs"
+msgstr "CPU 核心數"
+
+msgid "Cgroup Driver"
+msgstr "Cgroup 驅動"
+
+msgid "Compose Content"
+msgstr "編排內容"
+
+msgid "Compose Logs"
+msgstr "編排日誌"
+
+msgid "Compose project name"
+msgstr "編排項目名稱"
+
+msgid "Compose templates can be reused to deploy stacks quickly."
+msgstr "編排模板可重複使用以快速部署服務堆疊。"
+
+msgid "Config Content"
+msgstr "配置內容"
+
+msgid "Config Path"
+msgstr "配置路徑"
+
+msgid "Config content is required"
+msgstr "配置內容必填"
+
+msgid "Configure a new Docker network."
+msgstr "配置新的 Docker 網絡。"
+
+msgid "Configure a new Docker volume."
+msgstr "配置新的 Docker 存儲卷。"
+
+msgid "Container Details"
+msgstr "容器詳情"
+
+msgid "Container Logs"
+msgstr "容器日誌"
+
+msgid "Create Compose"
+msgstr "新建編排"
+
+msgid "Create Network"
+msgstr "建立網絡"
+
+msgid "Create Registry"
+msgstr "新增倉庫"
+
+msgid "Create Template"
+msgstr "新增模板"
+
+msgid "Create Volume"
+msgstr "建立存儲卷"
+
+msgid "Daemon Configuration"
+msgstr "Daemon 配置"
+
+msgid "Default daemon.json path"
+msgstr "預設 daemon.json 路徑"
+
+msgid "Delete Compose Project"
+msgstr "刪除編排項目"
+
+msgid "Delete Image"
+msgstr "刪除鏡像"
+
+msgid "Delete Network"
+msgstr "刪除網絡"
+
+msgid "Delete Registry"
+msgstr "刪除倉庫"
+
+msgid "Delete Template"
+msgstr "刪除模板"
+
+msgid "Delete Volume"
+msgstr "刪除存儲卷"
+
+msgid "Docker"
+msgstr "Docker"
+
+msgid "Docker Root Dir"
+msgstr "Docker 根目錄"
+
+msgid "Docker config updated"
+msgstr "Docker 配置已更新"
+
+msgid "Docker engine summary for the selected system."
+msgstr "所選系統的 Docker 引擎概覽。"
+
+msgid "Driver"
+msgstr "驅動"
+
+msgid "Edit Registry"
+msgstr "編輯倉庫"
+
+msgid "Edit Template"
+msgstr "編輯模板"
+
+msgid "Enable IPv6"
+msgstr "啟用 IPv6"
+
+msgid "Engine Details"
+msgstr "引擎詳情"
+
+msgid "Environment"
+msgstr "環境變數"
+
+msgid "Failed to create network"
+msgstr "建立網絡失敗"
+
+msgid "Failed to create volume"
+msgstr "建立存儲卷失敗"
+
+msgid "Failed to delete compose project"
+msgstr "刪除編排項目失敗"
+
+msgid "Failed to delete compose template"
+msgstr "刪除編排模板失敗"
+
+msgid "Failed to delete network"
+msgstr "刪除網絡失敗"
+
+msgid "Failed to delete registry"
+msgstr "刪除倉庫失敗"
+
+msgid "Failed to delete volume"
+msgstr "刪除存儲卷失敗"
+
+msgid "Failed to load Docker config"
+msgstr "載入 Docker 配置失敗"
+
+msgid "Failed to load Docker overview"
+msgstr "載入 Docker 概覽失敗"
+
+msgid "Failed to load compose projects"
+msgstr "載入編排項目失敗"
+
+msgid "Failed to load compose templates"
+msgstr "載入編排模板失敗"
+
+msgid "Failed to load container details"
+msgstr "載入容器詳情失敗"
+
+msgid "Failed to load container logs"
+msgstr "載入容器日誌失敗"
+
+msgid "Failed to load containers"
+msgstr "載入容器失敗"
+
+msgid "Failed to load images"
+msgstr "載入鏡像失敗"
+
+msgid "Failed to load networks"
+msgstr "載入網絡失敗"
+
+msgid "Failed to load registries"
+msgstr "載入倉庫失敗"
+
+msgid "Failed to load volumes"
+msgstr "載入存儲卷失敗"
+
+msgid "Failed to operate compose project"
+msgstr "編排操作失敗"
+
+msgid "Failed to operate container"
+msgstr "容器操作失敗"
+
+msgid "Failed to process image"
+msgstr "處理鏡像失敗"
+
+msgid "Failed to remove image"
+msgstr "刪除鏡像失敗"
+
+msgid "Failed to save compose project"
+msgstr "保存編排項目失敗"
+
+msgid "Failed to save compose template"
+msgstr "保存編排模板失敗"
+
+msgid "Failed to save registry"
+msgstr "保存倉庫失敗"
+
+msgid "Failed to update Docker config"
+msgstr "更新 Docker 配置失敗"
+
+msgid "Filter containers..."
+msgstr "篩選容器..."
+
+msgid "Filter images..."
+msgstr "篩選鏡像..."
+
+msgid "Filter networks..."
+msgstr "篩選網絡..."
+
+msgid "Filter projects..."
+msgstr "篩選項目..."
+
+msgid "Filter registries..."
+msgstr "篩選倉庫..."
+
+msgid "Filter templates..."
+msgstr "篩選模板..."
+
+msgid "Filter volumes..."
+msgstr "篩選存儲卷..."
+
+msgid "Force removal"
+msgstr "強制移除"
+
+msgid "IPv6"
+msgstr "IPv6"
+
+msgid "Image ID"
+msgstr "鏡像 ID"
+
+msgid "Image Logs"
+msgstr "鏡像日誌"
+
+msgid "Image name is required"
+msgstr "鏡像名稱必填"
+
+msgid "Image name or tag"
+msgstr "鏡像名稱或標籤"
+
+msgid "Inspect"
+msgstr "檢視"
+
+msgid "Internal"
+msgstr "內部"
+
+msgid "Kernel Version"
+msgstr "核心版本"
+
+msgid "Kill"
+msgstr "強制結束"
+
+msgid "Labels (JSON)"
+msgstr "標籤 (JSON)"
+
+msgid "Latest output from compose."
+msgstr "最新的編排輸出。"
+
+msgid "Leave blank to keep unchanged"
+msgstr "留空以保持不變"
+
+msgid "Loading"
+msgstr "載入中"
+
+msgid "Logging Driver"
+msgstr "日誌驅動"
+
+msgid "Maintain reusable Docker Compose templates."
+msgstr "維護可重用的 Docker Compose 模板。"
+
+msgid "Manage Docker Compose projects for the selected system."
+msgstr "管理所選系統的 Docker Compose 項目。"
+
+msgid "Manage Docker networks on the selected system."
+msgstr "管理所選系統的 Docker 網絡。"
+
+msgid "Manage Docker volumes for persistent storage."
+msgstr "管理 Docker 存儲卷以持久化儲存。"
+
+msgid "Manage local images and registries."
+msgstr "管理本地鏡像與倉庫。"
+
+msgid "Manage registry credentials for image pull and push."
+msgstr "管理鏡像拉取/推送的倉庫憑證。"
+
+msgid "Manage running and stopped containers."
+msgstr "管理運行中與已停止的容器。"
+
+msgid "Mountpoint"
+msgstr "掛載點"
+
+msgid "Name and content are required"
+msgstr "名稱與內容必填"
+
+msgid "Name and server are required"
+msgstr "名稱與伺服器必填"
+
+msgid "Network name"
+msgstr "網絡名稱"
+
+msgid "Network name is required"
+msgstr "網絡名稱必填"
+
+msgid "No compose projects found."
+msgstr "未找到編排項目。"
+
+msgid "No containers found."
+msgstr "未找到容器。"
+
+msgid "No details available."
+msgstr "沒有可用詳情。"
+
+msgid "No images found."
+msgstr "未找到鏡像。"
+
+msgid "No logs available."
+msgstr "沒有日誌可用。"
+
+msgid "No networks found."
+msgstr "未找到網絡。"
+
+msgid "No registries found."
+msgstr "未找到倉庫。"
+
+msgid "No templates found."
+msgstr "未找到模板。"
+
+msgid "No volumes found."
+msgstr "未找到存儲卷。"
+
+msgid "None"
+msgstr "無"
+
+msgid "Operating System"
+msgstr "作業系統"
+
+msgid "Optional .env content"
+msgstr "可選 .env 內容"
+
+msgid "Optional description"
+msgstr "可選描述"
+
+msgid "Optional driver name"
+msgstr "可選驅動名稱"
+
+msgid "Optional driver options as JSON"
+msgstr "可選驅動選項 (JSON)"
+
+msgid "Optional labels as JSON"
+msgstr "可選標籤 (JSON)"
+
+msgid "Optional registry"
+msgstr "可選倉庫"
+
+msgid "Options (JSON)"
+msgstr "選項 (JSON)"
+
+msgid "Paste daemon.json content"
+msgstr "貼上 daemon.json 內容"
+
+msgid "Paste docker-compose.yml content"
+msgstr "貼上 docker-compose.yml 內容"
+
+msgid "Please select a system to continue."
+msgstr "請先選擇系統。"
+
+msgid "Ports"
+msgstr "端口"
+
+msgid "Provide a full docker-compose.yml content for deployment."
+msgstr "請提供完整的 docker-compose.yml 內容以部署。"
+
+msgid "Pull"
+msgstr "拉取"
+
+msgid "Pull Image"
+msgstr "拉取鏡像"
+
+msgid "Push"
+msgstr "推送"
+
+msgid "Push Image"
+msgstr "推送鏡像"
+
+msgid "Registry"
+msgstr "倉庫"
+
+msgid "Registry name"
+msgstr "倉庫名稱"
+
+msgid "Registry server"
+msgstr "倉庫伺服器"
+
+msgid "Registry username"
+msgstr "倉庫用戶名"
+
+msgid "Remove project files"
+msgstr "刪除項目檔案"
+
+msgid "Restart Docker after update"
+msgstr "更新後重啟 Docker"
+
+msgid "Scope"
+msgstr "範圍"
+
+msgid "Select a registry if authentication is required."
+msgstr "需要驗證時選擇倉庫。"
+
+msgid "Select a system to manage Docker resources."
+msgstr "選擇系統以管理 Docker 資源。"
+
+msgid "Server"
+msgstr "伺服器"
+
+msgid "Server Version"
+msgstr "伺服器版本"
+
+msgid "Show all"
+msgstr "顯示全部"
+
+msgid "Show stopped"
+msgstr "顯示已停止"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Start"
+msgstr "啟動"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Stopped"
+msgstr "已停止"
+
+msgid "Storage Driver"
+msgstr "儲存驅動"
+
+msgid "Store credentials for private registries."
+msgstr "保存私有倉庫的憑證。"
+
+msgid "Tags"
+msgstr "標籤"
+
+msgid "Template name"
+msgstr "模板名稱"
+
+msgid "This will remove the selected compose template."
+msgstr "此操作將移除選定的編排模板。"
+
+msgid "This will remove the selected image from the host."
+msgstr "此操作將從主機移除選定的鏡像。"
+
+msgid "This will remove the selected network."
+msgstr "此操作將移除選定的網絡。"
+
+msgid "This will remove the selected registry credentials."
+msgstr "此操作將移除選定的倉庫憑證。"
+
+msgid "This will remove the selected volume."
+msgstr "此操作將移除選定的存儲卷。"
+
+msgid "This will stop and remove the selected compose project."
+msgstr "此操作將停止並移除選定的編排項目。"
+
+msgid "Total Memory"
+msgstr "總記憶體"
+
+msgid "Unpause"
+msgstr "恢復"
+
+msgid "Update Compose"
+msgstr "更新編排"
+
+msgid "Username"
+msgstr "用戶名"
+
+msgid "View and update Docker daemon configuration."
+msgstr "查看並更新 Docker daemon 配置。"
+
+msgid "Volume name"
+msgstr "存儲卷名稱"
+
+msgid "Volume name is required"
+msgstr "存儲卷名稱必填"
+
+msgid "Workdir"
+msgstr "工作目錄"
+
+msgid "daemon.json not found; a new file will be created on save."
+msgstr "未找到 daemon.json；儲存時將建立新檔案。"
+
+msgid "Select a system"
+msgstr "選擇系統"
+
+
+msgid "Restart"
+msgstr "重啟"
+
+msgid "Running"
+msgstr "運行中"
+
+msgid "Save"
+msgstr "儲存"
+

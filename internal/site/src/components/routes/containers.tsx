@@ -1,7 +1,9 @@
+// containers.tsx 渲染 Docker 模块入口页面。
+// 负责挂载 Docker Tabs 与全局告警视图。
 import { useLingui } from "@lingui/react/macro"
 import { memo, useEffect, useMemo } from "react"
-import ContainersTable from "@/components/containers-table/containers-table"
 import { ActiveAlerts } from "@/components/active-alerts"
+import DockerTabs from "@/components/docker/docker-tabs"
 import { FooterRepoLink } from "@/components/footer-repo-link"
 import { BRAND_NAME } from "@/lib/utils"
 
@@ -9,7 +11,7 @@ export default memo(() => {
 	const { t } = useLingui()
 
 	useEffect(() => {
-		// document.title = `${t`Containers`} / ${BRAND_NAME}`
+		document.title = `${t`Docker`} / ${BRAND_NAME}`
 	}, [t])
 
 	return useMemo(
@@ -17,7 +19,7 @@ export default memo(() => {
 			<>
 				<div className="grid gap-4">
 					<ActiveAlerts />
-					<ContainersTable />
+					<DockerTabs />
 				</div>
 				<FooterRepoLink />
 			</>

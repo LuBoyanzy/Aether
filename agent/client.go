@@ -15,6 +15,7 @@ import (
 
 	"aether"
 	"aether/internal/common"
+	dockermodel "aether/internal/entities/docker"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
@@ -294,7 +295,23 @@ func (client *WebSocketClient) sendResponse(data any, requestID *uint32) error {
 		case map[string]smart.SmartData:
 			response.SmartData = v
 		case systemd.ServiceDetails:
+			response.ServiceInfo = &v
+		case *systemd.ServiceDetails:
 			response.ServiceInfo = v
+		case *dockermodel.Overview:
+			response.DockerInfo = v
+		case []dockermodel.Container:
+			response.DockerContainers = v
+		case []dockermodel.Image:
+			response.DockerImages = v
+		case []dockermodel.Network:
+			response.DockerNetworks = v
+		case []dockermodel.Volume:
+			response.DockerVolumes = v
+		case []dockermodel.ComposeProject:
+			response.DockerComposeProjects = v
+		case *dockermodel.DaemonConfig:
+			response.DockerConfig = v
 		// case []byte:
 		// 	response.RawBytes = v
 		// case string:

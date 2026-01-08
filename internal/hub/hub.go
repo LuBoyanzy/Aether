@@ -195,7 +195,57 @@ func setCollectionAuthSettings(app core.App) error {
 	}
 	containersListRule := strings.Replace(systemsReadRule, "users.id", "system.users.id", 1)
 	containersCollection.ListRule = &containersListRule
-	return app.Save(containersCollection)
+	if err := app.Save(containersCollection); err != nil {
+		return err
+	}
+
+	// docker audits (read-only via API)
+	dockerAuditsCollection, err := app.FindCollectionByNameOrId("docker_audits")
+	if err != nil {
+		return err
+	}
+	dockerAuditsReadRule := "@request.auth.id != \"\""
+	if shareAllSystems != "true" {
+		dockerAuditsReadRule = "@request.auth.id != \"\" && (user.id = @request.auth.id || system.users.id ?= @request.auth.id)"
+	}
+	dockerAuditsCollection.ListRule = &dockerAuditsReadRule
+	dockerAuditsCollection.ViewRule = &dockerAuditsReadRule
+	dockerAuditsCollection.CreateRule = nil
+	dockerAuditsCollection.UpdateRule = nil
+	dockerAuditsCollection.DeleteRule = nil
+	if err := app.Save(dockerAuditsCollection); err != nil {
+		return err
+	}
+
+	// docker registries (owner-only)
+	dockerRegistriesCollection, err := app.FindCollectionByNameOrId("docker_registries")
+	if err != nil {
+		return err
+	}
+	registriesReadRule := "@request.auth.id != \"\" && created_by.id = @request.auth.id"
+	registriesWriteRule := registriesReadRule + " && @request.auth.role != \"readonly\""
+	dockerRegistriesCollection.ListRule = &registriesReadRule
+	dockerRegistriesCollection.ViewRule = &registriesReadRule
+	dockerRegistriesCollection.CreateRule = &registriesWriteRule
+	dockerRegistriesCollection.UpdateRule = &registriesWriteRule
+	dockerRegistriesCollection.DeleteRule = &registriesWriteRule
+	if err := app.Save(dockerRegistriesCollection); err != nil {
+		return err
+	}
+
+	// docker compose templates (owner-only)
+	dockerTemplatesCollection, err := app.FindCollectionByNameOrId("docker_compose_templates")
+	if err != nil {
+		return err
+	}
+	templatesReadRule := "@request.auth.id != \"\" && created_by.id = @request.auth.id"
+	templatesWriteRule := templatesReadRule + " && @request.auth.role != \"readonly\""
+	dockerTemplatesCollection.ListRule = &templatesReadRule
+	dockerTemplatesCollection.ViewRule = &templatesReadRule
+	dockerTemplatesCollection.CreateRule = &templatesWriteRule
+	dockerTemplatesCollection.UpdateRule = &templatesWriteRule
+	dockerTemplatesCollection.DeleteRule = &templatesWriteRule
+	return app.Save(dockerTemplatesCollection)
 }
 
 // registerCronJobs sets up scheduled tasks
@@ -285,6 +335,36 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 		// operate container
 		apiAuth.POST("/containers/operate", h.operateContainer)
 	}
+	// /docker routes
+	dockerGroup := apiAuth.Group("/docker")
+	dockerGroup.GET("/overview", h.getDockerOverview)
+	dockerGroup.GET("/containers", h.listDockerContainers)
+	dockerGroup.GET("/images", h.listDockerImages)
+	dockerGroup.POST("/images/pull", h.pullDockerImage)
+	dockerGroup.POST("/images/push", h.pushDockerImage)
+	dockerGroup.POST("/images/remove", h.removeDockerImage)
+	dockerGroup.GET("/networks", h.listDockerNetworks)
+	dockerGroup.POST("/networks", h.createDockerNetwork)
+	dockerGroup.POST("/networks/remove", h.removeDockerNetwork)
+	dockerGroup.GET("/volumes", h.listDockerVolumes)
+	dockerGroup.POST("/volumes", h.createDockerVolume)
+	dockerGroup.POST("/volumes/remove", h.removeDockerVolume)
+	dockerGroup.GET("/compose/projects", h.listDockerComposeProjects)
+	dockerGroup.POST("/compose/projects", h.createDockerComposeProject)
+	dockerGroup.POST("/compose/projects/update", h.updateDockerComposeProject)
+	dockerGroup.POST("/compose/projects/operate", h.operateDockerComposeProject)
+	dockerGroup.POST("/compose/projects/delete", h.deleteDockerComposeProject)
+	dockerGroup.GET("/config", h.getDockerConfig)
+	dockerGroup.POST("/config", h.updateDockerConfig)
+	dockerGroup.GET("/registries", h.listDockerRegistries)
+	dockerGroup.POST("/registries", h.createDockerRegistry)
+	dockerGroup.POST("/registries/update", h.updateDockerRegistry)
+	dockerGroup.POST("/registries/delete", h.deleteDockerRegistry)
+	dockerGroup.GET("/compose-templates", h.listDockerComposeTemplates)
+	dockerGroup.POST("/compose-templates", h.createDockerComposeTemplate)
+	dockerGroup.POST("/compose-templates/update", h.updateDockerComposeTemplate)
+	dockerGroup.POST("/compose-templates/delete", h.deleteDockerComposeTemplate)
+	dockerGroup.GET("/audits", h.listDockerAudits)
 	return nil
 }
 
@@ -375,7 +455,28 @@ func (h *Hub) operateContainer(e *core.RequestEvent) error {
 		return e.JSON(http.StatusNotFound, map[string]string{"error": "system not found"})
 	}
 
-	if err := system.OperateContainer(payload.Container, payload.Operation, payload.Signal); err != nil {
+	err = system.OperateContainer(payload.Container, payload.Operation, payload.Signal)
+	status := dockerAuditStatusSuccess
+	detail := payload.Operation
+	if payload.Signal != "" {
+		detail = payload.Operation + " (signal=" + payload.Signal + ")"
+	}
+	if err != nil {
+		status = dockerAuditStatusFailed
+		detail = err.Error()
+	}
+	if auditErr := h.recordDockerAudit(dockerAuditEntry{
+		SystemID:     payload.System,
+		UserID:       e.Auth.Id,
+		Action:       "container." + payload.Operation,
+		ResourceType: "container",
+		ResourceID:   payload.Container,
+		Status:       status,
+		Detail:       detail,
+	}); auditErr != nil {
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": auditErr.Error()})
+	}
+	if err != nil {
 		return e.JSON(http.StatusBadGateway, map[string]string{"error": err.Error()})
 	}
 
