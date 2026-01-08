@@ -196,7 +196,7 @@ export default memo(function DockerVolumesPanel({ systemId }: { systemId?: strin
 							<TableHead>
 								<Trans>Mode</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>
@@ -237,7 +237,7 @@ export default memo(function DockerVolumesPanel({ systemId }: { systemId?: strin
 									</TableCell>
 									<TableCell className="text-xs text-muted-foreground">{item.createdAt || "-"}</TableCell>
 									<TableCell className="text-xs text-muted-foreground">{item.scope}</TableCell>
-									<TableCell className="text-right">
+									<TableCell className="text-center">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button size="icon" variant="ghost">

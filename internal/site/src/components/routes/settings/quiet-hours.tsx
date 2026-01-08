@@ -239,7 +239,7 @@ export function QuietHours() {
 											return <Badge variant={config.variant}>{config.label}</Badge>
 										})()}
 									</TableCell>
-									<TableCell className="px-4 py-3 text-right">
+									<TableCell className="px-4 py-3 text-center">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button variant="ghost" size="icon" className="size-8">

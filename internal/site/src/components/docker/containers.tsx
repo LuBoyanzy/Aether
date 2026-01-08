@@ -15,10 +15,12 @@ import { Switch } from "@/components/ui/switch"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
 import { listDockerContainers } from "@/lib/docker"
+import { listDockerFocusServices } from "@/lib/docker-focus"
 import { isReadOnlyUser, pb } from "@/lib/api"
-import type { ContainerRecord, DockerContainer } from "@/types"
+import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord } from "@/types"
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
+import DockerFocusRulesDialog from "@/components/docker/focus-rules-dialog"
 import { AlertCircleIcon, LoaderCircleIcon, MoreHorizontalIcon, RefreshCwIcon } from "lucide-react"
 import { MeterState } from "@/lib/enums"
 import { cn, decimalString, formatBytes, formatSecondsToHuman, getMeterState } from "@/lib/utils"
@@ -32,6 +34,37 @@ const statusVariantMap: Record<string, "success" | "warning" | "danger" | "secon
 	created: "secondary",
 }
 const usageWindowMs = 70_000
+const composeProjectLabel = "com.docker.compose.project"
+const composeServiceLabel = "com.docker.compose.service"
+
+function matchesFocusRule(container: DockerContainer, rule: DockerFocusServiceRecord): boolean {
+	switch (rule.match_type) {
+		case "container_name":
+			return container.name === rule.value
+		case "image":
+			return container.image === rule.value
+		case "compose_project": {
+			const project = container.labels?.[composeProjectLabel] || container.createdBy || ""
+			return project === rule.value
+		}
+		case "compose_service": {
+			if (!rule.value2) return false
+			const project = container.labels?.[composeProjectLabel] || container.createdBy || ""
+			const service = container.labels?.[composeServiceLabel] || ""
+			return project === rule.value && service === rule.value2
+		}
+		case "label": {
+			if (!rule.value2) return false
+			return container.labels?.[rule.value] === rule.value2
+		}
+		default:
+			return false
+	}
+}
+
+function matchesFocusRules(container: DockerContainer, rules: DockerFocusServiceRecord[]): boolean {
+	return rules.some((rule) => matchesFocusRule(container, rule))
+}
 
 function formatPorts(ports?: DockerContainer["ports"]) {
 	if (!ports || ports.length === 0) return "-"
@@ -46,7 +79,11 @@ function formatPorts(ports?: DockerContainer["ports"]) {
 export default memo(function DockerContainersPanel({ systemId }: { systemId?: string }) {
 	const [loading, setLoading] = useState(true)
 	const [showAll, setShowAll] = useState(false)
+	const [focusOnly, setFocusOnly] = useState(true)
 	const [data, setData] = useState<DockerContainer[]>([])
+	const [focusRules, setFocusRules] = useState<DockerFocusServiceRecord[]>([])
+	const [focusLoading, setFocusLoading] = useState(false)
+	const [focusDialogOpen, setFocusDialogOpen] = useState(false)
 	const [filter, setFilter] = useState("")
 	const [logOpen, setLogOpen] = useState(false)
 	const [logContent, setLogContent] = useState("")
@@ -91,16 +128,50 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		}
 	}, [systemId, showAll])
 
+	const loadFocusRules = useCallback(async () => {
+		if (!systemId) return
+		setFocusLoading(true)
+		try {
+			const items = await listDockerFocusServices(systemId)
+			setFocusRules(items)
+		} catch (err) {
+			console.error("load docker focus rules failed", err)
+			toast({
+				variant: "destructive",
+				title: t`Error`,
+				description: t`Failed to load focus rules`,
+			})
+			throw err
+		} finally {
+			setFocusLoading(false)
+		}
+	}, [systemId])
+
 	useEffect(() => {
 		if (systemId) {
 			void loadContainers()
 		}
 	}, [systemId, showAll, loadContainers])
 
+	useEffect(() => {
+		if (systemId) {
+			void loadFocusRules()
+		}
+	}, [systemId, loadFocusRules])
+
+	const handleRefresh = useCallback(async () => {
+		await Promise.all([loadContainers(), loadFocusRules()])
+	}, [loadContainers, loadFocusRules])
+
 	const filtered = useMemo(() => {
 		const term = filter.trim().toLowerCase()
-		if (!term) return data
-		return data.filter((item) => {
+		const base = focusOnly
+			? focusRules.length === 0
+				? []
+				: data.filter((item) => matchesFocusRules(item, focusRules))
+			: data
+		if (!term) return base
+		return base.filter((item) => {
 			const ports = formatPorts(item.ports)
 			const networks = formatTagList(item.networks)
 			return [item.name, item.image, item.state, item.status, ports, networks, item.command, item.createdBy]
@@ -109,7 +180,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 				.toLowerCase()
 				.includes(term)
 		})
-	}, [data, filter])
+	}, [data, filter, focusOnly, focusRules])
 
 	const handleOperate = useCallback(
 		async (container: DockerContainer, operation: string) => {
@@ -224,13 +295,25 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 							<Trans>Show stopped</Trans>
 						</Label>
 					</div>
+					<div className="flex items-center gap-2">
+						<Switch id="docker-containers-focus" checked={focusOnly} onCheckedChange={setFocusOnly} />
+						<Label htmlFor="docker-containers-focus">
+							<Trans>Focus only</Trans>
+						</Label>
+					</div>
+					<Button variant="outline" size="sm" onClick={() => setFocusDialogOpen(true)}>
+						<Trans>Focus rules</Trans>
+						<Badge variant="secondary" className="ms-2">
+							{focusRules.length}
+						</Badge>
+					</Button>
 					<Input
 						className="w-56"
 						placeholder={t`Filter containers...`}
 						value={filter}
 						onChange={(event) => setFilter(event.target.value)}
 					/>
-					<Button variant="outline" size="sm" onClick={() => void loadContainers()} disabled={loading}>
+					<Button variant="outline" size="sm" onClick={() => void handleRefresh()} disabled={loading || focusLoading}>
 						{loading ? (
 							<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
 						) : (
@@ -240,6 +323,16 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 					</Button>
 				</div>
 			</div>
+			{focusOnly && !focusLoading && focusRules.length === 0 ? (
+				<div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed bg-muted/10 p-3 text-sm text-muted-foreground">
+					<span>
+						<Trans>No focus rules configured for this system.</Trans>
+					</span>
+					<Button variant="outline" size="sm" onClick={() => setFocusDialogOpen(true)}>
+						<Trans>Configure focus rules</Trans>
+					</Button>
+				</div>
+			) : null}
 			<div className="h-min max-h-[calc(100dvh-24rem)] max-w-full relative overflow-auto border rounded-md bg-card">
 				<table className="w-full caption-bottom text-sm">
 					<TableHeader className="sticky top-0 z-10 bg-card">
@@ -268,7 +361,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 							<TableHead>
 								<Trans>Created</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>
@@ -407,7 +500,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 									<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
 										{formatUnixSeconds(item.created)}
 									</TableCell>
-									<TableCell className="text-right py-3">
+									<TableCell className="text-center py-3">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button size="icon" variant="ghost">
@@ -498,6 +591,14 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 					</div>
 				</DialogContent>
 			</Dialog>
+			<DockerFocusRulesDialog
+				open={focusDialogOpen}
+				onOpenChange={setFocusDialogOpen}
+				systemId={systemId}
+				rules={focusRules}
+				loading={focusLoading}
+				onReload={loadFocusRules}
+			/>
 		</div>
 	)
 })

@@ -260,7 +260,7 @@ export default memo(function DockerComposePanel({ systemId }: { systemId?: strin
 							<TableHead>
 								<Trans>Workdir</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>

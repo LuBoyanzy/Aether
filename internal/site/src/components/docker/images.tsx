@@ -235,7 +235,7 @@ export default memo(function DockerImagesPanel({ systemId }: { systemId?: string
 							<TableHead>
 								<Trans>Created</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>
@@ -281,7 +281,7 @@ export default memo(function DockerImagesPanel({ systemId }: { systemId?: string
 									<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
 										{formatUnixSeconds(item.created)}
 									</TableCell>
-									<TableCell className="text-right py-3">
+									<TableCell className="text-center py-3">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button size="icon" variant="ghost">

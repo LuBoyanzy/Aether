@@ -2323,3 +2323,148 @@ msgstr "网关"
 
 msgid "Time"
 msgstr "时间"
+
+#: src/components/docker/containers.tsx
+msgid "Focus only"
+msgstr "仅看关注"
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules"
+msgstr "关注规则"
+
+#: src/components/docker/containers.tsx
+msgid "Configure focus rules"
+msgstr "配置关注规则"
+
+#: src/components/docker/containers.tsx
+msgid "No focus rules configured for this system."
+msgstr "该系统未配置关注规则。"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load focus rules"
+msgstr "加载关注规则失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Define system-level rules to filter the container list."
+msgstr "定义系统级规则以过滤容器列表。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules help"
+msgstr "关注规则使用帮助"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rules are exact matches. Use the values shown in the container list or details."
+msgstr "规则为精确匹配，请使用容器列表或详情中显示的值。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name: use the Name column value."
+msgstr "容器名称：填写容器列表中 Name 列的值。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Image: use the Image column value (including tag)."
+msgstr "镜像：填写容器列表中 Image 列的值（含 tag）。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project: use the Compose value shown under the name, or the label com.docker.compose.project."
+msgstr "编排项目：填写名称下方的 Compose 值，或标签 com.docker.compose.project。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service: enter both the compose project and service name. Service name comes from docker-compose.yml (services.*) or label com.docker.compose.service."
+msgstr "编排服务：需填写编排项目与服务名。服务名来自 docker-compose.yml 的 services.*，或标签 com.docker.compose.service。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label: enter the label key and value (see Inspect for labels)."
+msgstr "标签：填写标签键和值（可在 Inspect 中查看）。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Export rules"
+msgstr "导出规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import rules"
+msgstr "导入规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import completed"
+msgstr "导入完成"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Imported {importedCount} rules, skipped {skippedCount}."
+msgstr "已导入 {importedCount} 条规则，跳过 {skippedCount} 条。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Add rule"
+msgstr "添加规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type"
+msgstr "规则类型"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Select rule type"
+msgstr "选择规则类型"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to import focus rules"
+msgstr "导入关注规则失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name"
+msgstr "容器名称"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project"
+msgstr "编排项目"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service"
+msgstr "编排服务"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label key"
+msgstr "标签键"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label value"
+msgstr "标签值"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type is required"
+msgstr "规则类型为必填"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Value is required"
+msgstr "值为必填"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Secondary value is required"
+msgstr "第二个值为必填"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to create focus rule"
+msgstr "创建关注规则失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to delete focus rule"
+msgstr "删除关注规则失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Read-only users cannot modify focus rules."
+msgstr "只读用户无法修改关注规则。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "No focus rules found."
+msgstr "未找到关注规则。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Delete focus rule"
+msgstr "删除关注规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "This will remove the selected focus rule."
+msgstr "这将删除选中的关注规则。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Enter value"
+msgstr "输入值"

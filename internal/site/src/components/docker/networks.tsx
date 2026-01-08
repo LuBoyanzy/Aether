@@ -208,7 +208,7 @@ export default memo(function DockerNetworksPanel({ systemId }: { systemId?: stri
 							<TableHead>
 								<Trans>Time</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>
@@ -249,7 +249,7 @@ export default memo(function DockerNetworksPanel({ systemId }: { systemId?: stri
 									<TableCell className="text-xs text-muted-foreground whitespace-nowrap">
 										{item.created ? formatShortDate(item.created) : "-"}
 									</TableCell>
-									<TableCell className="text-right">
+									<TableCell className="text-center">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button size="icon" variant="ghost">

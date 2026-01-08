@@ -192,7 +192,7 @@ export default memo(function DockerRegistriesPanel() {
 							<TableHead>
 								<Trans>Created</Trans>
 							</TableHead>
-							<TableHead className="text-right">
+							<TableHead className="text-center">
 								<Trans>Actions</Trans>
 							</TableHead>
 						</TableRow>
@@ -230,7 +230,7 @@ export default memo(function DockerRegistriesPanel() {
 									<TableCell className="text-xs text-muted-foreground">{item.server}</TableCell>
 									<TableCell className="text-xs text-muted-foreground">{item.username || "-"}</TableCell>
 									<TableCell className="text-xs text-muted-foreground">{item.created}</TableCell>
-									<TableCell className="text-right">
+									<TableCell className="text-center">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button size="icon" variant="ghost">
