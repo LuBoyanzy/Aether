@@ -5,6 +5,8 @@ package agent
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"runtime/debug"
 
 	dockermodel "aether/internal/entities/docker"
 )
@@ -33,6 +35,19 @@ func (dm *dockerSDKManager) GetOverview() (*dockermodel.Overview, error) {
 		return nil, fmt.Errorf("docker mem total is negative: %d", memTotal)
 	}
 
+	composeVersion := ""
+	composeVersionValue, err := getComposeVersion(ctx)
+	if err != nil {
+		if errors.Is(err, errComposeCommandNotFound) {
+			slog.Warn("Docker compose command not found; compose version unavailable", "err", err)
+		} else {
+			slog.Error("Failed to get Docker compose version", "err", err, "stack", string(debug.Stack()))
+			return nil, err
+		}
+	} else {
+		composeVersion = composeVersionValue
+	}
+
 	return &dockermodel.Overview{
 		ServerVersion:     version.Version,
 		APIVersion:        version.APIVersion,
@@ -50,5 +65,6 @@ func (dm *dockerSDKManager) GetOverview() (*dockermodel.Overview, error) {
 		DockerRootDir:     info.DockerRootDir,
 		CPUs:              info.NCPU,
 		MemTotal:          uint64(memTotal),
+		ComposeVersion:    composeVersion,
 	}, nil
 }

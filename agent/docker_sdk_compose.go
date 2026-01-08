@@ -30,6 +30,8 @@ const (
 
 var composeNamePattern = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$`)
 
+var errComposeCommandNotFound = errors.New("docker compose command not found")
+
 func addComposeService(project *dockermodel.ComposeProject, service string) {
 	service = strings.TrimSpace(service)
 	if service == "" {
@@ -107,7 +109,7 @@ func resolveComposeCommand(ctx context.Context) (string, []string, error) {
 	if composePath, err := exec.LookPath("docker-compose"); err == nil {
 		return composePath, []string{}, nil
 	}
-	return "", nil, errors.New("docker compose command not found")
+	return "", nil, errComposeCommandNotFound
 }
 
 func runCompose(ctx context.Context, workdir string, args ...string) (string, error) {
@@ -126,6 +128,26 @@ func runCompose(ctx context.Context, workdir string, args ...string) (string, er
 		return string(output), fmt.Errorf("compose command failed: %w", err)
 	}
 	return string(output), nil
+}
+
+func getComposeVersion(ctx context.Context) (string, error) {
+	output, err := runCompose(ctx, ".", "version")
+	if err != nil {
+		if errors.Is(err, errComposeCommandNotFound) {
+			return "", err
+		}
+		trimmed := strings.TrimSpace(output)
+		if trimmed != "" {
+			return "", fmt.Errorf("compose version failed: %w: %s", err, trimmed)
+		}
+		return "", fmt.Errorf("compose version failed: %w", err)
+	}
+	version := strings.TrimSpace(output)
+	if version == "" {
+		return "", errors.New("compose version output is empty")
+	}
+	line, _, _ := strings.Cut(version, "\n")
+	return strings.TrimSpace(line), nil
 }
 
 func (a *Agent) ListComposeProjects() ([]dockermodel.ComposeProject, error) {

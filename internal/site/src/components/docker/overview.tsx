@@ -110,6 +110,12 @@ export default memo(function DockerOverviewPanel({ systemId }: { systemId?: stri
 						</div>
 						<div>
 							<span className="font-medium text-foreground">
+								<Trans>Compose Version</Trans>
+							</span>
+							: {data?.composeVersion || "-"}
+						</div>
+						<div>
+							<span className="font-medium text-foreground">
 								<Trans>Operating System</Trans>
 							</span>
 							: {data?.operatingSystem || "-"}

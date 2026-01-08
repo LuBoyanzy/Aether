@@ -264,6 +264,7 @@ export interface DockerOverview {
 	dockerRootDir: string
 	cpus: number
 	memTotal: number
+	composeVersion?: string
 }
 
 export interface DockerPort {

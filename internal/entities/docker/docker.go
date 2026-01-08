@@ -20,6 +20,7 @@ type Overview struct {
 	DockerRootDir     string `json:"dockerRootDir" cbor:"13,keyasint"`
 	CPUs              int    `json:"cpus" cbor:"14,keyasint"`
 	MemTotal          uint64 `json:"memTotal" cbor:"15,keyasint"`
+	ComposeVersion    string `json:"composeVersion" cbor:"16,keyasint"`
 }
 
 // Container 描述容器列表项。

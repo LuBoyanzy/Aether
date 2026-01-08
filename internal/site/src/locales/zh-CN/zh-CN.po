@@ -1789,6 +1789,9 @@ msgstr "您的用户设置已更新。"
 msgid "API Version"
 msgstr "API 版本"
 
+msgid "Compose Version"
+msgstr "Compose 版本"
+
 msgid "Architecture"
 msgstr "架构"
 
