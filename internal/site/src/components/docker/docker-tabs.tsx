@@ -1,6 +1,6 @@
 /**
  * Docker 模块页签与系统选择面板。
- * 统一渲染 9 大功能入口并传递所选系统。
+ * 统一渲染 10 大功能入口并传递所选系统。
  */
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
@@ -20,6 +20,7 @@ import DockerVolumesPanel from "@/components/docker/volumes"
 import DockerRegistriesPanel from "@/components/docker/registries"
 import DockerComposeTemplatesPanel from "@/components/docker/compose-templates"
 import DockerConfigPanel from "@/components/docker/config"
+import DockerServiceConfigsPanel from "@/components/docker/service-configs"
 
 const DockerTabs = memo(() => {
 	const systems = useStore($systems)
@@ -118,6 +119,12 @@ const DockerTabs = memo(() => {
 					>
 						<Trans>Config</Trans>
 					</TabsTrigger>
+					<TabsTrigger
+						value="service-configs"
+						className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
+					>
+						<Trans>Service Configs</Trans>
+					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="overview" className="mt-4 animate-fade-in duration-300">
 					<DockerOverviewPanel systemId={systemId} />
@@ -145,6 +152,9 @@ const DockerTabs = memo(() => {
 				</TabsContent>
 				<TabsContent value="config" className="mt-4 animate-fade-in duration-300">
 					<DockerConfigPanel systemId={systemId} />
+				</TabsContent>
+				<TabsContent value="service-configs" className="mt-4 animate-fade-in duration-300">
+					<DockerServiceConfigsPanel systemId={systemId} />
 				</TabsContent>
 			</Tabs>
 		</Card>

@@ -3,9 +3,15 @@
 package hub
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
@@ -30,6 +36,11 @@ func parseBoolParam(value string) bool {
 	return value == "1" || value == "true" || value == "yes"
 }
 
+var (
+	errSystemForbidden = errors.New("forbidden")
+	errSystemNotFound  = errors.New("system not found")
+)
+
 func (h *Hub) resolveSystem(systemID string) (*systems.System, error) {
 	if strings.TrimSpace(systemID) == "" {
 		return nil, errors.New("system is required")
@@ -39,6 +50,72 @@ func (h *Hub) resolveSystem(systemID string) (*systems.System, error) {
 		return nil, err
 	}
 	return system, nil
+}
+
+func (h *Hub) resolveSystemRecordForUser(e *core.RequestEvent, systemID string) (*core.Record, error) {
+	systemID = strings.TrimSpace(systemID)
+	if systemID == "" {
+		return nil, errors.New("system is required")
+	}
+	record, err := h.FindRecordById("systems", systemID)
+	if err != nil {
+		return nil, errSystemNotFound
+	}
+	shareAllSystems, _ := GetEnv("SHARE_ALL_SYSTEMS")
+	if shareAllSystems == "true" {
+		return record, nil
+	}
+	if e.Auth == nil {
+		return nil, errSystemForbidden
+	}
+	for _, userID := range record.GetStringSlice("users") {
+		if userID == e.Auth.Id {
+			return record, nil
+		}
+	}
+	return nil, errSystemForbidden
+}
+
+func (h *Hub) logServiceConfigError(message string, err error, fields ...any) {
+	if err == nil {
+		return
+	}
+	payload := []any{
+		"logger", "hub",
+		"err", err,
+		"stack", string(debug.Stack()),
+	}
+	payload = append(payload, fields...)
+	h.Logger().Error(message, payload...)
+}
+
+func validateServiceConfigURL(rawURL string) (string, error) {
+	trimmed := strings.TrimSpace(rawURL)
+	if trimmed == "" {
+		return "", errors.New("url is required")
+	}
+	parsed, err := url.Parse(trimmed)
+	if err != nil {
+		return "", fmt.Errorf("invalid url: %w", err)
+	}
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return "", errors.New("url scheme must be http or https")
+	}
+	if parsed.Host == "" {
+		return "", errors.New("url host is required")
+	}
+	return trimmed, nil
+}
+
+func respondSystemAccessError(e *core.RequestEvent, err error) error {
+	switch {
+	case errors.Is(err, errSystemForbidden):
+		return e.JSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
+	case errors.Is(err, errSystemNotFound):
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "system not found"})
+	default:
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
 }
 
 func (h *Hub) getDockerOverview(e *core.RequestEvent) error {
@@ -647,6 +724,449 @@ func (h *Hub) updateDockerConfig(e *core.RequestEvent) error {
 		return e.JSON(http.StatusBadGateway, map[string]string{"error": err.Error()})
 	}
 	return e.JSON(http.StatusOK, map[string]any{"status": "ok"})
+}
+
+type dockerServiceConfigPayload struct {
+	System string `json:"system"`
+	Name   string `json:"name"`
+	URL    string `json:"url"`
+	Token  string `json:"token"`
+}
+
+type dockerServiceConfigUpdatePayload struct {
+	ID    string  `json:"id"`
+	Name  *string `json:"name"`
+	URL   *string `json:"url"`
+	Token *string `json:"token"`
+}
+
+type dockerServiceConfigContentPayload struct {
+	System  string `json:"system"`
+	ID      string `json:"id"`
+	Content string `json:"content"`
+}
+
+type serviceConfigContentResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		Content string `json:"content"`
+	} `json:"data"`
+}
+
+type serviceConfigStatusResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func (h *Hub) listDockerServiceConfigs(e *core.RequestEvent) error {
+	systemID := strings.TrimSpace(e.Request.URL.Query().Get("system"))
+	if _, err := h.resolveSystemRecordForUser(e, systemID); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	records, err := h.FindRecordsByFilter(
+		"docker_service_configs",
+		"system = {:system}",
+		"-created",
+		-1,
+		0,
+		map[string]any{"system": systemID},
+	)
+	if err != nil {
+		h.logServiceConfigError("list service configs failed", err, "system", systemID)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	items := make([]map[string]any, 0, len(records))
+	for _, record := range records {
+		items = append(items, map[string]any{
+			"id":      record.Id,
+			"system":  record.GetString("system"),
+			"name":    record.GetString("name"),
+			"url":     record.GetString("url"),
+			"created": record.Get("created"),
+			"updated": record.Get("updated"),
+		})
+	}
+	return e.JSON(http.StatusOK, map[string]any{"items": items})
+}
+
+func (h *Hub) createDockerServiceConfig(e *core.RequestEvent) error {
+	if err := requireWritable(e); err != nil {
+		return err
+	}
+	var payload dockerServiceConfigPayload
+	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
+	}
+	if _, err := h.resolveSystemRecordForUser(e, payload.System); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	name := strings.TrimSpace(payload.Name)
+	if name == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "name is required"})
+	}
+	urlValue, err := validateServiceConfigURL(payload.URL)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	token := strings.TrimSpace(payload.Token)
+	if token == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "token is required"})
+	}
+	collection, err := h.FindCollectionByNameOrId("docker_service_configs")
+	if err != nil {
+		h.logServiceConfigError("find service configs collection failed", err, "system", payload.System)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	record := core.NewRecord(collection)
+	record.Set("system", strings.TrimSpace(payload.System))
+	record.Set("name", name)
+	record.Set("url", urlValue)
+	record.Set("token", token)
+	if err := h.Save(record); err != nil {
+		h.logServiceConfigError("create service config failed", err, "system", payload.System, "name", name, "url", urlValue)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	h.Logger().Info(
+		"service config created",
+		"logger",
+		"hub",
+		"system",
+		record.GetString("system"),
+		"id",
+		record.Id,
+		"name",
+		name,
+		"url",
+		urlValue,
+	)
+	return e.JSON(http.StatusOK, map[string]any{"id": record.Id})
+}
+
+func (h *Hub) updateDockerServiceConfig(e *core.RequestEvent) error {
+	if err := requireWritable(e); err != nil {
+		return err
+	}
+	var payload dockerServiceConfigUpdatePayload
+	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
+	}
+	if strings.TrimSpace(payload.ID) == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "id is required"})
+	}
+	if payload.Token != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "token cannot be updated"})
+	}
+	if payload.Name == nil && payload.URL == nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "name or url is required"})
+	}
+	record, err := h.FindRecordById("docker_service_configs", payload.ID)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "service config not found"})
+	}
+	if _, err := h.resolveSystemRecordForUser(e, record.GetString("system")); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	if payload.Name != nil {
+		name := strings.TrimSpace(*payload.Name)
+		if name == "" {
+			return e.JSON(http.StatusBadRequest, map[string]string{"error": "name is required"})
+		}
+		record.Set("name", name)
+	}
+	if payload.URL != nil {
+		urlValue, err := validateServiceConfigURL(*payload.URL)
+		if err != nil {
+			return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		record.Set("url", urlValue)
+	}
+	if err := h.Save(record); err != nil {
+		h.logServiceConfigError("update service config failed", err, "id", payload.ID, "system", record.GetString("system"))
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	h.Logger().Info(
+		"service config updated",
+		"logger",
+		"hub",
+		"system",
+		record.GetString("system"),
+		"id",
+		record.Id,
+	)
+	return e.JSON(http.StatusOK, map[string]any{"status": "ok"})
+}
+
+func (h *Hub) deleteDockerServiceConfig(e *core.RequestEvent) error {
+	if err := requireWritable(e); err != nil {
+		return err
+	}
+	id := strings.TrimSpace(e.Request.URL.Query().Get("id"))
+	if id == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "id is required"})
+	}
+	record, err := h.FindRecordById("docker_service_configs", id)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "service config not found"})
+	}
+	if _, err := h.resolveSystemRecordForUser(e, record.GetString("system")); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	if err := h.Delete(record); err != nil {
+		h.logServiceConfigError("delete service config failed", err, "id", id, "system", record.GetString("system"))
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	h.Logger().Info(
+		"service config deleted",
+		"logger",
+		"hub",
+		"system",
+		record.GetString("system"),
+		"id",
+		record.Id,
+	)
+	return e.JSON(http.StatusOK, map[string]any{"status": "ok"})
+}
+
+func (h *Hub) getDockerServiceConfigContent(e *core.RequestEvent) error {
+	query := e.Request.URL.Query()
+	systemID := strings.TrimSpace(query.Get("system"))
+	configID := strings.TrimSpace(query.Get("id"))
+	if systemID == "" || configID == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system and id are required"})
+	}
+	if _, err := h.resolveSystemRecordForUser(e, systemID); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	record, err := h.FindRecordById("docker_service_configs", configID)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "service config not found"})
+	}
+	if record.GetString("system") != systemID {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system mismatch"})
+	}
+	targetURL := record.GetString("url")
+	token := record.GetString("token")
+	if strings.TrimSpace(targetURL) == "" || strings.TrimSpace(token) == "" {
+		h.logServiceConfigError(
+			"service config missing url or token",
+			errors.New("service config missing url or token"),
+			"system", systemID,
+			"id", configID,
+		)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": "service config missing url or token"})
+	}
+	ctx, cancel := context.WithTimeout(e.Request.Context(), 10*time.Second)
+	defer cancel()
+	body, status, err := h.requestServiceConfig(ctx, http.MethodGet, targetURL, token, nil)
+	if err != nil {
+		h.logServiceConfigError(
+			"service config fetch failed",
+			err,
+			"system", systemID,
+			"id", configID,
+			"url", targetURL,
+			"status", status,
+			"response_size", len(body),
+		)
+		if status == http.StatusForbidden {
+			return e.JSON(http.StatusBadGateway, map[string]string{"error": "upstream rejected token"})
+		}
+		if status != http.StatusOK && status != 0 {
+			return e.JSON(http.StatusBadGateway, map[string]string{"error": fmt.Sprintf("upstream status %d", status)})
+		}
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": "failed to fetch config content"})
+	}
+	if status != http.StatusOK {
+		h.logServiceConfigError(
+			"service config fetch unexpected status",
+			fmt.Errorf("status %d", status),
+			"system", systemID,
+			"id", configID,
+			"url", targetURL,
+			"response_size", len(body),
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": fmt.Sprintf("upstream status %d", status)})
+	}
+	var response serviceConfigContentResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		h.logServiceConfigError(
+			"service config fetch invalid response",
+			err,
+			"system", systemID,
+			"id", configID,
+			"url", targetURL,
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": "invalid upstream response"})
+	}
+	if response.Code != http.StatusOK {
+		message := strings.TrimSpace(response.Message)
+		if message == "" {
+			message = fmt.Sprintf("upstream error code %d", response.Code)
+		}
+		h.logServiceConfigError(
+			"service config fetch upstream error",
+			fmt.Errorf("upstream code %d", response.Code),
+			"system", systemID,
+			"id", configID,
+			"url", targetURL,
+			"message", message,
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": message})
+	}
+	return e.JSON(http.StatusOK, map[string]any{"content": response.Data.Content})
+}
+
+func (h *Hub) updateDockerServiceConfigContent(e *core.RequestEvent) error {
+	if err := requireWritable(e); err != nil {
+		return err
+	}
+	var payload dockerServiceConfigContentPayload
+	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
+	}
+	systemID := strings.TrimSpace(payload.System)
+	if systemID == "" || strings.TrimSpace(payload.ID) == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system and id are required"})
+	}
+	if _, err := h.resolveSystemRecordForUser(e, systemID); err != nil {
+		return respondSystemAccessError(e, err)
+	}
+	if strings.TrimSpace(payload.Content) == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "content is required"})
+	}
+	record, err := h.FindRecordById("docker_service_configs", payload.ID)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "service config not found"})
+	}
+	if record.GetString("system") != systemID {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system mismatch"})
+	}
+	targetURL := record.GetString("url")
+	token := record.GetString("token")
+	if strings.TrimSpace(targetURL) == "" || strings.TrimSpace(token) == "" {
+		h.logServiceConfigError(
+			"service config missing url or token",
+			errors.New("service config missing url or token"),
+			"system", systemID,
+			"id", payload.ID,
+		)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": "service config missing url or token"})
+	}
+	requestBody, err := json.Marshal(map[string]string{"content": payload.Content})
+	if err != nil {
+		h.logServiceConfigError(
+			"service config marshal failed",
+			err,
+			"system", systemID,
+			"id", payload.ID,
+			"url", targetURL,
+			"content_len", len(payload.Content),
+		)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to encode content"})
+	}
+	ctx, cancel := context.WithTimeout(e.Request.Context(), 10*time.Second)
+	defer cancel()
+	body, status, err := h.requestServiceConfig(ctx, http.MethodPut, targetURL, token, requestBody)
+	if err != nil {
+		h.logServiceConfigError(
+			"service config update failed",
+			err,
+			"system", systemID,
+			"id", payload.ID,
+			"url", targetURL,
+			"status", status,
+			"response_size", len(body),
+		)
+		if status == http.StatusForbidden {
+			return e.JSON(http.StatusBadGateway, map[string]string{"error": "upstream rejected token"})
+		}
+		if status != http.StatusOK && status != 0 {
+			return e.JSON(http.StatusBadGateway, map[string]string{"error": fmt.Sprintf("upstream status %d", status)})
+		}
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": "failed to update config content"})
+	}
+	if status != http.StatusOK {
+		h.logServiceConfigError(
+			"service config update unexpected status",
+			fmt.Errorf("status %d", status),
+			"system", systemID,
+			"id", payload.ID,
+			"url", targetURL,
+			"response_size", len(body),
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": fmt.Sprintf("upstream status %d", status)})
+	}
+	var response serviceConfigStatusResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		h.logServiceConfigError(
+			"service config update invalid response",
+			err,
+			"system", systemID,
+			"id", payload.ID,
+			"url", targetURL,
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": "invalid upstream response"})
+	}
+	if response.Code != http.StatusOK {
+		message := strings.TrimSpace(response.Message)
+		if message == "" {
+			message = fmt.Sprintf("upstream error code %d", response.Code)
+		}
+		h.logServiceConfigError(
+			"service config update upstream error",
+			fmt.Errorf("upstream code %d", response.Code),
+			"system", systemID,
+			"id", payload.ID,
+			"url", targetURL,
+			"message", message,
+		)
+		return e.JSON(http.StatusBadGateway, map[string]string{"error": message})
+	}
+	h.Logger().Info(
+		"service config content updated",
+		"logger",
+		"hub",
+		"system",
+		systemID,
+		"id",
+		payload.ID,
+		"url",
+		targetURL,
+		"content_len",
+		len(payload.Content),
+	)
+	return e.JSON(http.StatusOK, map[string]any{"status": "ok"})
+}
+
+func (h *Hub) requestServiceConfig(
+	ctx context.Context,
+	method string,
+	endpoint string,
+	token string,
+	payload []byte,
+) ([]byte, int, error) {
+	requestBody := bytes.NewReader(payload)
+	req, err := http.NewRequestWithContext(ctx, method, endpoint, requestBody)
+	if err != nil {
+		return nil, 0, err
+	}
+	req.Header.Set("X-Config-Token", token)
+	req.Header.Set("Accept", "application/json")
+	if method == http.MethodPut {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+	return body, resp.StatusCode, nil
 }
 
 func (h *Hub) listDockerRegistries(e *core.RequestEvent) error {

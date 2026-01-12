@@ -355,6 +355,15 @@ export interface DockerDaemonConfig {
 	exists: boolean
 }
 
+export interface DockerServiceConfigItem {
+	id: string
+	system: string
+	name: string
+	url: string
+	created: string
+	updated: string
+}
+
 export type DockerFocusMatchType = "container_name" | "image" | "compose_project" | "compose_service" | "label"
 
 export interface DockerFocusServiceRecord extends RecordModel {

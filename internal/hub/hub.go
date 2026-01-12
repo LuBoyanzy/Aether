@@ -245,7 +245,23 @@ func setCollectionAuthSettings(app core.App) error {
 	dockerTemplatesCollection.CreateRule = &templatesWriteRule
 	dockerTemplatesCollection.UpdateRule = &templatesWriteRule
 	dockerTemplatesCollection.DeleteRule = &templatesWriteRule
-	return app.Save(dockerTemplatesCollection)
+	if err := app.Save(dockerTemplatesCollection); err != nil {
+		return err
+	}
+
+	// docker service configs (system-shared)
+	dockerServiceConfigsCollection, err := app.FindCollectionByNameOrId("docker_service_configs")
+	if err != nil {
+		return err
+	}
+	serviceConfigsReadRule := strings.Replace(systemsReadRule, "users.id", "system.users.id", 1)
+	serviceConfigsWriteRule := serviceConfigsReadRule + " && @request.auth.role != \"readonly\""
+	dockerServiceConfigsCollection.ListRule = &serviceConfigsReadRule
+	dockerServiceConfigsCollection.ViewRule = &serviceConfigsReadRule
+	dockerServiceConfigsCollection.CreateRule = &serviceConfigsWriteRule
+	dockerServiceConfigsCollection.UpdateRule = &serviceConfigsWriteRule
+	dockerServiceConfigsCollection.DeleteRule = &serviceConfigsWriteRule
+	return app.Save(dockerServiceConfigsCollection)
 }
 
 // registerCronJobs sets up scheduled tasks
@@ -364,6 +380,12 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	dockerGroup.POST("/compose-templates", h.createDockerComposeTemplate)
 	dockerGroup.POST("/compose-templates/update", h.updateDockerComposeTemplate)
 	dockerGroup.POST("/compose-templates/delete", h.deleteDockerComposeTemplate)
+	dockerGroup.GET("/service-configs", h.listDockerServiceConfigs)
+	dockerGroup.POST("/service-configs", h.createDockerServiceConfig)
+	dockerGroup.POST("/service-configs/update", h.updateDockerServiceConfig)
+	dockerGroup.POST("/service-configs/delete", h.deleteDockerServiceConfig)
+	dockerGroup.GET("/service-configs/content", h.getDockerServiceConfigContent)
+	dockerGroup.PUT("/service-configs/content", h.updateDockerServiceConfigContent)
 	dockerGroup.GET("/audits", h.listDockerAudits)
 	return nil
 }

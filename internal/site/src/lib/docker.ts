@@ -9,6 +9,7 @@ import type {
 	DockerNetwork,
 	DockerOverview,
 	DockerRegistryItem,
+	DockerServiceConfigItem,
 	DockerVolume,
 } from "@/types"
 
@@ -176,6 +177,40 @@ export const deleteDockerRegistry = (id: string) =>
 	pb.send<{ status: string }>("/api/aether/docker/registries/delete", {
 		method: "POST",
 		query: { id },
+	})
+
+export const listDockerServiceConfigs = (system: string) =>
+	pb.send<{ items: DockerServiceConfigItem[] }>("/api/aether/docker/service-configs", {
+		query: { system },
+	})
+
+export const createDockerServiceConfig = (payload: { system: string; name: string; url: string; token: string }) =>
+	pb.send<{ id: string }>("/api/aether/docker/service-configs", {
+		method: "POST",
+		body: payload,
+	})
+
+export const updateDockerServiceConfig = (payload: { id: string; name?: string; url?: string }) =>
+	pb.send<{ status: string }>("/api/aether/docker/service-configs/update", {
+		method: "POST",
+		body: payload,
+	})
+
+export const deleteDockerServiceConfig = (id: string) =>
+	pb.send<{ status: string }>("/api/aether/docker/service-configs/delete", {
+		method: "POST",
+		query: { id },
+	})
+
+export const fetchDockerServiceConfigContent = (params: { system: string; id: string }) =>
+	pb.send<{ content: string }>("/api/aether/docker/service-configs/content", {
+		query: params,
+	})
+
+export const updateDockerServiceConfigContent = (payload: { system: string; id: string; content: string }) =>
+	pb.send<{ status: string }>("/api/aether/docker/service-configs/content", {
+		method: "PUT",
+		body: payload,
 	})
 
 export const listDockerComposeTemplates = () =>

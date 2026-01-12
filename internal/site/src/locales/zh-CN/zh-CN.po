@@ -2471,3 +2471,116 @@ msgstr "这将删除选中的关注规则。"
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Enter value"
 msgstr "输入值"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Service Configs"
+msgstr "服务配置"
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Config"
+msgstr "服务配置"
+
+#: src/components/docker/service-configs.tsx
+msgid "Review and update config content for the selected service."
+msgstr "查看并更新所选服务的配置内容。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Paste YAML content"
+msgstr "粘贴 YAML 内容"
+
+#: src/components/docker/service-configs.tsx
+msgid "Changes take effect after restarting the service."
+msgstr "保存后需重启服务生效。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Maintain service configuration endpoints for the selected system."
+msgstr "维护所选系统的服务配置接口。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Create Service"
+msgstr "新增服务"
+
+#: src/components/docker/service-configs.tsx
+msgid "Filter services..."
+msgstr "筛选服务..."
+
+#: src/components/docker/service-configs.tsx
+msgid "No service configs yet."
+msgstr "暂无服务配置。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Edit Service"
+msgstr "编辑服务"
+
+#: src/components/docker/service-configs.tsx
+msgid "Register a configuration endpoint for this system."
+msgstr "为该系统注册配置接口。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Update service name or endpoint URL."
+msgstr "更新服务名称或接口 URL。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Name"
+msgstr "服务名称"
+
+#: src/components/docker/service-configs.tsx
+msgid "Endpoint URL"
+msgstr "接口 URL"
+
+#: src/components/docker/service-configs.tsx
+msgid "X-Config-Token"
+msgstr "X-Config-Token"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token for config API"
+msgstr "配置接口 Token"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is stored securely and cannot be edited later."
+msgstr "Token 会安全保存，创建后不可修改。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token cannot be changed after creation."
+msgstr "Token 创建后不可修改。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Delete service config?"
+msgstr "删除服务配置？"
+
+#: src/components/docker/service-configs.tsx
+msgid "Config saved. Restart the service to apply changes."
+msgstr "配置已保存，请重启服务生效。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load service configs"
+msgstr "加载服务配置失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to save service config"
+msgstr "保存服务配置失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to delete service config"
+msgstr "删除服务配置失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load config content"
+msgstr "加载配置内容失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to update config content"
+msgstr "更新配置内容失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Name and URL are required"
+msgstr "名称和 URL 为必填"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is required"
+msgstr "Token 为必填"
+
+#: src/components/docker/service-configs.tsx
+msgid "Service name"
+msgstr "服务名称"
