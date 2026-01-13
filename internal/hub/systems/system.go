@@ -216,6 +216,18 @@ func (sys *System) createRecords(data *system.CombinedData) (*core.Record, error
 			}
 		}
 
+		if data.NetworkMounts != nil {
+			if err := syncSystemNetworkMounts(txApp, sys.Id, data.NetworkMounts); err != nil {
+				return err
+			}
+		}
+
+		if data.RepoSources != nil {
+			if err := syncSystemRepoSources(txApp, sys.Id, data.RepoSources, true); err != nil {
+				return err
+			}
+		}
+
 		// add system details record
 		if data.Details != nil {
 			if err := createSystemDetailsRecord(txApp, data.Details, sys.Id); err != nil {

@@ -7,6 +7,7 @@ package agent
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -255,6 +256,23 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 		}
 	}
 	slog.Debug("Extra FS", "data", data.Stats.ExtraFs)
+
+	if networkMounts, err := a.getNetworkMounts(); err != nil {
+		slog.Error("Network mounts collection failed", "err", err)
+	} else {
+		data.NetworkMounts = networkMounts
+	}
+
+	if repoSources, err := a.collectRepoSources(repoSourcesOptions{}); err != nil {
+		if !errors.Is(err, errRepoSourcesUnsupported) {
+			slog.Error("Repo sources collection failed", "err", err)
+			if len(repoSources) > 0 {
+				data.RepoSources = repoSources
+			}
+		}
+	} else {
+		data.RepoSources = repoSources
+	}
 
 	if useCache {
 		a.cache.Set(data, cacheTimeMs)

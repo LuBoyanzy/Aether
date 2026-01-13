@@ -26,7 +26,7 @@ msgstr "已选择 {0} / {1} 行"
 
 #: src/components/routes/system/info-bar.tsx
 msgid "{cores, plural, one {# core} other {# cores}}"
-msgstr ""
+msgstr "{cores, plural, one {# 核} other {# 核}}"
 
 #: src/lib/utils.ts
 msgid "{count, plural, one {{countString} day} other {{countString} days}}"
@@ -42,7 +42,7 @@ msgstr "{count, plural, one {{countString} 分钟} few {{countString} 分钟} ma
 
 #: src/components/routes/system/info-bar.tsx
 msgid "{threads, plural, one {# thread} other {# threads}}"
-msgstr ""
+msgstr "{threads, plural, one {# 线程} other {# 线程}}"
 
 #: src/lib/utils.ts
 msgid "<1 minute"
@@ -88,6 +88,14 @@ msgid "5 min"
 msgstr "5 分钟"
 
 #. Table column
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -119,6 +127,11 @@ msgstr "添加 {foo}"
 msgid "Add <0>System</0>"
 msgstr "<0>添加客户端</0>"
 
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Add rule"
+msgstr "添加规则"
+
 #: src/components/add-system.tsx
 msgid "Add system"
 msgstr "添加客户端"
@@ -146,7 +159,7 @@ msgstr "管理员"
 
 #: src/components/routes/settings/general.tsx
 msgid "Aether translations are being set up; contribution details will be shared soon."
-msgstr ""
+msgstr "Aether 翻译正在建设中，贡献详情将尽快公布。"
 
 #: src/components/routes/settings/notifications.tsx
 #~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
@@ -154,7 +167,7 @@ msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
-msgstr ""
+msgstr "Aether 使用 <0>Shoutrrr</0> 集成常见通知服务，文档尚未准备好。"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
@@ -175,7 +188,6 @@ msgstr "警报历史"
 msgid "Alerts"
 msgstr "警报"
 
-#: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
 msgstr "所有容器"
@@ -190,6 +202,14 @@ msgstr "所有容器"
 msgid "All Systems"
 msgstr "所有客户端"
 
+#: src/components/docker/overview.tsx
+msgid "API Version"
+msgstr "API 版本"
+
+#: src/components/docker/overview.tsx
+msgid "Architecture"
+msgstr "架构"
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Are you sure you want to delete {name}?"
 msgstr "您确定要删除 {name} 吗？"
@@ -198,9 +218,17 @@ msgstr "您确定要删除 {name} 吗？"
 msgid "Are you sure?"
 msgstr "您确定吗？"
 
+#: src/components/docker/networks.tsx
+msgid "Attachable"
+msgstr "可附加"
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "自动复制所需的安全上下文。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Available"
+msgstr "可用"
 
 #: src/components/routes/system.tsx
 msgid "Average"
@@ -213,7 +241,7 @@ msgstr "容器的平均 CPU 使用率"
 #. placeholder {0}: alertData.unit
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Average drops below <0>{value}{0}</0>"
-msgstr ""
+msgstr "平均值低于<0>{value}{0}</0>"
 
 #. placeholder {0}: alertData.unit
 #: src/components/alerts/alerts-sheet.tsx
@@ -237,6 +265,10 @@ msgstr "{0} 平均利用率"
 msgid "Average utilization of GPU engines"
 msgstr "GPU 引擎的平均利用率"
 
+#: src/components/docker/service-configs.tsx
+msgid "Back"
+msgstr "返回"
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Backups"
@@ -250,7 +282,7 @@ msgstr "带宽"
 #. Battery label in systems table header
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
-msgstr ""
+msgstr "电池"
 
 #: src/components/routes/system.tsx
 #: src/lib/alerts.ts
@@ -274,7 +306,7 @@ msgstr "之前"
 #. placeholder {2}: alert.min
 #: src/components/active-alerts.tsx
 msgid "Below {0}{1} in last {2, plural, one {# minute} other {# minutes}}"
-msgstr ""
+msgstr "过去 {2, plural, one {# 分钟} other {# 分钟}} 内低于 {0}{1}"
 
 #: src/components/add-system.tsx
 msgid "Binary"
@@ -310,6 +342,14 @@ msgstr "可启动"
 msgid "Can stop"
 msgstr "可停止"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
@@ -324,6 +364,10 @@ msgstr "能力"
 msgid "Capacity"
 msgstr "容量"
 
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Category"
+msgstr "分类"
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Caution - potential data loss"
 msgstr "注意 - 数据可能已经丢失"
@@ -332,6 +376,10 @@ msgstr "注意 - 数据可能已经丢失"
 msgid "Celsius (°C)"
 msgstr "摄氏度 (°C)"
 
+#: src/components/docker/overview.tsx
+msgid "Cgroup Driver"
+msgstr "Cgroup 驱动"
+
 #: src/components/routes/settings/general.tsx
 msgid "Change display units for metrics."
 msgstr "更改指标的显示单位。"
@@ -339,6 +387,10 @@ msgstr "更改指标的显示单位。"
 #: src/components/routes/settings/general.tsx
 msgid "Change general application options."
 msgstr "更改常规应用程序选项。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Changes take effect after restarting the service."
+msgstr "保存后需重启服务生效。"
 
 #: src/components/routes/system.tsx
 msgid "Charge"
@@ -352,6 +404,10 @@ msgstr "充电中"
 #: src/components/routes/settings/general.tsx
 msgid "Chart options"
 msgstr "图表选项"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Check"
+msgstr "检测"
 
 #: src/components/login/forgot-pass-form.tsx
 msgid "Check {email} for a reset link."
@@ -392,6 +448,91 @@ msgstr "点击复制"
 msgid "Command line instructions"
 msgstr "命令行说明"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose"
+msgstr "编排"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Compose Content"
+msgstr "编排内容"
+
+#: src/components/docker/compose.tsx
+msgid "Compose Logs"
+msgstr "编排日志"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project"
+msgstr "编排项目"
+
+#: src/components/docker/compose.tsx
+msgid "Compose project name"
+msgstr "编排项目名称"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project: use the Compose value shown under the name, or the label com.docker.compose.project."
+msgstr "编排项目：填写名称下方的 Compose 值，或标签 com.docker.compose.project。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service"
+msgstr "编排服务"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service: enter both the compose project and service name. Service name comes from docker-compose.yml (services.*) or label com.docker.compose.service."
+msgstr "编排服务：需填写编排项目与服务名。服务名来自 docker-compose.yml 的 services.*，或标签 com.docker.compose.service。"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose Templates"
+msgstr "编排模板"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Compose templates can be reused to deploy stacks quickly."
+msgstr "编排模板可复用以快速部署应用栈。"
+
+#: src/components/docker/overview.tsx
+msgid "Compose Version"
+msgstr "Compose 版本"
+
+#: src/components/docker/config.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Config"
+msgstr "配置"
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config Content"
+msgstr "配置内容"
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config content is required"
+msgstr "配置内容为必填"
+
+#: src/components/docker/config.tsx
+msgid "Config Path"
+msgstr "配置路径"
+
+#: src/components/docker/service-configs.tsx
+msgid "Config saved. Restart the service to apply changes."
+msgstr "配置已保存，请重启服务生效。"
+
+#: src/components/docker/networks.tsx
+msgid "Configure a new Docker network."
+msgstr "配置新的 Docker 网络。"
+
+#: src/components/docker/volumes.tsx
+msgid "Configure a new Docker volume."
+msgstr "配置新的 Docker 存储卷。"
+
+#: src/components/docker/containers.tsx
+msgid "Configure focus rules"
+msgstr "配置关注规则"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Configure how you receive alert notifications."
 msgstr "配置您接收警报通知的方式。"
@@ -409,11 +550,37 @@ msgstr "冲突"
 msgid "Connection is down"
 msgstr "连接已断开"
 
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
+#: src/components/docker/containers.tsx
+msgid "Container Details"
+msgstr "容器详情"
+
+#: src/components/docker/containers.tsx
+msgid "Container Logs"
+msgstr "容器日志"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name"
+msgstr "容器名称"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name: use the Name column value."
+msgstr "容器名称：填写容器列表中 Name 列的值。"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
 msgid "Containers"
 msgstr "容器"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -497,6 +664,16 @@ msgstr "CPU 时间细分"
 msgid "CPU Usage"
 msgstr "CPU 使用率"
 
+#: src/components/docker/overview.tsx
+msgid "CPUs"
+msgstr "CPU 数"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Create"
 msgstr "创建"
@@ -505,8 +682,42 @@ msgstr "创建"
 msgid "Create account"
 msgstr "创建账户"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+msgid "Create Compose"
+msgstr "创建编排"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+msgid "Create Network"
+msgstr "创建网络"
+
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Create Registry"
+msgstr "创建仓库"
+
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Create Service"
+msgstr "新增服务"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+msgid "Create Template"
+msgstr "创建模板"
+
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Create Volume"
+msgstr "创建存储卷"
+
 #. Context: date created
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 msgid "Created"
 msgstr "创建时间"
 
@@ -537,15 +748,41 @@ msgctxt "unit"
 msgid "d"
 msgstr "天"
 
+#: src/components/docker/config.tsx
+msgid "Daemon Configuration"
+msgstr "守护进程配置"
+
+#: src/components/docker/config.tsx
+msgid "daemon.json not found; a new file will be created on save."
+msgstr "未找到 daemon.json；保存时会创建新文件。"
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Daily"
 msgstr "每日"
 
+#: src/components/docker/config.tsx
+msgid "Default daemon.json path"
+msgstr "默认 daemon.json 路径"
+
 #: src/components/routes/settings/general.tsx
 msgid "Default time period"
 msgstr "默认时间段"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Define system-level rules to filter the container list."
+msgstr "定义系统级规则以过滤容器列表。"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -553,10 +790,44 @@ msgstr "默认时间段"
 msgid "Delete"
 msgstr "删除"
 
+#: src/components/docker/compose.tsx
+msgid "Delete Compose Project"
+msgstr "删除编排项目"
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Delete fingerprint"
 msgstr "删除指纹"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Delete focus rule"
+msgstr "删除关注规则"
+
+#: src/components/docker/images.tsx
+msgid "Delete Image"
+msgstr "删除镜像"
+
+#: src/components/docker/networks.tsx
+msgid "Delete Network"
+msgstr "删除网络"
+
+#: src/components/docker/registries.tsx
+msgid "Delete Registry"
+msgstr "删除仓库"
+
+#: src/components/docker/service-configs.tsx
+msgid "Delete service config?"
+msgstr "删除服务配置？"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Delete Template"
+msgstr "删除模板"
+
+#: src/components/docker/volumes.tsx
+msgid "Delete Volume"
+msgstr "删除存储卷"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "描述"
@@ -568,6 +839,10 @@ msgstr "详情"
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
 msgstr "设备"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Disabled"
+msgstr "已禁用"
 
 #. Context: Battery state
 #: src/lib/i18n.ts
@@ -596,9 +871,24 @@ msgstr "磁盘使用"
 msgid "Disk usage of {extraFsName}"
 msgstr "{extraFsName}的磁盘使用"
 
+#: src/components/command-palette.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Docker"
+msgstr "Docker"
+
+#: src/components/docker/config.tsx
+msgid "Docker config updated"
+msgstr "Docker 配置已更新"
+
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker CPU 使用"
+
+#: src/components/docker/overview.tsx
+msgid "Docker engine summary for the selected system."
+msgstr "选中系统的 Docker 引擎概要。"
 
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
@@ -608,6 +898,10 @@ msgstr "Docker 内存使用"
 msgid "Docker Network I/O"
 msgstr "Docker 网络 I/O"
 
+#: src/components/docker/overview.tsx
+msgid "Docker Root Dir"
+msgstr "Docker 根目录"
+
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Documentation"
@@ -615,6 +909,7 @@ msgstr "文档"
 
 #. Context: System is down
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 #: src/lib/alerts.ts
@@ -629,10 +924,19 @@ msgstr "离线 ({downSystemsLength})"
 msgid "Download"
 msgstr "下载"
 
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Driver"
+msgstr "驱动"
+
 #: src/components/alerts-history-columns.tsx
 msgid "Duration"
 msgstr "持续时间"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -642,6 +946,18 @@ msgstr "编辑"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "编辑 {foo}"
+
+#: src/components/docker/registries.tsx
+msgid "Edit Registry"
+msgstr "编辑仓库"
+
+#: src/components/docker/service-configs.tsx
+msgid "Edit Service"
+msgstr "编辑服务"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Edit Template"
+msgstr "编辑模板"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -658,10 +974,22 @@ msgstr "电子邮件通知"
 msgid "Empty"
 msgstr "空电"
 
+#: src/components/docker/networks.tsx
+msgid "Enable IPv6"
+msgstr "启用 IPv6"
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "End Time"
 msgstr "结束时间"
+
+#: src/components/docker/service-configs.tsx
+msgid "Endpoint URL"
+msgstr "接口 URL"
+
+#: src/components/docker/overview.tsx
+msgid "Engine Details"
+msgstr "引擎详情"
 
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
@@ -671,10 +999,73 @@ msgstr "输入电子邮件地址以重置密码"
 msgid "Enter email address..."
 msgstr "输入电子邮件地址..."
 
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Enter value"
+msgstr "输入值"
+
 #: src/components/login/otp-forms.tsx
 msgid "Enter your one-time password."
 msgstr "输入您的一次性密码。"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Environment"
+msgstr "环境变量"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
@@ -682,6 +1073,10 @@ msgstr "输入您的一次性密码。"
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Error"
 msgstr "错误"
@@ -713,6 +1108,10 @@ msgstr "导出"
 msgid "Export configuration"
 msgstr "导出配置"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Export rules"
+msgstr "导出规则"
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Export your current systems configuration."
 msgstr "导出您当前的系统配置。"
@@ -733,6 +1132,151 @@ msgstr "失败属性："
 msgid "Failed to authenticate"
 msgstr "认证失败"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to check repository sources"
+msgstr "检测仓库源失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to create focus rule"
+msgstr "创建关注规则失败"
+
+#: src/components/docker/networks.tsx
+msgid "Failed to create network"
+msgstr "创建网络失败"
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to create volume"
+msgstr "创建存储卷失败"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to delete compose project"
+msgstr "删除编排项目失败"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to delete compose template"
+msgstr "删除编排模板失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to delete focus rule"
+msgstr "删除关注规则失败"
+
+#: src/components/docker/networks.tsx
+msgid "Failed to delete network"
+msgstr "删除网络失败"
+
+#: src/components/docker/registries.tsx
+msgid "Failed to delete registry"
+msgstr "删除仓库失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to delete service config"
+msgstr "删除服务配置失败"
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to delete volume"
+msgstr "删除存储卷失败"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to import focus rules"
+msgstr "导入关注规则失败"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to load compose projects"
+msgstr "加载编排项目失败"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to load compose templates"
+msgstr "加载编排模板失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load config content"
+msgstr "加载配置内容失败"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container details"
+msgstr "加载容器详情失败"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container logs"
+msgstr "加载容器日志失败"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load containers"
+msgstr "加载容器失败"
+
+#: src/components/docker/config.tsx
+msgid "Failed to load Docker config"
+msgstr "加载 Docker 配置失败"
+
+#: src/components/docker/overview.tsx
+msgid "Failed to load Docker overview"
+msgstr "加载 Docker 概览失败"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load focus rules"
+msgstr "加载关注规则失败"
+
+#: src/components/docker/images.tsx
+msgid "Failed to load images"
+msgstr "加载镜像失败"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Failed to load network mounts"
+msgstr "加载网络挂载失败"
+
+#: src/components/docker/networks.tsx
+msgid "Failed to load networks"
+msgstr "加载网络失败"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+msgid "Failed to load registries"
+msgstr "加载仓库失败"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to load repository sources"
+msgstr "加载仓库源失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load service configs"
+msgstr "加载服务配置失败"
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to load volumes"
+msgstr "加载存储卷失败"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to operate compose project"
+msgstr "操作编排项目失败"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to operate container"
+msgstr "操作容器失败"
+
+#: src/components/docker/images.tsx
+msgid "Failed to process image"
+msgstr "处理镜像失败"
+
+#: src/components/docker/images.tsx
+msgid "Failed to remove image"
+msgstr "删除镜像失败"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to save compose project"
+msgstr "保存编排项目失败"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to save compose template"
+msgstr "保存编排模板失败"
+
+#: src/components/docker/registries.tsx
+msgid "Failed to save registry"
+msgstr "保存仓库失败"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to save service config"
+msgstr "保存服务配置失败"
+
 #: src/components/routes/settings/layout.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -747,10 +1291,50 @@ msgstr "发送测试通知失败"
 msgid "Failed to update alert"
 msgstr "更新警报失败"
 
+#: src/components/docker/service-configs.tsx
+msgid "Failed to update config content"
+msgstr "更新配置内容失败"
+
+#: src/components/docker/config.tsx
+msgid "Failed to update Docker config"
+msgstr "更新 Docker 配置失败"
+
 #. placeholder {0}: statusTotals[ServiceStatus.Failed]
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Failed: {0}"
 msgstr "失败: {0}"
+
+#: src/components/docker/containers.tsx
+msgid "Filter containers..."
+msgstr "筛选容器..."
+
+#: src/components/docker/images.tsx
+msgid "Filter images..."
+msgstr "筛选镜像..."
+
+#: src/components/docker/networks.tsx
+msgid "Filter networks..."
+msgstr "筛选网络..."
+
+#: src/components/docker/compose.tsx
+msgid "Filter projects..."
+msgstr "筛选项目..."
+
+#: src/components/docker/registries.tsx
+msgid "Filter registries..."
+msgstr "筛选仓库..."
+
+#: src/components/docker/service-configs.tsx
+msgid "Filter services..."
+msgstr "筛选服务..."
+
+#: src/components/docker/compose-templates.tsx
+msgid "Filter templates..."
+msgstr "筛选模板..."
+
+#: src/components/docker/volumes.tsx
+msgid "Filter volumes..."
+msgstr "筛选存储卷..."
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -769,13 +1353,52 @@ msgstr "指纹"
 msgid "Firmware"
 msgstr "固件"
 
+#: src/components/docker/containers.tsx
+msgid "Focus only"
+msgstr "仅看关注"
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules"
+msgstr "关注规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules help"
+msgstr "关注规则使用帮助"
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "持续<0>{min}</0> {min, plural, one {分钟} other {分钟}}"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "Forbidden"
 msgstr "禁止访问"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/volumes.tsx
+msgid "Force removal"
+msgstr "强制删除"
 
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
@@ -791,6 +1414,10 @@ msgstr "FreeBSD 命令"
 #: src/lib/i18n.ts
 msgid "Full"
 msgstr "满电"
+
+#: src/components/docker/networks.tsx
+msgid "Gateway"
+msgstr "网关"
 
 #. Context: General settings
 #: src/components/routes/settings/general.tsx
@@ -846,28 +1473,117 @@ msgstr "闲置"
 msgid "If you've lost the password to your admin account, you may reset it using the following command."
 msgstr "如果您丢失了管理员账户的密码，可以使用以下命令重置。"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+msgid "Image"
+msgstr "镜像"
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgctxt "Docker image"
 msgid "Image"
 msgstr "镜像"
 
+#: src/components/docker/images.tsx
+msgid "Image ID"
+msgstr "镜像 ID"
+
+#: src/components/docker/images.tsx
+msgid "Image Logs"
+msgstr "镜像日志"
+
+#: src/components/docker/images.tsx
+msgid "Image name is required"
+msgstr "镜像名称为必填"
+
+#: src/components/docker/images.tsx
+msgid "Image name or tag"
+msgstr "镜像名称或标签"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Image: use the Image column value (including tag)."
+msgstr "镜像：填写容器列表中 Image 列的值（含 tag）。"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/overview.tsx
+msgid "Images"
+msgstr "镜像"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import completed"
+msgstr "导入完成"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import rules"
+msgstr "导入规则"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Imported {importedCount} rules, skipped {skippedCount}."
+msgstr "已导入 {importedCount} 条规则，跳过 {skippedCount} 条。"
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Inactive"
 msgstr "非活跃"
 
+#: src/components/docker/containers.tsx
+msgid "Inspect"
+msgstr "查看详情"
+
+#: src/components/docker/networks.tsx
+msgid "Internal"
+msgstr "内部"
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "无效的电子邮件地址。"
+
+#~ msgid "IPv6"
+#~ msgstr "IPv6"
 
 #. Linux kernel
 #: src/components/routes/system.tsx
 #~ msgid "Kernel"
 #~ msgstr "内核"
 
+#: src/components/docker/overview.tsx
+msgid "Kernel Version"
+msgstr "内核版本"
+
+#: src/components/docker/containers.tsx
+msgid "Kill"
+msgstr "强制停止"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label"
+msgstr "标签"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label key"
+msgstr "标签键"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label value"
+msgstr "标签值"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label: enter the label key and value (see Inspect for labels)."
+msgstr "标签：填写标签键和值（可在 Inspect 中查看）。"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Labels (JSON)"
+msgstr "标签 (JSON)"
+
 #: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "语言"
+
+#: src/components/docker/compose.tsx
+msgid "Latest output from compose."
+msgstr "编排最新输出。"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Layout"
@@ -876,6 +1592,10 @@ msgstr "布局"
 #: src/components/routes/settings/general.tsx
 msgid "Layout width"
 msgstr "布局宽度"
+
+#: src/components/docker/registries.tsx
+msgid "Leave blank to keep unchanged"
+msgstr "留空则保持不变"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Lifecycle"
@@ -911,6 +1631,19 @@ msgstr "负载"
 msgid "Load state"
 msgstr "加载状态"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Loading"
+msgstr "加载中"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "加载中..."
@@ -918,6 +1651,10 @@ msgstr "加载中..."
 #: src/components/navbar.tsx
 msgid "Log Out"
 msgstr "登出"
+
+#: src/components/docker/overview.tsx
+msgid "Logging Driver"
+msgstr "日志驱动"
 
 #: src/components/login/login.tsx
 #~ msgid "Login"
@@ -930,6 +1667,7 @@ msgstr "登录尝试失败"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
 #: src/components/navbar.tsx
 msgid "Logs"
 msgstr "日志"
@@ -947,9 +1685,45 @@ msgstr "分"
 msgid "Main PID"
 msgstr "主进程 ID"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Maintain reusable Docker Compose templates."
+msgstr "维护可复用的 Docker Compose 模板。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Maintain service configuration endpoints for the selected system."
+msgstr "维护所选系统的服务配置接口。"
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "管理显示和通知偏好。"
+
+#: src/components/docker/compose.tsx
+msgid "Manage Docker Compose projects for the selected system."
+msgstr "管理所选系统的 Docker Compose 项目。"
+
+#: src/components/docker/networks.tsx
+msgid "Manage Docker networks on the selected system."
+msgstr "管理所选系统的 Docker 网络。"
+
+#: src/components/docker/volumes.tsx
+msgid "Manage Docker volumes for persistent storage."
+msgstr "管理所选系统的 Docker 存储卷。"
+
+#: src/components/docker/images.tsx
+msgid "Manage local images and registries."
+msgstr "管理本地镜像与仓库。"
+
+#: src/components/docker/registries.tsx
+msgid "Manage registry credentials for image pull and push."
+msgstr "管理镜像拉取与推送的仓库凭据。"
+
+#: src/components/docker/containers.tsx
+msgid "Manage running and stopped containers."
+msgstr "管理运行中和已停止的容器。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Manager"
+msgstr "管理器"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -986,21 +1760,78 @@ msgstr "内存使用率"
 msgid "Memory usage of docker containers"
 msgstr "Docker 容器的内存使用率"
 
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Mode"
+msgstr "模式"
+
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
 msgstr "型号"
 
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mount Point"
+msgstr "挂载点"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mounted network filesystems detected on the server"
+msgstr "检测到服务器上的网络挂载文件系统"
+
+#: src/components/docker/volumes.tsx
+msgid "Mountpoint"
+msgstr "挂载点"
+
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
 msgstr "名称"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Name and content are required"
+msgstr "名称和内容为必填"
+
+#: src/components/docker/registries.tsx
+msgid "Name and server are required"
+msgstr "名称和服务器为必填"
+
+#: src/components/docker/service-configs.tsx
+msgid "Name and URL are required"
+msgstr "名称和 URL 为必填"
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "网络"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drive"
+msgstr "网络盘"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drives"
+msgstr "网络盘"
+
+#: src/components/docker/networks.tsx
+msgid "Network name"
+msgstr "网络名称"
+
+#: src/components/docker/networks.tsx
+msgid "Network name is required"
+msgstr "网络名称为必填"
 
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
@@ -1018,11 +1849,61 @@ msgstr "公共接口的网络流量"
 msgid "Network unit"
 msgstr "网络单位"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/networks.tsx
+msgid "Networks"
+msgstr "网络"
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No"
 msgstr "否"
+
+#: src/components/docker/compose.tsx
+msgid "No compose projects found."
+msgstr "未找到编排项目。"
+
+#: src/components/docker/containers.tsx
+msgid "No containers found."
+msgstr "未找到容器。"
+
+#: src/components/docker/containers.tsx
+msgid "No details available."
+msgstr "暂无详情。"
+
+#: src/components/docker/containers.tsx
+msgid "No focus rules configured for this system."
+msgstr "该系统未配置关注规则。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "No focus rules found."
+msgstr "未找到关注规则。"
+
+#: src/components/docker/images.tsx
+msgid "No images found."
+msgstr "未找到镜像。"
+
+#: src/components/docker/containers.tsx
+msgid "No logs available."
+msgstr "暂无日志。"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "No network mounts detected"
+msgstr "未检测到网络挂载"
+
+#: src/components/docker/networks.tsx
+msgid "No networks found."
+msgstr "未找到网络。"
+
+#: src/components/docker/registries.tsx
+msgid "No registries found."
+msgstr "未找到仓库。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "No repository sources detected"
+msgstr "未检测到仓库源"
 
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1042,10 +1923,34 @@ msgstr "无结果。"
 msgid "No S.M.A.R.T. attributes available for this device."
 msgstr "此设备没有可用的 S.M.A.R.T. 属性。"
 
+#: src/components/docker/service-configs.tsx
+msgid "No service configs yet."
+msgstr "暂无服务配置。"
+
+#: src/components/docker/service-configs.tsx
+msgid "No system found."
+msgstr "未找到系统。"
+
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "No systems found."
 msgstr "未找到系统。"
+
+#: src/components/docker/compose-templates.tsx
+msgid "No templates found."
+msgstr "未找到模板。"
+
+#: src/components/docker/volumes.tsx
+msgid "No volumes found."
+msgstr "未找到存储卷。"
+
+#: src/components/docker/images.tsx
+msgid "None"
+msgstr "无"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Not checked"
+msgstr "未检测"
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1078,13 +1983,54 @@ msgstr "一次性密码"
 msgid "Open menu"
 msgstr "打开菜单"
 
+#: src/components/docker/overview.tsx
+msgid "Operating System"
+msgstr "操作系统"
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
-msgstr ""
+msgstr "操作失败"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Operation success"
 msgstr "操作成功"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Optional .env content"
+msgstr "可选 .env 内容"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Optional description"
+msgstr "可选描述"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver name"
+msgstr "可选驱动名称"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver options as JSON"
+msgstr "可选驱动选项（JSON）"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional labels as JSON"
+msgstr "可选标签（JSON）"
+
+#: src/components/docker/images.tsx
+msgid "Optional registry"
+msgstr "可选仓库"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Options (JSON)"
+msgstr "选项 (JSON)"
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1094,9 +2040,18 @@ msgstr "或使用以下方式登录"
 msgid "Other"
 msgstr "其他"
 
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
+msgid "Overview"
+msgstr "概览"
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
 msgstr "覆盖现有警报"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Package manager sources configured on the server"
+msgstr "服务器上配置的包管理器源"
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
@@ -1114,6 +2069,7 @@ msgstr "第 {0} 页，共 {1} 页"
 msgid "Pages / Settings"
 msgstr "页面 / 设置"
 
+#: src/components/docker/registries.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
 msgid "Password"
@@ -1135,10 +2091,33 @@ msgstr "已收到密码重置请求"
 msgid "Past"
 msgstr "过去"
 
+#: src/components/docker/config.tsx
+msgid "Paste daemon.json content"
+msgstr "粘贴 daemon.json 内容"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Paste docker-compose.yml content"
+msgstr "粘贴 docker-compose.yml 内容"
+
+#: src/components/docker/service-configs.tsx
+msgid "Paste YAML content"
+msgstr "粘贴 YAML 内容"
+
+#: src/components/docker/service-configs.tsx
+msgid "Path (e.g. /api/v1/config)"
+msgstr "路径（例如 /api/v1/config）"
+
+#: src/components/docker/service-configs.tsx
+msgid "Path is required"
+msgstr "路径为必填"
+
+#: src/components/docker/containers.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Pause"
 msgstr "暂停"
 
+#: src/components/docker/overview.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Paused"
 msgstr "已暂停"
@@ -1185,12 +2164,26 @@ msgstr "请重新登录"
 #~ msgid "Please see <0>the documentation</0> for instructions."
 #~ msgstr "请参阅<0>文档</0>以获取说明。"
 
+#: src/components/docker/empty-state.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Please select a system to continue."
+msgstr "请选择一个系统以继续。"
+
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
 msgstr "请登录您的账户"
 
 #: src/components/add-system.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Port"
+msgstr "端口"
+
+#: src/components/docker/service-configs.tsx
+msgid "Port is required"
+msgstr "端口为必填"
+
+#: src/components/docker/containers.tsx
+msgid "Ports"
 msgstr "端口"
 
 #. Power On Time
@@ -1211,10 +2204,33 @@ msgstr "首选语言"
 msgid "Process started"
 msgstr "进程启动"
 
+#: src/components/docker/compose.tsx
+msgid "Provide a full docker-compose.yml content for deployment."
+msgstr "请提供完整的 docker-compose.yml 内容用于部署。"
+
 #. Use 'Key' if your language requires many more characters
 #: src/components/add-system.tsx
 msgid "Public Key"
 msgstr "公钥"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/images.tsx
+msgid "Pull"
+msgstr "拉取"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Pull Image"
+msgstr "拉取镜像"
+
+#: src/components/docker/images.tsx
+msgid "Push"
+msgstr "推送"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Push Image"
+msgstr "推送镜像"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
@@ -1226,19 +2242,71 @@ msgstr "静默时间"
 msgid "Read"
 msgstr "读取"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Read-only users cannot modify focus rules."
+msgstr "只读用户无法修改关注规则。"
+
 #: src/components/routes/system.tsx
 msgid "Received"
 msgstr "接收"
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "刷新"
 
+#: src/components/docker/service-configs.tsx
+msgid "Register a configuration endpoint for this system."
+msgstr "为该系统注册配置接口。"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/registries.tsx
+msgid "Registries"
+msgstr "仓库"
+
+#: src/components/docker/images.tsx
+msgid "Registry"
+msgstr "仓库"
+
+#: src/components/docker/registries.tsx
+msgid "Registry name"
+msgstr "仓库名称"
+
+#: src/components/docker/registries.tsx
+msgid "Registry server"
+msgstr "仓库服务器"
+
+#: src/components/docker/registries.tsx
+msgid "Registry username"
+msgstr "仓库用户名"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Relationships"
 msgstr "关系"
+
+#: src/components/docker/compose.tsx
+msgid "Remove project files"
+msgstr "删除项目文件"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository checks are not supported on this OS"
+msgstr "当前操作系统不支持仓库检测"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository Sources"
+msgstr "仓库源"
 
 #: src/components/login/login.tsx
 msgid "Request a one-time password"
@@ -1266,6 +2334,15 @@ msgstr "重置密码"
 msgid "Resolved"
 msgstr "已解决"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Restart"
+msgstr "重启"
+
+#: src/components/docker/config.tsx
+msgid "Restart Docker after update"
+msgstr "更新后重启 Docker"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Restarts"
 msgstr "重启次数"
@@ -1273,6 +2350,10 @@ msgstr "重启次数"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Resume"
 msgstr "恢复"
+
+#: src/components/docker/service-configs.tsx
+msgid "Review and update config content for the selected service."
+msgstr "查看并更新所选服务的配置内容。"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -1287,6 +2368,22 @@ msgstr "轮换令牌"
 msgid "Rows per page"
 msgstr "每页行数"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type"
+msgstr "规则类型"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type is required"
+msgstr "规则类型为必填"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rules are exact matches. Use the values shown in the container list or details."
+msgstr "规则为精确匹配，请使用容器列表或详情中显示的值。"
+
+#: src/components/docker/overview.tsx
+msgid "Running"
+msgstr "运行中"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Runtime Metrics"
 msgstr "运行时指标"
@@ -1298,6 +2395,15 @@ msgstr "S.M.A.R.T. 详情"
 #: src/components/routes/system/smart-table.tsx
 msgid "S.M.A.R.T. Self-Test"
 msgstr "S.M.A.R.T. 自检"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Save"
+msgstr "保存"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
@@ -1324,6 +2430,9 @@ msgstr "安排静默时间，在此期间不会发送通知，例如在维护期
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "安排静默时间，在此期间不会发送通知。"
 
+#~ msgid "Scope"
+#~ msgstr "范围"
+
 #: src/components/navbar.tsx
 msgid "Search"
 msgstr "搜索"
@@ -1331,6 +2440,10 @@ msgstr "搜索"
 #: src/components/command-palette.tsx
 msgid "Search for systems or settings..."
 msgstr "搜索系统或设置..."
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Secondary value is required"
+msgstr "第二个值为必填"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "See <0>notification settings</0> to configure how you receive alerts."
@@ -1340,6 +2453,22 @@ msgstr "查看<0>通知设置</0>以配置您接收警报的方式。"
 msgid "Select {foo}"
 msgstr "选择 {foo}"
 
+#: src/components/docker/images.tsx
+msgid "Select a registry if authentication is required."
+msgstr "如需认证请选择仓库。"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system"
+msgstr "选择系统"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system to manage Docker resources."
+msgstr "请选择一个系统以管理 Docker 资源。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Select rule type"
+msgstr "选择规则类型"
+
 #: src/components/routes/system.tsx
 msgid "Sent"
 msgstr "发送"
@@ -1348,10 +2477,41 @@ msgstr "发送"
 msgid "Serial Number"
 msgstr "序列号"
 
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Server"
+msgstr "服务器"
+
+#: src/components/docker/overview.tsx
+msgid "Server Version"
+msgstr "服务器版本"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Service"
+msgstr "服务"
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Config"
+msgstr "服务配置"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Service Configs"
+msgstr "服务配置"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Service Details"
 msgstr "服务详情"
 
+#: src/components/docker/service-configs.tsx
+msgid "Service name"
+msgstr "服务名称"
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Name"
+msgstr "服务名称"
+
+#: src/components/docker/compose.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Services"
 msgstr "服务"
@@ -1372,9 +2532,21 @@ msgstr "设置"
 msgid "Settings saved"
 msgstr "设置已保存"
 
+#: src/components/docker/images.tsx
+msgid "Show all"
+msgstr "显示全部"
+
+#: src/components/docker/containers.tsx
+msgid "Show stopped"
+msgstr "显示已停止"
+
 #: src/components/login/auth-form.tsx
 msgid "Sign in"
 msgstr "登录"
+
+#: src/components/docker/images.tsx
+msgid "Size"
+msgstr "大小"
 
 #: src/components/command-palette.tsx
 msgid "SMTP settings"
@@ -1383,6 +2555,16 @@ msgstr "SMTP 设置"
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
 msgstr "排序依据"
+
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Source"
+msgstr "来源"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Start"
+msgstr "启动"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -1396,6 +2578,9 @@ msgid "State"
 msgstr "状态"
 
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1404,9 +2589,30 @@ msgstr "状态"
 msgid "Status"
 msgstr "状态"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Stop"
+msgstr "停止"
+
+#: src/components/docker/overview.tsx
+msgid "Stopped"
+msgstr "已停止"
+
+#: src/components/docker/overview.tsx
+msgid "Storage Driver"
+msgstr "存储驱动"
+
+#: src/components/docker/registries.tsx
+msgid "Store credentials for private registries."
+msgstr "保存私有仓库凭据。"
+
 #: src/components/systemd-table/systemd-table-columns.tsx
 #~ msgid "Sub State"
 #~ msgstr "子状态"
+
+#: src/components/docker/networks.tsx
+msgid "Subnet"
+msgstr "子网"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1450,6 +2656,10 @@ msgstr "系统可以在数据目录中的<0>config.yml</0>文件中管理。"
 msgid "Table"
 msgstr "表格"
 
+#: src/components/docker/images.tsx
+msgid "Tags"
+msgstr "标签"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Tasks"
 msgstr "任务数"
@@ -1473,6 +2683,10 @@ msgstr "温度单位"
 msgid "Temperatures of system sensors"
 msgstr "系统传感器的温度"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Template name"
+msgstr "模板名称"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Test <0>URL</0>"
 msgstr "测试<0>URL</0>"
@@ -1485,6 +2699,10 @@ msgstr "测试通知已发送"
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "然后登录到后台并在用户表中重置您的用户账户密码。"
 
+#: src/components/docker/service-configs.tsx
+msgid "This action cannot be undone."
+msgstr "此操作无法撤销。"
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "This action cannot be undone. This will permanently delete all current records for {name} from the database."
 msgstr "此操作无法撤销。这将永久删除数据库中{name}的所有当前记录。"
@@ -1493,6 +2711,34 @@ msgstr "此操作无法撤销。这将永久删除数据库中{name}的所有当
 msgid "This will permanently delete all selected records from the database."
 msgstr "这将永久删除数据库中所有选定的记录。"
 
+#: src/components/docker/compose-templates.tsx
+msgid "This will remove the selected compose template."
+msgstr "这将删除选中的编排模板。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "This will remove the selected focus rule."
+msgstr "这将删除选中的关注规则。"
+
+#: src/components/docker/images.tsx
+msgid "This will remove the selected image from the host."
+msgstr "这将从主机删除选中的镜像。"
+
+#: src/components/docker/networks.tsx
+msgid "This will remove the selected network."
+msgstr "这将删除选中的网络。"
+
+#: src/components/docker/registries.tsx
+msgid "This will remove the selected registry credentials."
+msgstr "这将删除选中的仓库凭据。"
+
+#: src/components/docker/volumes.tsx
+msgid "This will remove the selected volume."
+msgstr "这将删除选中的存储卷。"
+
+#: src/components/docker/compose.tsx
+msgid "This will stop and remove the selected compose project."
+msgstr "这将停止并删除选中的编排项目。"
+
 #: src/components/routes/system.tsx
 msgid "Throughput of {extraFsName}"
 msgstr "{extraFsName}的吞吐量"
@@ -1500,6 +2746,10 @@ msgstr "{extraFsName}的吞吐量"
 #: src/components/routes/system.tsx
 msgid "Throughput of root filesystem"
 msgstr "根文件系统的吞吐量"
+
+#: src/components/docker/networks.tsx
+msgid "Time"
+msgstr "时间"
 
 #: src/components/routes/settings/general.tsx
 msgid "Time format"
@@ -1523,6 +2773,22 @@ msgstr "切换主题"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Token"
 msgstr "令牌"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token cannot be changed after creation."
+msgstr "Token 创建后不可修改。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token for config API"
+msgstr "配置接口 Token"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is required"
+msgstr "Token 为必填"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is stored securely and cannot be edited later."
+msgstr "Token 会安全保存，创建后不可修改。"
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1550,6 +2816,10 @@ msgstr "每个接口的总接收数据量"
 #: src/components/routes/system/network-sheet.tsx
 msgid "Total data sent for each interface"
 msgstr "每个接口的总发送数据量"
+
+#: src/components/docker/overview.tsx
+msgid "Total Memory"
+msgstr "总内存"
 
 #. placeholder {0}: data.length
 #: src/components/systemd-table/systemd-table.tsx
@@ -1582,7 +2852,7 @@ msgstr "当任何传感器超过阈值时触发"
 
 #: src/lib/alerts.ts
 msgid "Triggers when battery charge drops below a threshold"
-msgstr ""
+msgstr "当电池电量低于阈值时触发"
 
 #: src/lib/alerts.ts
 msgid "Triggers when combined up/down exceeds a threshold"
@@ -1608,11 +2878,17 @@ msgstr "当状态在上线与掉线之间切换时触发"
 msgid "Triggers when usage of any disk exceeds a threshold"
 msgstr "当任何磁盘的使用率超过阈值时触发"
 
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Type"
 msgstr "类型"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unavailable"
+msgstr "不可用"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Unit file"
@@ -1638,7 +2914,16 @@ msgstr "未知"
 msgid "Unlimited"
 msgstr "无限制"
 
+#: src/components/docker/containers.tsx
+msgid "Unpause"
+msgstr "恢复"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unsupported"
+msgstr "不支持"
+
 #. Context: System is up
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Up"
@@ -1648,11 +2933,23 @@ msgstr "在线"
 msgid "Up ({upSystemsLength})"
 msgstr "在线 ({upSystemsLength})"
 
+#: src/components/docker/compose.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Update"
 msgstr "更新"
 
+#: src/components/docker/compose.tsx
+msgid "Update Compose"
+msgstr "更新编排"
+
+#: src/components/docker/service-configs.tsx
+msgid "Update service name or endpoint URL."
+msgstr "更新服务名称或接口 URL。"
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -1667,16 +2964,23 @@ msgid "Upload"
 msgstr "上传"
 
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "正常运行时间"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "URL"
+msgstr "URL"
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/cpu-sheet.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 msgid "Usage"
 msgstr "使用"
 
@@ -1694,18 +2998,34 @@ msgstr "已用"
 msgid "User Actions"
 msgstr "用户操作"
 
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Username"
+msgstr "用户名"
+
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 msgid "Users"
 msgstr "用户"
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 msgid "Value"
 msgstr "值"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Value is required"
+msgstr "值为必填"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "View"
 msgstr "视图"
+
+#: src/components/docker/config.tsx
+msgid "View and update Docker daemon configuration."
+msgstr "查看并更新 Docker 守护进程配置。"
 
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/network-sheet.tsx
@@ -1719,6 +3039,19 @@ msgstr "查看您最近的200个警报。"
 #: src/components/systems-table/systems-table.tsx
 msgid "Visible Fields"
 msgstr "可见列"
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name"
+msgstr "存储卷名称"
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name is required"
+msgstr "存储卷名称为必填"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/volumes.tsx
+msgid "Volumes"
+msgstr "存储卷"
 
 #: src/components/routes/system.tsx
 msgid "Waiting for enough records to display"
@@ -1754,11 +3087,19 @@ msgctxt "Button to copy install command"
 msgid "Windows command"
 msgstr "Windows 安装命令"
 
+#: src/components/docker/compose.tsx
+msgid "Workdir"
+msgstr "工作目录"
+
 #. Disk write
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 msgid "Write"
 msgstr "写入"
+
+#: src/components/docker/service-configs.tsx
+msgid "X-Config-Token"
+msgstr "X-Config-Token"
 
 #: src/components/routes/settings/layout.tsx
 msgid "YAML Config"
@@ -1775,6 +3116,27 @@ msgid "Yes"
 msgstr "是"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "You have read-only access"
 msgstr "你只有只读权限"
 
@@ -1785,802 +3147,3 @@ msgstr "您的用户设置已更新。"
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
-
-msgid "API Version"
-msgstr "API 版本"
-
-msgid "Compose Version"
-msgstr "Compose 版本"
-
-msgid "Architecture"
-msgstr "架构"
-
-msgid "Attachable"
-msgstr "可附加"
-
-msgid "CPUs"
-msgstr "CPU 数"
-
-msgid "Cgroup Driver"
-msgstr "Cgroup 驱动"
-
-msgid "Compose"
-msgstr "编排"
-
-msgid "Compose Content"
-msgstr "编排内容"
-
-msgid "Compose Logs"
-msgstr "编排日志"
-
-msgid "Compose Templates"
-msgstr "编排模板"
-
-msgid "Compose project name"
-msgstr "编排项目名称"
-
-msgid "Compose templates can be reused to deploy stacks quickly."
-msgstr "编排模板可复用以快速部署应用栈。"
-
-msgid "Config"
-msgstr "配置"
-
-msgid "Config Content"
-msgstr "配置内容"
-
-msgid "Config Path"
-msgstr "配置路径"
-
-msgid "Config content is required"
-msgstr "配置内容为必填"
-
-msgid "Configure a new Docker network."
-msgstr "配置新的 Docker 网络。"
-
-msgid "Configure a new Docker volume."
-msgstr "配置新的 Docker 存储卷。"
-
-msgid "Container Details"
-msgstr "容器详情"
-
-msgid "Container Logs"
-msgstr "容器日志"
-
-msgid "Create Compose"
-msgstr "创建编排"
-
-msgid "Create Network"
-msgstr "创建网络"
-
-msgid "Create Registry"
-msgstr "创建仓库"
-
-msgid "Create Template"
-msgstr "创建模板"
-
-msgid "Create Volume"
-msgstr "创建存储卷"
-
-msgid "Daemon Configuration"
-msgstr "守护进程配置"
-
-msgid "Default daemon.json path"
-msgstr "默认 daemon.json 路径"
-
-msgid "Delete Compose Project"
-msgstr "删除编排项目"
-
-msgid "Delete Image"
-msgstr "删除镜像"
-
-msgid "Delete Network"
-msgstr "删除网络"
-
-msgid "Delete Registry"
-msgstr "删除仓库"
-
-msgid "Delete Template"
-msgstr "删除模板"
-
-msgid "Delete Volume"
-msgstr "删除存储卷"
-
-msgid "Docker"
-msgstr "Docker"
-
-msgid "Docker Root Dir"
-msgstr "Docker 根目录"
-
-msgid "Docker config updated"
-msgstr "Docker 配置已更新"
-
-msgid "Docker engine summary for the selected system."
-msgstr "选中系统的 Docker 引擎概要。"
-
-msgid "Driver"
-msgstr "驱动"
-
-msgid "Edit Registry"
-msgstr "编辑仓库"
-
-msgid "Edit Template"
-msgstr "编辑模板"
-
-msgid "Enable IPv6"
-msgstr "启用 IPv6"
-
-msgid "Engine Details"
-msgstr "引擎详情"
-
-msgid "Environment"
-msgstr "环境变量"
-
-msgid "Failed to create network"
-msgstr "创建网络失败"
-
-msgid "Failed to create volume"
-msgstr "创建存储卷失败"
-
-msgid "Failed to delete compose project"
-msgstr "删除编排项目失败"
-
-msgid "Failed to delete compose template"
-msgstr "删除编排模板失败"
-
-msgid "Failed to delete network"
-msgstr "删除网络失败"
-
-msgid "Failed to delete registry"
-msgstr "删除仓库失败"
-
-msgid "Failed to delete volume"
-msgstr "删除存储卷失败"
-
-msgid "Failed to load Docker config"
-msgstr "加载 Docker 配置失败"
-
-msgid "Failed to load Docker overview"
-msgstr "加载 Docker 概览失败"
-
-msgid "Failed to load compose projects"
-msgstr "加载编排项目失败"
-
-msgid "Failed to load compose templates"
-msgstr "加载编排模板失败"
-
-msgid "Failed to load container details"
-msgstr "加载容器详情失败"
-
-msgid "Failed to load container logs"
-msgstr "加载容器日志失败"
-
-msgid "Failed to load containers"
-msgstr "加载容器失败"
-
-msgid "Failed to load images"
-msgstr "加载镜像失败"
-
-msgid "Failed to load networks"
-msgstr "加载网络失败"
-
-msgid "Failed to load registries"
-msgstr "加载仓库失败"
-
-msgid "Failed to load volumes"
-msgstr "加载存储卷失败"
-
-msgid "Failed to operate compose project"
-msgstr "操作编排项目失败"
-
-msgid "Failed to operate container"
-msgstr "操作容器失败"
-
-msgid "Failed to process image"
-msgstr "处理镜像失败"
-
-msgid "Failed to remove image"
-msgstr "删除镜像失败"
-
-msgid "Failed to save compose project"
-msgstr "保存编排项目失败"
-
-msgid "Failed to save compose template"
-msgstr "保存编排模板失败"
-
-msgid "Failed to save registry"
-msgstr "保存仓库失败"
-
-msgid "Failed to update Docker config"
-msgstr "更新 Docker 配置失败"
-
-msgid "Filter containers..."
-msgstr "筛选容器..."
-
-msgid "Filter images..."
-msgstr "筛选镜像..."
-
-msgid "Filter networks..."
-msgstr "筛选网络..."
-
-msgid "Filter projects..."
-msgstr "筛选项目..."
-
-msgid "Filter registries..."
-msgstr "筛选仓库..."
-
-msgid "Filter templates..."
-msgstr "筛选模板..."
-
-msgid "Filter volumes..."
-msgstr "筛选存储卷..."
-
-msgid "Force removal"
-msgstr "强制删除"
-
-msgid "IPv6"
-msgstr "IPv6"
-
-msgid "Image"
-msgstr "镜像"
-
-msgid "Image ID"
-msgstr "镜像 ID"
-
-msgid "Image Logs"
-msgstr "镜像日志"
-
-msgid "Image name is required"
-msgstr "镜像名称为必填"
-
-msgid "Image name or tag"
-msgstr "镜像名称或标签"
-
-msgid "Images"
-msgstr "镜像"
-
-msgid "Inspect"
-msgstr "查看详情"
-
-msgid "Internal"
-msgstr "内部"
-
-msgid "Kernel Version"
-msgstr "内核版本"
-
-msgid "Kill"
-msgstr "强制停止"
-
-msgid "Labels (JSON)"
-msgstr "标签 (JSON)"
-
-msgid "Latest output from compose."
-msgstr "编排最新输出。"
-
-msgid "Leave blank to keep unchanged"
-msgstr "留空则保持不变"
-
-msgid "Loading"
-msgstr "加载中"
-
-msgid "Logging Driver"
-msgstr "日志驱动"
-
-msgid "Maintain reusable Docker Compose templates."
-msgstr "维护可复用的 Docker Compose 模板。"
-
-msgid "Manage Docker Compose projects for the selected system."
-msgstr "管理所选系统的 Docker Compose 项目。"
-
-msgid "Manage Docker networks on the selected system."
-msgstr "管理所选系统的 Docker 网络。"
-
-msgid "Manage Docker volumes for persistent storage."
-msgstr "管理所选系统的 Docker 存储卷。"
-
-msgid "Manage local images and registries."
-msgstr "管理本地镜像与仓库。"
-
-msgid "Manage registry credentials for image pull and push."
-msgstr "管理镜像拉取与推送的仓库凭据。"
-
-msgid "Manage running and stopped containers."
-msgstr "管理运行中和已停止的容器。"
-
-msgid "Mountpoint"
-msgstr "挂载点"
-
-msgid "Name and content are required"
-msgstr "名称和内容为必填"
-
-msgid "Name and server are required"
-msgstr "名称和服务器为必填"
-
-msgid "Network name"
-msgstr "网络名称"
-
-msgid "Network name is required"
-msgstr "网络名称为必填"
-
-msgid "Networks"
-msgstr "网络"
-
-msgid "No compose projects found."
-msgstr "未找到编排项目。"
-
-msgid "No containers found."
-msgstr "未找到容器。"
-
-msgid "No details available."
-msgstr "暂无详情。"
-
-msgid "No images found."
-msgstr "未找到镜像。"
-
-msgid "No logs available."
-msgstr "暂无日志。"
-
-msgid "No networks found."
-msgstr "未找到网络。"
-
-msgid "No registries found."
-msgstr "未找到仓库。"
-
-msgid "No templates found."
-msgstr "未找到模板。"
-
-msgid "No volumes found."
-msgstr "未找到存储卷。"
-
-msgid "None"
-msgstr "无"
-
-msgid "Operating System"
-msgstr "操作系统"
-
-msgid "Optional .env content"
-msgstr "可选 .env 内容"
-
-msgid "Optional description"
-msgstr "可选描述"
-
-msgid "Optional driver name"
-msgstr "可选驱动名称"
-
-msgid "Optional driver options as JSON"
-msgstr "可选驱动选项（JSON）"
-
-msgid "Optional labels as JSON"
-msgstr "可选标签（JSON）"
-
-msgid "Optional registry"
-msgstr "可选仓库"
-
-msgid "Options (JSON)"
-msgstr "选项 (JSON)"
-
-msgid "Overview"
-msgstr "概览"
-
-msgid "Paste daemon.json content"
-msgstr "粘贴 daemon.json 内容"
-
-msgid "Paste docker-compose.yml content"
-msgstr "粘贴 docker-compose.yml 内容"
-
-msgid "Please select a system to continue."
-msgstr "请选择一个系统以继续。"
-
-msgid "Ports"
-msgstr "端口"
-
-msgid "Provide a full docker-compose.yml content for deployment."
-msgstr "请提供完整的 docker-compose.yml 内容用于部署。"
-
-msgid "Pull"
-msgstr "拉取"
-
-msgid "Pull Image"
-msgstr "拉取镜像"
-
-msgid "Push"
-msgstr "推送"
-
-msgid "Push Image"
-msgstr "推送镜像"
-
-msgid "Registries"
-msgstr "仓库"
-
-msgid "Registry"
-msgstr "仓库"
-
-msgid "Registry name"
-msgstr "仓库名称"
-
-msgid "Registry server"
-msgstr "仓库服务器"
-
-msgid "Registry username"
-msgstr "仓库用户名"
-
-msgid "Remove project files"
-msgstr "删除项目文件"
-
-msgid "Restart"
-msgstr "重启"
-
-msgid "Restart Docker after update"
-msgstr "更新后重启 Docker"
-
-msgid "Running"
-msgstr "运行中"
-
-msgid "Save"
-msgstr "保存"
-
-msgid "Scope"
-msgstr "范围"
-
-msgid "Select a registry if authentication is required."
-msgstr "如需认证请选择仓库。"
-
-msgid "Select a system"
-msgstr "选择系统"
-
-msgid "Select a system to manage Docker resources."
-msgstr "请选择一个系统以管理 Docker 资源。"
-
-msgid "Server"
-msgstr "服务器"
-
-msgid "Server Version"
-msgstr "服务器版本"
-
-msgid "Show all"
-msgstr "显示全部"
-
-msgid "Show stopped"
-msgstr "显示已停止"
-
-msgid "Size"
-msgstr "大小"
-
-msgid "Start"
-msgstr "启动"
-
-msgid "Stop"
-msgstr "停止"
-
-msgid "Stopped"
-msgstr "已停止"
-
-msgid "Storage Driver"
-msgstr "存储驱动"
-
-msgid "Store credentials for private registries."
-msgstr "保存私有仓库凭据。"
-
-msgid "Tags"
-msgstr "标签"
-
-msgid "Template name"
-msgstr "模板名称"
-
-msgid "This will remove the selected compose template."
-msgstr "这将删除选中的编排模板。"
-
-msgid "This will remove the selected image from the host."
-msgstr "这将从主机删除选中的镜像。"
-
-msgid "This will remove the selected network."
-msgstr "这将删除选中的网络。"
-
-msgid "This will remove the selected registry credentials."
-msgstr "这将删除选中的仓库凭据。"
-
-msgid "This will remove the selected volume."
-msgstr "这将删除选中的存储卷。"
-
-msgid "This will stop and remove the selected compose project."
-msgstr "这将停止并删除选中的编排项目。"
-
-msgid "Total Memory"
-msgstr "总内存"
-
-msgid "Unpause"
-msgstr "恢复"
-
-msgid "Update Compose"
-msgstr "更新编排"
-
-msgid "Username"
-msgstr "用户名"
-
-msgid "View and update Docker daemon configuration."
-msgstr "查看并更新 Docker 守护进程配置。"
-
-msgid "Volume name"
-msgstr "存储卷名称"
-
-msgid "Volume name is required"
-msgstr "存储卷名称为必填"
-
-msgid "Volumes"
-msgstr "存储卷"
-
-msgid "Workdir"
-msgstr "工作目录"
-
-msgid "daemon.json not found; a new file will be created on save."
-msgstr "未找到 daemon.json；保存时会创建新文件。"
-
-
-msgid "Mode"
-msgstr "模式"
-
-msgid "Subnet"
-msgstr "子网"
-
-msgid "Gateway"
-msgstr "网关"
-
-msgid "Time"
-msgstr "时间"
-
-#: src/components/docker/containers.tsx
-msgid "Focus only"
-msgstr "仅看关注"
-
-#: src/components/docker/containers.tsx
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Focus rules"
-msgstr "关注规则"
-
-#: src/components/docker/containers.tsx
-msgid "Configure focus rules"
-msgstr "配置关注规则"
-
-#: src/components/docker/containers.tsx
-msgid "No focus rules configured for this system."
-msgstr "该系统未配置关注规则。"
-
-#: src/components/docker/containers.tsx
-msgid "Failed to load focus rules"
-msgstr "加载关注规则失败"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Define system-level rules to filter the container list."
-msgstr "定义系统级规则以过滤容器列表。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Focus rules help"
-msgstr "关注规则使用帮助"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Rules are exact matches. Use the values shown in the container list or details."
-msgstr "规则为精确匹配，请使用容器列表或详情中显示的值。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Container name: use the Name column value."
-msgstr "容器名称：填写容器列表中 Name 列的值。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Image: use the Image column value (including tag)."
-msgstr "镜像：填写容器列表中 Image 列的值（含 tag）。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Compose project: use the Compose value shown under the name, or the label com.docker.compose.project."
-msgstr "编排项目：填写名称下方的 Compose 值，或标签 com.docker.compose.project。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Compose service: enter both the compose project and service name. Service name comes from docker-compose.yml (services.*) or label com.docker.compose.service."
-msgstr "编排服务：需填写编排项目与服务名。服务名来自 docker-compose.yml 的 services.*，或标签 com.docker.compose.service。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Label: enter the label key and value (see Inspect for labels)."
-msgstr "标签：填写标签键和值（可在 Inspect 中查看）。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Export rules"
-msgstr "导出规则"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Import rules"
-msgstr "导入规则"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Import completed"
-msgstr "导入完成"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Imported {importedCount} rules, skipped {skippedCount}."
-msgstr "已导入 {importedCount} 条规则，跳过 {skippedCount} 条。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Add rule"
-msgstr "添加规则"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Rule type"
-msgstr "规则类型"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Select rule type"
-msgstr "选择规则类型"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Failed to import focus rules"
-msgstr "导入关注规则失败"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Container name"
-msgstr "容器名称"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Compose project"
-msgstr "编排项目"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Compose service"
-msgstr "编排服务"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Label key"
-msgstr "标签键"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Label value"
-msgstr "标签值"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Rule type is required"
-msgstr "规则类型为必填"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Value is required"
-msgstr "值为必填"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Secondary value is required"
-msgstr "第二个值为必填"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Failed to create focus rule"
-msgstr "创建关注规则失败"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Failed to delete focus rule"
-msgstr "删除关注规则失败"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Read-only users cannot modify focus rules."
-msgstr "只读用户无法修改关注规则。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "No focus rules found."
-msgstr "未找到关注规则。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Delete focus rule"
-msgstr "删除关注规则"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "This will remove the selected focus rule."
-msgstr "这将删除选中的关注规则。"
-
-#: src/components/docker/focus-rules-dialog.tsx
-msgid "Enter value"
-msgstr "输入值"
-
-#: src/components/docker/docker-tabs.tsx
-#: src/components/docker/service-configs.tsx
-msgid "Service Configs"
-msgstr "服务配置"
-
-#: src/components/docker/service-configs.tsx
-msgid "Service Config"
-msgstr "服务配置"
-
-#: src/components/docker/service-configs.tsx
-msgid "Review and update config content for the selected service."
-msgstr "查看并更新所选服务的配置内容。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Paste YAML content"
-msgstr "粘贴 YAML 内容"
-
-#: src/components/docker/service-configs.tsx
-msgid "Changes take effect after restarting the service."
-msgstr "保存后需重启服务生效。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Maintain service configuration endpoints for the selected system."
-msgstr "维护所选系统的服务配置接口。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Create Service"
-msgstr "新增服务"
-
-#: src/components/docker/service-configs.tsx
-msgid "Filter services..."
-msgstr "筛选服务..."
-
-#: src/components/docker/service-configs.tsx
-msgid "No service configs yet."
-msgstr "暂无服务配置。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Edit Service"
-msgstr "编辑服务"
-
-#: src/components/docker/service-configs.tsx
-msgid "Register a configuration endpoint for this system."
-msgstr "为该系统注册配置接口。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Update service name or endpoint URL."
-msgstr "更新服务名称或接口 URL。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Service Name"
-msgstr "服务名称"
-
-#: src/components/docker/service-configs.tsx
-msgid "Endpoint URL"
-msgstr "接口 URL"
-
-#: src/components/docker/service-configs.tsx
-msgid "X-Config-Token"
-msgstr "X-Config-Token"
-
-#: src/components/docker/service-configs.tsx
-msgid "Token for config API"
-msgstr "配置接口 Token"
-
-#: src/components/docker/service-configs.tsx
-msgid "Token is stored securely and cannot be edited later."
-msgstr "Token 会安全保存，创建后不可修改。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Token cannot be changed after creation."
-msgstr "Token 创建后不可修改。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Delete service config?"
-msgstr "删除服务配置？"
-
-#: src/components/docker/service-configs.tsx
-msgid "Config saved. Restart the service to apply changes."
-msgstr "配置已保存，请重启服务生效。"
-
-#: src/components/docker/service-configs.tsx
-msgid "Failed to load service configs"
-msgstr "加载服务配置失败"
-
-#: src/components/docker/service-configs.tsx
-msgid "Failed to save service config"
-msgstr "保存服务配置失败"
-
-#: src/components/docker/service-configs.tsx
-msgid "Failed to delete service config"
-msgstr "删除服务配置失败"
-
-#: src/components/docker/service-configs.tsx
-msgid "Failed to load config content"
-msgstr "加载配置内容失败"
-
-#: src/components/docker/service-configs.tsx
-msgid "Failed to update config content"
-msgstr "更新配置内容失败"
-
-#: src/components/docker/service-configs.tsx
-msgid "Name and URL are required"
-msgstr "名称和 URL 为必填"
-
-#: src/components/docker/service-configs.tsx
-msgid "Token is required"
-msgstr "Token 为必填"
-
-#: src/components/docker/service-configs.tsx
-msgid "Service name"
-msgstr "服务名称"

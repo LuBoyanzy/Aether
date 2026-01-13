@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"aether/internal/entities/container"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/systemd"
 )
 
@@ -106,6 +107,17 @@ type NetIoStats struct {
 	Name      string
 }
 
+type NetworkMount struct {
+	Source     string  `json:"source" cbor:"0,keyasint"`
+	SourceHost string  `json:"source_host,omitempty" cbor:"1,keyasint,omitempty"`
+	SourcePath string  `json:"source_path,omitempty" cbor:"2,keyasint,omitempty"`
+	MountPoint string  `json:"mount_point" cbor:"3,keyasint"`
+	FsType     string  `json:"fstype" cbor:"4,keyasint"`
+	TotalBytes uint64  `json:"total_bytes" cbor:"5,keyasint"`
+	UsedBytes  uint64  `json:"used_bytes" cbor:"6,keyasint"`
+	UsedPct    float64 `json:"used_pct" cbor:"7,keyasint"`
+}
+
 type Os = uint8
 
 const (
@@ -177,4 +189,6 @@ type CombinedData struct {
 	Containers      []*container.Stats `json:"container" cbor:"2,keyasint"`
 	SystemdServices []*systemd.Service `json:"systemd,omitempty" cbor:"3,keyasint,omitempty"`
 	Details         *Details           `cbor:"4,keyasint,omitempty"`
+	NetworkMounts   []*NetworkMount    `json:"network_mounts,omitempty" cbor:"5,keyasint,omitempty"`
+	RepoSources     []repo.Source      `json:"repo_sources,omitempty" cbor:"6,keyasint,omitempty"`
 }

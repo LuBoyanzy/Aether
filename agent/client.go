@@ -16,6 +16,7 @@ import (
 	"aether"
 	"aether/internal/common"
 	dockermodel "aether/internal/entities/docker"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
@@ -312,6 +313,8 @@ func (client *WebSocketClient) sendResponse(data any, requestID *uint32) error {
 			response.DockerComposeProjects = v
 		case *dockermodel.DaemonConfig:
 			response.DockerConfig = v
+		case []repo.Source:
+			response.RepoSources = v
 		// case []byte:
 		// 	response.RawBytes = v
 		// case string:

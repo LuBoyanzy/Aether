@@ -2,6 +2,7 @@ package common
 
 import (
 	"aether/internal/entities/docker"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
@@ -62,6 +63,8 @@ const (
 	GetDockerConfig
 	// Update Docker daemon config
 	UpdateDockerConfig
+	// Request package repository sources
+	GetRepoSources
 	// Add new actions here...
 )
 
@@ -88,6 +91,7 @@ type AgentResponse struct {
 	DockerVolumes         []docker.Volume            `cbor:"11,keyasint,omitempty,omitzero"`
 	DockerComposeProjects []docker.ComposeProject    `cbor:"12,keyasint,omitempty,omitzero"`
 	DockerConfig          *docker.DaemonConfig       `cbor:"13,keyasint,omitempty,omitzero"`
+	RepoSources           []repo.Source              `cbor:"14,keyasint,omitempty,omitzero"`
 	// Logs        *LogsPayload         `cbor:"4,keyasint,omitempty,omitzero"`
 	// RawBytes    []byte               `cbor:"4,keyasint,omitempty,omitzero"`
 }
@@ -216,4 +220,8 @@ type DockerConfigUpdateRequest struct {
 
 type SystemdInfoRequest struct {
 	ServiceName string `cbor:"0,keyasint"`
+}
+
+type RepoSourcesRequest struct {
+	Check bool `cbor:"0,keyasint,omitempty"`
 }

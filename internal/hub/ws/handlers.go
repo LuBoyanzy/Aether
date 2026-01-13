@@ -6,6 +6,7 @@ import (
 
 	"aether/internal/common"
 	"aether/internal/entities/docker"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
@@ -198,6 +199,40 @@ func (ws *WsConn) RequestDockerImages(ctx context.Context, req common.DockerImag
 		return nil, err
 	}
 	return result, nil
+}
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// RequestRepoSources requests package repository sources via WebSocket.
+func (ws *WsConn) RequestRepoSources(ctx context.Context, req common.RepoSourcesRequest) ([]repo.Source, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequest(ctx, common.GetRepoSources, req)
+	if err != nil {
+		return nil, err
+	}
+	var result []repo.Source
+	handler := &repoSourcesHandler{result: &result}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type repoSourcesHandler struct {
+	BaseHandler
+	result *[]repo.Source
+}
+
+func (h *repoSourcesHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.RepoSources == nil {
+		return errors.New("no repo sources in response")
+	}
+	*h.result = agentResponse.RepoSources
+	return nil
 }
 
 type dockerImagesHandler struct {

@@ -340,6 +340,8 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiAuth.DELETE("/user-alerts", alerts.DeleteUserAlerts)
 	// refresh SMART devices for a system
 	apiAuth.POST("/smart/refresh", h.refreshSmartData)
+	// refresh repo sources for a system
+	apiAuth.POST("/repo-sources/refresh", h.refreshRepoSources)
 	// get systemd service details
 	apiAuth.GET("/systemd/info", h.getSystemdInfo)
 	// /containers routes
@@ -559,6 +561,26 @@ func (h *Hub) refreshSmartData(e *core.RequestEvent) error {
 
 	// Fetch and save SMART devices
 	if err := system.FetchAndSaveSmartDevices(); err != nil {
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return e.JSON(http.StatusOK, map[string]string{"status": "ok"})
+}
+
+// refreshRepoSources handles POST /api/aether/repo-sources/refresh requests
+// Fetches repo sources from the agent and updates the collection
+func (h *Hub) refreshRepoSources(e *core.RequestEvent) error {
+	systemID := e.Request.URL.Query().Get("system")
+	if systemID == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "system parameter is required"})
+	}
+
+	system, err := h.sm.GetSystem(systemID)
+	if err != nil {
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "system not found"})
+	}
+
+	if err := system.FetchAndSaveRepoSources(true); err != nil {
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 

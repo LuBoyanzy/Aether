@@ -65,6 +65,8 @@ import CpuCoresSheet from "./system/cpu-sheet"
 import LineChartDefault from "../charts/line-chart"
 import { pinnedAxisDomain } from "../ui/chart"
 import InfoBar from "./system/info-bar"
+import NetworkMountsCard from "./system/network-mounts-card"
+import RepoSourcesCard from "./system/repo-sources-card"
 
 type ChartTimeData = {
 	time: number
@@ -416,6 +418,11 @@ export default memo(function SystemDetail({ id }: { id: string }) {
 			<div ref={chartWrapRef} className="grid gap-4 mb-14 overflow-x-clip">
 				{/* system info */}
 				<InfoBar system={system} chartData={chartData} grid={grid} setGrid={setGrid} details={details} />
+
+				<div className="grid grid-cols-1 gap-4">
+					<NetworkMountsCard systemId={system.id} />
+					<RepoSourcesCard systemId={system.id} os={details?.os ?? system.info?.os} />
+				</div>
 
 				{/* <Tabs defaultValue="overview" className="w-full">
 					<TabsList className="w-full h-11">

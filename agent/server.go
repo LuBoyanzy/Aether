@@ -14,6 +14,7 @@ import (
 	"aether"
 	"aether/internal/common"
 	dockermodel "aether/internal/entities/docker"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/smart"
 	"aether/internal/entities/system"
 	"aether/internal/entities/systemd"
@@ -193,6 +194,8 @@ func (a *Agent) handleSSHRequest(w io.Writer, req *common.HubRequest[cbor.RawMes
 			response.DockerComposeProjects = v
 		case *dockermodel.DaemonConfig:
 			response.DockerConfig = v
+		case []repo.Source:
+			response.RepoSources = v
 		default:
 			response.Error = fmt.Sprintf("unsupported response type: %T", data)
 		}

@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -24,6 +25,15 @@ func parseFilesystemEntry(entry string) (device, customName string) {
 		device = entry
 	}
 	return device, customName
+}
+
+var networkFsTypes = map[string]struct{}{
+	"nfs":        {},
+	"nfs4":       {},
+	"cifs":       {},
+	"smbfs":      {},
+	"sshfs":      {},
+	"fuse.sshfs": {},
 }
 
 // Sets up the filesystems to monitor for disk usage and I/O.
@@ -359,4 +369,75 @@ func (a *Agent) getRootMountPoint() string {
 	}
 
 	return "/"
+}
+
+func (a *Agent) getNetworkMounts() ([]*system.NetworkMount, error) {
+	// Include nodev filesystems (e.g. NFS/NFS4) so network mounts are not filtered out.
+	partitions, err := disk.Partitions(true)
+	if err != nil {
+		return nil, fmt.Errorf("get disk partitions for network mounts failed: %w", err)
+	}
+
+	var mounts []*system.NetworkMount
+	for _, p := range partitions {
+		if !isNetworkFsType(p.Fstype) {
+			continue
+		}
+		totalBytes := uint64(0)
+		usedBytes := uint64(0)
+		usedPct := float64(0)
+		if usage, usageErr := disk.Usage(p.Mountpoint); usageErr != nil {
+			slog.Error("Error getting network mount usage", "mountpoint", p.Mountpoint, "fstype", p.Fstype, "err", usageErr)
+		} else {
+			totalBytes = usage.Total
+			usedBytes = usage.Used
+			if usage.Total > 0 {
+				usedPct = twoDecimals(float64(usage.Used) / float64(usage.Total) * 100)
+			}
+		}
+		host, path := parseNetworkSource(p.Device)
+		mounts = append(mounts, &system.NetworkMount{
+			Source:     p.Device,
+			SourceHost: host,
+			SourcePath: path,
+			MountPoint: p.Mountpoint,
+			FsType:     strings.ToLower(p.Fstype),
+			TotalBytes: totalBytes,
+			UsedBytes:  usedBytes,
+			UsedPct:    usedPct,
+		})
+	}
+	return mounts, nil
+}
+
+func isNetworkFsType(fsType string) bool {
+	_, ok := networkFsTypes[strings.ToLower(fsType)]
+	return ok
+}
+
+func parseNetworkSource(source string) (string, string) {
+	source = strings.TrimSpace(source)
+	if source == "" {
+		return "", ""
+	}
+	if strings.HasPrefix(source, "//") {
+		trimmed := strings.TrimPrefix(source, "//")
+		host, path, _ := strings.Cut(trimmed, "/")
+		if path != "" {
+			path = "/" + path
+		}
+		return host, path
+	}
+	if strings.HasPrefix(source, `\\`) {
+		trimmed := strings.TrimPrefix(source, `\\`)
+		host, path, _ := strings.Cut(trimmed, `\`)
+		if path != "" {
+			path = `\` + path
+		}
+		return host, path
+	}
+	if host, path, ok := strings.Cut(source, ":"); ok {
+		return host, path
+	}
+	return "", ""
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"aether/internal/common"
+	"aether/internal/entities/repo"
 	"aether/internal/entities/smart"
 
 	"github.com/docker/docker/api/types/network"
@@ -76,6 +77,7 @@ func NewHandlerRegistry() *HandlerRegistry {
 	registry.Register(common.UpdateDockerConfig, &UpdateDockerConfigHandler{})
 	registry.Register(common.GetSmartData, &GetSmartDataHandler{})
 	registry.Register(common.GetSystemdInfo, &GetSystemdInfoHandler{})
+	registry.Register(common.GetRepoSources, &GetRepoSourcesHandler{})
 
 	return registry
 }
@@ -659,4 +661,27 @@ func (h *GetSystemdInfoHandler) Handle(hctx *HandlerContext) error {
 	}
 
 	return hctx.SendResponse(details, hctx.RequestID)
+}
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// GetRepoSourcesHandler handles repository source requests
+type GetRepoSourcesHandler struct{}
+
+func (h *GetRepoSourcesHandler) Handle(hctx *HandlerContext) error {
+	var req common.RepoSourcesRequest
+	if len(hctx.Request.Data) > 0 {
+		if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
+			return err
+		}
+	}
+	sources, err := hctx.Agent.collectRepoSources(repoSourcesOptions{Check: req.Check})
+	if err != nil {
+		return err
+	}
+	if sources == nil {
+		sources = []repo.Source{}
+	}
+	return hctx.SendResponse(sources, hctx.RequestID)
 }

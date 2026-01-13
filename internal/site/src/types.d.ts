@@ -556,6 +556,32 @@ export interface SystemDetailsRecord extends RecordModel {
 	nvidia_ctk?: string
 }
 
+export interface SystemNetworkMountRecord extends RecordModel {
+	system: string
+	source?: string
+	source_host?: string
+	source_path?: string
+	mount_point: string
+	fstype: string
+	total_bytes: number
+	used_bytes: number
+	used_pct: number
+	updated: number
+}
+
+export interface SystemRepoSourceRecord extends RecordModel {
+	system: string
+	manager: string
+	repo_id: string
+	name?: string
+	url: string
+	enabled: boolean
+	status?: string
+	error?: string
+	checked_at?: number
+	updated: number
+}
+
 export interface SmartDeviceRecord extends RecordModel {
 	id: string
 	system: string
