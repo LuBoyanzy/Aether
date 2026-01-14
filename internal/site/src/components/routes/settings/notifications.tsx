@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro"
 import { BellIcon, LoaderCircleIcon, PlusIcon, SaveIcon, Trash2Icon } from "lucide-react"
 import { type ChangeEventHandler, useEffect, useState } from "react"
 import * as v from "valibot"
-import { prependBasePath } from "@/components/router"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,11 +10,12 @@ import { InputTags } from "@/components/ui/input-tags"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/use-toast"
-import { isAdmin, pb } from "@/lib/api"
+import { pb } from "@/lib/api"
 import { showDocsUnavailable } from "@/lib/utils"
 import type { UserSettings } from "@/types"
 import { saveSettings } from "./layout"
 import { QuietHours } from "./quiet-hours"
+import { SmtpSettingsDialog } from "./smtp-settings-dialog"
 
 interface ShoutrrrUrlCardProps {
 	url: string
@@ -93,17 +93,11 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 						<h3 className="mb-1 text-lg font-medium">
 							<Trans>Email notifications</Trans>
 						</h3>
-						{isAdmin() && (
-							<p className="text-sm text-muted-foreground leading-relaxed">
-								<Trans>
-									Please{" "}
-									<a href={prependBasePath("/_/#/settings/mail")} className="link" target="_blank">
-										configure an SMTP server
-									</a>{" "}
-									to ensure alerts are delivered.
-								</Trans>
-							</p>
-						)}
+						<p className="text-sm text-muted-foreground leading-relaxed">
+							<Trans>
+								Please <SmtpSettingsDialog>configure an SMTP server</SmtpSettingsDialog> to ensure alerts are delivered.
+							</Trans>
+						</p>
 					</div>
 					<Label className="block" htmlFor="email">
 						<Trans>To email(s)</Trans>

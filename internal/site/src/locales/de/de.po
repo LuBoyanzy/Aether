@@ -87,7 +87,23 @@ msgstr "30 Tage"
 msgid "5 min"
 msgstr "5 Min"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Access Key"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Action"
+msgstr ""
+
 #. Table column
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -118,6 +134,11 @@ msgstr "{foo} hinzufügen"
 #: src/components/add-system.tsx
 msgid "Add <0>System</0>"
 msgstr "<0>System</0> hinzufügen"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Add rule"
+msgstr ""
 
 #: src/components/add-system.tsx
 msgid "Add system"
@@ -175,12 +196,13 @@ msgstr "Warnungsverlauf"
 msgid "Alerts"
 msgstr "Warnungen"
 
-#: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
 msgstr "Alle Container"
 
 #: src/components/alerts/alerts-sheet.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
@@ -190,6 +212,18 @@ msgstr "Alle Container"
 msgid "All Systems"
 msgstr "Alle Systeme"
 
+#: src/components/docker/overview.tsx
+msgid "API Version"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Apply Filters"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Architecture"
+msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Are you sure you want to delete {name}?"
 msgstr "Möchtest du {name} wirklich löschen?"
@@ -198,9 +232,23 @@ msgstr "Möchtest du {name} wirklich löschen?"
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
 
+#: src/components/docker/networks.tsx
+msgid "Attachable"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Audit Logs"
+msgstr ""
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "Automatisches Kopieren erfordert einen sicheren Kontext."
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Available"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Average"
@@ -236,6 +284,10 @@ msgstr "Durchschnittliche Auslastung von {0}"
 #: src/components/routes/system.tsx
 msgid "Average utilization of GPU engines"
 msgstr "Durchschnittliche Auslastung der GPU-Engines"
+
+#: src/components/docker/service-configs.tsx
+msgid "Back"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
@@ -310,8 +362,18 @@ msgstr "Kann starten"
 msgid "Can stop"
 msgstr "Kann stoppen"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -324,6 +386,10 @@ msgstr "Fähigkeiten"
 msgid "Capacity"
 msgstr "Kapazität"
 
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Category"
+msgstr ""
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Caution - potential data loss"
 msgstr "Vorsicht - potenzieller Datenverlust"
@@ -332,6 +398,10 @@ msgstr "Vorsicht - potenzieller Datenverlust"
 msgid "Celsius (°C)"
 msgstr "Celsius (°C)"
 
+#: src/components/docker/overview.tsx
+msgid "Cgroup Driver"
+msgstr ""
+
 #: src/components/routes/settings/general.tsx
 msgid "Change display units for metrics."
 msgstr "Anzeigeeinheiten der Werte ändern."
@@ -339,6 +409,10 @@ msgstr "Anzeigeeinheiten der Werte ändern."
 #: src/components/routes/settings/general.tsx
 msgid "Change general application options."
 msgstr "Allgemeine Anwendungsoptionen ändern."
+
+#: src/components/docker/service-configs.tsx
+msgid "Changes take effect after restarting the service."
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Charge"
@@ -353,6 +427,10 @@ msgstr "Wird geladen"
 msgid "Chart options"
 msgstr "Diagrammoptionen"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Check"
+msgstr ""
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Check {email} for a reset link."
 msgstr "Überprüfe {email} auf einen Link zum Zurücksetzen."
@@ -361,9 +439,29 @@ msgstr "Überprüfe {email} auf einen Link zum Zurücksetzen."
 msgid "Check logs for more details."
 msgstr "Überprüfe die Protokolle für weitere Details."
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Check the inbox for the test message."
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Check your notification service"
 msgstr "Überprüfe deinen Benachrichtigungsdienst"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Choose a database and clean keys by predefined patterns."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup configuration saved"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup Progress"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup will delete data immediately. Please confirm the targets and proceed."
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -387,14 +485,115 @@ msgstr "Klicke auf ein System, um weitere Informationen zu sehen."
 msgid "Click to copy"
 msgstr "Zum Kopieren klicken"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Close"
+msgstr ""
+
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
 msgid "Command line instructions"
 msgstr "Befehlszeilenanweisungen"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Compose Content"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Compose Logs"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Compose project name"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project: use the Compose value shown under the name, or the label com.docker.compose.project."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service: enter both the compose project and service name. Service name comes from docker-compose.yml (services.*) or label com.docker.compose.service."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose Templates"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Compose templates can be reused to deploy stacks quickly."
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Compose Version"
+msgstr ""
+
+#: src/components/docker/config.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Config"
+msgstr ""
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config Content"
+msgstr ""
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config content is required"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Config Path"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Config saved. Restart the service to apply changes."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Configure a new Docker network."
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Configure a new Docker volume."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Configure focus rules"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Configure how you receive alert notifications."
 msgstr "Konfiguriere, wie du Warnbenachrichtigungen erhältst."
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Configure MySQL, Redis, MinIO, and Elasticsearch cleanup targets for the selected system."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Configure the sender and SMTP server details for alert emails."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Confirm cleanup"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
@@ -409,11 +608,37 @@ msgstr "Konflikte"
 msgid "Connection is down"
 msgstr "Verbindung unterbrochen"
 
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
+#: src/components/docker/containers.tsx
+msgid "Container Details"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Container Logs"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name: use the Name column value."
+msgstr ""
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
 msgid "Containers"
 msgstr ""
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -497,6 +722,16 @@ msgstr "CPU-Zeit-Aufschlüsselung"
 msgid "CPU Usage"
 msgstr "CPU-Auslastung"
 
+#: src/components/docker/overview.tsx
+msgid "CPUs"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Create"
 msgstr "Erstellen"
@@ -505,8 +740,43 @@ msgstr "Erstellen"
 msgid "Create account"
 msgstr "Konto erstellen"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+msgid "Create Compose"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+msgid "Create Network"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Create Registry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Create Service"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+msgid "Create Template"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Create Volume"
+msgstr ""
+
 #. Context: date created
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 msgid "Created"
 msgstr "Erstellt"
 
@@ -527,6 +797,10 @@ msgstr "Kumulativer Upload"
 msgid "Current state"
 msgstr "Aktueller Zustand"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Current step"
+msgstr ""
+
 #. Power Cycles
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
@@ -541,15 +815,50 @@ msgstr ""
 #~ msgid "d"
 #~ msgstr ""
 
+#: src/components/docker/config.tsx
+msgid "Daemon Configuration"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "daemon.json not found; a new file will be created on save."
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Daily"
 msgstr "Täglich"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Data Cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "DB {db}"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Default daemon.json path"
+msgstr ""
+
 #: src/components/routes/settings/general.tsx
 msgid "Default time period"
 msgstr "Standardzeitraum"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Define system-level rules to filter the container list."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -557,14 +866,49 @@ msgstr "Standardzeitraum"
 msgid "Delete"
 msgstr "Löschen"
 
+#: src/components/docker/compose.tsx
+msgid "Delete Compose Project"
+msgstr ""
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Delete fingerprint"
 msgstr "Fingerabdruck löschen"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Delete focus rule"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Delete Image"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Delete Network"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Delete Registry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Delete service config?"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Delete Template"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Delete Volume"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "Beschreibung"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "Detail"
 msgstr "Details"
@@ -572,6 +916,10 @@ msgstr "Details"
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
 msgstr "Gerät"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Disabled"
+msgstr ""
 
 #. Context: Battery state
 #: src/lib/i18n.ts
@@ -600,9 +948,24 @@ msgstr "Festplattennutzung"
 msgid "Disk usage of {extraFsName}"
 msgstr "Festplattennutzung von {extraFsName}"
 
+#: src/components/command-palette.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Docker"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Docker config updated"
+msgstr ""
+
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker-CPU-Auslastung"
+
+#: src/components/docker/overview.tsx
+msgid "Docker engine summary for the selected system."
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
@@ -612,6 +975,10 @@ msgstr "Docker-Arbeitsspeichernutzung"
 msgid "Docker Network I/O"
 msgstr "Docker-Netzwerk-I/O"
 
+#: src/components/docker/overview.tsx
+msgid "Docker Root Dir"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Documentation"
@@ -619,6 +986,7 @@ msgstr "Dokumentation"
 
 #. Context: System is down
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 #: src/lib/alerts.ts
@@ -633,10 +1001,19 @@ msgstr "Offline ({downSystemsLength})"
 msgid "Download"
 msgstr "Herunterladen"
 
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Driver"
+msgstr ""
+
 #: src/components/alerts-history-columns.tsx
 msgid "Duration"
 msgstr "Dauer"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -646,6 +1023,26 @@ msgstr "Bearbeiten"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "{foo} bearbeiten"
+
+#: src/components/docker/registries.tsx
+msgid "Edit Registry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Edit Service"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Edit Template"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch port is invalid"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -662,10 +1059,29 @@ msgstr "E-Mail-Benachrichtigungen"
 msgid "Empty"
 msgstr "Leer"
 
+#: src/components/docker/networks.tsx
+msgid "Enable IPv6"
+msgstr ""
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "End Time"
 msgstr "Endzeit"
+
+#: src/components/docker/service-configs.tsx
+msgid "Endpoint URL"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Enforce TLS"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Engine Details"
+msgstr ""
 
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
@@ -675,17 +1091,114 @@ msgstr "E-Mail-Adresse eingeben, um das Passwort zurückzusetzen"
 msgid "Enter email address..."
 msgstr "E-Mail-Adresse eingeben..."
 
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Enter value"
+msgstr ""
+
 #: src/components/login/otp-forms.tsx
 msgid "Enter your one-time password."
 msgstr "Geben Sie Ihr Einmalpasswort ein."
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Environment"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Error"
 msgstr "Fehler"
@@ -717,6 +1230,10 @@ msgstr "Exportieren"
 msgid "Export configuration"
 msgstr "Konfiguration exportieren"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Export rules"
+msgstr ""
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Export your current systems configuration."
 msgstr "Exportiere die aktuelle Systemkonfiguration."
@@ -725,6 +1242,8 @@ msgstr "Exportiere die aktuelle Systemkonfiguration."
 msgid "Fahrenheit (°F)"
 msgstr "Fahrenheit (°F)"
 
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "Fehlgeschlagen"
@@ -737,24 +1256,267 @@ msgstr "Fehlgeschlagene Attribute:"
 msgid "Failed to authenticate"
 msgstr "Authentifizierung fehlgeschlagen"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to check repository sources"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to create focus rule"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to create network"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to create volume"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to delete compose project"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to delete compose template"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to delete focus rule"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to delete network"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Failed to delete registry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to delete service config"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to delete volume"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to import focus rules"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Failed to load audit logs"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load cleanup config"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to load compose projects"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to load compose templates"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load config content"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container details"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container logs"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load containers"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Failed to load Docker config"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Failed to load Docker overview"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Elasticsearch indices"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load focus rules"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Failed to load images"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO buckets"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO folders"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL databases"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL tables"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Failed to load network mounts"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to load networks"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Redis databases"
+msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+msgid "Failed to load registries"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to load repository sources"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load service configs"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to load volumes"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to operate compose project"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to operate container"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Failed to process image"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Failed to remove image"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to retry cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to save cleanup config"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to save compose project"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to save compose template"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Failed to save registry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to save service config"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Failed to save settings"
 msgstr "Einstellungen konnten nicht gespeichert werden"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to save SMTP settings"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to send test email"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Failed to send test notification"
 msgstr "Testbenachrichtigung konnte nicht gesendet werden"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to start cleanup"
+msgstr ""
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
 msgstr "Warnung konnte nicht aktualisiert werden"
 
+#: src/components/docker/service-configs.tsx
+msgid "Failed to update config content"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Failed to update Docker config"
+msgstr ""
+
 #. placeholder {0}: statusTotals[ServiceStatus.Failed]
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Failed: {0}"
 msgstr "Fehlgeschlagen: {0}"
+
+#: src/components/docker/containers.tsx
+msgid "Filter containers..."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Filter images..."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Filter networks..."
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Filter projects..."
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Filter registries..."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Filter services..."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Filter templates..."
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Filter volumes..."
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -773,12 +1535,52 @@ msgstr "Fingerabdruck"
 msgid "Firmware"
 msgstr "Firm­ware"
 
+#: src/components/docker/containers.tsx
+msgid "Focus only"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules help"
+msgstr ""
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "Für <0>{min}</0> {min, plural, one {Minute} other {Minuten}}"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "Forbidden"
+msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/volumes.tsx
+msgid "Force removal"
 msgstr ""
 
 #: src/components/login/auth-form.tsx
@@ -795,6 +1597,10 @@ msgstr "FreeBSD Befehl"
 #: src/lib/i18n.ts
 msgid "Full"
 msgstr "Voll"
+
+#: src/components/docker/networks.tsx
+msgid "Gateway"
+msgstr ""
 
 #. Context: General settings
 #: src/components/routes/settings/general.tsx
@@ -841,6 +1647,13 @@ msgctxt "Button to copy install command"
 msgid "Homebrew command"
 msgstr "Homebrew-Befehl"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Host"
+msgstr ""
+
 #: src/components/add-system.tsx
 msgid "Host / IP"
 msgstr "Host / IP"
@@ -854,28 +1667,130 @@ msgstr "Untätig"
 msgid "If you've lost the password to your admin account, you may reset it using the following command."
 msgstr "Wenn du das Passwort für dein Administratorkonto verloren hast, kannst du es mit dem folgenden Befehl zurücksetzen."
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+msgid "Image"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgctxt "Docker image"
 msgid "Image"
 msgstr "Image"
 
+#: src/components/docker/images.tsx
+msgid "Image ID"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Image Logs"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Image name is required"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Image name or tag"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Image: use the Image column value (including tag)."
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/overview.tsx
+msgid "Images"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import completed"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import rules"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Imported {importedCount} rules, skipped {skippedCount}."
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Inactive"
 msgstr "Inaktiv"
 
+#: src/components/docker/containers.tsx
+msgid "Inspect"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Internal"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "Ungültige E-Mail-Adresse."
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid SMTP port"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid test email"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Invalid time range"
+msgstr ""
 
 #. Linux kernel
 #: src/components/routes/system.tsx
 #~ msgid "Kernel"
 #~ msgstr "Kernel"
 
+#: src/components/docker/overview.tsx
+msgid "Kernel Version"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Kill"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label key"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label value"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label: enter the label key and value (see Inspect for labels)."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Labels (JSON)"
+msgstr ""
+
 #: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Sprache"
+
+#: src/components/docker/compose.tsx
+msgid "Latest output from compose."
+msgstr ""
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Layout"
@@ -884,6 +1799,14 @@ msgstr "Anordnung"
 #: src/components/routes/settings/general.tsx
 msgid "Layout width"
 msgstr "Layoutbreite"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Leave blank to keep existing password"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Leave blank to keep unchanged"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Lifecycle"
@@ -915,17 +1838,67 @@ msgstr "Durchschnittliche Systemlast 5 Min"
 msgid "Load Avg"
 msgstr "Systemlast"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Buckets"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Databases"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Folders"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Indices"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load indices from _cat/indices and delete documents by query."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Load state"
 msgstr "Ladezustand"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Tables"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Loading"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Loading SMTP settings..."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "Lädt..."
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Local name (EHLO/HELO)"
+msgstr ""
+
 #: src/components/navbar.tsx
 msgid "Log Out"
 msgstr "Abmelden"
+
+#: src/components/docker/overview.tsx
+msgid "Logging Driver"
+msgstr ""
 
 #: src/components/login/login.tsx
 #~ msgid "Login"
@@ -938,6 +1911,8 @@ msgstr "Anmeldeversuch fehlgeschlagen"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/navbar.tsx
 msgid "Logs"
 msgstr "Protokolle"
@@ -959,9 +1934,45 @@ msgstr ""
 msgid "Main PID"
 msgstr "Haupt-PID"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Maintain reusable Docker Compose templates."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Maintain service configuration endpoints for the selected system."
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "Anzeige- und Benachrichtigungseinstellungen verwalten."
+
+#: src/components/docker/compose.tsx
+msgid "Manage Docker Compose projects for the selected system."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Manage Docker networks on the selected system."
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Manage Docker volumes for persistent storage."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Manage local images and registries."
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Manage registry credentials for image pull and push."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Manage running and stopped containers."
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Manager"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -998,21 +2009,122 @@ msgstr "Arbeitsspeichernutzung"
 msgid "Memory usage of docker containers"
 msgstr "Arbeitsspeichernutzung der Docker-Container"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host, port and bucket are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO port is invalid"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender name"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing SMTP host"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing test email"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Mode"
+msgstr ""
+
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
 msgstr "Modell"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Module results"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mount Point"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mounted network filesystems detected on the server"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Mountpoint"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host, port and database are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL port is invalid"
+msgstr ""
+
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
 msgstr "Name"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Name and content are required"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Name and server are required"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Name and URL are required"
+msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "Netz"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drive"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drives"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Network name"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Network name is required"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
@@ -1030,11 +2142,85 @@ msgstr "Netzwerkverkehr der öffentlichen Schnittstellen"
 msgid "Network unit"
 msgstr "Netzwerkeinheit"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/networks.tsx
+msgid "Networks"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Next"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No"
 msgstr "Nein"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "No audit logs found."
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "No compose projects found."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "No containers found."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "No details available."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "No focus rules configured for this system."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "No focus rules found."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No folders loaded."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "No images found."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No indices loaded."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "No logs available."
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "No network mounts detected"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "No networks found."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "No password stored"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No patterns configured."
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "No registries found."
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "No repository sources detected"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1054,10 +2240,38 @@ msgstr "Keine Ergebnisse."
 msgid "No S.M.A.R.T. attributes available for this device."
 msgstr "Für dieses Gerät sind keine S.M.A.R.T.-Attribute verfügbar."
 
+#: src/components/docker/service-configs.tsx
+msgid "No service configs yet."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "No system found."
+msgstr ""
+
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "No systems found."
 msgstr "Keine Systeme gefunden."
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No tables loaded."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "No templates found."
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "No volumes found."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "None"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Not checked"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1082,6 +2296,10 @@ msgstr "Einmalig"
 msgid "One-time password"
 msgstr "Einmalpasswort"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Only administrators can edit these settings."
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -1090,12 +2308,53 @@ msgstr "Einmalpasswort"
 msgid "Open menu"
 msgstr "Menü öffnen"
 
+#: src/components/docker/overview.tsx
+msgid "Operating System"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
 msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Operation success"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Optional .env content"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Optional description"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver name"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver options as JSON"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional labels as JSON"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Optional registry"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Options (JSON)"
 msgstr ""
 
 #: src/components/login/auth-form.tsx
@@ -1106,9 +2365,18 @@ msgstr "Oder fortfahren mit"
 msgid "Other"
 msgstr "Andere"
 
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
+msgid "Overview"
+msgstr ""
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
 msgstr "Bestehende Warnungen überschreiben"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Package manager sources configured on the server"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
@@ -1122,10 +2390,18 @@ msgstr "Seite"
 msgid "Page {0} of {1}"
 msgstr "Seite {0} von {1}"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Page {page}"
+msgstr ""
+
 #: src/components/command-palette.tsx
 msgid "Pages / Settings"
 msgstr "Seiten / Einstellungen"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/registries.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
 msgid "Password"
@@ -1143,14 +2419,41 @@ msgstr "Das Passwort muss weniger als 72 Bytes lang sein."
 msgid "Password reset request received"
 msgstr "Anfrage zum Zurücksetzen des Passworts erhalten"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Password stored"
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Past"
 msgstr ""
 
+#: src/components/docker/config.tsx
+msgid "Paste daemon.json content"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Paste docker-compose.yml content"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Paste YAML content"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Path (e.g. /api/v1/config)"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Path is required"
+msgstr ""
+
+#: src/components/docker/containers.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Pause"
 msgstr "Pause"
 
+#: src/components/docker/overview.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Paused"
 msgstr "Pausiert"
@@ -1158,6 +2461,10 @@ msgstr "Pausiert"
 #: src/components/systems-table/systems-table.tsx
 msgid "Paused ({pausedSystemsLength})"
 msgstr "Pausiert ({pausedSystemsLength})"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Pending"
+msgstr ""
 
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/cpu-sheet.tsx
@@ -1167,6 +2474,10 @@ msgstr "Durchschnittliche Auslastung pro Kern"
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Percentage of time spent in each state"
 msgstr "Prozentsatz der Zeit in jedem Zustand"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Pick a date range"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Please <0>configure an SMTP server</0> to ensure alerts are delivered."
@@ -1189,6 +2500,26 @@ msgstr "Bitte erstelle ein Administratorkonto"
 msgid "Please enable pop-ups for this site"
 msgstr "Bitte aktiviere Pop-ups für diese Seite"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender email address."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender name."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a test email address."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a valid port number."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter an SMTP host."
+msgstr ""
+
 #: src/lib/api.ts
 msgid "Please log in again"
 msgstr "Bitte melde dich erneut an"
@@ -1197,13 +2528,31 @@ msgstr "Bitte melde dich erneut an"
 #~ msgid "Please see <0>the documentation</0> for instructions."
 #~ msgstr "In der <0>Dokumentation</0> findest du weitere Anweisungen."
 
+#: src/components/docker/empty-state.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Please select a system to continue."
+msgstr ""
+
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
 msgstr "Bitte melde dich bei deinem Konto an"
 
 #: src/components/add-system.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Port"
 msgstr "Port"
+
+#: src/components/docker/service-configs.tsx
+msgid "Port is required"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Ports"
+msgstr ""
 
 #. Power On Time
 #: src/components/routes/system/smart-table.tsx
@@ -1219,14 +2568,41 @@ msgstr "Genaue Nutzung zum aufgezeichneten Zeitpunkt"
 msgid "Preferred Language"
 msgstr "Bevorzugte Sprache"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Prev"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Process started"
 msgstr "Prozess gestartet"
+
+#: src/components/docker/compose.tsx
+msgid "Provide a full docker-compose.yml content for deployment."
+msgstr ""
 
 #. Use 'Key' if your language requires many more characters
 #: src/components/add-system.tsx
 msgid "Public Key"
 msgstr "Öffentlicher Schlüssel"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/images.tsx
+msgid "Pull"
+msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Pull Image"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Push"
+msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Push Image"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
@@ -1238,19 +2614,88 @@ msgstr "Ruhezeiten"
 msgid "Read"
 msgstr "Lesen"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Read-only users cannot modify focus rules."
+msgstr ""
+
 #: src/components/routes/system.tsx
 msgid "Received"
 msgstr "Empfangen"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis DB is invalid"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis port is invalid"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "Aktualisieren"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Refresh Config"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Register a configuration endpoint for this system."
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/registries.tsx
+msgid "Registries"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Registry"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Registry name"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Registry server"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Registry username"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Relationships"
 msgstr "Beziehungen"
+
+#: src/components/docker/compose.tsx
+msgid "Remove project files"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository checks are not supported on this OS"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository Sources"
+msgstr ""
 
 #: src/components/login/login.tsx
 msgid "Request a one-time password"
@@ -1268,6 +2713,10 @@ msgstr "Benötigt von"
 msgid "Requires"
 msgstr "Benötigt"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Reset Filters"
+msgstr ""
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Reset Password"
 msgstr "Passwort zurücksetzen"
@@ -1278,6 +2727,19 @@ msgstr "Passwort zurücksetzen"
 msgid "Resolved"
 msgstr "Gelöst"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Resource"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Restart"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Restart Docker after update"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Restarts"
 msgstr "Neustarts"
@@ -1285,6 +2747,18 @@ msgstr "Neustarts"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Resume"
 msgstr "Fortsetzen"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Retry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Review and update config content for the selected service."
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Review Docker audit records and data cleanup runs."
+msgstr ""
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -1295,9 +2769,27 @@ msgstr ""
 msgid "Rotate token"
 msgstr "Token rotieren"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Rows per page"
 msgstr "Zeilen pro Seite"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type is required"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rules are exact matches. Use the values shown in the container list or details."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/overview.tsx
+msgid "Running"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Runtime Metrics"
@@ -1311,9 +2803,23 @@ msgstr "S.M.A.R.T.-Details"
 msgid "S.M.A.R.T. Self-Test"
 msgstr "S.M.A.R.T.-Selbsttest"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Save"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
 msgstr "Adresse mit der Enter-Taste oder Komma speichern. Leer lassen, um E-Mail-Benachrichtigungen zu deaktivieren."
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Save Config"
+msgstr ""
 
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1323,6 +2829,10 @@ msgstr "Einstellungen speichern"
 #: src/components/add-system.tsx
 msgid "Save system"
 msgstr "System speichern"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Saved"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
@@ -1344,6 +2854,18 @@ msgstr "Suche"
 msgid "Search for systems or settings..."
 msgstr "Nach Systemen oder Einstellungen suchen..."
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Search logs..."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Secondary value is required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Secret Key"
+msgstr ""
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "See <0>notification settings</0> to configure how you receive alerts."
 msgstr "Siehe <0>Benachrichtigungseinstellungen</0>, um zu konfigurieren, wie du Warnungen erhältst."
@@ -1351,6 +2873,54 @@ msgstr "Siehe <0>Benachrichtigungseinstellungen</0>, um zu konfigurieren, wie du
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Select {foo}"
 msgstr "Auswählen {foo}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a bucket and top-level folders to clean."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a database and tables to delete with DELETE statements."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Select a registry if authentication is required."
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system"
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system to manage Docker resources."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select bucket"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select database"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select DB"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Select rule type"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Send test email"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender name"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Sent"
@@ -1360,10 +2930,41 @@ msgstr "Gesendet"
 msgid "Serial Number"
 msgstr "Seriennummer"
 
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Server"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Server Version"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Service"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Config"
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Service Configs"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Service Details"
 msgstr "Servicedetails"
 
+#: src/components/docker/service-configs.tsx
+msgid "Service name"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Name"
+msgstr ""
+
+#: src/components/docker/compose.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Services"
 msgstr "Dienste"
@@ -1384,18 +2985,80 @@ msgstr "Einstellungen"
 msgid "Settings saved"
 msgstr "Einstellungen gespeichert"
 
+#: src/components/docker/images.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Show stopped"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Sign in"
 msgstr "Anmelden"
 
+#: src/components/docker/images.tsx
+msgid "Size"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP auth method"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP enabled"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP host"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP password"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP port"
+msgstr ""
+
 #: src/components/command-palette.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "SMTP settings"
 msgstr "SMTP-Einstellungen"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP settings saved"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP username"
+msgstr ""
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
 msgstr "Sortieren nach"
 
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Source"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Start"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start Cleanup"
+msgstr ""
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Start Time"
@@ -1407,7 +3070,12 @@ msgstr "Startzeit"
 msgid "State"
 msgstr "Status"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1416,9 +3084,45 @@ msgstr "Status"
 msgid "Status"
 msgstr "Status"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Stop"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Stopped"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Storage Driver"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Store credentials for private registries."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored password available"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored secret available"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table-columns.tsx
 #~ msgid "Sub State"
 #~ msgstr "Unterzustand"
+
+#: src/components/docker/networks.tsx
+msgid "Subnet"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Success"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1430,6 +3134,8 @@ msgstr "Swap-Nutzung"
 
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -1462,6 +3168,10 @@ msgstr "Systeme können in einer <0>config.yml</0>-Datei im Datenverzeichnis ver
 msgid "Table"
 msgstr "Tabelle"
 
+#: src/components/docker/images.tsx
+msgid "Tags"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Tasks"
 msgstr "Aufgaben"
@@ -1485,9 +3195,21 @@ msgstr "Temperatureinheit"
 msgid "Temperatures of system sensors"
 msgstr "Temperaturen der Systemsensoren"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Template name"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Test <0>URL</0>"
 msgstr "Test <0>URL</0>"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email sent"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Test notification sent"
@@ -1497,6 +3219,10 @@ msgstr "Testbenachrichtigung gesendet"
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "Melde dich dann im Backend an und setze dein Benutzerkontopasswort in der Benutzertabelle zurück."
 
+#: src/components/docker/service-configs.tsx
+msgid "This action cannot be undone."
+msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "This action cannot be undone. This will permanently delete all current records for {name} from the database."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden alle aktuellen Datensätze für {name} dauerhaft aus der Datenbank gelöscht."
@@ -1504,6 +3230,34 @@ msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden alle
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "This will permanently delete all selected records from the database."
 msgstr "Dadurch werden alle ausgewählten Datensätze dauerhaft aus der Datenbank gelöscht."
+
+#: src/components/docker/compose-templates.tsx
+msgid "This will remove the selected compose template."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "This will remove the selected focus rule."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "This will remove the selected image from the host."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "This will remove the selected network."
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "This will remove the selected registry credentials."
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "This will remove the selected volume."
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "This will stop and remove the selected compose project."
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Throughput of {extraFsName}"
@@ -1513,9 +3267,17 @@ msgstr "Durchsatz von {extraFsName}"
 msgid "Throughput of root filesystem"
 msgstr "Durchsatz des Root-Dateisystems"
 
+#: src/components/docker/networks.tsx
+msgid "Time"
+msgstr ""
+
 #: src/components/routes/settings/general.tsx
 msgid "Time format"
 msgstr "Zeitformat"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Time Range"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -1535,6 +3297,22 @@ msgstr "Darstellung umschalten"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Token"
 msgstr "Token"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token cannot be changed after creation."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token for config API"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is required"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is stored securely and cannot be edited later."
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1563,10 +3341,18 @@ msgstr "Empfangene Gesamtdatenmenge je Schnittstelle "
 msgid "Total data sent for each interface"
 msgstr "Gesendete Gesamtdatenmenge je Schnittstelle"
 
+#: src/components/docker/overview.tsx
+msgid "Total Memory"
+msgstr ""
+
 #. placeholder {0}: data.length
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Total: {0}"
 msgstr "Gesamt: {0}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Track cleanup steps, logs, and results in real time."
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
@@ -1620,11 +3406,17 @@ msgstr "Löst aus, wenn der Status zwischen online und offline wechselt"
 msgid "Triggers when usage of any disk exceeds a threshold"
 msgstr "Löst aus, wenn die Nutzung einer Festplatte einen Schwellenwert überschreitet"
 
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Type"
 msgstr "Typ"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unavailable"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Unit file"
@@ -1641,6 +3433,7 @@ msgid "Universal token"
 msgstr "Universeller Token"
 
 #. Context: Battery state
+#: src/components/audit/audit-logs-table.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "Unbekannt"
@@ -1650,7 +3443,16 @@ msgstr "Unbekannt"
 msgid "Unlimited"
 msgstr "Unbegrenzt"
 
+#: src/components/docker/containers.tsx
+msgid "Unpause"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unsupported"
+msgstr ""
+
 #. Context: System is up
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Up"
@@ -1660,11 +3462,23 @@ msgstr "aktiv"
 msgid "Up ({upSystemsLength})"
 msgstr "aktiv ({upSystemsLength})"
 
+#: src/components/docker/compose.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Update"
 msgstr "Aktualisieren"
 
+#: src/components/docker/compose.tsx
+msgid "Update Compose"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Update service name or endpoint URL."
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -1679,16 +3493,23 @@ msgid "Upload"
 msgstr "Hochladen"
 
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "Betriebszeit"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "URL"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/cpu-sheet.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 msgid "Usage"
 msgstr "Nutzung"
 
@@ -1696,14 +3517,36 @@ msgstr "Nutzung"
 msgid "Usage of root partition"
 msgstr "Nutzung der Root-Partition"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored password"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored secret"
+msgstr ""
+
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
 msgid "Used"
 msgstr "Verwendet"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "User"
+msgstr ""
+
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
 msgid "User Actions"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Username"
 msgstr ""
 
 #: src/components/command-palette.tsx
@@ -1712,12 +3555,23 @@ msgid "Users"
 msgstr "Benutzer"
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 msgid "Value"
 msgstr "Wert"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Value is required"
+msgstr ""
 
 #: src/components/systems-table/systems-table.tsx
 msgid "View"
 msgstr "Ansicht"
+
+#: src/components/docker/config.tsx
+msgid "View and update Docker daemon configuration."
+msgstr ""
 
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/network-sheet.tsx
@@ -1731,6 +3585,19 @@ msgstr "Sieh dir die neusten 200 Alarme an."
 #: src/components/systems-table/systems-table.tsx
 msgid "Visible Fields"
 msgstr "Sichtbare Spalten"
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name is required"
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/volumes.tsx
+msgid "Volumes"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Waiting for enough records to display"
@@ -1766,11 +3633,19 @@ msgctxt "Button to copy install command"
 msgid "Windows command"
 msgstr "Windows-Befehl"
 
+#: src/components/docker/compose.tsx
+msgid "Workdir"
+msgstr ""
+
 #. Disk write
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 msgid "Write"
 msgstr "Schreiben"
+
+#: src/components/docker/service-configs.tsx
+msgid "X-Config-Token"
+msgstr ""
 
 #: src/components/routes/settings/layout.tsx
 msgid "YAML Config"
@@ -1787,7 +3662,33 @@ msgid "Yes"
 msgstr "Ja"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "You have read-only access"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Your changes have been saved."
 msgstr ""
 
 #: src/components/routes/settings/layout.tsx

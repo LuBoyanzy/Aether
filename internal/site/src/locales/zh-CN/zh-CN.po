@@ -87,6 +87,14 @@ msgstr "30 天"
 msgid "5 min"
 msgstr "5 分钟"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Access Key"
+msgstr "访问密钥"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Action"
+msgstr "操作"
+
 #. Table column
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
@@ -193,6 +201,8 @@ msgid "All Containers"
 msgstr "所有容器"
 
 #: src/components/alerts/alerts-sheet.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
@@ -205,6 +215,10 @@ msgstr "所有客户端"
 #: src/components/docker/overview.tsx
 msgid "API Version"
 msgstr "API 版本"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Apply Filters"
+msgstr "应用筛选"
 
 #: src/components/docker/overview.tsx
 msgid "Architecture"
@@ -221,6 +235,12 @@ msgstr "您确定吗？"
 #: src/components/docker/networks.tsx
 msgid "Attachable"
 msgstr "可附加"
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Audit Logs"
+msgstr "审查日志"
 
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
@@ -344,6 +364,7 @@ msgstr "可停止"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/images.tsx
 #: src/components/docker/networks.tsx
@@ -352,6 +373,7 @@ msgstr "可停止"
 #: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Cancel"
 msgstr "取消"
@@ -417,9 +439,29 @@ msgstr "检查 {email} 以获取重置链接。"
 msgid "Check logs for more details."
 msgstr "检查日志以获取更多详细信息。"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Check the inbox for the test message."
+msgstr "请在收件箱中查收测试邮件。"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Check your notification service"
 msgstr "检查您的通知服务"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Choose a database and clean keys by predefined patterns."
+msgstr "选择数据库并按预设模式清理键。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup configuration saved"
+msgstr "清理配置已保存"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup Progress"
+msgstr "清理进度"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup will delete data immediately. Please confirm the targets and proceed."
+msgstr "清理会立即删除数据，请确认目标后继续。"
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -442,6 +484,10 @@ msgstr "点击系统查看更多信息。"
 #: src/components/ui/input-copy.tsx
 msgid "Click to copy"
 msgstr "点击复制"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Close"
+msgstr "关闭"
 
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -536,6 +582,18 @@ msgstr "配置关注规则"
 #: src/components/routes/settings/notifications.tsx
 msgid "Configure how you receive alert notifications."
 msgstr "配置您接收警报通知的方式。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Configure MySQL, Redis, MinIO, and Elasticsearch cleanup targets for the selected system."
+msgstr "为所选系统配置 MySQL、Redis、MinIO 和 Elasticsearch 清理目标。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Configure the sender and SMTP server details for alert emails."
+msgstr "配置告警邮件的发件人与 SMTP 服务器信息。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Confirm cleanup"
+msgstr "确认清理"
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
@@ -714,6 +772,7 @@ msgstr "创建存储卷"
 
 #. Context: date created
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/images.tsx
 #: src/components/docker/registries.tsx
@@ -738,6 +797,10 @@ msgstr "累计上传"
 msgid "Current state"
 msgstr "当前状态"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Current step"
+msgstr "当前步骤"
+
 #. Power Cycles
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
@@ -760,6 +823,15 @@ msgstr "未找到 daemon.json；保存时会创建新文件。"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Daily"
 msgstr "每日"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Data Cleanup"
+msgstr "数据清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "DB {db}"
+msgstr "数据库 {db}"
 
 #: src/components/docker/config.tsx
 msgid "Default daemon.json path"
@@ -832,6 +904,7 @@ msgstr "删除存储卷"
 msgid "Description"
 msgstr "描述"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "Detail"
 msgstr "详情"
@@ -959,6 +1032,14 @@ msgstr "编辑服务"
 msgid "Edit Template"
 msgstr "编辑模板"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch host and port are required"
+msgstr "Elasticsearch 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch port is invalid"
+msgstr "Elasticsearch 端口无效"
+
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/otp-forms.tsx
@@ -978,6 +1059,13 @@ msgstr "空电"
 msgid "Enable IPv6"
 msgstr "启用 IPv6"
 
+#: src/components/audit/audit-logs-table.tsx
+#~ msgid "End"
+#~ msgstr "结束"
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "End Time"
@@ -986,6 +1074,10 @@ msgstr "结束时间"
 #: src/components/docker/service-configs.tsx
 msgid "Endpoint URL"
 msgstr "接口 URL"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Enforce TLS"
+msgstr "强制 TLS"
 
 #: src/components/docker/overview.tsx
 msgid "Engine Details"
@@ -1013,6 +1105,8 @@ msgstr "输入您的一次性密码。"
 msgid "Environment"
 msgstr "环境变量"
 
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
@@ -1030,6 +1124,33 @@ msgstr "环境变量"
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1072,6 +1193,7 @@ msgstr "环境变量"
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/repo-sources-card.tsx
@@ -1120,6 +1242,8 @@ msgstr "导出您当前的系统配置。"
 msgid "Fahrenheit (°F)"
 msgstr "华氏度 (°F)"
 
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "失败"
@@ -1180,6 +1304,14 @@ msgstr "删除存储卷失败"
 msgid "Failed to import focus rules"
 msgstr "导入关注规则失败"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Failed to load audit logs"
+msgstr "加载审查日志失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load cleanup config"
+msgstr "加载清理配置失败"
+
 #: src/components/docker/compose.tsx
 msgid "Failed to load compose projects"
 msgstr "加载编排项目失败"
@@ -1212,6 +1344,11 @@ msgstr "加载 Docker 配置失败"
 msgid "Failed to load Docker overview"
 msgstr "加载 Docker 概览失败"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Elasticsearch indices"
+msgstr "加载 Elasticsearch 索引失败"
+
 #: src/components/docker/containers.tsx
 msgid "Failed to load focus rules"
 msgstr "加载关注规则失败"
@@ -1220,6 +1357,26 @@ msgstr "加载关注规则失败"
 msgid "Failed to load images"
 msgstr "加载镜像失败"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO buckets"
+msgstr "加载 MinIO 桶失败"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO folders"
+msgstr "加载 MinIO 目录失败"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL databases"
+msgstr "加载 MySQL 数据库失败"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL tables"
+msgstr "加载 MySQL 表失败"
+
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Failed to load network mounts"
 msgstr "加载网络挂载失败"
@@ -1227,6 +1384,11 @@ msgstr "加载网络挂载失败"
 #: src/components/docker/networks.tsx
 msgid "Failed to load networks"
 msgstr "加载网络失败"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Redis databases"
+msgstr "加载 Redis 数据库失败"
 
 #: src/components/docker/images.tsx
 #: src/components/docker/registries.tsx
@@ -1261,6 +1423,14 @@ msgstr "处理镜像失败"
 msgid "Failed to remove image"
 msgstr "删除镜像失败"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to retry cleanup"
+msgstr "重试清理失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to save cleanup config"
+msgstr "保存清理配置失败"
+
 #: src/components/docker/compose.tsx
 msgid "Failed to save compose project"
 msgstr "保存编排项目失败"
@@ -1283,9 +1453,21 @@ msgstr "保存服务配置失败"
 msgid "Failed to save settings"
 msgstr "保存设置失败"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to save SMTP settings"
+msgstr "保存 SMTP 设置失败"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to send test email"
+msgstr "发送测试邮件失败"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Failed to send test notification"
 msgstr "发送测试通知失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to start cleanup"
+msgstr "启动清理失败"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
@@ -1378,6 +1560,7 @@ msgstr "持续<0>{min}</0> {min, plural, one {分钟} other {分钟}}"
 #: src/components/docker/compose.tsx
 #: src/components/docker/config.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1460,6 +1643,13 @@ msgctxt "Button to copy install command"
 msgid "Homebrew command"
 msgstr "Homebrew 安装命令"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Host"
+msgstr "主机"
+
 #: src/components/add-system.tsx
 msgid "Host / IP"
 msgstr "主机/IP"
@@ -1539,6 +1729,22 @@ msgstr "内部"
 msgid "Invalid email address."
 msgstr "无效的电子邮件地址。"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid sender address"
+msgstr "发件人邮箱无效"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid SMTP port"
+msgstr "SMTP 端口无效"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid test email"
+msgstr "测试邮箱无效"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Invalid time range"
+msgstr "时间范围无效"
+
 #~ msgid "IPv6"
 #~ msgstr "IPv6"
 
@@ -1593,6 +1799,10 @@ msgstr "布局"
 msgid "Layout width"
 msgstr "布局宽度"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Leave blank to keep existing password"
+msgstr "留空以保持现有密码"
+
 #: src/components/docker/registries.tsx
 msgid "Leave blank to keep unchanged"
 msgstr "留空则保持不变"
@@ -1627,14 +1837,43 @@ msgstr "5 分钟内的平均负载"
 msgid "Load Avg"
 msgstr "负载"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Buckets"
+msgstr "加载桶"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Databases"
+msgstr "加载数据库"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Folders"
+msgstr "加载目录"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Indices"
+msgstr "加载索引"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load indices from _cat/indices and delete documents by query."
+msgstr "从 _cat/indices 加载索引，并通过查询删除文档。"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Load state"
 msgstr "加载状态"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Tables"
+msgstr "加载表"
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 msgid "Loading"
 msgstr "加载中"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Loading SMTP settings..."
+msgstr "正在加载 SMTP 设置..."
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
@@ -1647,6 +1886,10 @@ msgstr "加载中"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "加载中..."
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Local name (EHLO/HELO)"
+msgstr "本地主机名（EHLO/HELO）"
 
 #: src/components/navbar.tsx
 msgid "Log Out"
@@ -1668,6 +1911,7 @@ msgstr "登录尝试失败"
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/navbar.tsx
 msgid "Logs"
 msgstr "日志"
@@ -1760,6 +2004,34 @@ msgstr "内存使用率"
 msgid "Memory usage of docker containers"
 msgstr "Docker 容器的内存使用率"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host and port are required"
+msgstr "MinIO 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host, port and bucket are required"
+msgstr "MinIO 主机、端口和桶为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO port is invalid"
+msgstr "MinIO 端口无效"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender address"
+msgstr "缺少发件人邮箱"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender name"
+msgstr "缺少发件人名称"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing SMTP host"
+msgstr "缺少 SMTP 主机"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing test email"
+msgstr "缺少测试邮箱"
+
 #: src/components/docker/networks.tsx
 #: src/components/docker/volumes.tsx
 msgid "Mode"
@@ -1768,6 +2040,10 @@ msgstr "模式"
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
 msgstr "型号"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Module results"
+msgstr "模块结果"
 
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Mount Point"
@@ -1780,6 +2056,18 @@ msgstr "检测到服务器上的网络挂载文件系统"
 #: src/components/docker/volumes.tsx
 msgid "Mountpoint"
 msgstr "挂载点"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host and port are required"
+msgstr "MySQL 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host, port and database are required"
+msgstr "MySQL 主机、端口和数据库为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL port is invalid"
+msgstr "MySQL 端口无效"
 
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
@@ -1855,11 +2143,19 @@ msgstr "网络单位"
 msgid "Networks"
 msgstr "网络"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Next"
+msgstr "下一页"
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No"
 msgstr "否"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "No audit logs found."
+msgstr "未找到审查日志记录。"
 
 #: src/components/docker/compose.tsx
 msgid "No compose projects found."
@@ -1881,9 +2177,17 @@ msgstr "该系统未配置关注规则。"
 msgid "No focus rules found."
 msgstr "未找到关注规则。"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "No folders loaded."
+msgstr "未加载任何目录。"
+
 #: src/components/docker/images.tsx
 msgid "No images found."
 msgstr "未找到镜像。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No indices loaded."
+msgstr "未加载任何索引。"
 
 #: src/components/docker/containers.tsx
 msgid "No logs available."
@@ -1896,6 +2200,14 @@ msgstr "未检测到网络挂载"
 #: src/components/docker/networks.tsx
 msgid "No networks found."
 msgstr "未找到网络。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "No password stored"
+msgstr "未保存密码"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No patterns configured."
+msgstr "未配置任何模式。"
 
 #: src/components/docker/registries.tsx
 msgid "No registries found."
@@ -1936,6 +2248,10 @@ msgstr "未找到系统。"
 msgid "No systems found."
 msgstr "未找到系统。"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "No tables loaded."
+msgstr "未加载任何表。"
+
 #: src/components/docker/compose-templates.tsx
 msgid "No templates found."
 msgstr "未找到模板。"
@@ -1974,6 +2290,10 @@ msgstr "一次性"
 #: src/components/login/auth-form.tsx
 msgid "One-time password"
 msgstr "一次性密码"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Only administrators can edit these settings."
+msgstr "仅管理员可编辑这些设置。"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -2065,10 +2385,17 @@ msgstr "页面"
 msgid "Page {0} of {1}"
 msgstr "第 {0} 页，共 {1} 页"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Page {page}"
+msgstr "第 {page} 页"
+
 #: src/components/command-palette.tsx
 msgid "Pages / Settings"
 msgstr "页面 / 设置"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/registries.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
@@ -2086,6 +2413,10 @@ msgstr "密码必须小于 72 字节。"
 #: src/components/login/forgot-pass-form.tsx
 msgid "Password reset request received"
 msgstr "已收到密码重置请求"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Password stored"
+msgstr "已保存密码"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Past"
@@ -2126,6 +2457,10 @@ msgstr "已暂停"
 msgid "Paused ({pausedSystemsLength})"
 msgstr "已暂停 ({pausedSystemsLength})"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Pending"
+msgstr "等待中"
+
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Per-core average utilization"
@@ -2134,6 +2469,10 @@ msgstr "每个核心的平均利用率"
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Percentage of time spent in each state"
 msgstr "在每个状态下花费的时间百分比"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Pick a date range"
+msgstr "选择时间范围"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Please <0>configure an SMTP server</0> to ensure alerts are delivered."
@@ -2156,6 +2495,26 @@ msgstr "请创建一个管理员账户"
 msgid "Please enable pop-ups for this site"
 msgstr "请为此网站启用弹出窗口"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender email address."
+msgstr "请输入发件人邮箱地址。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender name."
+msgstr "请输入发件人名称。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a test email address."
+msgstr "请输入测试邮箱地址。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a valid port number."
+msgstr "请输入有效的端口号。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter an SMTP host."
+msgstr "请输入 SMTP 主机。"
+
 #: src/lib/api.ts
 msgid "Please log in again"
 msgstr "请重新登录"
@@ -2174,6 +2533,10 @@ msgid "Please sign in to your account"
 msgstr "请登录您的账户"
 
 #: src/components/add-system.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/service-configs.tsx
 msgid "Port"
 msgstr "端口"
@@ -2199,6 +2562,10 @@ msgstr "采集时间下的精确内存使用率"
 #: src/components/routes/settings/general.tsx
 msgid "Preferred Language"
 msgstr "首选语言"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Prev"
+msgstr "上一页"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Process started"
@@ -2250,6 +2617,19 @@ msgstr "只读用户无法修改关注规则。"
 msgid "Received"
 msgstr "接收"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis DB is invalid"
+msgstr "Redis DB 无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis host and port are required"
+msgstr "Redis 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis port is invalid"
+msgstr "Redis 端口无效"
+
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 #: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx
@@ -2266,6 +2646,10 @@ msgstr "接收"
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "刷新"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Refresh Config"
+msgstr "刷新配置"
 
 #: src/components/docker/service-configs.tsx
 msgid "Register a configuration endpoint for this system."
@@ -2324,6 +2708,10 @@ msgstr "被需要"
 msgid "Requires"
 msgstr "需要"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Reset Filters"
+msgstr "重置筛选"
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Reset Password"
 msgstr "重置密码"
@@ -2333,6 +2721,10 @@ msgstr "重置密码"
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Resolved"
 msgstr "已解决"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Resource"
+msgstr "资源"
 
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
@@ -2351,9 +2743,17 @@ msgstr "重启次数"
 msgid "Resume"
 msgstr "恢复"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Retry"
+msgstr "重试"
+
 #: src/components/docker/service-configs.tsx
 msgid "Review and update config content for the selected service."
 msgstr "查看并更新所选服务的配置内容。"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Review Docker audit records and data cleanup runs."
+msgstr "查看 Docker 审计记录与数据清理执行结果。"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -2364,6 +2764,7 @@ msgstr "根"
 msgid "Rotate token"
 msgstr "轮换令牌"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Rows per page"
 msgstr "每页行数"
@@ -2380,6 +2781,7 @@ msgstr "规则类型为必填"
 msgid "Rules are exact matches. Use the values shown in the container list or details."
 msgstr "规则为精确匹配，请使用容器列表或详情中显示的值。"
 
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
 msgid "Running"
 msgstr "运行中"
@@ -2402,12 +2804,17 @@ msgstr "S.M.A.R.T. 自检"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Save"
 msgstr "保存"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
 msgstr "使用回车键或逗号保存地址。留空以禁用电子邮件通知。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Save Config"
+msgstr "保存配置"
 
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -2417,6 +2824,10 @@ msgstr "保存设置"
 #: src/components/add-system.tsx
 msgid "Save system"
 msgstr "保存系统"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Saved"
+msgstr "已保存"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
@@ -2441,9 +2852,17 @@ msgstr "搜索"
 msgid "Search for systems or settings..."
 msgstr "搜索系统或设置..."
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Search logs..."
+msgstr "搜索日志..."
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Secondary value is required"
 msgstr "第二个值为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Secret Key"
+msgstr "密钥"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "See <0>notification settings</0> to configure how you receive alerts."
@@ -2452,6 +2871,14 @@ msgstr "查看<0>通知设置</0>以配置您接收警报的方式。"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Select {foo}"
 msgstr "选择 {foo}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a bucket and top-level folders to clean."
+msgstr "选择桶和需要清理的顶层目录。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a database and tables to delete with DELETE statements."
+msgstr "选择数据库与表，使用 DELETE 语句清空。"
 
 #: src/components/docker/images.tsx
 msgid "Select a registry if authentication is required."
@@ -2465,9 +2892,33 @@ msgstr "选择系统"
 msgid "Select a system to manage Docker resources."
 msgstr "请选择一个系统以管理 Docker 资源。"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Select bucket"
+msgstr "选择桶"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select database"
+msgstr "选择数据库"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select DB"
+msgstr "选择 DB"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Select rule type"
 msgstr "选择规则类型"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Send test email"
+msgstr "发送测试邮件"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender address"
+msgstr "发件人邮箱"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender name"
+msgstr "发件人名称"
 
 #: src/components/routes/system.tsx
 msgid "Sent"
@@ -2548,9 +2999,38 @@ msgstr "登录"
 msgid "Size"
 msgstr "大小"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP auth method"
+msgstr "SMTP 认证方式"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP enabled"
+msgstr "启用 SMTP"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP host"
+msgstr "SMTP 主机"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP password"
+msgstr "SMTP 密码"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP port"
+msgstr "SMTP 端口"
+
 #: src/components/command-palette.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "SMTP settings"
 msgstr "SMTP 设置"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP settings saved"
+msgstr "SMTP 设置已保存"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP username"
+msgstr "SMTP 用户名"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
@@ -2566,18 +3046,21 @@ msgstr "来源"
 msgid "Start"
 msgstr "启动"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Start cleanup"
+msgstr "开始清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start Cleanup"
+msgstr "开始清理"
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Start Time"
 msgstr "开始时间"
-
-#: src/components/audit/audit-date-range.tsx
-msgid "Time Range"
-msgstr "时间范围"
-
-#: src/components/audit/audit-date-range.tsx
-msgid "Pick a date range"
-msgstr "选择时间范围"
 
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
@@ -2585,9 +3068,11 @@ msgstr "选择时间范围"
 msgid "State"
 msgstr "状态"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -2614,6 +3099,16 @@ msgstr "存储驱动"
 msgid "Store credentials for private registries."
 msgstr "保存私有仓库凭据。"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored password available"
+msgstr "已有已保存的密码"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored secret available"
+msgstr "已有已保存的密钥"
+
 #: src/components/systemd-table/systemd-table-columns.tsx
 #~ msgid "Sub State"
 #~ msgstr "子状态"
@@ -2621,6 +3116,11 @@ msgstr "保存私有仓库凭据。"
 #: src/components/docker/networks.tsx
 msgid "Subnet"
 msgstr "子网"
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Success"
+msgstr "成功"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -2632,6 +3132,8 @@ msgstr "SWAP 使用率"
 
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2699,6 +3201,14 @@ msgstr "模板名称"
 msgid "Test <0>URL</0>"
 msgstr "测试<0>URL</0>"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email address"
+msgstr "测试邮箱地址"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email sent"
+msgstr "测试邮件已发送"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Test notification sent"
 msgstr "测试通知已发送"
@@ -2762,6 +3272,10 @@ msgstr "时间"
 #: src/components/routes/settings/general.tsx
 msgid "Time format"
 msgstr "时间格式"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Time Range"
+msgstr "时间范围"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -2833,6 +3347,10 @@ msgstr "总内存"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Total: {0}"
 msgstr "总计: {0}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Track cleanup steps, logs, and results in real time."
+msgstr "实时查看清理步骤、日志和结果。"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
@@ -2913,6 +3431,7 @@ msgid "Universal token"
 msgstr "通用令牌"
 
 #. Context: Battery state
+#: src/components/audit/audit-logs-table.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "未知"
@@ -2996,16 +3515,33 @@ msgstr "使用"
 msgid "Usage of root partition"
 msgstr "根分区的使用"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored password"
+msgstr "使用已保存的密码"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored secret"
+msgstr "使用已保存的密钥"
+
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
 msgid "Used"
 msgstr "已用"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "User"
+msgstr "用户"
 
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
 msgid "User Actions"
 msgstr "用户操作"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/registries.tsx
 msgid "Username"
@@ -3131,6 +3667,7 @@ msgstr "是"
 #: src/components/docker/compose.tsx
 #: src/components/docker/config.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -3148,339 +3685,14 @@ msgstr "是"
 msgid "You have read-only access"
 msgstr "你只有只读权限"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Your changes have been saved."
+msgstr "更改已保存。"
+
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "您的用户设置已更新。"
 
-#: src/components/docker/data-cleanup.tsx
-msgid "Access Key"
-msgstr "访问密钥"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Cleanup Progress"
-msgstr "清理进度"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Cleanup configuration saved"
-msgstr "清理配置已保存"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Cleanup will delete data immediately. Please confirm the targets and proceed."
-msgstr "清理会立即删除数据，请确认目标后继续。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Choose a database and clean keys by predefined patterns."
-msgstr "选择数据库并按预设模式清理键。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Close"
-msgstr "关闭"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Confirm cleanup"
-msgstr "确认清理"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Configure MySQL, Redis, MinIO, and Elasticsearch cleanup targets for the selected system."
-msgstr "为所选系统配置 MySQL、Redis、MinIO 和 Elasticsearch 清理目标。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Current step"
-msgstr "当前步骤"
-
-#: src/components/docker/data-cleanup.tsx
-#: src/components/docker/docker-tabs.tsx
-msgid "Data Cleanup"
-msgstr "数据清理"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "DB {db}"
-msgstr "数据库 {db}"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Elasticsearch host and port are required"
-msgstr "Elasticsearch 主机和端口为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Elasticsearch port is invalid"
-msgstr "Elasticsearch 端口无效"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load Elasticsearch indices"
-msgstr "加载 Elasticsearch 索引失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load MinIO buckets"
-msgstr "加载 MinIO 桶失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load MinIO folders"
-msgstr "加载 MinIO 目录失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load MySQL databases"
-msgstr "加载 MySQL 数据库失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load MySQL tables"
-msgstr "加载 MySQL 表失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load Redis databases"
-msgstr "加载 Redis 数据库失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to load cleanup config"
-msgstr "加载清理配置失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to retry cleanup"
-msgstr "重试清理失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to save cleanup config"
-msgstr "保存清理配置失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Failed to start cleanup"
-msgstr "启动清理失败"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Host"
-msgstr "主机"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load Buckets"
-msgstr "加载桶"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load Databases"
-msgstr "加载数据库"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load Folders"
-msgstr "加载目录"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load Indices"
-msgstr "加载索引"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load Tables"
-msgstr "加载表"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Load indices from _cat/indices and delete documents by query."
-msgstr "从 _cat/indices 加载索引，并通过查询删除文档。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MinIO host and port are required"
-msgstr "MinIO 主机和端口为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MinIO host, port and bucket are required"
-msgstr "MinIO 主机、端口和桶为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MinIO port is invalid"
-msgstr "MinIO 端口无效"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Module results"
-msgstr "模块结果"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MySQL host and port are required"
-msgstr "MySQL 主机和端口为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MySQL host, port and database are required"
-msgstr "MySQL 主机、端口和数据库为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "MySQL port is invalid"
-msgstr "MySQL 端口无效"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "No folders loaded."
-msgstr "未加载任何目录。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "No indices loaded."
-msgstr "未加载任何索引。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "No patterns configured."
-msgstr "未配置任何模式。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "No tables loaded."
-msgstr "未加载任何表。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Pending"
-msgstr "等待中"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Refresh Config"
-msgstr "刷新配置"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Redis DB is invalid"
-msgstr "Redis DB 无效"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Redis host and port are required"
-msgstr "Redis 主机和端口为必填"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Redis port is invalid"
-msgstr "Redis 端口无效"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Retry"
-msgstr "重试"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Save Config"
-msgstr "保存配置"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Saved"
-msgstr "已保存"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Secret Key"
-msgstr "密钥"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Select DB"
-msgstr "选择 DB"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Select a bucket and top-level folders to clean."
-msgstr "选择桶和需要清理的顶层目录。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Select a database and tables to delete with DELETE statements."
-msgstr "选择数据库与表，使用 DELETE 语句清空。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Select bucket"
-msgstr "选择桶"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Select database"
-msgstr "选择数据库"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Start Cleanup"
-msgstr "开始清理"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Start cleanup"
-msgstr "开始清理"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Stored password available"
-msgstr "已有已保存的密码"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Stored secret available"
-msgstr "已有已保存的密钥"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Success"
-msgstr "成功"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Track cleanup steps, logs, and results in real time."
-msgstr "实时查看清理步骤、日志和结果。"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Use stored password"
-msgstr "使用已保存的密码"
-
-#: src/components/docker/data-cleanup.tsx
-msgid "Use stored secret"
-msgstr "使用已保存的密钥"
-
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
-
-
-#: src/components/navbar.tsx
-#: src/components/audit/audit-logs-table.tsx
-msgid "Audit Logs"
-msgstr "审查日志"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Review Docker audit records and data cleanup runs."
-msgstr "查看 Docker 审计记录与数据清理执行结果。"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Search logs..."
-msgstr "搜索日志..."
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "End"
-msgstr "结束"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Reset Filters"
-msgstr "重置筛选"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Apply Filters"
-msgstr "应用筛选"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Action"
-msgstr "操作"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Resource"
-msgstr "资源"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "User"
-msgstr "用户"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "No audit logs found."
-msgstr "未找到审查日志记录。"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Prev"
-msgstr "上一页"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Next"
-msgstr "下一页"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Page {page}"
-msgstr "第 {page} 页"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Failed to load audit logs"
-msgstr "加载审查日志失败"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Invalid time range"
-msgstr "时间范围无效"

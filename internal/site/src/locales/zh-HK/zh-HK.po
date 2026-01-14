@@ -87,7 +87,23 @@ msgstr "30天"
 msgid "5 min"
 msgstr "5 分鐘"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Access Key"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Action"
+msgstr "操作"
+
 #. Table column
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -118,6 +134,11 @@ msgstr ""
 #: src/components/add-system.tsx
 msgid "Add <0>System</0>"
 msgstr "新增<0>系統</0>"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Add rule"
+msgstr ""
 
 #: src/components/add-system.tsx
 msgid "Add system"
@@ -175,12 +196,13 @@ msgstr "警報歷史"
 msgid "Alerts"
 msgstr "警報"
 
-#: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
 msgstr "所有容器"
 
 #: src/components/alerts/alerts-sheet.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
@@ -190,6 +212,18 @@ msgstr "所有容器"
 msgid "All Systems"
 msgstr "所有系統"
 
+#: src/components/docker/overview.tsx
+msgid "API Version"
+msgstr "API 版本"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Apply Filters"
+msgstr "套用篩選"
+
+#: src/components/docker/overview.tsx
+msgid "Architecture"
+msgstr "架構"
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Are you sure you want to delete {name}?"
 msgstr "您確定要刪除 {name} 嗎？"
@@ -198,9 +232,23 @@ msgstr "您確定要刪除 {name} 嗎？"
 msgid "Are you sure?"
 msgstr "您確定嗎？"
 
+#: src/components/docker/networks.tsx
+msgid "Attachable"
+msgstr "可附加"
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Audit Logs"
+msgstr "審查日誌"
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "自動複製需要安全的上下文。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Available"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Average"
@@ -236,6 +284,10 @@ msgstr "{0} 的平均使用率"
 #: src/components/routes/system.tsx
 msgid "Average utilization of GPU engines"
 msgstr "GPU 引擎的平均利用率"
+
+#: src/components/docker/service-configs.tsx
+msgid "Back"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
@@ -310,8 +362,18 @@ msgstr "可啟動"
 msgid "Can stop"
 msgstr "可停止"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Cancel"
 msgstr "取消"
@@ -324,6 +386,10 @@ msgstr "能力"
 msgid "Capacity"
 msgstr "容量"
 
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Category"
+msgstr ""
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Caution - potential data loss"
 msgstr "注意 - 可能遺失資料"
@@ -332,6 +398,10 @@ msgstr "注意 - 可能遺失資料"
 msgid "Celsius (°C)"
 msgstr "攝氏 (°C)"
 
+#: src/components/docker/overview.tsx
+msgid "Cgroup Driver"
+msgstr "Cgroup 驅動"
+
 #: src/components/routes/settings/general.tsx
 msgid "Change display units for metrics."
 msgstr "更改指標的顯示單位。"
@@ -339,6 +409,10 @@ msgstr "更改指標的顯示單位。"
 #: src/components/routes/settings/general.tsx
 msgid "Change general application options."
 msgstr "更改一般應用選項。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Changes take effect after restarting the service."
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Charge"
@@ -353,6 +427,10 @@ msgstr "充電中"
 msgid "Chart options"
 msgstr "圖表選項"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Check"
+msgstr ""
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Check {email} for a reset link."
 msgstr "檢查 {email} 以獲取重置鏈接。"
@@ -361,9 +439,29 @@ msgstr "檢查 {email} 以獲取重置鏈接。"
 msgid "Check logs for more details."
 msgstr "檢查日誌以取得更多資訊。"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Check the inbox for the test message."
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Check your notification service"
 msgstr "檢查您的通知服務"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Choose a database and clean keys by predefined patterns."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup configuration saved"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup Progress"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup will delete data immediately. Please confirm the targets and proceed."
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -387,14 +485,115 @@ msgstr "點擊系統以查看更多資訊。"
 msgid "Click to copy"
 msgstr "點擊以複製"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Close"
+msgstr ""
+
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
 msgid "Command line instructions"
 msgstr "命令行指令"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose"
+msgstr "編排"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Compose Content"
+msgstr "編排內容"
+
+#: src/components/docker/compose.tsx
+msgid "Compose Logs"
+msgstr "編排日誌"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Compose project name"
+msgstr "編排項目名稱"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose project: use the Compose value shown under the name, or the label com.docker.compose.project."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Compose service: enter both the compose project and service name. Service name comes from docker-compose.yml (services.*) or label com.docker.compose.service."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Compose Templates"
+msgstr "編排模板"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Compose templates can be reused to deploy stacks quickly."
+msgstr "編排模板可重複使用以快速部署服務堆疊。"
+
+#: src/components/docker/overview.tsx
+msgid "Compose Version"
+msgstr ""
+
+#: src/components/docker/config.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Config"
+msgstr "配置"
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config Content"
+msgstr "配置內容"
+
+#: src/components/docker/config.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Config content is required"
+msgstr "配置內容必填"
+
+#: src/components/docker/config.tsx
+msgid "Config Path"
+msgstr "配置路徑"
+
+#: src/components/docker/service-configs.tsx
+msgid "Config saved. Restart the service to apply changes."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Configure a new Docker network."
+msgstr "配置新的 Docker 網絡。"
+
+#: src/components/docker/volumes.tsx
+msgid "Configure a new Docker volume."
+msgstr "配置新的 Docker 存儲卷。"
+
+#: src/components/docker/containers.tsx
+msgid "Configure focus rules"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Configure how you receive alert notifications."
 msgstr "配置您接收警報通知的方式。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Configure MySQL, Redis, MinIO, and Elasticsearch cleanup targets for the selected system."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Configure the sender and SMTP server details for alert emails."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Confirm cleanup"
+msgstr ""
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
@@ -409,11 +608,37 @@ msgstr "衝突"
 msgid "Connection is down"
 msgstr "連線中斷"
 
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
+#: src/components/docker/containers.tsx
+msgid "Container Details"
+msgstr "容器詳情"
+
+#: src/components/docker/containers.tsx
+msgid "Container Logs"
+msgstr "容器日誌"
+
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Container name: use the Name column value."
+msgstr ""
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
 msgid "Containers"
 msgstr ""
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Continue"
@@ -497,6 +722,16 @@ msgstr "CPU 時間細分"
 msgid "CPU Usage"
 msgstr "CPU 使用率"
 
+#: src/components/docker/overview.tsx
+msgid "CPUs"
+msgstr "CPU 核心數"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Create"
 msgstr "建立"
@@ -505,8 +740,43 @@ msgstr "建立"
 msgid "Create account"
 msgstr "創建帳戶"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+msgid "Create Compose"
+msgstr "新建編排"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+msgid "Create Network"
+msgstr "建立網絡"
+
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Create Registry"
+msgstr "新增倉庫"
+
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Create Service"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+msgid "Create Template"
+msgstr "新增模板"
+
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Create Volume"
+msgstr "建立存儲卷"
+
 #. Context: date created
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 msgid "Created"
 msgstr "已建立"
 
@@ -527,6 +797,10 @@ msgstr "累計上傳"
 msgid "Current state"
 msgstr "目前狀態"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Current step"
+msgstr ""
+
 #. Power Cycles
 #: src/components/routes/system/smart-table.tsx
 msgid "Cycles"
@@ -541,15 +815,50 @@ msgstr ""
 #~ msgid "d"
 #~ msgstr ""
 
+#: src/components/docker/config.tsx
+msgid "Daemon Configuration"
+msgstr "Daemon 配置"
+
+#: src/components/docker/config.tsx
+msgid "daemon.json not found; a new file will be created on save."
+msgstr "未找到 daemon.json；儲存時將建立新檔案。"
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Daily"
 msgstr "每日"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Data Cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "DB {db}"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Default daemon.json path"
+msgstr "預設 daemon.json 路徑"
+
 #: src/components/routes/settings/general.tsx
 msgid "Default time period"
 msgstr "預設時間段"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Define system-level rules to filter the container list."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -557,14 +866,49 @@ msgstr "預設時間段"
 msgid "Delete"
 msgstr "刪除"
 
+#: src/components/docker/compose.tsx
+msgid "Delete Compose Project"
+msgstr "刪除編排項目"
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Delete fingerprint"
 msgstr "刪除指紋"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Delete focus rule"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Delete Image"
+msgstr "刪除鏡像"
+
+#: src/components/docker/networks.tsx
+msgid "Delete Network"
+msgstr "刪除網絡"
+
+#: src/components/docker/registries.tsx
+msgid "Delete Registry"
+msgstr "刪除倉庫"
+
+#: src/components/docker/service-configs.tsx
+msgid "Delete service config?"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Delete Template"
+msgstr "刪除模板"
+
+#: src/components/docker/volumes.tsx
+msgid "Delete Volume"
+msgstr "刪除存儲卷"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "描述"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 msgid "Detail"
 msgstr "詳細資訊"
@@ -572,6 +916,10 @@ msgstr "詳細資訊"
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
 msgstr "裝置"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Disabled"
+msgstr ""
 
 #. Context: Battery state
 #: src/lib/i18n.ts
@@ -600,9 +948,24 @@ msgstr "磁碟使用"
 msgid "Disk usage of {extraFsName}"
 msgstr "{extraFsName} 的磁碟使用量"
 
+#: src/components/command-palette.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+msgid "Docker"
+msgstr "Docker"
+
+#: src/components/docker/config.tsx
+msgid "Docker config updated"
+msgstr "Docker 配置已更新"
+
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker CPU 使用率"
+
+#: src/components/docker/overview.tsx
+msgid "Docker engine summary for the selected system."
+msgstr "所選系統的 Docker 引擎概覽。"
 
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
@@ -612,6 +975,10 @@ msgstr "Docker 記憶體使用率"
 msgid "Docker Network I/O"
 msgstr "Docker 網絡 I/O"
 
+#: src/components/docker/overview.tsx
+msgid "Docker Root Dir"
+msgstr "Docker 根目錄"
+
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Documentation"
@@ -619,6 +986,7 @@ msgstr "文件"
 
 #. Context: System is down
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 #: src/lib/alerts.ts
@@ -633,10 +1001,19 @@ msgstr "中斷 ({downSystemsLength})"
 msgid "Download"
 msgstr "下載"
 
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+msgid "Driver"
+msgstr "驅動"
+
 #: src/components/alerts-history-columns.tsx
 msgid "Duration"
 msgstr "持續時間"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -645,6 +1022,26 @@ msgstr "編輯"
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Edit Registry"
+msgstr "編輯倉庫"
+
+#: src/components/docker/service-configs.tsx
+msgid "Edit Service"
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Edit Template"
+msgstr "編輯模板"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch port is invalid"
 msgstr ""
 
 #: src/components/login/auth-form.tsx
@@ -662,10 +1059,33 @@ msgstr "電子郵件通知"
 msgid "Empty"
 msgstr "空電"
 
+#: src/components/docker/networks.tsx
+msgid "Enable IPv6"
+msgstr "啟用 IPv6"
+
+#: src/components/audit/audit-logs-table.tsx
+#~ msgid "End"
+#~ msgstr "結束"
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "End Time"
 msgstr "結束時間"
+
+#: src/components/docker/service-configs.tsx
+msgid "Endpoint URL"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Enforce TLS"
+msgstr ""
+
+#: src/components/docker/overview.tsx
+msgid "Engine Details"
+msgstr "引擎詳情"
 
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
@@ -675,17 +1095,114 @@ msgstr "輸入電子郵件地址以重置密碼"
 msgid "Enter email address..."
 msgstr "輸入電子郵件地址..."
 
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Enter value"
+msgstr ""
+
 #: src/components/login/otp-forms.tsx
 msgid "Enter your one-time password."
 msgstr "輸入您的一次性密碼。"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Environment"
+msgstr "環境變數"
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Error"
 msgstr "錯誤"
@@ -717,6 +1234,10 @@ msgstr "匯出"
 msgid "Export configuration"
 msgstr "匯出設定"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Export rules"
+msgstr ""
+
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Export your current systems configuration."
 msgstr "匯出您現在的系統設定。"
@@ -725,6 +1246,8 @@ msgstr "匯出您現在的系統設定。"
 msgid "Fahrenheit (°F)"
 msgstr "華氏 (°F)"
 
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "失敗"
@@ -737,24 +1260,267 @@ msgstr "失敗屬性："
 msgid "Failed to authenticate"
 msgstr "認證失敗"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to check repository sources"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to create focus rule"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to create network"
+msgstr "建立網絡失敗"
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to create volume"
+msgstr "建立存儲卷失敗"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to delete compose project"
+msgstr "刪除編排項目失敗"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to delete compose template"
+msgstr "刪除編排模板失敗"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to delete focus rule"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to delete network"
+msgstr "刪除網絡失敗"
+
+#: src/components/docker/registries.tsx
+msgid "Failed to delete registry"
+msgstr "刪除倉庫失敗"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to delete service config"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to delete volume"
+msgstr "刪除存儲卷失敗"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Failed to import focus rules"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Failed to load audit logs"
+msgstr "載入審查日誌失敗"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load cleanup config"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to load compose projects"
+msgstr "載入編排項目失敗"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to load compose templates"
+msgstr "載入編排模板失敗"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load config content"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container details"
+msgstr "載入容器詳情失敗"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load container logs"
+msgstr "載入容器日誌失敗"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load containers"
+msgstr "載入容器失敗"
+
+#: src/components/docker/config.tsx
+msgid "Failed to load Docker config"
+msgstr "載入 Docker 配置失敗"
+
+#: src/components/docker/overview.tsx
+msgid "Failed to load Docker overview"
+msgstr "載入 Docker 概覽失敗"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Elasticsearch indices"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Failed to load focus rules"
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Failed to load images"
+msgstr "載入鏡像失敗"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO buckets"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO folders"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL databases"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL tables"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Failed to load network mounts"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Failed to load networks"
+msgstr "載入網絡失敗"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Redis databases"
+msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/registries.tsx
+msgid "Failed to load registries"
+msgstr "載入倉庫失敗"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Failed to load repository sources"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to load service configs"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Failed to load volumes"
+msgstr "載入存儲卷失敗"
+
+#: src/components/docker/compose.tsx
+msgid "Failed to operate compose project"
+msgstr "編排操作失敗"
+
+#: src/components/docker/containers.tsx
+msgid "Failed to operate container"
+msgstr "容器操作失敗"
+
+#: src/components/docker/images.tsx
+msgid "Failed to process image"
+msgstr "處理鏡像失敗"
+
+#: src/components/docker/images.tsx
+msgid "Failed to remove image"
+msgstr "刪除鏡像失敗"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to retry cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to save cleanup config"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+msgid "Failed to save compose project"
+msgstr "保存編排項目失敗"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Failed to save compose template"
+msgstr "保存編排模板失敗"
+
+#: src/components/docker/registries.tsx
+msgid "Failed to save registry"
+msgstr "保存倉庫失敗"
+
+#: src/components/docker/service-configs.tsx
+msgid "Failed to save service config"
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to save SMTP settings"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Failed to send test email"
+msgstr ""
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Failed to send test notification"
 msgstr "發送測試通知失敗"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to start cleanup"
+msgstr ""
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
 msgstr "更新警報失敗"
 
+#: src/components/docker/service-configs.tsx
+msgid "Failed to update config content"
+msgstr ""
+
+#: src/components/docker/config.tsx
+msgid "Failed to update Docker config"
+msgstr "更新 Docker 配置失敗"
+
 #. placeholder {0}: statusTotals[ServiceStatus.Failed]
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Failed: {0}"
 msgstr "失敗: {0}"
+
+#: src/components/docker/containers.tsx
+msgid "Filter containers..."
+msgstr "篩選容器..."
+
+#: src/components/docker/images.tsx
+msgid "Filter images..."
+msgstr "篩選鏡像..."
+
+#: src/components/docker/networks.tsx
+msgid "Filter networks..."
+msgstr "篩選網絡..."
+
+#: src/components/docker/compose.tsx
+msgid "Filter projects..."
+msgstr "篩選項目..."
+
+#: src/components/docker/registries.tsx
+msgid "Filter registries..."
+msgstr "篩選倉庫..."
+
+#: src/components/docker/service-configs.tsx
+msgid "Filter services..."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "Filter templates..."
+msgstr "篩選模板..."
+
+#: src/components/docker/volumes.tsx
+msgid "Filter volumes..."
+msgstr "篩選存儲卷..."
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -773,13 +1539,53 @@ msgstr "指紋"
 msgid "Firmware"
 msgstr "韌體"
 
+#: src/components/docker/containers.tsx
+msgid "Focus only"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Focus rules help"
+msgstr ""
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
 msgstr "持續<0>{min}</0> {min, plural, one {分鐘} other {分鐘}}"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "Forbidden"
 msgstr ""
+
+#: src/components/docker/images.tsx
+#: src/components/docker/volumes.tsx
+msgid "Force removal"
+msgstr "強制移除"
 
 #: src/components/login/auth-form.tsx
 msgid "Forgot password?"
@@ -795,6 +1601,10 @@ msgstr "FreeBSD 指令"
 #: src/lib/i18n.ts
 msgid "Full"
 msgstr "滿電"
+
+#: src/components/docker/networks.tsx
+msgid "Gateway"
+msgstr ""
 
 #. Context: General settings
 #: src/components/routes/settings/general.tsx
@@ -841,6 +1651,13 @@ msgctxt "Button to copy install command"
 msgid "Homebrew command"
 msgstr "Homebrew 指令"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Host"
+msgstr ""
+
 #: src/components/add-system.tsx
 msgid "Host / IP"
 msgstr "主機 / IP"
@@ -854,28 +1671,133 @@ msgstr "閒置"
 msgid "If you've lost the password to your admin account, you may reset it using the following command."
 msgstr "如果您遺失了管理員帳號密碼，可以使用以下指令重設。"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+msgid "Image"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgctxt "Docker image"
 msgid "Image"
 msgstr "鏡像"
 
+#: src/components/docker/images.tsx
+msgid "Image ID"
+msgstr "鏡像 ID"
+
+#: src/components/docker/images.tsx
+msgid "Image Logs"
+msgstr "鏡像日誌"
+
+#: src/components/docker/images.tsx
+msgid "Image name is required"
+msgstr "鏡像名稱必填"
+
+#: src/components/docker/images.tsx
+msgid "Image name or tag"
+msgstr "鏡像名稱或標籤"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Image: use the Image column value (including tag)."
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/overview.tsx
+msgid "Images"
+msgstr "鏡像"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import completed"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Import rules"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Imported {importedCount} rules, skipped {skippedCount}."
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Inactive"
 msgstr "未啟用"
 
+#: src/components/docker/containers.tsx
+msgid "Inspect"
+msgstr "檢視"
+
+#: src/components/docker/networks.tsx
+msgid "Internal"
+msgstr "內部"
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "無效的電子郵件地址。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid SMTP port"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Invalid test email"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Invalid time range"
+msgstr "時間範圍無效"
+
+#~ msgid "IPv6"
+#~ msgstr "IPv6"
 
 #. Linux kernel
 #: src/components/routes/system.tsx
 #~ msgid "Kernel"
 #~ msgstr "核心"
 
+#: src/components/docker/overview.tsx
+msgid "Kernel Version"
+msgstr "核心版本"
+
+#: src/components/docker/containers.tsx
+msgid "Kill"
+msgstr "強制結束"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label key"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label value"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Label: enter the label key and value (see Inspect for labels)."
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Labels (JSON)"
+msgstr "標籤 (JSON)"
+
 #: src/components/navbar.tsx
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "語言"
+
+#: src/components/docker/compose.tsx
+msgid "Latest output from compose."
+msgstr "最新的編排輸出。"
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Layout"
@@ -884,6 +1806,14 @@ msgstr "版面配置"
 #: src/components/routes/settings/general.tsx
 msgid "Layout width"
 msgstr "版面寬度"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Leave blank to keep existing password"
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "Leave blank to keep unchanged"
+msgstr "留空以保持不變"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Lifecycle"
@@ -915,17 +1845,67 @@ msgstr "5分鐘平均負載"
 msgid "Load Avg"
 msgstr "平均負載"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Buckets"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Databases"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Folders"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Indices"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load indices from _cat/indices and delete documents by query."
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Load state"
 msgstr "載入狀態"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Tables"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Loading"
+msgstr "載入中"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Loading SMTP settings..."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Loading..."
 msgstr "載入中..."
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Local name (EHLO/HELO)"
+msgstr ""
+
 #: src/components/navbar.tsx
 msgid "Log Out"
 msgstr "登出"
+
+#: src/components/docker/overview.tsx
+msgid "Logging Driver"
+msgstr "日誌驅動"
 
 #: src/components/login/login.tsx
 #~ msgid "Login"
@@ -938,6 +1918,8 @@ msgstr "登入嘗試失敗"
 
 #: src/components/command-palette.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
 #: src/components/navbar.tsx
 msgid "Logs"
 msgstr "日誌"
@@ -959,9 +1941,45 @@ msgstr ""
 msgid "Main PID"
 msgstr "主進程 ID"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Maintain reusable Docker Compose templates."
+msgstr "維護可重用的 Docker Compose 模板。"
+
+#: src/components/docker/service-configs.tsx
+msgid "Maintain service configuration endpoints for the selected system."
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "管理顯示和通知偏好。"
+
+#: src/components/docker/compose.tsx
+msgid "Manage Docker Compose projects for the selected system."
+msgstr "管理所選系統的 Docker Compose 項目。"
+
+#: src/components/docker/networks.tsx
+msgid "Manage Docker networks on the selected system."
+msgstr "管理所選系統的 Docker 網絡。"
+
+#: src/components/docker/volumes.tsx
+msgid "Manage Docker volumes for persistent storage."
+msgstr "管理 Docker 存儲卷以持久化儲存。"
+
+#: src/components/docker/images.tsx
+msgid "Manage local images and registries."
+msgstr "管理本地鏡像與倉庫。"
+
+#: src/components/docker/registries.tsx
+msgid "Manage registry credentials for image pull and push."
+msgstr "管理鏡像拉取/推送的倉庫憑證。"
+
+#: src/components/docker/containers.tsx
+msgid "Manage running and stopped containers."
+msgstr "管理運行中與已停止的容器。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Manager"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -998,21 +2016,122 @@ msgstr "記憶體使用"
 msgid "Memory usage of docker containers"
 msgstr "Docker 容器的記憶體使用量"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host, port and bucket are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO port is invalid"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing sender name"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing SMTP host"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Missing test email"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Mode"
+msgstr ""
+
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
 msgstr "型號"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Module results"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mount Point"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Mounted network filesystems detected on the server"
+msgstr ""
+
+#: src/components/docker/volumes.tsx
+msgid "Mountpoint"
+msgstr "掛載點"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host, port and database are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL port is invalid"
+msgstr ""
+
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
 msgstr "名稱"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Name and content are required"
+msgstr "名稱與內容必填"
+
+#: src/components/docker/registries.tsx
+msgid "Name and server are required"
+msgstr "名稱與伺服器必填"
+
+#: src/components/docker/service-configs.tsx
+msgid "Name and URL are required"
+msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
 msgstr "網絡"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drive"
+msgstr ""
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "Network Drives"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "Network name"
+msgstr "網絡名稱"
+
+#: src/components/docker/networks.tsx
+msgid "Network name is required"
+msgstr "網絡名稱必填"
 
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
@@ -1030,11 +2149,85 @@ msgstr "公共接口的網絡流量"
 msgid "Network unit"
 msgstr "網路單位"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/networks.tsx
+msgid "Networks"
+msgstr "網絡"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Next"
+msgstr "下一頁"
+
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "No"
 msgstr "否"
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "No audit logs found."
+msgstr "未找到審查日誌記錄。"
+
+#: src/components/docker/compose.tsx
+msgid "No compose projects found."
+msgstr "未找到編排項目。"
+
+#: src/components/docker/containers.tsx
+msgid "No containers found."
+msgstr "未找到容器。"
+
+#: src/components/docker/containers.tsx
+msgid "No details available."
+msgstr "沒有可用詳情。"
+
+#: src/components/docker/containers.tsx
+msgid "No focus rules configured for this system."
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "No focus rules found."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No folders loaded."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "No images found."
+msgstr "未找到鏡像。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No indices loaded."
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "No logs available."
+msgstr "沒有日誌可用。"
+
+#: src/components/routes/system/network-mounts-card.tsx
+msgid "No network mounts detected"
+msgstr ""
+
+#: src/components/docker/networks.tsx
+msgid "No networks found."
+msgstr "未找到網絡。"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "No password stored"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No patterns configured."
+msgstr ""
+
+#: src/components/docker/registries.tsx
+msgid "No registries found."
+msgstr "未找到倉庫。"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "No repository sources detected"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1054,10 +2247,38 @@ msgstr "沒有結果。"
 msgid "No S.M.A.R.T. attributes available for this device."
 msgstr "此裝置沒有可用的 S.M.A.R.T. 屬性。"
 
+#: src/components/docker/service-configs.tsx
+msgid "No service configs yet."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "No system found."
+msgstr ""
+
 #: src/components/systems-table/systems-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "No systems found."
 msgstr "未找到系統。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No tables loaded."
+msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+msgid "No templates found."
+msgstr "未找到模板。"
+
+#: src/components/docker/volumes.tsx
+msgid "No volumes found."
+msgstr "未找到存儲卷。"
+
+#: src/components/docker/images.tsx
+msgid "None"
+msgstr "無"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Not checked"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1082,6 +2303,10 @@ msgstr "一次性"
 msgid "One-time password"
 msgstr "一次性密碼"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Only administrators can edit these settings."
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -1090,13 +2315,54 @@ msgstr "一次性密碼"
 msgid "Open menu"
 msgstr "開啟選單"
 
+#: src/components/docker/overview.tsx
+msgid "Operating System"
+msgstr "作業系統"
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
 msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Operation success"
 msgstr ""
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Optional .env content"
+msgstr "可選 .env 內容"
+
+#: src/components/docker/compose-templates.tsx
+msgid "Optional description"
+msgstr "可選描述"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver name"
+msgstr "可選驅動名稱"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional driver options as JSON"
+msgstr "可選驅動選項 (JSON)"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Optional labels as JSON"
+msgstr "可選標籤 (JSON)"
+
+#: src/components/docker/images.tsx
+msgid "Optional registry"
+msgstr "可選倉庫"
+
+#: src/components/docker/networks.tsx
+#: src/components/docker/volumes.tsx
+msgid "Options (JSON)"
+msgstr "選項 (JSON)"
 
 #: src/components/login/auth-form.tsx
 msgid "Or continue with"
@@ -1106,9 +2372,18 @@ msgstr "或繼續使用"
 msgid "Other"
 msgstr "其他"
 
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/overview.tsx
+msgid "Overview"
+msgstr "概覽"
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
 msgstr "覆蓋現有警報"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Package manager sources configured on the server"
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
@@ -1122,10 +2397,18 @@ msgstr "頁面"
 msgid "Page {0} of {1}"
 msgstr "第 {0} 頁，共 {1} 頁"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Page {page}"
+msgstr "第 {page} 頁"
+
 #: src/components/command-palette.tsx
 msgid "Pages / Settings"
 msgstr "頁面 / 設定"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/registries.tsx
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
 msgid "Password"
@@ -1143,14 +2426,41 @@ msgstr "密碼必須少於 72 個字節。"
 msgid "Password reset request received"
 msgstr "已收到密碼重設請求"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Password stored"
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Past"
 msgstr ""
 
+#: src/components/docker/config.tsx
+msgid "Paste daemon.json content"
+msgstr "貼上 daemon.json 內容"
+
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+msgid "Paste docker-compose.yml content"
+msgstr "貼上 docker-compose.yml 內容"
+
+#: src/components/docker/service-configs.tsx
+msgid "Paste YAML content"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Path (e.g. /api/v1/config)"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Path is required"
+msgstr ""
+
+#: src/components/docker/containers.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Pause"
 msgstr "暫停"
 
+#: src/components/docker/overview.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Paused"
 msgstr "已暫停"
@@ -1158,6 +2468,10 @@ msgstr "已暫停"
 #: src/components/systems-table/systems-table.tsx
 msgid "Paused ({pausedSystemsLength})"
 msgstr "已暫停 ({pausedSystemsLength})"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Pending"
+msgstr ""
 
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/cpu-sheet.tsx
@@ -1167,6 +2481,10 @@ msgstr "每個核心的平均使用率"
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Percentage of time spent in each state"
 msgstr "在每個狀態下花費的時間百分比"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Pick a date range"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Please <0>configure an SMTP server</0> to ensure alerts are delivered."
@@ -1189,6 +2507,26 @@ msgstr "請建立一個管理員帳號"
 msgid "Please enable pop-ups for this site"
 msgstr "請為此網站啟用彈出窗口"
 
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender email address."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a sender name."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a test email address."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter a valid port number."
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Please enter an SMTP host."
+msgstr ""
+
 #: src/lib/api.ts
 msgid "Please log in again"
 msgstr "請重新登入"
@@ -1197,12 +2535,30 @@ msgstr "請重新登入"
 #~ msgid "Please see <0>the documentation</0> for instructions."
 #~ msgstr "請參閱<0>文件</0>以取得說明。"
 
+#: src/components/docker/empty-state.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Please select a system to continue."
+msgstr "請先選擇系統。"
+
 #: src/components/login/login.tsx
 msgid "Please sign in to your account"
 msgstr "請登入您的帳號"
 
 #: src/components/add-system.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/service-configs.tsx
 msgid "Port"
+msgstr "端口"
+
+#: src/components/docker/service-configs.tsx
+msgid "Port is required"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+msgid "Ports"
 msgstr "端口"
 
 #. Power On Time
@@ -1219,14 +2575,41 @@ msgstr "記錄時間的精確使用率"
 msgid "Preferred Language"
 msgstr "首選語言"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Prev"
+msgstr "上一頁"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Process started"
 msgstr "進程啟動"
+
+#: src/components/docker/compose.tsx
+msgid "Provide a full docker-compose.yml content for deployment."
+msgstr "請提供完整的 docker-compose.yml 內容以部署。"
 
 #. Use 'Key' if your language requires many more characters
 #: src/components/add-system.tsx
 msgid "Public Key"
 msgstr "公鑰"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/images.tsx
+msgid "Pull"
+msgstr "拉取"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Pull Image"
+msgstr "拉取鏡像"
+
+#: src/components/docker/images.tsx
+msgid "Push"
+msgstr "推送"
+
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+msgid "Push Image"
+msgstr "推送鏡像"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
@@ -1238,19 +2621,88 @@ msgstr "靜音時段"
 msgid "Read"
 msgstr "讀取"
 
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Read-only users cannot modify focus rules."
+msgstr ""
+
 #: src/components/routes/system.tsx
 msgid "Received"
 msgstr "接收"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis DB is invalid"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis host and port are required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis port is invalid"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/overview.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "重新整理"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Refresh Config"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Register a configuration endpoint for this system."
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/registries.tsx
+msgid "Registries"
+msgstr "倉庫"
+
+#: src/components/docker/images.tsx
+msgid "Registry"
+msgstr "倉庫"
+
+#: src/components/docker/registries.tsx
+msgid "Registry name"
+msgstr "倉庫名稱"
+
+#: src/components/docker/registries.tsx
+msgid "Registry server"
+msgstr "倉庫伺服器"
+
+#: src/components/docker/registries.tsx
+msgid "Registry username"
+msgstr "倉庫用戶名"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Relationships"
 msgstr "關係"
+
+#: src/components/docker/compose.tsx
+msgid "Remove project files"
+msgstr "刪除項目檔案"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository checks are not supported on this OS"
+msgstr ""
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Repository Sources"
+msgstr ""
 
 #: src/components/login/login.tsx
 msgid "Request a one-time password"
@@ -1268,6 +2720,10 @@ msgstr "被需要"
 msgid "Requires"
 msgstr "需要"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Reset Filters"
+msgstr "重置篩選"
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Reset Password"
 msgstr "重設密碼"
@@ -1278,6 +2734,19 @@ msgstr "重設密碼"
 msgid "Resolved"
 msgstr "已解決"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Resource"
+msgstr "資源"
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Restart"
+msgstr "重啟"
+
+#: src/components/docker/config.tsx
+msgid "Restart Docker after update"
+msgstr "更新後重啟 Docker"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Restarts"
 msgstr "重啟次數"
@@ -1285,6 +2754,18 @@ msgstr "重啟次數"
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Resume"
 msgstr "恢復"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Retry"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Review and update config content for the selected service."
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Review Docker audit records and data cleanup runs."
+msgstr "查看 Docker 審計記錄與數據清理執行結果。"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -1295,9 +2776,27 @@ msgstr "根"
 msgid "Rotate token"
 msgstr "輪換令牌"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Rows per page"
 msgstr "每頁行數"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rule type is required"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Rules are exact matches. Use the values shown in the container list or details."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/overview.tsx
+msgid "Running"
+msgstr "運行中"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Runtime Metrics"
@@ -1311,9 +2810,23 @@ msgstr "S.M.A.R.T. 詳情"
 msgid "S.M.A.R.T. Self-Test"
 msgstr "S.M.A.R.T. 自檢"
 
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Save"
+msgstr "儲存"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
 msgstr "使用回車鍵或逗號保存地址。留空以禁用電子郵件通知。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Save Config"
+msgstr ""
 
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1323,6 +2836,10 @@ msgstr "儲存設定"
 #: src/components/add-system.tsx
 msgid "Save system"
 msgstr "儲存系統"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Saved"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
@@ -1336,6 +2853,9 @@ msgstr "安排不會發送通知的靜音時段，例如在維護期間。"
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "安排不會發送通知的靜音時段。"
 
+#~ msgid "Scope"
+#~ msgstr "範圍"
+
 #: src/components/navbar.tsx
 msgid "Search"
 msgstr "搜索"
@@ -1344,12 +2864,72 @@ msgstr "搜索"
 msgid "Search for systems or settings..."
 msgstr "搜索系統或設置..."
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "Search logs..."
+msgstr "搜尋日誌..."
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Secondary value is required"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Secret Key"
+msgstr ""
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "See <0>notification settings</0> to configure how you receive alerts."
 msgstr "查看<0>通知設置</0>以配置您接收警報的方式。"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Select {foo}"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a bucket and top-level folders to clean."
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a database and tables to delete with DELETE statements."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "Select a registry if authentication is required."
+msgstr "需要驗證時選擇倉庫。"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system"
+msgstr "選擇系統"
+
+#: src/components/docker/docker-tabs.tsx
+msgid "Select a system to manage Docker resources."
+msgstr "選擇系統以管理 Docker 資源。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select bucket"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select database"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select DB"
+msgstr ""
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Select rule type"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Send test email"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Sender name"
 msgstr ""
 
 #: src/components/routes/system.tsx
@@ -1360,10 +2940,41 @@ msgstr "發送"
 msgid "Serial Number"
 msgstr "序列號"
 
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Server"
+msgstr "伺服器"
+
+#: src/components/docker/overview.tsx
+msgid "Server Version"
+msgstr "伺服器版本"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Service"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Config"
+msgstr ""
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/service-configs.tsx
+msgid "Service Configs"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Service Details"
 msgstr "服務詳情"
 
+#: src/components/docker/service-configs.tsx
+msgid "Service name"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Service Name"
+msgstr ""
+
+#: src/components/docker/compose.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Services"
 msgstr "服務"
@@ -1384,26 +2995,84 @@ msgstr "設置"
 msgid "Settings saved"
 msgstr "設置已保存"
 
+#: src/components/docker/images.tsx
+msgid "Show all"
+msgstr "顯示全部"
+
+#: src/components/docker/containers.tsx
+msgid "Show stopped"
+msgstr "顯示已停止"
+
 #: src/components/login/auth-form.tsx
 msgid "Sign in"
 msgstr "登錄"
 
+#: src/components/docker/images.tsx
+msgid "Size"
+msgstr "大小"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP auth method"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP enabled"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP host"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP password"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP port"
+msgstr ""
+
 #: src/components/command-palette.tsx
+#: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "SMTP settings"
 msgstr "SMTP設置"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP settings saved"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "SMTP username"
+msgstr ""
 
 #: src/components/systems-table/systems-table.tsx
 msgid "Sort By"
 msgstr "排序依據"
 
+#: src/components/routes/system/network-mounts-card.tsx
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Source"
+msgstr ""
+
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Start"
+msgstr "啟動"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start cleanup"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start Cleanup"
+msgstr ""
+
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
+#: src/components/audit/audit-date-range.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Start Time"
 msgstr "開始時間"
-
-#: src/components/audit/audit-date-range.tsx
-msgid "Time Range"
-msgstr "時間範圍"
 
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
@@ -1411,7 +3080,12 @@ msgstr "時間範圍"
 msgid "State"
 msgstr "狀態"
 
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1420,9 +3094,45 @@ msgstr "狀態"
 msgid "Status"
 msgstr "狀態"
 
+#: src/components/docker/compose.tsx
+#: src/components/docker/containers.tsx
+msgid "Stop"
+msgstr "停止"
+
+#: src/components/docker/overview.tsx
+msgid "Stopped"
+msgstr "已停止"
+
+#: src/components/docker/overview.tsx
+msgid "Storage Driver"
+msgstr "儲存驅動"
+
+#: src/components/docker/registries.tsx
+msgid "Store credentials for private registries."
+msgstr "保存私有倉庫的憑證。"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored password available"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored secret available"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table-columns.tsx
 #~ msgid "Sub State"
 #~ msgstr "子狀態"
+
+#: src/components/docker/networks.tsx
+msgid "Subnet"
+msgstr ""
+
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Success"
+msgstr ""
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -1434,6 +3144,8 @@ msgstr "交換使用"
 
 #: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
+#: src/components/audit/audit-logs-table.tsx
+#: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -1466,6 +3178,10 @@ msgstr "系統可以在您的數據目錄中的<0>config.yml</0>文件中管理�
 msgid "Table"
 msgstr "表格"
 
+#: src/components/docker/images.tsx
+msgid "Tags"
+msgstr "標籤"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Tasks"
 msgstr "任務數"
@@ -1489,9 +3205,21 @@ msgstr "溫度單位"
 msgid "Temperatures of system sensors"
 msgstr "系統傳感器的溫度"
 
+#: src/components/docker/compose-templates.tsx
+msgid "Template name"
+msgstr "模板名稱"
+
 #: src/components/routes/settings/notifications.tsx
 msgid "Test <0>URL</0>"
 msgstr "測試<0>URL</0>"
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email address"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Test email sent"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Test notification sent"
@@ -1501,6 +3229,10 @@ msgstr "測試通知已發送"
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "然後登錄到後端並在用戶表中重置您的用戶帳戶密碼。"
 
+#: src/components/docker/service-configs.tsx
+msgid "This action cannot be undone."
+msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "This action cannot be undone. This will permanently delete all current records for {name} from the database."
 msgstr "此操作無法撤銷。這將永久刪除數據庫中{name}的所有當前記錄。"
@@ -1508,6 +3240,34 @@ msgstr "此操作無法撤銷。這將永久刪除數據庫中{name}的所有當
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "This will permanently delete all selected records from the database."
 msgstr "這將從資料庫中永久刪除所有選定的記錄。"
+
+#: src/components/docker/compose-templates.tsx
+msgid "This will remove the selected compose template."
+msgstr "此操作將移除選定的編排模板。"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "This will remove the selected focus rule."
+msgstr ""
+
+#: src/components/docker/images.tsx
+msgid "This will remove the selected image from the host."
+msgstr "此操作將從主機移除選定的鏡像。"
+
+#: src/components/docker/networks.tsx
+msgid "This will remove the selected network."
+msgstr "此操作將移除選定的網絡。"
+
+#: src/components/docker/registries.tsx
+msgid "This will remove the selected registry credentials."
+msgstr "此操作將移除選定的倉庫憑證。"
+
+#: src/components/docker/volumes.tsx
+msgid "This will remove the selected volume."
+msgstr "此操作將移除選定的存儲卷。"
+
+#: src/components/docker/compose.tsx
+msgid "This will stop and remove the selected compose project."
+msgstr "此操作將停止並移除選定的編排項目。"
 
 #: src/components/routes/system.tsx
 msgid "Throughput of {extraFsName}"
@@ -1517,9 +3277,17 @@ msgstr "{extraFsName}的吞吐量"
 msgid "Throughput of root filesystem"
 msgstr "根文件系統的吞吐量"
 
+#: src/components/docker/networks.tsx
+msgid "Time"
+msgstr ""
+
 #: src/components/routes/settings/general.tsx
 msgid "Time format"
 msgstr "時間格式"
+
+#: src/components/audit/audit-date-range.tsx
+msgid "Time Range"
+msgstr "時間範圍"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -1539,6 +3307,22 @@ msgstr "切換主題"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Token"
 msgstr "令牌"
+
+#: src/components/docker/service-configs.tsx
+msgid "Token cannot be changed after creation."
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token for config API"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is required"
+msgstr ""
+
+#: src/components/docker/service-configs.tsx
+msgid "Token is stored securely and cannot be edited later."
+msgstr ""
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
@@ -1567,10 +3351,18 @@ msgstr "每個介面的總接收資料量"
 msgid "Total data sent for each interface"
 msgstr "每個介面的總傳送資料量"
 
+#: src/components/docker/overview.tsx
+msgid "Total Memory"
+msgstr "總記憶體"
+
 #. placeholder {0}: data.length
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Total: {0}"
 msgstr "總計: {0}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Track cleanup steps, logs, and results in real time."
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
@@ -1624,11 +3416,17 @@ msgstr "當狀態在上和下之間切換時觸發"
 msgid "Triggers when usage of any disk exceeds a threshold"
 msgstr "當任何磁碟的使用超過閾值時觸發"
 
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Type"
 msgstr "類型"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unavailable"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Unit file"
@@ -1645,6 +3443,7 @@ msgid "Universal token"
 msgstr "通用令牌"
 
 #. Context: Battery state
+#: src/components/audit/audit-logs-table.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "未知"
@@ -1654,7 +3453,16 @@ msgstr "未知"
 msgid "Unlimited"
 msgstr "無限制"
 
+#: src/components/docker/containers.tsx
+msgid "Unpause"
+msgstr "恢復"
+
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "Unsupported"
+msgstr ""
+
 #. Context: System is up
+#: src/components/docker/compose.tsx
 #: src/components/routes/system/info-bar.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Up"
@@ -1664,11 +3472,23 @@ msgstr "上線"
 msgid "Up ({upSystemsLength})"
 msgstr "上線 ({upSystemsLength})"
 
+#: src/components/docker/compose.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Update"
 msgstr "更新"
 
+#: src/components/docker/compose.tsx
+msgid "Update Compose"
+msgstr "更新編排"
+
+#: src/components/docker/service-configs.tsx
+msgid "Update service name or endpoint URL."
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/service-configs.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -1683,16 +3503,23 @@ msgid "Upload"
 msgstr "上傳"
 
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Uptime"
 msgstr "正常運行時間"
 
+#: src/components/routes/system/repo-sources-card.tsx
+msgid "URL"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/cpu-sheet.tsx
+#: src/components/routes/system/network-mounts-card.tsx
 msgid "Usage"
 msgstr "使用"
 
@@ -1700,15 +3527,37 @@ msgstr "使用"
 msgid "Usage of root partition"
 msgstr "根分區的使用"
 
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored password"
+msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored secret"
+msgstr ""
+
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
 msgid "Used"
 msgstr "已用"
 
+#: src/components/audit/audit-logs-table.tsx
+msgid "User"
+msgstr "使用者"
+
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
 msgid "User Actions"
 msgstr ""
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+msgid "Username"
+msgstr "用戶名"
 
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
@@ -1716,12 +3565,23 @@ msgid "Users"
 msgstr "用戶"
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 msgid "Value"
 msgstr "值"
+
+#: src/components/docker/focus-rules-dialog.tsx
+msgid "Value is required"
+msgstr ""
 
 #: src/components/systems-table/systems-table.tsx
 msgid "View"
 msgstr "檢視"
+
+#: src/components/docker/config.tsx
+msgid "View and update Docker daemon configuration."
+msgstr "查看並更新 Docker daemon 配置。"
 
 #: src/components/routes/system/cpu-sheet.tsx
 #: src/components/routes/system/network-sheet.tsx
@@ -1735,6 +3595,19 @@ msgstr "檢視最近 200 則警報。"
 #: src/components/systems-table/systems-table.tsx
 msgid "Visible Fields"
 msgstr "可見欄位"
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name"
+msgstr "存儲卷名稱"
+
+#: src/components/docker/volumes.tsx
+msgid "Volume name is required"
+msgstr "存儲卷名稱必填"
+
+#: src/components/docker/docker-tabs.tsx
+#: src/components/docker/volumes.tsx
+msgid "Volumes"
+msgstr "儲存卷"
 
 #: src/components/routes/system.tsx
 msgid "Waiting for enough records to display"
@@ -1770,11 +3643,19 @@ msgctxt "Button to copy install command"
 msgid "Windows command"
 msgstr "Windows 指令"
 
+#: src/components/docker/compose.tsx
+msgid "Workdir"
+msgstr "工作目錄"
+
 #. Disk write
 #: src/components/routes/system.tsx
 #: src/components/routes/system.tsx
 msgid "Write"
 msgstr "寫入"
+
+#: src/components/docker/service-configs.tsx
+msgid "X-Config-Token"
+msgstr ""
 
 #: src/components/routes/settings/layout.tsx
 msgid "YAML Config"
@@ -1791,621 +3672,39 @@ msgid "Yes"
 msgstr "是"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose-templates.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/compose.tsx
+#: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/images.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/networks.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/registries.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/service-configs.tsx
+#: src/components/docker/volumes.tsx
+#: src/components/docker/volumes.tsx
 msgid "You have read-only access"
+msgstr ""
+
+#: src/components/routes/settings/smtp-settings-dialog.tsx
+msgid "Your changes have been saved."
 msgstr ""
 
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "您的用戶設置已更新。"
 
-#: src/components/docker/docker-tabs.tsx
-msgid "Overview"
-msgstr "概覽"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Compose"
-msgstr "編排"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Images"
-msgstr "鏡像"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Networks"
-msgstr "網絡"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Volumes"
-msgstr "儲存卷"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Registries"
-msgstr "倉庫"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Compose Templates"
-msgstr "編排模板"
-
-#: src/components/docker/docker-tabs.tsx
-msgid "Config"
-msgstr "配置"
-
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
-
-msgid "API Version"
-msgstr "API 版本"
-
-msgid "Architecture"
-msgstr "架構"
-
-msgid "Attachable"
-msgstr "可附加"
-
-msgid "CPUs"
-msgstr "CPU 核心數"
-
-msgid "Cgroup Driver"
-msgstr "Cgroup 驅動"
-
-msgid "Compose Content"
-msgstr "編排內容"
-
-msgid "Compose Logs"
-msgstr "編排日誌"
-
-msgid "Compose project name"
-msgstr "編排項目名稱"
-
-msgid "Compose templates can be reused to deploy stacks quickly."
-msgstr "編排模板可重複使用以快速部署服務堆疊。"
-
-msgid "Config Content"
-msgstr "配置內容"
-
-msgid "Config Path"
-msgstr "配置路徑"
-
-msgid "Config content is required"
-msgstr "配置內容必填"
-
-msgid "Configure a new Docker network."
-msgstr "配置新的 Docker 網絡。"
-
-msgid "Configure a new Docker volume."
-msgstr "配置新的 Docker 存儲卷。"
-
-msgid "Container Details"
-msgstr "容器詳情"
-
-msgid "Container Logs"
-msgstr "容器日誌"
-
-msgid "Create Compose"
-msgstr "新建編排"
-
-msgid "Create Network"
-msgstr "建立網絡"
-
-msgid "Create Registry"
-msgstr "新增倉庫"
-
-msgid "Create Template"
-msgstr "新增模板"
-
-msgid "Create Volume"
-msgstr "建立存儲卷"
-
-msgid "Daemon Configuration"
-msgstr "Daemon 配置"
-
-msgid "Default daemon.json path"
-msgstr "預設 daemon.json 路徑"
-
-msgid "Delete Compose Project"
-msgstr "刪除編排項目"
-
-msgid "Delete Image"
-msgstr "刪除鏡像"
-
-msgid "Delete Network"
-msgstr "刪除網絡"
-
-msgid "Delete Registry"
-msgstr "刪除倉庫"
-
-msgid "Delete Template"
-msgstr "刪除模板"
-
-msgid "Delete Volume"
-msgstr "刪除存儲卷"
-
-msgid "Docker"
-msgstr "Docker"
-
-msgid "Docker Root Dir"
-msgstr "Docker 根目錄"
-
-msgid "Docker config updated"
-msgstr "Docker 配置已更新"
-
-msgid "Docker engine summary for the selected system."
-msgstr "所選系統的 Docker 引擎概覽。"
-
-msgid "Driver"
-msgstr "驅動"
-
-msgid "Edit Registry"
-msgstr "編輯倉庫"
-
-msgid "Edit Template"
-msgstr "編輯模板"
-
-msgid "Enable IPv6"
-msgstr "啟用 IPv6"
-
-msgid "Engine Details"
-msgstr "引擎詳情"
-
-msgid "Environment"
-msgstr "環境變數"
-
-msgid "Failed to create network"
-msgstr "建立網絡失敗"
-
-msgid "Failed to create volume"
-msgstr "建立存儲卷失敗"
-
-msgid "Failed to delete compose project"
-msgstr "刪除編排項目失敗"
-
-msgid "Failed to delete compose template"
-msgstr "刪除編排模板失敗"
-
-msgid "Failed to delete network"
-msgstr "刪除網絡失敗"
-
-msgid "Failed to delete registry"
-msgstr "刪除倉庫失敗"
-
-msgid "Failed to delete volume"
-msgstr "刪除存儲卷失敗"
-
-msgid "Failed to load Docker config"
-msgstr "載入 Docker 配置失敗"
-
-msgid "Failed to load Docker overview"
-msgstr "載入 Docker 概覽失敗"
-
-msgid "Failed to load compose projects"
-msgstr "載入編排項目失敗"
-
-msgid "Failed to load compose templates"
-msgstr "載入編排模板失敗"
-
-msgid "Failed to load container details"
-msgstr "載入容器詳情失敗"
-
-msgid "Failed to load container logs"
-msgstr "載入容器日誌失敗"
-
-msgid "Failed to load containers"
-msgstr "載入容器失敗"
-
-msgid "Failed to load images"
-msgstr "載入鏡像失敗"
-
-msgid "Failed to load networks"
-msgstr "載入網絡失敗"
-
-msgid "Failed to load registries"
-msgstr "載入倉庫失敗"
-
-msgid "Failed to load volumes"
-msgstr "載入存儲卷失敗"
-
-msgid "Failed to operate compose project"
-msgstr "編排操作失敗"
-
-msgid "Failed to operate container"
-msgstr "容器操作失敗"
-
-msgid "Failed to process image"
-msgstr "處理鏡像失敗"
-
-msgid "Failed to remove image"
-msgstr "刪除鏡像失敗"
-
-msgid "Failed to save compose project"
-msgstr "保存編排項目失敗"
-
-msgid "Failed to save compose template"
-msgstr "保存編排模板失敗"
-
-msgid "Failed to save registry"
-msgstr "保存倉庫失敗"
-
-msgid "Failed to update Docker config"
-msgstr "更新 Docker 配置失敗"
-
-msgid "Filter containers..."
-msgstr "篩選容器..."
-
-msgid "Filter images..."
-msgstr "篩選鏡像..."
-
-msgid "Filter networks..."
-msgstr "篩選網絡..."
-
-msgid "Filter projects..."
-msgstr "篩選項目..."
-
-msgid "Filter registries..."
-msgstr "篩選倉庫..."
-
-msgid "Filter templates..."
-msgstr "篩選模板..."
-
-msgid "Filter volumes..."
-msgstr "篩選存儲卷..."
-
-msgid "Force removal"
-msgstr "強制移除"
-
-msgid "IPv6"
-msgstr "IPv6"
-
-msgid "Image ID"
-msgstr "鏡像 ID"
-
-msgid "Image Logs"
-msgstr "鏡像日誌"
-
-msgid "Image name is required"
-msgstr "鏡像名稱必填"
-
-msgid "Image name or tag"
-msgstr "鏡像名稱或標籤"
-
-msgid "Inspect"
-msgstr "檢視"
-
-msgid "Internal"
-msgstr "內部"
-
-msgid "Kernel Version"
-msgstr "核心版本"
-
-msgid "Kill"
-msgstr "強制結束"
-
-msgid "Labels (JSON)"
-msgstr "標籤 (JSON)"
-
-msgid "Latest output from compose."
-msgstr "最新的編排輸出。"
-
-msgid "Leave blank to keep unchanged"
-msgstr "留空以保持不變"
-
-msgid "Loading"
-msgstr "載入中"
-
-msgid "Logging Driver"
-msgstr "日誌驅動"
-
-msgid "Maintain reusable Docker Compose templates."
-msgstr "維護可重用的 Docker Compose 模板。"
-
-msgid "Manage Docker Compose projects for the selected system."
-msgstr "管理所選系統的 Docker Compose 項目。"
-
-msgid "Manage Docker networks on the selected system."
-msgstr "管理所選系統的 Docker 網絡。"
-
-msgid "Manage Docker volumes for persistent storage."
-msgstr "管理 Docker 存儲卷以持久化儲存。"
-
-msgid "Manage local images and registries."
-msgstr "管理本地鏡像與倉庫。"
-
-msgid "Manage registry credentials for image pull and push."
-msgstr "管理鏡像拉取/推送的倉庫憑證。"
-
-msgid "Manage running and stopped containers."
-msgstr "管理運行中與已停止的容器。"
-
-msgid "Mountpoint"
-msgstr "掛載點"
-
-msgid "Name and content are required"
-msgstr "名稱與內容必填"
-
-msgid "Name and server are required"
-msgstr "名稱與伺服器必填"
-
-msgid "Network name"
-msgstr "網絡名稱"
-
-msgid "Network name is required"
-msgstr "網絡名稱必填"
-
-msgid "No compose projects found."
-msgstr "未找到編排項目。"
-
-msgid "No containers found."
-msgstr "未找到容器。"
-
-msgid "No details available."
-msgstr "沒有可用詳情。"
-
-msgid "No images found."
-msgstr "未找到鏡像。"
-
-msgid "No logs available."
-msgstr "沒有日誌可用。"
-
-msgid "No networks found."
-msgstr "未找到網絡。"
-
-msgid "No registries found."
-msgstr "未找到倉庫。"
-
-msgid "No templates found."
-msgstr "未找到模板。"
-
-msgid "No volumes found."
-msgstr "未找到存儲卷。"
-
-msgid "None"
-msgstr "無"
-
-msgid "Operating System"
-msgstr "作業系統"
-
-msgid "Optional .env content"
-msgstr "可選 .env 內容"
-
-msgid "Optional description"
-msgstr "可選描述"
-
-msgid "Optional driver name"
-msgstr "可選驅動名稱"
-
-msgid "Optional driver options as JSON"
-msgstr "可選驅動選項 (JSON)"
-
-msgid "Optional labels as JSON"
-msgstr "可選標籤 (JSON)"
-
-msgid "Optional registry"
-msgstr "可選倉庫"
-
-msgid "Options (JSON)"
-msgstr "選項 (JSON)"
-
-msgid "Paste daemon.json content"
-msgstr "貼上 daemon.json 內容"
-
-msgid "Paste docker-compose.yml content"
-msgstr "貼上 docker-compose.yml 內容"
-
-msgid "Please select a system to continue."
-msgstr "請先選擇系統。"
-
-msgid "Ports"
-msgstr "端口"
-
-msgid "Provide a full docker-compose.yml content for deployment."
-msgstr "請提供完整的 docker-compose.yml 內容以部署。"
-
-msgid "Pull"
-msgstr "拉取"
-
-msgid "Pull Image"
-msgstr "拉取鏡像"
-
-msgid "Push"
-msgstr "推送"
-
-msgid "Push Image"
-msgstr "推送鏡像"
-
-msgid "Registry"
-msgstr "倉庫"
-
-msgid "Registry name"
-msgstr "倉庫名稱"
-
-msgid "Registry server"
-msgstr "倉庫伺服器"
-
-msgid "Registry username"
-msgstr "倉庫用戶名"
-
-msgid "Remove project files"
-msgstr "刪除項目檔案"
-
-msgid "Restart Docker after update"
-msgstr "更新後重啟 Docker"
-
-msgid "Scope"
-msgstr "範圍"
-
-msgid "Select a registry if authentication is required."
-msgstr "需要驗證時選擇倉庫。"
-
-msgid "Select a system to manage Docker resources."
-msgstr "選擇系統以管理 Docker 資源。"
-
-msgid "Server"
-msgstr "伺服器"
-
-msgid "Server Version"
-msgstr "伺服器版本"
-
-msgid "Show all"
-msgstr "顯示全部"
-
-msgid "Show stopped"
-msgstr "顯示已停止"
-
-msgid "Size"
-msgstr "大小"
-
-msgid "Start"
-msgstr "啟動"
-
-msgid "Stop"
-msgstr "停止"
-
-msgid "Stopped"
-msgstr "已停止"
-
-msgid "Storage Driver"
-msgstr "儲存驅動"
-
-msgid "Store credentials for private registries."
-msgstr "保存私有倉庫的憑證。"
-
-msgid "Tags"
-msgstr "標籤"
-
-msgid "Template name"
-msgstr "模板名稱"
-
-msgid "This will remove the selected compose template."
-msgstr "此操作將移除選定的編排模板。"
-
-msgid "This will remove the selected image from the host."
-msgstr "此操作將從主機移除選定的鏡像。"
-
-msgid "This will remove the selected network."
-msgstr "此操作將移除選定的網絡。"
-
-msgid "This will remove the selected registry credentials."
-msgstr "此操作將移除選定的倉庫憑證。"
-
-msgid "This will remove the selected volume."
-msgstr "此操作將移除選定的存儲卷。"
-
-msgid "This will stop and remove the selected compose project."
-msgstr "此操作將停止並移除選定的編排項目。"
-
-msgid "Total Memory"
-msgstr "總記憶體"
-
-msgid "Unpause"
-msgstr "恢復"
-
-msgid "Update Compose"
-msgstr "更新編排"
-
-msgid "Username"
-msgstr "用戶名"
-
-msgid "View and update Docker daemon configuration."
-msgstr "查看並更新 Docker daemon 配置。"
-
-msgid "Volume name"
-msgstr "存儲卷名稱"
-
-msgid "Volume name is required"
-msgstr "存儲卷名稱必填"
-
-msgid "Workdir"
-msgstr "工作目錄"
-
-msgid "daemon.json not found; a new file will be created on save."
-msgstr "未找到 daemon.json；儲存時將建立新檔案。"
-
-msgid "Select a system"
-msgstr "選擇系統"
-
-
-msgid "Restart"
-msgstr "重啟"
-
-msgid "Running"
-msgstr "運行中"
-
-msgid "Save"
-msgstr "儲存"
-
-
-
-#: src/components/navbar.tsx
-#: src/components/audit/audit-logs-table.tsx
-msgid "Audit Logs"
-msgstr "審查日誌"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Review Docker audit records and data cleanup runs."
-msgstr "查看 Docker 審計記錄與數據清理執行結果。"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Search logs..."
-msgstr "搜尋日誌..."
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "End"
-msgstr "結束"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Reset Filters"
-msgstr "重置篩選"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Apply Filters"
-msgstr "套用篩選"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Action"
-msgstr "操作"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Resource"
-msgstr "資源"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "User"
-msgstr "使用者"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "No audit logs found."
-msgstr "未找到審查日誌記錄。"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Prev"
-msgstr "上一頁"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Next"
-msgstr "下一頁"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Page {page}"
-msgstr "第 {page} 頁"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Failed to load audit logs"
-msgstr "載入審查日誌失敗"
-
-
-#: src/components/audit/audit-logs-table.tsx
-msgid "Invalid time range"
-msgstr "時間範圍無效"

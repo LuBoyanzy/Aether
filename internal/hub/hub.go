@@ -363,6 +363,9 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiAuth.POST("/test-notification", h.SendTestNotification)
 	// get config.yml content
 	apiAuth.GET("/config-yaml", config.GetYamlConfig)
+	apiAuth.GET("/mail-settings", h.GetMailSettings)
+	apiAuth.PUT("/mail-settings", h.UpdateMailSettings)
+	apiAuth.POST("/mail-settings/test", h.TestMailSettings)
 	// handle agent websocket connection
 	apiNoAuth.GET("/agent-connect", h.handleAgentConnect)
 	// get or create universal tokens
