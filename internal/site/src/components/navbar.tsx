@@ -88,6 +88,23 @@ export default function Navbar() {
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Link
+							href={getPagePath($router, "audit_logs")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label={t`Audit Logs`}
+							onMouseEnter={runOnce(() => import("@/components/routes/audit-logs"))}
+						>
+							<LogsIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>
+							<Trans>Audit Logs</Trans>
+						</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
 							href={getPagePath($router, "smart")}
 							className={cn("hidden md:grid", buttonVariants({ variant: "ghost", size: "icon" }))}
 							aria-label="S.M.A.R.T."

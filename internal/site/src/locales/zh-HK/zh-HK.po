@@ -1401,6 +1401,10 @@ msgstr "排序依據"
 msgid "Start Time"
 msgstr "開始時間"
 
+#: src/components/audit/audit-date-range.tsx
+msgid "Time Range"
+msgstr "時間範圍"
+
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2329,3 +2333,79 @@ msgstr "運行中"
 msgid "Save"
 msgstr "儲存"
 
+
+
+#: src/components/navbar.tsx
+#: src/components/audit/audit-logs-table.tsx
+msgid "Audit Logs"
+msgstr "審查日誌"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Review Docker audit records and data cleanup runs."
+msgstr "查看 Docker 審計記錄與數據清理執行結果。"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Search logs..."
+msgstr "搜尋日誌..."
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "End"
+msgstr "結束"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Reset Filters"
+msgstr "重置篩選"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Apply Filters"
+msgstr "套用篩選"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Action"
+msgstr "操作"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Resource"
+msgstr "資源"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "User"
+msgstr "使用者"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "No audit logs found."
+msgstr "未找到審查日誌記錄。"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Prev"
+msgstr "上一頁"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Next"
+msgstr "下一頁"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Page {page}"
+msgstr "第 {page} 頁"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Failed to load audit logs"
+msgstr "載入審查日誌失敗"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Invalid time range"
+msgstr "時間範圍無效"

@@ -1396,6 +1396,10 @@ msgstr "Sort By"
 msgid "Start Time"
 msgstr "Start Time"
 
+#: src/components/audit/audit-date-range.tsx
+msgid "Time Range"
+msgstr "Time Range"
+
 #. Context: alert state (active or resolved)
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2324,3 +2328,79 @@ msgstr "Running"
 msgid "Save"
 msgstr "Save"
 
+
+
+#: src/components/navbar.tsx
+#: src/components/audit/audit-logs-table.tsx
+msgid "Audit Logs"
+msgstr "Audit Logs"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Review Docker audit records and data cleanup runs."
+msgstr "Review Docker audit records and data cleanup runs."
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Search logs..."
+msgstr "Search logs..."
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "End"
+msgstr "End"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Reset Filters"
+msgstr "Reset Filters"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Apply Filters"
+msgstr "Apply Filters"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Action"
+msgstr "Action"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Resource"
+msgstr "Resource"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "User"
+msgstr "User"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "No audit logs found."
+msgstr "No audit logs found."
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Prev"
+msgstr "Prev"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Next"
+msgstr "Next"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Page {page}"
+msgstr "Page {page}"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Failed to load audit logs"
+msgstr "Failed to load audit logs"
+
+
+#: src/components/audit/audit-logs-table.tsx
+msgid "Invalid time range"
+msgstr "Invalid time range"

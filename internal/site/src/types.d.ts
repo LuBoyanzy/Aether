@@ -462,6 +462,8 @@ export interface DockerAuditItem {
 	id: string
 	system: string
 	user: string
+	user_name?: string
+	user_email?: string
 	action: string
 	resource_type: string
 	resource_id: string

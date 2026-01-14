@@ -23,7 +23,6 @@ import (
 	"github.com/pocketbase/pocketbase/tools/types"
 	"gopkg.in/yaml.v3"
 )
-
 func requireWritable(e *core.RequestEvent) error {
 	if e.Auth == nil || e.Auth.GetString("role") == "readonly" {
 		return e.JSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
@@ -777,6 +776,32 @@ func (h *Hub) listDockerServiceConfigs(e *core.RequestEvent) error {
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	items := make([]map[string]any, 0, len(records))
+userIDs := make([]string, 0, len(records))
+for _, record := range records {
+	userID := record.GetString("user")
+	if userID != "" {
+		userIDs = append(userIDs, userID)
+	}
+}
+usernames := map[string]string{}
+if len(userIDs) > 0 {
+	uniqueIDs := map[string]struct{}{}
+	uniqueList := make([]string, 0, len(userIDs))
+	for _, id := range userIDs {
+		if _, exists := uniqueIDs[id]; exists {
+			continue
+		}
+		uniqueIDs[id] = struct{}{}
+		uniqueList = append(uniqueList, id)
+	}
+	for _, id := range uniqueList {
+		userRecord, userErr := h.FindRecordById("users", id)
+		if userErr != nil {
+			return e.JSON(http.StatusInternalServerError, map[string]string{"error": userErr.Error()})
+		}
+		usernames[id] = userRecord.GetString("username")
+	}
+}
 	for _, record := range records {
 		items = append(items, map[string]any{
 			"id":      record.Id,
@@ -1175,6 +1200,32 @@ func (h *Hub) listDockerRegistries(e *core.RequestEvent) error {
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	items := make([]map[string]any, 0, len(records))
+userIDs := make([]string, 0, len(records))
+for _, record := range records {
+	userID := record.GetString("user")
+	if userID != "" {
+		userIDs = append(userIDs, userID)
+	}
+}
+usernames := map[string]string{}
+if len(userIDs) > 0 {
+	uniqueIDs := map[string]struct{}{}
+	uniqueList := make([]string, 0, len(userIDs))
+	for _, id := range userIDs {
+		if _, exists := uniqueIDs[id]; exists {
+			continue
+		}
+		uniqueIDs[id] = struct{}{}
+		uniqueList = append(uniqueList, id)
+	}
+	for _, id := range uniqueList {
+		userRecord, userErr := h.FindRecordById("users", id)
+		if userErr != nil {
+			return e.JSON(http.StatusInternalServerError, map[string]string{"error": userErr.Error()})
+		}
+		usernames[id] = userRecord.GetString("username")
+	}
+}
 	for _, record := range records {
 		items = append(items, map[string]any{
 			"id":       record.Id,
@@ -1348,6 +1399,32 @@ func (h *Hub) listDockerComposeTemplates(e *core.RequestEvent) error {
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	items := make([]map[string]any, 0, len(records))
+userIDs := make([]string, 0, len(records))
+for _, record := range records {
+	userID := record.GetString("user")
+	if userID != "" {
+		userIDs = append(userIDs, userID)
+	}
+}
+usernames := map[string]string{}
+if len(userIDs) > 0 {
+	uniqueIDs := map[string]struct{}{}
+	uniqueList := make([]string, 0, len(userIDs))
+	for _, id := range userIDs {
+		if _, exists := uniqueIDs[id]; exists {
+			continue
+		}
+		uniqueIDs[id] = struct{}{}
+		uniqueList = append(uniqueList, id)
+	}
+	for _, id := range uniqueList {
+		userRecord, userErr := h.FindRecordById("users", id)
+		if userErr != nil {
+			return e.JSON(http.StatusInternalServerError, map[string]string{"error": userErr.Error()})
+		}
+		usernames[id] = userRecord.GetString("username")
+	}
+}
 	for _, record := range records {
 		items = append(items, map[string]any{
 			"id":          record.Id,
@@ -1593,11 +1670,50 @@ func (h *Hub) listDockerAudits(e *core.RequestEvent) error {
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	items := make([]map[string]any, 0, len(records))
+	userIDs := make([]string, 0, len(records))
+	for _, record := range records {
+		userID := record.GetString("user")
+		if userID != "" {
+			userIDs = append(userIDs, userID)
+		}
+	}
+
+	usernames := map[string]string{}
+	userEmails := map[string]string{}
+	if len(userIDs) > 0 {
+		uniqueIDs := map[string]struct{}{}
+		uniqueList := make([]string, 0, len(userIDs))
+		for _, id := range userIDs {
+			if _, exists := uniqueIDs[id]; exists {
+				continue
+			}
+			uniqueIDs[id] = struct{}{}
+			uniqueList = append(uniqueList, id)
+		}
+		for _, id := range uniqueList {
+			userRecord, userErr := h.FindRecordById("users", id)
+			if userErr != nil {
+				h.Logger().Error(
+					"resolve audit user failed",
+					"logger", "hub",
+					"err", userErr,
+					"err_type", fmt.Sprintf("%T", userErr),
+					"stack", string(debug.Stack()),
+					"user_id", id,
+				)
+				return e.JSON(http.StatusInternalServerError, map[string]string{"error": userErr.Error()})
+			}
+			usernames[id] = userRecord.GetString("username")
+			userEmails[id] = userRecord.GetString("email")
+		}
+	}
 	for _, record := range records {
 		items = append(items, map[string]any{
 			"id":            record.Id,
 			"system":        record.GetString("system"),
 			"user":          record.GetString("user"),
+			"user_name":     usernames[record.GetString("user")],
+			"user_email":    userEmails[record.GetString("user")],
 			"action":        record.GetString("action"),
 			"resource_type": record.GetString("resource_type"),
 			"resource_id":   record.GetString("resource_id"),
