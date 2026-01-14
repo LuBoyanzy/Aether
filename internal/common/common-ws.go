@@ -65,6 +65,26 @@ const (
 	UpdateDockerConfig
 	// Request package repository sources
 	GetRepoSources
+	// List MySQL databases for data cleanup
+	DataCleanupMySQLDatabases
+	// List MySQL tables for data cleanup
+	DataCleanupMySQLTables
+	// Delete MySQL tables for data cleanup
+	DataCleanupMySQLDeleteTables
+	// List Redis databases for data cleanup
+	DataCleanupRedisDatabases
+	// Cleanup Redis keys for data cleanup
+	DataCleanupRedisCleanup
+	// List MinIO buckets for data cleanup
+	DataCleanupMinioBuckets
+	// List MinIO prefixes for data cleanup
+	DataCleanupMinioPrefixes
+	// Cleanup MinIO prefixes for data cleanup
+	DataCleanupMinioCleanup
+	// List ES indices for data cleanup
+	DataCleanupESIndices
+	// Cleanup ES indices for data cleanup
+	DataCleanupESCleanup
 	// Add new actions here...
 )
 
@@ -92,6 +112,8 @@ type AgentResponse struct {
 	DockerComposeProjects []docker.ComposeProject    `cbor:"12,keyasint,omitempty,omitzero"`
 	DockerConfig          *docker.DaemonConfig       `cbor:"13,keyasint,omitempty,omitzero"`
 	RepoSources           []repo.Source              `cbor:"14,keyasint,omitempty,omitzero"`
+	DataCleanupList       *DockerDataCleanupList     `cbor:"15,keyasint,omitempty,omitzero"`
+	DataCleanupResult     *DockerDataCleanupResult   `cbor:"16,keyasint,omitempty,omitzero"`
 	// Logs        *LogsPayload         `cbor:"4,keyasint,omitempty,omitzero"`
 	// RawBytes    []byte               `cbor:"4,keyasint,omitempty,omitzero"`
 }
@@ -224,4 +246,97 @@ type SystemdInfoRequest struct {
 
 type RepoSourcesRequest struct {
 	Check bool `cbor:"0,keyasint,omitempty"`
+}
+
+type DockerDataCleanupList struct {
+	Databases []string `cbor:"0,keyasint,omitempty"`
+	Tables    []string `cbor:"1,keyasint,omitempty"`
+	RedisDBs  []int    `cbor:"2,keyasint,omitempty"`
+	Buckets   []string `cbor:"3,keyasint,omitempty"`
+	Prefixes  []string `cbor:"4,keyasint,omitempty"`
+	Indices   []string `cbor:"5,keyasint,omitempty"`
+}
+
+type DockerDataCleanupResult struct {
+	Deleted int64  `cbor:"0,keyasint,omitempty"`
+	Detail  string `cbor:"1,keyasint,omitempty"`
+}
+
+type DataCleanupMySQLDatabasesRequest struct {
+	Host     string `cbor:"0,keyasint"`
+	Port     int    `cbor:"1,keyasint"`
+	Username string `cbor:"2,keyasint,omitempty"`
+	Password string `cbor:"3,keyasint,omitempty"`
+}
+
+type DataCleanupMySQLTablesRequest struct {
+	Host     string `cbor:"0,keyasint"`
+	Port     int    `cbor:"1,keyasint"`
+	Username string `cbor:"2,keyasint,omitempty"`
+	Password string `cbor:"3,keyasint,omitempty"`
+	Database string `cbor:"4,keyasint"`
+}
+
+type DataCleanupMySQLDeleteTablesRequest struct {
+	Host     string   `cbor:"0,keyasint"`
+	Port     int      `cbor:"1,keyasint"`
+	Username string   `cbor:"2,keyasint,omitempty"`
+	Password string   `cbor:"3,keyasint,omitempty"`
+	Database string   `cbor:"4,keyasint"`
+	Tables   []string `cbor:"5,keyasint,omitempty"`
+}
+
+type DataCleanupRedisDatabasesRequest struct {
+	Host     string `cbor:"0,keyasint"`
+	Port     int    `cbor:"1,keyasint"`
+	Username string `cbor:"2,keyasint,omitempty"`
+	Password string `cbor:"3,keyasint,omitempty"`
+}
+
+type DataCleanupRedisCleanupRequest struct {
+	Host     string   `cbor:"0,keyasint"`
+	Port     int      `cbor:"1,keyasint"`
+	Username string   `cbor:"2,keyasint,omitempty"`
+	Password string   `cbor:"3,keyasint,omitempty"`
+	DB       int      `cbor:"4,keyasint"`
+	Patterns []string `cbor:"5,keyasint,omitempty"`
+}
+
+type DataCleanupMinioBucketsRequest struct {
+	Host      string `cbor:"0,keyasint"`
+	Port      int    `cbor:"1,keyasint"`
+	AccessKey string `cbor:"2,keyasint"`
+	SecretKey string `cbor:"3,keyasint,omitempty"`
+}
+
+type DataCleanupMinioPrefixesRequest struct {
+	Host      string `cbor:"0,keyasint"`
+	Port      int    `cbor:"1,keyasint"`
+	AccessKey string `cbor:"2,keyasint"`
+	SecretKey string `cbor:"3,keyasint,omitempty"`
+	Bucket    string `cbor:"4,keyasint"`
+}
+
+type DataCleanupMinioCleanupRequest struct {
+	Host      string   `cbor:"0,keyasint"`
+	Port      int      `cbor:"1,keyasint"`
+	AccessKey string   `cbor:"2,keyasint"`
+	SecretKey string   `cbor:"3,keyasint,omitempty"`
+	Bucket    string   `cbor:"4,keyasint"`
+	Prefixes  []string `cbor:"5,keyasint,omitempty"`
+}
+
+type DataCleanupESIndicesRequest struct {
+	Host     string `cbor:"0,keyasint"`
+	Port     int    `cbor:"1,keyasint"`
+	Username string `cbor:"2,keyasint,omitempty"`
+	Password string `cbor:"3,keyasint,omitempty"`
+}
+
+type DataCleanupESCleanupRequest struct {
+	Host     string   `cbor:"0,keyasint"`
+	Port     int      `cbor:"1,keyasint"`
+	Username string   `cbor:"2,keyasint,omitempty"`
+	Password string   `cbor:"3,keyasint,omitempty"`
+	Indices  []string `cbor:"4,keyasint,omitempty"`
 }

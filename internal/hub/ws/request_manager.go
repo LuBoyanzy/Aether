@@ -7,8 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/fxamacker/cbor/v2"
 	"aether/internal/common"
+	"github.com/fxamacker/cbor/v2"
 	"github.com/lxzan/gws"
 )
 
@@ -41,11 +41,21 @@ func NewRequestManager(conn *gws.Conn) *RequestManager {
 	return rm
 }
 
-// SendRequest sends a request and returns a channel for the response
+// SendRequest sends a request with the default timeout and returns a channel for the response.
 func (rm *RequestManager) SendRequest(ctx context.Context, action common.WebSocketAction, data any) (*PendingRequest, error) {
+	return rm.SendRequestWithTimeout(ctx, action, data, 5*time.Second)
+}
+
+// SendRequestWithTimeout sends a request with a custom timeout and returns a channel for the response.
+func (rm *RequestManager) SendRequestWithTimeout(
+	ctx context.Context,
+	action common.WebSocketAction,
+	data any,
+	timeout time.Duration,
+) (*PendingRequest, error) {
 	reqID := RequestID(rm.nextID.Add(1))
 
-	reqCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	reqCtx, cancel := context.WithTimeout(ctx, timeout)
 
 	req := &PendingRequest{
 		ID:         reqID,

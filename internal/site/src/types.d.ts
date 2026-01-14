@@ -364,6 +364,69 @@ export interface DockerServiceConfigItem {
 	updated: string
 }
 
+export interface DockerDataCleanupMySQLConfig {
+	host: string
+	port: number
+	username?: string
+	password?: string
+	database?: string
+	tables?: string[]
+	hasPassword?: boolean
+}
+
+export interface DockerDataCleanupRedisConfig {
+	host: string
+	port: number
+	username?: string
+	password?: string
+	db?: number
+	patterns?: string[]
+	hasPassword?: boolean
+}
+
+export interface DockerDataCleanupMinioConfig {
+	host: string
+	port: number
+	accessKey?: string
+	secretKey?: string
+	bucket?: string
+	prefixes?: string[]
+	hasSecretKey?: boolean
+}
+
+export interface DockerDataCleanupESConfig {
+	host: string
+	port: number
+	username?: string
+	password?: string
+	indices?: string[]
+	hasPassword?: boolean
+}
+
+export interface DockerDataCleanupConfig {
+	id?: string
+	system: string
+	mysql: DockerDataCleanupMySQLConfig
+	redis: DockerDataCleanupRedisConfig
+	minio: DockerDataCleanupMinioConfig
+	es: DockerDataCleanupESConfig
+}
+
+export interface DockerDataCleanupRunResult {
+	module: string
+	status: "success" | "failed"
+	detail?: string
+}
+
+export interface DockerDataCleanupRun {
+	id: string
+	status: "pending" | "running" | "success" | "failed"
+	progress: number
+	step: string
+	logs: string[]
+	results: DockerDataCleanupRunResult[]
+}
+
 export type DockerFocusMatchType = "container_name" | "image" | "compose_project" | "compose_service" | "label"
 
 export interface DockerFocusServiceRecord extends RecordModel {

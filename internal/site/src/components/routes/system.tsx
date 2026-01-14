@@ -36,7 +36,6 @@ import {
 	compareSemVer,
 	decimalString,
 	formatBytes,
-	BRAND_NAME,
 	listen,
 	parseSemVer,
 	toFixedFloat,

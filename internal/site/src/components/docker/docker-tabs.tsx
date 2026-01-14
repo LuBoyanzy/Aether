@@ -1,6 +1,6 @@
 /**
  * Docker 模块页签与系统选择面板。
- * 统一渲染 10 大功能入口并传递所选系统。
+ * 统一渲染 11 大功能入口并传递所选系统。
  */
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
@@ -21,6 +21,7 @@ import DockerRegistriesPanel from "@/components/docker/registries"
 import DockerComposeTemplatesPanel from "@/components/docker/compose-templates"
 import DockerConfigPanel from "@/components/docker/config"
 import DockerServiceConfigsPanel from "@/components/docker/service-configs"
+import DockerDataCleanupPanel from "@/components/docker/data-cleanup"
 
 const DockerTabs = memo(() => {
 	const systems = useStore($systems)
@@ -125,6 +126,12 @@ const DockerTabs = memo(() => {
 					>
 						<Trans>Service Configs</Trans>
 					</TabsTrigger>
+					<TabsTrigger
+						value="data-cleanup"
+						className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
+					>
+						<Trans>Data Cleanup</Trans>
+					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="overview" className="mt-4 animate-fade-in duration-300">
 					<DockerOverviewPanel systemId={systemId} />
@@ -155,6 +162,9 @@ const DockerTabs = memo(() => {
 				</TabsContent>
 				<TabsContent value="service-configs" className="mt-4 animate-fade-in duration-300">
 					<DockerServiceConfigsPanel systemId={systemId} />
+				</TabsContent>
+				<TabsContent value="data-cleanup" className="mt-4 animate-fade-in duration-300">
+					<DockerDataCleanupPanel systemId={systemId} />
 				</TabsContent>
 			</Tabs>
 		</Card>

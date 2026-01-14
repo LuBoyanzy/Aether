@@ -3144,6 +3144,259 @@ msgstr "你只有只读权限"
 msgid "Your user settings have been updated."
 msgstr "您的用户设置已更新。"
 
+#: src/components/docker/data-cleanup.tsx
+msgid "Access Key"
+msgstr "访问密钥"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup Progress"
+msgstr "清理进度"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup configuration saved"
+msgstr "清理配置已保存"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Cleanup will delete data immediately. Please confirm the targets and proceed."
+msgstr "清理会立即删除数据，请确认目标后继续。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Choose a database and clean keys by predefined patterns."
+msgstr "选择数据库并按预设模式清理键。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Close"
+msgstr "关闭"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Confirm cleanup"
+msgstr "确认清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Configure MySQL, Redis, MinIO, and Elasticsearch cleanup targets for the selected system."
+msgstr "为所选系统配置 MySQL、Redis、MinIO 和 Elasticsearch 清理目标。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Current step"
+msgstr "当前步骤"
+
+#: src/components/docker/data-cleanup.tsx
+#: src/components/docker/docker-tabs.tsx
+msgid "Data Cleanup"
+msgstr "数据清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "DB {db}"
+msgstr "数据库 {db}"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch host and port are required"
+msgstr "Elasticsearch 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Elasticsearch port is invalid"
+msgstr "Elasticsearch 端口无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Elasticsearch indices"
+msgstr "加载 Elasticsearch 索引失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO buckets"
+msgstr "加载 MinIO 桶失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MinIO folders"
+msgstr "加载 MinIO 目录失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL databases"
+msgstr "加载 MySQL 数据库失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load MySQL tables"
+msgstr "加载 MySQL 表失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load Redis databases"
+msgstr "加载 Redis 数据库失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to load cleanup config"
+msgstr "加载清理配置失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to retry cleanup"
+msgstr "重试清理失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to save cleanup config"
+msgstr "保存清理配置失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Failed to start cleanup"
+msgstr "启动清理失败"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Host"
+msgstr "主机"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Buckets"
+msgstr "加载桶"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Databases"
+msgstr "加载数据库"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Folders"
+msgstr "加载目录"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Indices"
+msgstr "加载索引"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load Tables"
+msgstr "加载表"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Load indices from _cat/indices and delete documents by query."
+msgstr "从 _cat/indices 加载索引，并通过查询删除文档。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host and port are required"
+msgstr "MinIO 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO host, port and bucket are required"
+msgstr "MinIO 主机、端口和桶为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MinIO port is invalid"
+msgstr "MinIO 端口无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Module results"
+msgstr "模块结果"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host and port are required"
+msgstr "MySQL 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL host, port and database are required"
+msgstr "MySQL 主机、端口和数据库为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "MySQL port is invalid"
+msgstr "MySQL 端口无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No folders loaded."
+msgstr "未加载任何目录。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No indices loaded."
+msgstr "未加载任何索引。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No patterns configured."
+msgstr "未配置任何模式。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "No tables loaded."
+msgstr "未加载任何表。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Pending"
+msgstr "等待中"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Refresh Config"
+msgstr "刷新配置"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis DB is invalid"
+msgstr "Redis DB 无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis host and port are required"
+msgstr "Redis 主机和端口为必填"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Redis port is invalid"
+msgstr "Redis 端口无效"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Retry"
+msgstr "重试"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Save Config"
+msgstr "保存配置"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Saved"
+msgstr "已保存"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Secret Key"
+msgstr "密钥"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select DB"
+msgstr "选择 DB"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a bucket and top-level folders to clean."
+msgstr "选择桶和需要清理的顶层目录。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select a database and tables to delete with DELETE statements."
+msgstr "选择数据库与表，使用 DELETE 语句清空。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select bucket"
+msgstr "选择桶"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Select database"
+msgstr "选择数据库"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start Cleanup"
+msgstr "开始清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Start cleanup"
+msgstr "开始清理"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored password available"
+msgstr "已有已保存的密码"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Stored secret available"
+msgstr "已有已保存的密钥"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Success"
+msgstr "成功"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Track cleanup steps, logs, and results in real time."
+msgstr "实时查看清理步骤、日志和结果。"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored password"
+msgstr "使用已保存的密码"
+
+#: src/components/docker/data-cleanup.tsx
+msgid "Use stored secret"
+msgstr "使用已保存的密钥"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""

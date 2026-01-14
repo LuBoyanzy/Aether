@@ -261,7 +261,39 @@ func setCollectionAuthSettings(app core.App) error {
 	dockerServiceConfigsCollection.CreateRule = &serviceConfigsWriteRule
 	dockerServiceConfigsCollection.UpdateRule = &serviceConfigsWriteRule
 	dockerServiceConfigsCollection.DeleteRule = &serviceConfigsWriteRule
-	return app.Save(dockerServiceConfigsCollection)
+	if err := app.Save(dockerServiceConfigsCollection); err != nil {
+		return err
+	}
+
+	// docker data cleanup configs (system-shared)
+	dockerCleanupConfigsCollection, err := app.FindCollectionByNameOrId("docker_data_cleanup_configs")
+	if err != nil {
+		return err
+	}
+	cleanupConfigsReadRule := strings.Replace(systemsReadRule, "users.id", "system.users.id", 1)
+	cleanupConfigsWriteRule := cleanupConfigsReadRule + " && @request.auth.role != \"readonly\""
+	dockerCleanupConfigsCollection.ListRule = &cleanupConfigsReadRule
+	dockerCleanupConfigsCollection.ViewRule = &cleanupConfigsReadRule
+	dockerCleanupConfigsCollection.CreateRule = &cleanupConfigsWriteRule
+	dockerCleanupConfigsCollection.UpdateRule = &cleanupConfigsWriteRule
+	dockerCleanupConfigsCollection.DeleteRule = &cleanupConfigsWriteRule
+	if err := app.Save(dockerCleanupConfigsCollection); err != nil {
+		return err
+	}
+
+	// docker data cleanup runs (system-shared)
+	dockerCleanupRunsCollection, err := app.FindCollectionByNameOrId("docker_data_cleanup_runs")
+	if err != nil {
+		return err
+	}
+	cleanupRunsReadRule := strings.Replace(systemsReadRule, "users.id", "system.users.id", 1)
+	cleanupRunsWriteRule := cleanupRunsReadRule + " && @request.auth.role != \"readonly\""
+	dockerCleanupRunsCollection.ListRule = &cleanupRunsReadRule
+	dockerCleanupRunsCollection.ViewRule = &cleanupRunsReadRule
+	dockerCleanupRunsCollection.CreateRule = &cleanupRunsWriteRule
+	dockerCleanupRunsCollection.UpdateRule = &cleanupRunsWriteRule
+	dockerCleanupRunsCollection.DeleteRule = &cleanupRunsWriteRule
+	return app.Save(dockerCleanupRunsCollection)
 }
 
 // registerCronJobs sets up scheduled tasks
@@ -388,6 +420,18 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	dockerGroup.POST("/service-configs/delete", h.deleteDockerServiceConfig)
 	dockerGroup.GET("/service-configs/content", h.getDockerServiceConfigContent)
 	dockerGroup.PUT("/service-configs/content", h.updateDockerServiceConfigContent)
+	dockerCleanupGroup := dockerGroup.Group("/data-cleanup")
+	dockerCleanupGroup.GET("/config", h.getDockerDataCleanupConfig)
+	dockerCleanupGroup.POST("/config", h.upsertDockerDataCleanupConfig)
+	dockerCleanupGroup.POST("/mysql/databases", h.listDataCleanupMySQLDatabases)
+	dockerCleanupGroup.POST("/mysql/tables", h.listDataCleanupMySQLTables)
+	dockerCleanupGroup.POST("/redis/dbs", h.listDataCleanupRedisDatabases)
+	dockerCleanupGroup.POST("/minio/buckets", h.listDataCleanupMinioBuckets)
+	dockerCleanupGroup.POST("/minio/prefixes", h.listDataCleanupMinioPrefixes)
+	dockerCleanupGroup.POST("/es/indices", h.listDataCleanupESIndices)
+	dockerCleanupGroup.POST("/run", h.startDataCleanupRun)
+	dockerCleanupGroup.GET("/run", h.getDataCleanupRun)
+	dockerCleanupGroup.POST("/retry", h.retryDataCleanupRun)
 	dockerGroup.GET("/audits", h.listDockerAudits)
 	return nil
 }

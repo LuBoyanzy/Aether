@@ -5,6 +5,8 @@ import type {
 	DockerComposeTemplateItem,
 	DockerContainer,
 	DockerDaemonConfig,
+	DockerDataCleanupConfig,
+	DockerDataCleanupRun,
 	DockerImage,
 	DockerNetwork,
 	DockerOverview,
@@ -13,7 +15,7 @@ import type {
 	DockerVolume,
 } from "@/types"
 
-// 对接后端实现：internal/hub/docker.go
+// 对接后端实现：internal/hub/docker.go、internal/hub/docker_data_cleanup.go
 
 export const fetchDockerOverview = (system: string) =>
 	pb.send<DockerOverview>("/api/aether/docker/overview", { query: { system } })
@@ -210,6 +212,88 @@ export const fetchDockerServiceConfigContent = (params: { system: string; id: st
 export const updateDockerServiceConfigContent = (payload: { system: string; id: string; content: string }) =>
 	pb.send<{ status: string }>("/api/aether/docker/service-configs/content", {
 		method: "PUT",
+		body: payload,
+	})
+
+type DataCleanupListPayload = {
+	system: string
+	host: string
+	port: number
+	username?: string
+	password?: string
+	useStoredPassword?: boolean
+	database?: string
+}
+
+type DataCleanupMinioListPayload = {
+	system: string
+	host: string
+	port: number
+	accessKey?: string
+	secretKey?: string
+	useStoredSecret?: boolean
+	bucket?: string
+}
+
+export const fetchDockerDataCleanupConfig = (system: string) =>
+	pb.send<DockerDataCleanupConfig>("/api/aether/docker/data-cleanup/config", { query: { system } })
+
+export const upsertDockerDataCleanupConfig = (payload: DockerDataCleanupConfig) =>
+	pb.send<{ id: string; status: string }>("/api/aether/docker/data-cleanup/config", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupMySQLDatabases = (payload: DataCleanupListPayload) =>
+	pb.send<{ items: string[] }>("/api/aether/docker/data-cleanup/mysql/databases", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupMySQLTables = (payload: DataCleanupListPayload) =>
+	pb.send<{ items: string[] }>("/api/aether/docker/data-cleanup/mysql/tables", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupRedisDatabases = (payload: DataCleanupListPayload) =>
+	pb.send<{ items: number[] }>("/api/aether/docker/data-cleanup/redis/dbs", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupMinioBuckets = (payload: DataCleanupMinioListPayload) =>
+	pb.send<{ items: string[] }>("/api/aether/docker/data-cleanup/minio/buckets", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupMinioPrefixes = (payload: DataCleanupMinioListPayload) =>
+	pb.send<{ items: string[] }>("/api/aether/docker/data-cleanup/minio/prefixes", {
+		method: "POST",
+		body: payload,
+	})
+
+export const listDockerDataCleanupESIndices = (payload: DataCleanupListPayload) =>
+	pb.send<{ items: string[] }>("/api/aether/docker/data-cleanup/es/indices", {
+		method: "POST",
+		body: payload,
+	})
+
+export const startDockerDataCleanupRun = (payload: { system: string }) =>
+	pb.send<{ runId: string }>("/api/aether/docker/data-cleanup/run", {
+		method: "POST",
+		body: payload,
+	})
+
+export const fetchDockerDataCleanupRun = (runId: string) =>
+	pb.send<DockerDataCleanupRun>("/api/aether/docker/data-cleanup/run", {
+		query: { id: runId },
+	})
+
+export const retryDockerDataCleanupRun = (payload: { system: string }) =>
+	pb.send<{ runId: string }>("/api/aether/docker/data-cleanup/retry", {
+		method: "POST",
 		body: payload,
 	})
 

@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"errors"
+	"time"
 
 	"aether/internal/common"
 	"aether/internal/entities/docker"
@@ -233,6 +234,235 @@ func (h *repoSourcesHandler) Handle(agentResponse common.AgentResponse) error {
 	}
 	*h.result = agentResponse.RepoSources
 	return nil
+}
+
+type dataCleanupListHandler struct {
+	BaseHandler
+	result   *common.DockerDataCleanupList
+	errorMsg string
+}
+
+func (h *dataCleanupListHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.Error != "" {
+		return errors.New(agentResponse.Error)
+	}
+	if agentResponse.DataCleanupList == nil {
+		return errors.New(h.errorMsg)
+	}
+	*h.result = *agentResponse.DataCleanupList
+	return nil
+}
+
+type dataCleanupResultHandler struct {
+	BaseHandler
+	result   *common.DockerDataCleanupResult
+	errorMsg string
+}
+
+func (h *dataCleanupResultHandler) Handle(agentResponse common.AgentResponse) error {
+	if agentResponse.Error != "" {
+		return errors.New(agentResponse.Error)
+	}
+	if agentResponse.DataCleanupResult == nil {
+		return errors.New(h.errorMsg)
+	}
+	*h.result = *agentResponse.DataCleanupResult
+	return nil
+}
+
+const (
+	dataCleanupListTimeout   = 20 * time.Second
+	dataCleanupActionTimeout = 30 * time.Minute
+)
+
+func (ws *WsConn) RequestDataCleanupMySQLDatabases(
+	ctx context.Context,
+	req common.DataCleanupMySQLDatabasesRequest,
+) ([]string, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMySQLDatabases, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no mysql databases in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.Databases, nil
+}
+
+func (ws *WsConn) RequestDataCleanupMySQLTables(
+	ctx context.Context,
+	req common.DataCleanupMySQLTablesRequest,
+) ([]string, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMySQLTables, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no mysql tables in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.Tables, nil
+}
+
+func (ws *WsConn) RequestDataCleanupMySQLDeleteTables(
+	ctx context.Context,
+	req common.DataCleanupMySQLDeleteTablesRequest,
+) (common.DockerDataCleanupResult, error) {
+	if !ws.IsConnected() {
+		return common.DockerDataCleanupResult{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMySQLDeleteTables, req, dataCleanupActionTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	var result common.DockerDataCleanupResult
+	handler := &dataCleanupResultHandler{result: &result, errorMsg: "no mysql cleanup result in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	return result, nil
+}
+
+func (ws *WsConn) RequestDataCleanupRedisDatabases(
+	ctx context.Context,
+	req common.DataCleanupRedisDatabasesRequest,
+) ([]int, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupRedisDatabases, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no redis databases in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.RedisDBs, nil
+}
+
+func (ws *WsConn) RequestDataCleanupRedisCleanup(
+	ctx context.Context,
+	req common.DataCleanupRedisCleanupRequest,
+) (common.DockerDataCleanupResult, error) {
+	if !ws.IsConnected() {
+		return common.DockerDataCleanupResult{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupRedisCleanup, req, dataCleanupActionTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	var result common.DockerDataCleanupResult
+	handler := &dataCleanupResultHandler{result: &result, errorMsg: "no redis cleanup result in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	return result, nil
+}
+
+func (ws *WsConn) RequestDataCleanupMinioBuckets(
+	ctx context.Context,
+	req common.DataCleanupMinioBucketsRequest,
+) ([]string, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMinioBuckets, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no minio buckets in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.Buckets, nil
+}
+
+func (ws *WsConn) RequestDataCleanupMinioPrefixes(
+	ctx context.Context,
+	req common.DataCleanupMinioPrefixesRequest,
+) ([]string, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMinioPrefixes, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no minio prefixes in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.Prefixes, nil
+}
+
+func (ws *WsConn) RequestDataCleanupMinioCleanup(
+	ctx context.Context,
+	req common.DataCleanupMinioCleanupRequest,
+) (common.DockerDataCleanupResult, error) {
+	if !ws.IsConnected() {
+		return common.DockerDataCleanupResult{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupMinioCleanup, req, dataCleanupActionTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	var result common.DockerDataCleanupResult
+	handler := &dataCleanupResultHandler{result: &result, errorMsg: "no minio cleanup result in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	return result, nil
+}
+
+func (ws *WsConn) RequestDataCleanupESIndices(
+	ctx context.Context,
+	req common.DataCleanupESIndicesRequest,
+) ([]string, error) {
+	if !ws.IsConnected() {
+		return nil, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupESIndices, req, dataCleanupListTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var result common.DockerDataCleanupList
+	handler := &dataCleanupListHandler{result: &result, errorMsg: "no es indices in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return nil, err
+	}
+	return result.Indices, nil
+}
+
+func (ws *WsConn) RequestDataCleanupESCleanup(
+	ctx context.Context,
+	req common.DataCleanupESCleanupRequest,
+) (common.DockerDataCleanupResult, error) {
+	if !ws.IsConnected() {
+		return common.DockerDataCleanupResult{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupESCleanup, req, dataCleanupActionTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	var result common.DockerDataCleanupResult
+	handler := &dataCleanupResultHandler{result: &result, errorMsg: "no es cleanup result in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	return result, nil
 }
 
 type dockerImagesHandler struct {

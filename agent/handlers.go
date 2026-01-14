@@ -78,6 +78,16 @@ func NewHandlerRegistry() *HandlerRegistry {
 	registry.Register(common.GetSmartData, &GetSmartDataHandler{})
 	registry.Register(common.GetSystemdInfo, &GetSystemdInfoHandler{})
 	registry.Register(common.GetRepoSources, &GetRepoSourcesHandler{})
+	registry.Register(common.DataCleanupMySQLDatabases, &DataCleanupMySQLDatabasesHandler{})
+	registry.Register(common.DataCleanupMySQLTables, &DataCleanupMySQLTablesHandler{})
+	registry.Register(common.DataCleanupMySQLDeleteTables, &DataCleanupMySQLDeleteTablesHandler{})
+	registry.Register(common.DataCleanupRedisDatabases, &DataCleanupRedisDatabasesHandler{})
+	registry.Register(common.DataCleanupRedisCleanup, &DataCleanupRedisCleanupHandler{})
+	registry.Register(common.DataCleanupMinioBuckets, &DataCleanupMinioBucketsHandler{})
+	registry.Register(common.DataCleanupMinioPrefixes, &DataCleanupMinioPrefixesHandler{})
+	registry.Register(common.DataCleanupMinioCleanup, &DataCleanupMinioCleanupHandler{})
+	registry.Register(common.DataCleanupESIndices, &DataCleanupESIndicesHandler{})
+	registry.Register(common.DataCleanupESCleanup, &DataCleanupESCleanupHandler{})
 
 	return registry
 }

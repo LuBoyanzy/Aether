@@ -315,6 +315,12 @@ func (client *WebSocketClient) sendResponse(data any, requestID *uint32) error {
 			response.DockerConfig = v
 		case []repo.Source:
 			response.RepoSources = v
+		case *common.DockerDataCleanupList:
+			response.DataCleanupList = v
+		case *common.DockerDataCleanupResult:
+			response.DataCleanupResult = v
+		case error:
+			response.Error = v.Error()
 		// case []byte:
 		// 	response.RawBytes = v
 		// case string:
