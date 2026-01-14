@@ -3,6 +3,7 @@
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
+	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
 	HardDriveIcon,
@@ -93,7 +94,7 @@ export default function Navbar() {
 							aria-label={t`Audit Logs`}
 							onMouseEnter={runOnce(() => import("@/components/routes/audit-logs"))}
 						>
-							<LogsIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+							<ClipboardListIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
