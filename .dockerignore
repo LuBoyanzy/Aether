@@ -46,3 +46,8 @@ Thumbs.db
 # .NET build artifacts
 agent/lhm/obj
 agent/lhm/bin
+
+.codex/
+.github/
+.vscode/
+.helloagents/
