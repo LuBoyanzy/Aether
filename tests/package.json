@@ -1,0 +1,19 @@
+{
+	"name": "beszel-tests",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"test": "npm run test:api-tests",
+		"test:api-tests": "playwright test -c api-tests/playwright.config.ts",
+		"test:api-tests:api": "playwright test -c api-tests/playwright.config.ts api-tests/api.spec.ts",
+		"test:api-tests:ui": "playwright test -c api-tests/playwright.config.ts api-tests/ui.spec.ts",
+		"test:api-tests:cn": "npm run test:api-tests && npm run report:api-tests:cn",
+		"report:api-tests": "playwright show-report api-tests/playwright-report",
+		"report:api-tests:cn": "node api-tests/scripts/generate-cn-report.mjs"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.57.0",
+		"@types/node": "24.3.0",
+		"typescript": "5.9.2"
+	}
+}

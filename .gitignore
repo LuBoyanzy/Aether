@@ -32,4 +32,7 @@ Agent.md
 helloagents/
 .tmp
 test-results/
-internal/site/test-results/
+playwright-report/
+tests/**/test-results/
+tests/**/playwright-report/
+tests/**/.env

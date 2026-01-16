@@ -1,13 +1,13 @@
 import { type APIRequestContext, type APIResponse, type Page } from "@playwright/test"
 import fs from "node:fs"
-import path from "node:path"
 
 const loadEnvFile = () => {
-	const envPath = path.resolve(process.cwd(), "tests", "api-tests", ".env")
-	if (!fs.existsSync(envPath)) {
+	// 与当前工作目录无关：始终读取同目录下的 `.env`（tests/api-tests/.env）
+	const envUrl = new URL("./.env", import.meta.url)
+	if (!fs.existsSync(envUrl)) {
 		return
 	}
-	const content = fs.readFileSync(envPath, "utf8")
+	const content = fs.readFileSync(envUrl, "utf8")
 	for (const line of content.split(/\r?\n/)) {
 		const trimmed = line.trim()
 		if (!trimmed || trimmed.startsWith("#")) {
@@ -209,6 +209,28 @@ export const deleteRecordIfExists = async (
 	}
 }
 
+export const findRecordIdByName = async (
+	request: APIRequestContext,
+	token: string,
+	collection: string,
+	name: string
+) => {
+	const url = new URL(buildApiUrl(`/api/collections/${encodeURIComponent(collection)}/records`))
+	url.searchParams.set("perPage", "1")
+	url.searchParams.set("page", "1")
+	url.searchParams.set("filter", `name=${JSON.stringify(name)}`)
+
+	const response = await request.get(url.toString(), { headers: authHeaders(token) })
+	const data = await expectOkJson<{
+		items: Array<{ id: string }>
+		page: number
+		perPage: number
+		totalItems: number
+		totalPages: number
+	}>(response)
+	return data.items?.[0]?.id || ""
+}
+
 export const getSchedule = async (request: APIRequestContext, token: string) => {
 	const response = await request.get(buildApiUrl("/api/aether/api-tests/schedule"), { headers: authHeaders(token) })
 	return expectOkJson<{
@@ -276,6 +298,21 @@ export const runAll = async (request: APIRequestContext, token: string) => {
 	})
 	return expectOkJson<{
 		collections: number
+		cases: number
+		success: number
+		failed: number
+		results: Array<{ name: string; status: number; durationMs: number; success: boolean }>
+	}>(response)
+}
+
+export const runCollection = async (request: APIRequestContext, token: string, collectionId: string) => {
+	const response = await request.post(buildApiUrl("/api/aether/api-tests/run-collection"), {
+		headers: authHeaders(token),
+		data: { collectionId },
+	})
+	return expectOkJson<{
+		collectionId: string
+		collection: string
 		cases: number
 		success: number
 		failed: number
