@@ -45,7 +45,7 @@ func TestParseSmartForScsi(t *testing.T) {
 	assert.Equal(t, deviceData.DiskType, "scsi")
 	assert.EqualValues(t, deviceData.Temperature, 34)
 	assert.Equal(t, deviceData.SmartStatus, "PASSED")
-	assert.EqualValues(t, deviceData.Capacity, 14000519643136)
+	assert.EqualValues(t, deviceData.Capacity, uint64(14000519643136))
 
 	if len(deviceData.Attributes) == 0 {
 		t.Fatalf("expected attributes to be populated")

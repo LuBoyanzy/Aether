@@ -19,7 +19,12 @@ internal/site/src/locales/**/*.ts
 *.bak
 __debug_*
 agent/lhm/obj
-agent/lhm/bin
+agent/lhm/bin/**
+!agent/lhm/bin/Release/
+!agent/lhm/bin/Release/net48/
+!agent/lhm/bin/Release/net48/.gitkeep
+agent/smartmontools/**
+!agent/smartmontools/.gitkeep
 dockerfile_agent_dev
 local-dev.sh
 local-dev.*.log
