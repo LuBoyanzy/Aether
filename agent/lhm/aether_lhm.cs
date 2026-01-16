@@ -13,6 +13,8 @@ class Program
       IsMemoryEnabled = true,
       IsMotherboardEnabled = true,
       IsStorageEnabled = true,
+      // IsPsuEnabled = true,
+      // IsNetworkEnabled = true,
     };
     computer.Open();
 
@@ -26,28 +28,53 @@ class Program
       {
         foreach (var hw in computer.Hardware)
         {
+          // process main hardware sensors
           ProcessSensors(hw, writer);
+
+          // process subhardware sensors
           foreach (var subhardware in hw.SubHardware)
           {
             ProcessSensors(subhardware, writer);
           }
         }
+        // send empty line to signal end of sensor data
         writer.WriteLine();
         writer.Flush();
       }
     }
+
     computer.Close();
   }
 
   static void ProcessSensors(IHardware hardware, System.IO.TextWriter writer)
   {
-    hardware.Update();
+    var updated = false;
     foreach (var sensor in hardware.Sensors)
     {
-      if (sensor.SensorType == SensorType.Temperature)
+      var validTemp = sensor.SensorType == SensorType.Temperature && sensor.Value.HasValue;
+      if (!validTemp || sensor.Name.Contains("Distance"))
       {
-        writer.WriteLine($"{sensor.Name}:{sensor.Value?.ToString(CultureInfo.InvariantCulture)}:{sensor.Identifier}");
+        continue;
       }
+
+      if (!updated)
+      {
+        hardware.Update();
+        updated = true;
+      }
+
+      var name = sensor.Name;
+      // if sensor.Name starts with "Temperature" replace with hardware.Identifier but retain the rest of the name.
+      // usually this is a number like Temperature 3
+      if (sensor.Name.StartsWith("Temperature"))
+      {
+        name = hardware.Identifier.ToString().Replace("/", "_").TrimStart('_') + sensor.Name.Substring(11);
+      }
+
+      // invariant culture assures the value is parsable as a float
+      var value = sensor.Value.Value.ToString("0.##", CultureInfo.InvariantCulture);
+      // write the name and value to the writer
+      writer.WriteLine($"{name}|{value}");
     }
   }
 }

@@ -4,7 +4,7 @@ internalsite/node_modules
 
 # Go build artifacts and binaries
 build
-dist
+/dist
 *.exe
 beszel-agent
 beszel_data*
@@ -51,3 +51,5 @@ agent/lhm/bin
 .github/
 .vscode/
 .helloagents/
+tests/
+test/

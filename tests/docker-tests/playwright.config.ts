@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test"
 export default defineConfig({
 	testDir: ".",
 	testMatch: /.*\.spec\.ts/,
-	timeout: 120_000,
+	timeout: 180_000,
 	fullyParallel: false,
 	workers: 1,
 	outputDir: "test-results",

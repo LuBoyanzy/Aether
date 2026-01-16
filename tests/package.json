@@ -9,7 +9,13 @@
 		"test:api-tests:ui": "playwright test -c api-tests/playwright.config.ts api-tests/ui.spec.ts",
 		"test:api-tests:cn": "npm run test:api-tests && npm run report:api-tests:cn",
 		"report:api-tests": "playwright show-report api-tests/playwright-report",
-		"report:api-tests:cn": "node api-tests/scripts/generate-cn-report.mjs"
+		"report:api-tests:cn": "node api-tests/scripts/generate-cn-report.mjs",
+		"test:docker-tests": "playwright test -c docker-tests/playwright.config.ts",
+		"test:docker-tests:api": "playwright test -c docker-tests/playwright.config.ts docker-tests/api.spec.ts",
+		"test:docker-tests:ui": "playwright test -c docker-tests/playwright.config.ts docker-tests/ui.spec.ts",
+		"test:docker-tests:cn": "npm run test:docker-tests && npm run report:docker-tests:cn",
+		"report:docker-tests": "playwright show-report docker-tests/playwright-report",
+		"report:docker-tests:cn": "node docker-tests/scripts/generate-cn-report.mjs"
 	},
 	"devDependencies": {
 		"@playwright/test": "1.57.0",
