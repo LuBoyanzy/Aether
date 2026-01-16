@@ -9,6 +9,13 @@
   - `tests/api-tests/api.spec.ts`
   - `tests/api-tests/ui.spec.ts`
 - 旧目录 `tests/playright/` 逐步迁移到新结构，新增用例统一使用上述目录。
+- Playwright 配置统一在 `internal/site/playwright.config.ts`。
+
+## 运行方式（建议）
+- 在 `internal/site` 目录执行：
+  - `npx playwright test -c playwright.config.ts`
+- 或在仓库根目录执行（需要显式指定配置）：
+  - `./internal/site/node_modules/.bin/playwright test -c internal/site/playwright.config.ts`
 
 ## 分层原则
 - **API 层**：用 `APIRequestContext` 做数据准备/清理与接口断言。
@@ -36,6 +43,11 @@
 - `PLAYWRIGHT_EMAIL`
 - `PLAYWRIGHT_PASSWORD`
 - `PLAYWRIGHT_CASE_URL`
+- 本地可使用 `tests/api-tests/.env` 统一管理变量，避免在命令行明文输入；该文件应加入 `.gitignore`。
+
+## 测试报告与产物
+- 默认仅控制台输出结果；失败上下文、截图等产物输出到 `internal/site/test-results/`。
+- 如需 HTML 报告：`npx playwright test -c playwright.config.ts --reporter=html`，生成 `playwright-report/`（位于执行命令的目录）。
 
 ## 禁止事项
 - 不自动启动前后端服务。

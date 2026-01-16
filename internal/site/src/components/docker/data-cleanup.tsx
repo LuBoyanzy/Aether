@@ -259,9 +259,15 @@ export default memo(function DockerDataCleanupPanel({ systemId }: { systemId?: s
 				const items = res.items ?? []
 				setRedisDBs(items)
 				const configuredDB = config.redis?.db
-				if (configuredDB !== undefined && items.map(String).includes(String(configuredDB))) {
+				const dbStrings = items.map(String)
+				if (configuredDB !== undefined && dbStrings.includes(String(configuredDB))) {
 					setRedisDB(String(configuredDB))
 				} else if (configuredDB !== undefined) {
+					setRedisDB("")
+				} else if (dbStrings.includes("0")) {
+					// Legacy/backward-compat: backend may omit db when it's 0 (e.g. json omitempty).
+					setRedisDB("0")
+				} else {
 					setRedisDB("")
 				}
 			} catch (err) {

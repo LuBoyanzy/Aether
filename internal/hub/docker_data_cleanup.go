@@ -53,7 +53,7 @@ type dataCleanupRedisStored struct {
 	Host     string   `json:"host"`
 	Port     int      `json:"port"`
 	Username string   `json:"username,omitempty"`
-	DB       int      `json:"db,omitempty"`
+	DB       int      `json:"db"`
 	Patterns []string `json:"patterns,omitempty"`
 }
 
@@ -96,7 +96,7 @@ type dataCleanupRedisPayload struct {
 	Port        int      `json:"port"`
 	Username    string   `json:"username,omitempty"`
 	Password    string   `json:"password,omitempty"`
-	DB          int      `json:"db,omitempty"`
+	DB          int      `json:"db"`
 	Patterns    []string `json:"patterns,omitempty"`
 	HasPassword bool     `json:"hasPassword,omitempty"`
 }
