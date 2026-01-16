@@ -3,7 +3,6 @@
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
-	ActivityIcon,
 	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
@@ -13,6 +12,7 @@ import {
 	SearchIcon,
 	ServerIcon,
 	SettingsIcon,
+	TestTube2 as TestTube2Icon,
 	UserIcon,
 	UsersIcon,
 } from "lucide-react"
@@ -95,7 +95,7 @@ export default function Navbar() {
 							aria-label={t`API Tests`}
 							onMouseEnter={runOnce(() => import("@/components/routes/api-tests"))}
 						>
-							<ActivityIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+							<TestTube2Icon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
