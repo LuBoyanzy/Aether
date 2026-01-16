@@ -31,3 +31,5 @@ local-dev.pids
 Agent.md
 helloagents/
 .tmp
+test-results/
+internal/site/test-results/

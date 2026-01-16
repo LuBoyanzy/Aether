@@ -302,6 +302,8 @@ func (h *Hub) registerCronJobs(_ *core.ServeEvent) error {
 	h.Cron().MustAdd("delete old records", "8 * * * *", h.rm.DeleteOldRecords)
 	// create longer records every 10 minutes
 	h.Cron().MustAdd("create longer records", "*/10 * * * *", h.rm.CreateLongerRecords)
+	// run api tests schedule check every minute
+	h.Cron().MustAdd("api tests schedule", "*/1 * * * *", h.runApiTestScheduleTick)
 	return nil
 }
 
@@ -436,6 +438,14 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	dockerCleanupGroup.GET("/run", h.getDataCleanupRun)
 	dockerCleanupGroup.POST("/retry", h.retryDataCleanupRun)
 	dockerGroup.GET("/audits", h.listDockerAudits)
+	// /api-tests routes
+	apiTestsGroup := apiAuth.Group("/api-tests")
+	apiTestsGroup.GET("/schedule", h.getApiTestScheduleConfig)
+	apiTestsGroup.PUT("/schedule", h.updateApiTestScheduleConfig)
+	apiTestsGroup.POST("/run-case", h.runApiTestCase)
+	apiTestsGroup.POST("/run-collection", h.runApiTestCollection)
+	apiTestsGroup.POST("/run-all", h.runAllApiTests)
+	apiTestsGroup.GET("/runs", h.listApiTestRuns)
 	return nil
 }
 

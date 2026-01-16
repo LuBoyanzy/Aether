@@ -21,6 +21,7 @@ const LoginPage = lazy(() => import("@/components/login/login.tsx"))
 const Home = lazy(() => import("@/components/routes/home.tsx"))
 const Containers = lazy(() => import("@/components/routes/containers.tsx"))
 const AuditLogs = lazy(() => import("@/components/routes/audit-logs.tsx"))
+const ApiTests = lazy(() => import("@/components/routes/api-tests.tsx"))
 const Smart = lazy(() => import("@/components/routes/smart.tsx"))
 const SystemDetail = lazy(() => import("@/components/routes/system.tsx"))
 const CopyToClipboardDialog = lazy(() => import("@/components/copy-to-clipboard.tsx"))
@@ -66,6 +67,8 @@ const App = memo(() => {
 		return <Containers />
 	} else if (page.route === "audit_logs") {
 		return <AuditLogs />
+	} else if (page.route === "api_tests") {
+		return <ApiTests />
 	} else if (page.route === "smart") {
 		return <Smart />
 	} else if (page.route === "settings") {

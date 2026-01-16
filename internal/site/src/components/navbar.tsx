@@ -3,6 +3,7 @@
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
+	ActivityIcon,
 	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
@@ -83,6 +84,23 @@ export default function Navbar() {
 					<TooltipContent>
 						<p>
 							<Trans>Docker</Trans>
+						</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "api_tests")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label={t`API Tests`}
+							onMouseEnter={runOnce(() => import("@/components/routes/api-tests"))}
+						>
+							<ActivityIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>
+							<Trans>API Tests</Trans>
 						</p>
 					</TooltipContent>
 				</Tooltip>

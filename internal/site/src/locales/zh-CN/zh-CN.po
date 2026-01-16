@@ -3696,3 +3696,376 @@ msgstr "您的用户设置已更新。"
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "API Tests"
+msgstr "接口管理"
+
+#: src/components/routes/api-tests.tsx
+msgid "Add"
+msgstr "添加"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert"
+msgstr "告警"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert enabled"
+msgstr "启用告警"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert on recovery"
+msgstr "恢复时告警"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold"
+msgstr "告警阈值"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold must be greater than 0"
+msgstr "告警阈值必须大于 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "All cases"
+msgstr "全部用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "All cases executed"
+msgstr "已执行全部用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "All collections"
+msgstr "全部合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Base URL"
+msgstr "基础 URL"
+
+#: src/components/routes/api-tests.tsx
+msgid "Body"
+msgstr "请求体"
+
+#: src/components/routes/api-tests.tsx
+msgid "Body type"
+msgstr "请求体类型"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case"
+msgstr "用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case deleted"
+msgstr "用例已删除"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case executed"
+msgstr "用例已执行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case name is required"
+msgstr "用例名称为必填"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case saved"
+msgstr "用例已保存"
+
+#: src/components/routes/api-tests.tsx
+msgid "Cases"
+msgstr "用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection"
+msgstr "合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection deleted"
+msgstr "合集已删除"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection executed"
+msgstr "合集已执行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection is required"
+msgstr "合集为必填"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection name is required"
+msgstr "合集名称为必填"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection saved"
+msgstr "合集已保存"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collections"
+msgstr "合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Delete this case?"
+msgstr "删除此用例？"
+
+#: src/components/routes/api-tests.tsx
+msgid "Delete this collection?"
+msgstr "删除此合集？"
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit case"
+msgstr "编辑用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit collection"
+msgstr "编辑合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Enable alerts"
+msgstr "启用告警"
+
+#: src/components/routes/api-tests.tsx
+msgid "Enable schedule"
+msgstr "启用定时"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status"
+msgstr "期望状态码"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status must be greater than 0"
+msgstr "期望状态码必须大于 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete case"
+msgstr "删除用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete collection"
+msgstr "删除合集失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load cases"
+msgstr "加载用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load collections"
+msgstr "加载合集失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load run history"
+msgstr "加载执行历史失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load schedule"
+msgstr "加载计划失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run all cases"
+msgstr "执行全部用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run case"
+msgstr "执行用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run collection"
+msgstr "执行合集失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save case"
+msgstr "保存用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save collection"
+msgstr "保存合集失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save schedule"
+msgstr "保存计划失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to update case"
+msgstr "更新用例失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "Form body"
+msgstr "表单内容"
+
+#: src/components/routes/api-tests.tsx
+msgid "Form body is invalid"
+msgstr "表单内容无效"
+
+#: src/components/routes/api-tests.tsx
+msgid "Headers"
+msgstr "请求头"
+
+#: src/components/routes/api-tests.tsx
+msgid "History"
+msgstr "历史记录"
+
+#: src/components/routes/api-tests.tsx
+msgid "History retention (days)"
+msgstr "历史保留（天）"
+
+#: src/components/routes/api-tests.tsx
+msgid "Interval (minutes)"
+msgstr "间隔（分钟）"
+
+#: src/components/routes/api-tests.tsx
+msgid "Interval must be greater than 0"
+msgstr "间隔必须大于 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "JSON body is invalid"
+msgstr "JSON 内容无效"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Run"
+msgstr "上次运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Status"
+msgstr "上次状态"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last error"
+msgstr "上次错误"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last run"
+msgstr "上次运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Loading schedule..."
+msgstr "正在加载计划..."
+
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API cases"
+msgstr "管理并运行接口用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API tests."
+msgstr "管理并运行接口测试。"
+
+#: src/components/routes/api-tests.tsx
+msgid "Method"
+msgstr "方法"
+
+#: src/components/routes/api-tests.tsx
+msgid "New Case"
+msgstr "新建用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "New Collection"
+msgstr "新建合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "New case"
+msgstr "新建用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "New collection"
+msgstr "新建合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Next run"
+msgstr "下次运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "No cases yet"
+msgstr "暂无用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "No collections yet"
+msgstr "暂无合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "No form fields"
+msgstr "暂无表单字段"
+
+#: src/components/routes/api-tests.tsx
+msgid "No headers"
+msgstr "暂无请求头"
+
+#: src/components/routes/api-tests.tsx
+msgid "No history yet"
+msgstr "暂无历史记录"
+
+#: src/components/routes/api-tests.tsx
+msgid "No params"
+msgstr "暂无参数"
+
+#: src/components/routes/api-tests.tsx
+msgid "Only scheduled cases will run"
+msgstr "仅运行已启用定时的用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "Query params"
+msgstr "查询参数"
+
+#: src/components/routes/api-tests.tsx
+msgid "Request URL is required"
+msgstr "请求 URL 为必填"
+
+#: src/components/routes/api-tests.tsx
+msgid "Retention must be greater than 0"
+msgstr "保留天数必须大于 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run"
+msgstr "运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run All"
+msgstr "全部运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Collection"
+msgstr "运行合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Now"
+msgstr "立即运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule enabled"
+msgstr "启用定时"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes"
+msgstr "定时间隔（分钟）"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes must be greater than 0"
+msgstr "定时间隔必须大于 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule not loaded"
+msgstr "计划未加载"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule saved"
+msgstr "计划已保存"
+
+#: src/components/routes/api-tests.tsx
+msgid "Select body type"
+msgstr "选择请求体类型"
+
+#: src/components/routes/api-tests.tsx
+msgid "Select collection"
+msgstr "选择合集"
+
+#: src/components/routes/api-tests.tsx
+msgid "Select method"
+msgstr "选择方法"
+
+#: src/components/routes/api-tests.tsx
+msgid "Sort order"
+msgstr "排序"
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout (ms)"
+msgstr "超时（毫秒）"
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout must be greater than 0"
+msgstr "超时必须大于 0"
+

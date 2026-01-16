@@ -790,3 +790,114 @@ export interface SystemdServiceDetails {
 	Wants: string[];
 	WantsMountsFor: any[];
 }
+
+export type ApiTestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD"
+export type ApiTestBodyType = "json" | "text" | "form"
+
+export interface ApiTestKeyValue {
+	key: string
+	value: string
+	enabled: boolean
+}
+
+export interface ApiTestCollectionRecord extends RecordModel {
+	name: string
+	description: string
+	base_url: string
+	sort_order: number
+	tags: string[]
+	created: string
+	updated: string
+}
+
+export interface ApiTestCaseRecord extends RecordModel {
+	collection: string
+	name: string
+	method: ApiTestMethod
+	url: string
+	description: string
+	headers: ApiTestKeyValue[]
+	params: ApiTestKeyValue[]
+	body_type: ApiTestBodyType
+	body: string
+	expected_status: number
+	timeout_ms: number
+	schedule_enabled: boolean
+	schedule_minutes: number
+	sort_order: number
+	tags: string[]
+	alert_enabled: boolean
+	alert_threshold: number
+	consecutive_failures: number
+	alert_triggered: boolean
+	last_status?: number
+	last_duration_ms?: number
+	last_run_at?: string
+	last_success?: boolean
+	last_error?: string
+	last_response_snippet?: string
+	created: string
+	updated: string
+}
+
+export interface ApiTestScheduleConfig {
+	id: string
+	enabled: boolean
+	intervalMinutes: number
+	lastRunAt: string
+	nextRunAt: string
+	lastError: string
+	alertEnabled: boolean
+	alertOnRecover: boolean
+	historyRetentionDays: number
+}
+
+export interface ApiTestRunResult {
+	caseId: string
+	collectionId: string
+	name: string
+	status: number
+	durationMs: number
+	success: boolean
+	error: string
+	responseSnippet: string
+	runAt: string
+}
+
+export interface ApiTestCollectionRunSummary {
+	collectionId: string
+	collection: string
+	cases: number
+	success: number
+	failed: number
+	results: ApiTestRunResult[]
+}
+
+export interface ApiTestRunAllSummary {
+	collections: number
+	cases: number
+	success: number
+	failed: number
+	results: ApiTestRunResult[]
+}
+
+export interface ApiTestRunItem {
+	id: string
+	caseId: string
+	collectionId: string
+	status: number
+	durationMs: number
+	success: boolean
+	error: string
+	responseSnippet: string
+	source: "manual" | "schedule"
+	created: string
+}
+
+export interface ApiTestRunList {
+	items: ApiTestRunItem[]
+	page: number
+	perPage: number
+	totalItems: number
+	totalPages: number
+}
