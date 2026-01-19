@@ -1,4 +1,4 @@
-//go:build !(linux && arm)
+//go:build windows || (linux && (amd64 || arm64))
 
 package agent
 
