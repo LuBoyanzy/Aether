@@ -170,7 +170,7 @@ jobs:
         run: bun install --no-save --cwd ./internal/site
 
       - name: Build site
-        run: bun run --cwd ./internal/site build
+        run: bun run --cwd ./internal/site build:ci
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

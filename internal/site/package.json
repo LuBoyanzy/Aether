@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite --host",
 		"build": "lingui extract --overwrite && lingui compile && vite build",
+		"build:ci": "lingui compile && vite build",
 		"preview": "vite preview",
 		"sync": "lingui extract --overwrite && lingui compile",
 		"sync_and_purge": "lingui extract --overwrite --clean && lingui compile",

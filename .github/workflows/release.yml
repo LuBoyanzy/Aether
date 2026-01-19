@@ -24,7 +24,7 @@ jobs:
         run: bun install --no-save --cwd ./internal/site
 
       - name: Build site
-        run: bun run --cwd ./internal/site build
+        run: bun run --cwd ./internal/site build:ci
 
       - name: Set up Go
         uses: actions/setup-go@v5
