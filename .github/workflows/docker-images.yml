@@ -6,77 +6,16 @@ on:
       - "v*"
 
 jobs:
-  build:
+  build_ghcr:
     runs-on: ubuntu-latest
-    # Skip DockerHub matrix entries unless credentials are configured.
-    if: ${{ matrix.registry != 'docker.io' || secrets[matrix.password_secret] != '' }}
     strategy:
       fail-fast: false
       max-parallel: 5
       matrix:
         include:
-          # loboyanzy/aether
-          - image: loboyanzy/aether
-            dockerfile: ./internal/dockerfile_hub
-            registry: docker.io
-            username_secret: DOCKERHUB_USERNAME
-            password_secret: DOCKERHUB_TOKEN
-            tags: |
-              type=raw,value=edge
-              type=raw,value=latest
-              type=semver,pattern={{version}}
-              type=semver,pattern={{major}}.{{minor}}
-              type=semver,pattern={{major}}
-              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
-            
-          # loboyanzy/aether-agent:alpine
-          - image: loboyanzy/aether-agent
-            dockerfile: ./internal/dockerfile_agent_alpine
-            registry: docker.io
-            username_secret: DOCKERHUB_USERNAME
-            password_secret: DOCKERHUB_TOKEN
-            tags: |
-              type=raw,value=alpine
-              type=semver,pattern={{version}}-alpine
-              type=semver,pattern={{major}}.{{minor}}-alpine
-              type=semver,pattern={{major}}-alpine
-
-          # loboyanzy/aether-agent-nvidia
-          - image: loboyanzy/aether-agent-nvidia
-            dockerfile: ./internal/dockerfile_agent_nvidia
-            platforms: linux/amd64
-            registry: docker.io
-            username_secret: DOCKERHUB_USERNAME
-            password_secret: DOCKERHUB_TOKEN
-            tags: |
-              type=raw,value=edge
-              type=raw,value=latest
-              type=semver,pattern={{version}}
-              type=semver,pattern={{major}}.{{minor}}
-              type=semver,pattern={{major}}
-              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
-
-          # loboyanzy/aether-agent-intel
-          - image: loboyanzy/aether-agent-intel
-            dockerfile: ./internal/dockerfile_agent_intel
-            platforms: linux/amd64
-            registry: docker.io
-            username_secret: DOCKERHUB_USERNAME
-            password_secret: DOCKERHUB_TOKEN
-            tags: |
-              type=raw,value=edge
-              type=raw,value=latest
-              type=semver,pattern={{version}}
-              type=semver,pattern={{major}}.{{minor}}
-              type=semver,pattern={{major}}
-              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
-
           # ghcr.io/.../aether
           - image: ghcr.io/luboyanzy/aether
             dockerfile: ./internal/dockerfile_hub
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password_secret: GITHUB_TOKEN
             tags: |
               type=raw,value=edge
               type=raw,value=latest
@@ -88,9 +27,6 @@ jobs:
           # ghcr.io/.../aether-agent
           - image: ghcr.io/luboyanzy/aether-agent
             dockerfile: ./internal/dockerfile_agent
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password_secret: GITHUB_TOKEN
             tags: |
               type=raw,value=edge
               type=raw,value=latest
@@ -103,9 +39,6 @@ jobs:
           - image: ghcr.io/luboyanzy/aether-agent-nvidia
             dockerfile: ./internal/dockerfile_agent_nvidia
             platforms: linux/amd64
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password_secret: GITHUB_TOKEN
             tags: |
               type=raw,value=edge
               type=raw,value=latest
@@ -118,9 +51,6 @@ jobs:
           - image: ghcr.io/luboyanzy/aether-agent-intel
             dockerfile: ./internal/dockerfile_agent_intel
             platforms: linux/amd64
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password_secret: GITHUB_TOKEN
             tags: |
               type=raw,value=edge
               type=raw,value=latest
@@ -132,21 +62,121 @@ jobs:
           # ghcr.io/.../aether-agent:alpine
           - image: ghcr.io/luboyanzy/aether-agent
             dockerfile: ./internal/dockerfile_agent_alpine
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password_secret: GITHUB_TOKEN
             tags: |
               type=raw,value=alpine
               type=semver,pattern={{version}}-alpine
               type=semver,pattern={{major}}.{{minor}}-alpine
               type=semver,pattern={{major}}-alpine
 
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --no-save --cwd ./internal/site
+
+      - name: Build site
+        run: bun run --cwd ./internal/site build:ci
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image }}
+          tags: ${{ matrix.tags }}
+
+      # https://github.com/docker/login-action
+      - name: Login to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: ${{ matrix.dockerfile }}
+          platforms: ${{ matrix.platforms || 'linux/amd64,linux/arm64,linux/arm/v7' }}
+          push: ${{ github.ref_type == 'tag' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+
+  build_dockerhub:
+    # 没有配置 DockerHub 凭据时，整个 job 直接跳过（只推 GHCR）。
+    if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        include:
+          # loboyanzy/aether
+          - image: loboyanzy/aether
+            dockerfile: ./internal/dockerfile_hub
+            tags: |
+              type=raw,value=edge
+              type=raw,value=latest
+              type=semver,pattern={{version}}
+              type=semver,pattern={{major}}.{{minor}}
+              type=semver,pattern={{major}}
+              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
+
+          # loboyanzy/aether-agent:alpine
+          - image: loboyanzy/aether-agent
+            dockerfile: ./internal/dockerfile_agent_alpine
+            tags: |
+              type=raw,value=alpine
+              type=semver,pattern={{version}}-alpine
+              type=semver,pattern={{major}}.{{minor}}-alpine
+              type=semver,pattern={{major}}-alpine
+
+          # loboyanzy/aether-agent-nvidia
+          - image: loboyanzy/aether-agent-nvidia
+            dockerfile: ./internal/dockerfile_agent_nvidia
+            platforms: linux/amd64
+            tags: |
+              type=raw,value=edge
+              type=raw,value=latest
+              type=semver,pattern={{version}}
+              type=semver,pattern={{major}}.{{minor}}
+              type=semver,pattern={{major}}
+              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
+
+          # loboyanzy/aether-agent-intel
+          - image: loboyanzy/aether-agent-intel
+            dockerfile: ./internal/dockerfile_agent_intel
+            platforms: linux/amd64
+            tags: |
+              type=raw,value=edge
+              type=raw,value=latest
+              type=semver,pattern={{version}}
+              type=semver,pattern={{major}}.{{minor}}
+              type=semver,pattern={{major}}
+              type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
+
           # loboyanzy/aether-agent (keep at bottom so it gets built after :alpine)
           - image: loboyanzy/aether-agent
             dockerfile: ./internal/dockerfile_agent
-            registry: docker.io
-            username_secret: DOCKERHUB_USERNAME
-            password_secret: DOCKERHUB_TOKEN
             tags: |
               type=raw,value=edge
               type=raw,value=latest
@@ -185,26 +215,21 @@ jobs:
           images: ${{ matrix.image }}
           tags: ${{ matrix.tags }}
 
-      # https://github.com/docker/login-action
       - name: Login to Docker Hub
-        env:
-          password_secret_exists: ${{ secrets[matrix.password_secret] != '' && 'true' || 'false' }}
-        if: github.event_name != 'pull_request' && env.password_secret_exists == 'true'
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
-          username: ${{ matrix.username || secrets[matrix.username_secret] }}
-          password: ${{ secrets[matrix.password_secret] }}
-          registry: ${{ matrix.registry }}
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platforms || 'linux/amd64,linux/arm64,linux/arm/v7' }}
-          push: ${{ github.ref_type == 'tag' && secrets[matrix.password_secret] != '' }}
+          push: ${{ github.ref_type == 'tag' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: ${{ steps.metadata.outputs.tags }}
