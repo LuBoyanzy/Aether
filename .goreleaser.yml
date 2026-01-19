@@ -232,7 +232,6 @@ winget:
     release_notes_url: "https://github.com/LuBoyanzy/Aether/releases/tag/v{{ .Version }}"
     publisher_support_url: "https://github.com/LuBoyanzy/Aether/issues"
     short_description: "Agent for Aether，轻量服务器监控平台。"
-    skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
     description: |
       Aether 是轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
       具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
