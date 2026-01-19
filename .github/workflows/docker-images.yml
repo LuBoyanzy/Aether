@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Skip DockerHub matrix entries unless credentials are configured.
+    if: ${{ matrix.registry != 'docker.io' || secrets[matrix.password_secret] != '' }}
     strategy:
       fail-fast: false
       max-parallel: 5
@@ -203,5 +205,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platforms || 'linux/amd64,linux/arm64,linux/arm/v7' }}
           push: ${{ github.ref_type == 'tag' && secrets[matrix.password_secret] != '' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
