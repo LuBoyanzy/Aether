@@ -7,7 +7,7 @@ body:
     id: component
     attributes:
       label: Component
-      description: Which part of Beszel is this about?
+      description: Which part of Aether is this about?
       options:
         - Hub
         - Agent
@@ -19,14 +19,14 @@ body:
       value: |
         ### Thanks for taking the time to fill out this bug report!
 
-        - For more general support, please [start a support thread](https://github.com/henrygd/beszel/discussions/new?category=support).
-        - To request a change or feature, use the [feature request form](https://github.com/henrygd/beszel/issues/new?template=feature_request.yml).
+        - For more general support, please [start a support thread](https://github.com/LuBoyanzy/Aether/discussions).
+        - To request a change or feature, use the [feature request form](https://github.com/LuBoyanzy/Aether/issues/new?template=feature_request.yml).
         - Please do not submit bugs that are specific to ZFS. We plan to add integration with ZFS utilities in the near future.
 
         ### Before submitting a bug report:
 
-        - Check the [common issues guide](https://beszel.dev/guide/common-issues).
-        - Search existing [issues](https://github.com/henrygd/beszel/issues) and [discussions](https://github.com/henrygd/beszel/discussions) (including closed).
+        - Check the [guides](https://github.com/LuBoyanzy/Aether/tree/main/supplemental/guides).
+        - Search existing [issues](https://github.com/LuBoyanzy/Aether/issues) and [discussions](https://github.com/LuBoyanzy/Aether/discussions) (including closed).
   - type: textarea
     id: description
     attributes:
@@ -97,8 +97,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: Beszel version
-      placeholder: 0.9.1
+      label: Aether version
+      placeholder: 1.0.0
     validations:
       required: true
   - type: dropdown

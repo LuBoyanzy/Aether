@@ -70,7 +70,7 @@ jobs:
               type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
 
           # ghcr.io/.../aether
-          - image: ghcr.io/${{ github.repository }}/aether
+          - image: ghcr.io/luboyanzy/aether
             dockerfile: ./internal/dockerfile_hub
             registry: ghcr.io
             username: ${{ github.actor }}
@@ -84,7 +84,7 @@ jobs:
               type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
 
           # ghcr.io/.../aether-agent
-          - image: ghcr.io/${{ github.repository }}/aether-agent
+          - image: ghcr.io/luboyanzy/aether-agent
             dockerfile: ./internal/dockerfile_agent
             registry: ghcr.io
             username: ${{ github.actor }}
@@ -98,7 +98,7 @@ jobs:
               type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
 
           # ghcr.io/.../aether-agent-nvidia
-          - image: ghcr.io/${{ github.repository }}/aether-agent-nvidia
+          - image: ghcr.io/luboyanzy/aether-agent-nvidia
             dockerfile: ./internal/dockerfile_agent_nvidia
             platforms: linux/amd64
             registry: ghcr.io
@@ -113,7 +113,7 @@ jobs:
               type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
 
           # ghcr.io/.../aether-agent-intel
-          - image: ghcr.io/${{ github.repository }}/aether-agent-intel
+          - image: ghcr.io/luboyanzy/aether-agent-intel
             dockerfile: ./internal/dockerfile_agent_intel
             platforms: linux/amd64
             registry: ghcr.io
@@ -128,7 +128,7 @@ jobs:
               type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
 
           # ghcr.io/.../aether-agent:alpine
-          - image: ghcr.io/${{ github.repository }}/aether-agent
+          - image: ghcr.io/luboyanzy/aether-agent
             dockerfile: ./internal/dockerfile_agent_alpine
             registry: ghcr.io
             username: ${{ github.actor }}

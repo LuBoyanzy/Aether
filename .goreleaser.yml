@@ -5,7 +5,6 @@ project_name: aether
 before:
   hooks:
     - go mod tidy
-    - go generate -run fetchsmartctl ./agent
 
 builds:
   - id: aether
@@ -26,6 +25,8 @@ builds:
       - goos: windows
         goarch: arm64
       - goos: windows
+        goarch: arm
+      - goos: darwin
         goarch: arm
       - goos: freebsd
         goarch: arm64
@@ -71,10 +72,44 @@ builds:
         gomips: hardfloat
       - goos: windows
         goarch: arm
+      - goos: windows
+        goarch: mips64
+      - goos: windows
+        goarch: mipsle
+      - goos: windows
+        goarch: mips
+      - goos: windows
+        goarch: ppc64le
       - goos: darwin
         goarch: riscv64
+      - goos: darwin
+        goarch: arm
+      - goos: darwin
+        goarch: mips64
+      - goos: darwin
+        goarch: mipsle
+      - goos: darwin
+        goarch: mips
+      - goos: darwin
+        goarch: ppc64le
       - goos: windows
         goarch: riscv64
+      - goos: freebsd
+        goarch: mips64
+      - goos: freebsd
+        goarch: mipsle
+      - goos: freebsd
+        goarch: mips
+      - goos: freebsd
+        goarch: ppc64le
+      - goos: openbsd
+        goarch: mips64
+      - goos: openbsd
+        goarch: mipsle
+      - goos: openbsd
+        goarch: mips
+      - goos: openbsd
+        goarch: ppc64le
 
 archives:
   - id: aether-agent
@@ -101,12 +136,16 @@ archives:
       - goos: windows
         formats: [zip]
 
+checksum:
+  name_template: "aether_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
 nfpms:
   - id: aether-agent
     package_name: aether-agent
     description: |-
       Agent for Aether
-      Aether 是基于 Beszel 二次开发的轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
+      Aether 是轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
       具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
     maintainer: loboyanzy
     section: net
@@ -145,9 +184,10 @@ scoops:
       owner: LuBoyanzy
       name: aether-scoops
     homepage: "https://github.com/LuBoyanzy/Aether"
-    description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
+    description: "Agent for Aether，轻量服务器监控平台。"
     license: MIT
-    skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
+    # The target Scoop repo isn't guaranteed to exist; keep releases unblocked by default.
+    skip_upload: true
 
 
 brews:
@@ -157,9 +197,10 @@ brews:
       owner: LuBoyanzy
       name: homebrew-aether
     homepage: "https://github.com/LuBoyanzy/Aether"
-    description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
+    description: "Agent for Aether，轻量服务器监控平台。"
     license: MIT
-    skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
+    # The target Homebrew tap repo isn't guaranteed to exist; keep releases unblocked by default.
+    skip_upload: true
     extra_install: |
       (bin/"aether-agent-launcher").write <<~EOS
         #!/bin/bash
@@ -190,10 +231,10 @@ winget:
     homepage: "https://github.com/LuBoyanzy/Aether"
     release_notes_url: "https://github.com/LuBoyanzy/Aether/releases/tag/v{{ .Version }}"
     publisher_support_url: "https://github.com/LuBoyanzy/Aether/issues"
-    short_description: "Agent for Aether，基于 Beszel 的轻量服务器监控平台。"
+    short_description: "Agent for Aether，轻量服务器监控平台。"
     skip_upload: '{{ if eq (tolower .Env.IS_FORK) "true" }}true{{ else }}auto{{ end }}'
     description: |
-      Aether 是基于 Beszel 二次开发的轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
+      Aether 是轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
       具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
     tags:
       - homelab
@@ -211,9 +252,11 @@ winget:
       #     owner: microsoft
       #     name: winget-pkgs
       #     branch: master
+    # Requires a separate repo + token; keep releases unblocked by default.
+    skip_upload: true
 
 release:
-  draft: true
+  draft: false
 
 changelog:
   disable: true

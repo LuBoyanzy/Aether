@@ -1,13 +1,14 @@
 # Node.js dependencies
 node_modules
-internalsite/node_modules
+internal/site/node_modules
 
 # Go build artifacts and binaries
 build
 /dist
 *.exe
-beszel-agent
-beszel_data*
+aether
+aether-agent
+aether_data*
 pb_data
 data
 temp
@@ -50,6 +51,6 @@ agent/lhm/bin
 .codex/
 .github/
 .vscode/
-.helloagents/
+helloagents/
 tests/
 test/

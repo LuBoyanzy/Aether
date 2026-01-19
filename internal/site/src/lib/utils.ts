@@ -10,7 +10,7 @@ import { HourFormat, MeterState, Unit } from "./enums"
 import { $copyContent, $userSettings } from "./stores"
 
 export const BRAND_NAME = "Aether"
-export const BRAND_BASELINE = "Aether · 基于 Beszel 开发"
+export const BRAND_BASELINE = "Aether · 服务器与容器监控平台"
 
 export function showDocsUnavailable() {
 	toast({

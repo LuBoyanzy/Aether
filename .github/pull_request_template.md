@@ -4,7 +4,7 @@ A short description of the pull request changes should go here and the sections 
 
 ## 📖 Documentation
 
-Add a link to the PR for [documentation](https://github.com/henrygd/beszel-docs) changes.
+If this PR changes behavior or UX, please update the relevant docs in this repository (e.g. `readme.md` or `supplemental/guides/`).
 
 ## 🪵 Changelog
 

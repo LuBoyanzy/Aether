@@ -4,8 +4,8 @@ body:
       value: |
         ### Before opening a discussion:
 
-        - Check the [common issues guide](https://beszel.dev/guide/common-issues).
-        - Search existing [issues](https://github.com/henrygd/beszel/issues) and [discussions](https://github.com/henrygd/beszel/discussions) (including closed).
+        - Check the [guides](https://github.com/LuBoyanzy/Aether/tree/main/supplemental/guides).
+        - Search existing [issues](https://github.com/LuBoyanzy/Aether/issues) and [discussions](https://github.com/LuBoyanzy/Aether/discussions) (including closed).
 
   - type: textarea
     id: description
@@ -24,8 +24,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: Beszel version
-      placeholder: 0.9.1
+      label: Aether version
+      placeholder: 1.0.0
     validations:
       required: true
   - type: dropdown

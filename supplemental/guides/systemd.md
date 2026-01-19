@@ -6,12 +6,12 @@ This is useful if you want to run the hub or agent in the background continuousl
 
 There are two scripts, one for the hub and one for the agent. You can run either one, or both.
 
-The install script creates a dedicated user for the service (`aether`), downloads the latest release from the legacy Beszel source, and installs the service.
+The install script creates a dedicated user for the service (`aether`), downloads the latest release from this repository's GitHub Releases, and installs the service.
 
 If you need to edit the service -- for instance, to change an environment variable -- you can edit the file(s) in `/etc/systemd/system/`. Then reload the systemd daemon and restart the service.
 
 > [!NOTE]
-> You need system administrator privileges to run the install script. If you encounter a problem, please open an issue in this repository (legacy Beszel issue links are deprecated).
+> You need system administrator privileges to run the install script. If you encounter a problem, please open an issue in this repository.
 
 ### Hub
 

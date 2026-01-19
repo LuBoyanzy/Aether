@@ -2,7 +2,7 @@
   <img src="internal/site/public/static/logo.svg" alt="Aether" width="140" />
 </p>
 <h1 align="center">Aether</h1>
-<p align="center">基于 Beszel 二次开发的服务器与容器监控平台</p>
+<p align="center">服务器与容器监控平台</p>
 
 <p align="center">
   <strong>Top-Rated Web-based Linux Server Monitoring</strong> · <strong>New-Gen Ops Panel</strong>
@@ -25,7 +25,7 @@
   English · 中文(简体) · 日本語 · Português (Brasil) · العربية · Deutsch · Español · français · 한국어 · Bahasa Indonesia · 中文(繁體) · Türkçe · Русский · Bahasa Melayu
 </p>
 
-> Aether 继承 Beszel 的核心能力并进行品牌与功能增强；镜像与安装脚本全部指向本仓库的发布版本。
+> Aether 面向自托管场景，镜像与安装脚本全部指向本仓库的发布版本。
 
 ## 特性速览
 
@@ -102,11 +102,6 @@ curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/sc
 
 > 若端口冲突，请先释放 19090/19091 或调整上述变量。
 
-## 品牌与致谢
-
-- Aether 基于 Beszel 开发，向原作者 [henrygd/beszel](https://github.com/henrygd/beszel) 致谢。
-- 所有新特性、修复与品牌素材（如 `internal/site/public/static/logo.svg`）均以 Aether 名义发布。
-
 ## 许可
 
-沿用原项目许可证，遵循本仓库附带的开源授权文件。
+MIT License，详见本仓库 `LICENSE`。

@@ -71,7 +71,7 @@ func TestUserAlertsApi(t *testing.T) {
 		// 	Method:          http.MethodGet,
 		// 	URL:             "/api/aether/user-alerts",
 		// 	ExpectedStatus:  200,
-		// 	ExpectedContent: []string{"<html ", "globalThis.BESZEL"},
+		// 	ExpectedContent: []string{"<html ", "Aether"},
 		// 	TestAppFactory:  testAppFactory,
 		// },
 		{

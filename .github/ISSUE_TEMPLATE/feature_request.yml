@@ -7,7 +7,7 @@ body:
     id: component
     attributes:
       label: Component
-      description: Which part of Beszel is this about?
+      description: Which part of Aether is this about?
       options:
         - Hub
         - Agent
@@ -16,7 +16,7 @@ body:
       required: true
   - type: markdown
     attributes:
-      value: Before submitting, please search existing [issues](https://github.com/henrygd/beszel/issues) and [discussions](https://github.com/henrygd/beszel/discussions) (including closed).
+      value: Before submitting, please search existing [issues](https://github.com/LuBoyanzy/Aether/issues) and [discussions](https://github.com/LuBoyanzy/Aether/discussions) (including closed).
   - type: textarea
     attributes:
       label: Describe the feature you would like to see
