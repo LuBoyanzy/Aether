@@ -11,12 +11,21 @@ import { DropdownMenuContent, DropdownMenuItem } from "./ui/dropdown-menu"
  * @param path - The path to the script (e.g. "/brew").
  * @returns The URL for the script.
  */
-const getScriptUrl = (path: string = "") => {
+const getShellScriptUrl = (path: string = "") => {
 	const suffix = path === "/brew" ? "-brew" : ""
 	return `https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent${suffix}.sh`
 }
 
-export function copyDockerCompose(port = "45876", publicKey: string, token: string) {
+const getPowerShellScriptUrl = () => {
+	return `https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent.ps1`
+}
+
+const getUnixSocketDir = (listen: string) => listen.split("/").slice(0, -1).join("/") || "/"
+
+export function copyDockerCompose(listen = "45876", publicKey: string, token: string) {
+	const unixSocketDir = listen.startsWith("/") ? getUnixSocketDir(listen) : ""
+	const unixSocketVolume = unixSocketDir && unixSocketDir !== "/" ? `\n      # Required when LISTEN is a unix socket path\n      - ${unixSocketDir}:${unixSocketDir}` : ""
+
 	copyToClipboard(`services:
   aether-agent:
     image: loboyanzy/aether-agent
@@ -25,28 +34,31 @@ export function copyDockerCompose(port = "45876", publicKey: string, token: stri
     network_mode: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./aether_agent_data:/var/lib/aether-agent
+      - ./aether_agent_data:/var/lib/aether-agent${unixSocketVolume}
       # monitor other disks / partitions by mounting a folder in /extra-filesystems
       # - /mnt/disk/.aether:/extra-filesystems/sda1:ro
     environment:
-      LISTEN: ${port}
+      LISTEN: '${listen}'
       KEY: '${publicKey}'
-      TOKEN: ${token}
-      HUB_URL: ${getHubURL()}`)
+      TOKEN: '${token}'
+      HUB_URL: '${getHubURL()}'`)
 }
 
-export function copyDockerRun(port = "45876", publicKey: string, token: string) {
+export function copyDockerRun(listen = "45876", publicKey: string, token: string) {
+	const unixSocketDir = listen.startsWith("/") ? getUnixSocketDir(listen) : ""
+	const unixSocketMount = unixSocketDir && unixSocketDir !== "/" ? ` -v ${unixSocketDir}:${unixSocketDir}` : ""
+
 	copyToClipboard(
-		`docker run -d --name aether-agent --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v ./aether_agent_data:/var/lib/aether-agent -e KEY="${publicKey}" -e LISTEN=${port} -e TOKEN="${token}" -e HUB_URL="${getHubURL()}" loboyanzy/aether-agent`
+		`docker run -d --name aether-agent --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v ./aether_agent_data:/var/lib/aether-agent${unixSocketMount} -e KEY="${publicKey}" -e LISTEN="${listen}" -e TOKEN="${token}" -e HUB_URL="${getHubURL()}" loboyanzy/aether-agent`
 	)
 }
 
 export function copyLinuxCommand(port = "45876", publicKey: string, token: string, brew = false) {
-	let cmd = `curl -sL ${getScriptUrl(
+	let cmd = `curl -sL ${getShellScriptUrl(
 		brew ? "/brew" : ""
 	)} -o /tmp/install-agent.sh && chmod +x /tmp/install-agent.sh && /tmp/install-agent.sh -p ${port} -k "${publicKey}" -t "${token}" -url "${getHubURL()}"`
-	// brew script does not support --china-mirrors
-	if (!brew && (i18n.locale + navigator.language).includes("zh-CN")) {
+	// Default to built-in mirror for zh-CN; the script decides how to apply it.
+	if ((i18n.locale + navigator.language).includes("zh-CN")) {
 		cmd += ` --china-mirrors`
 	}
 	copyToClipboard(cmd)
@@ -54,7 +66,7 @@ export function copyLinuxCommand(port = "45876", publicKey: string, token: strin
 
 export function copyWindowsCommand(port = "45876", publicKey: string, token: string) {
 	copyToClipboard(
-		`& iwr -useb ${getScriptUrl()} -OutFile "$env:TEMP\\install-agent.ps1"; & Powershell -ExecutionPolicy Bypass -File "$env:TEMP\\install-agent.ps1" -Key "${publicKey}" -Port ${port} -Token "${token}" -Url "${getHubURL()}"`
+		`& iwr -useb ${getPowerShellScriptUrl()} -OutFile "$env:TEMP\\install-agent.ps1"; & PowerShell -ExecutionPolicy Bypass -File "$env:TEMP\\install-agent.ps1" -Key "${publicKey}" -Port ${port} -Token "${token}" -Url "${getHubURL()}"`
 	)
 }
 

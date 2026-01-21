@@ -1,0 +1,29 @@
+[Unit]
+Description=Aether Hub Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment="HTTP=0.0.0.0:19090"
+# 可在 /etc/aether.conf 中覆盖 HTTP/APP_URL 等变量。
+EnvironmentFile=/etc/aether.conf
+ExecStart=/usr/bin/aether serve --http=${HTTP} --dir=%S/aether
+User=aether
+Restart=on-failure
+StateDirectory=aether
+WorkingDirectory=%S/aether
+
+# Security/sandboxing settings
+KeyringMode=private
+LockPersonality=yes
+ProtectClock=yes
+ProtectHome=read-only
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectSystem=strict
+RemoveIPC=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
+

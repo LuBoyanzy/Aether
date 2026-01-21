@@ -123,6 +123,12 @@ aether_agent_prestart()
         echo WARNING: missing "${aether_agent_env_file}" env file. Start aborted.
         exit 1
     fi
+
+    # Load env file and export variables so the daemon'ed process inherits them.
+    # shellcheck disable=SC1090
+    set -a
+    . "${aether_agent_env_file}"
+    set +a
 }
 
 aether_agent_start()
@@ -234,6 +240,8 @@ case "$1" in
   printf "  --auto-update [VALUE] : Control automatic daily updates\n"
   printf "                          VALUE can be true (enable) or false (disable). If not specified, will prompt.\n"
   printf "  --mirror [URL]        : (Optional) Use a custom GitHub proxy URL\n"
+  printf "  --china-mirrors       : Use built-in China mirror (gh.aether.dev)\n"
+  printf "  --china-mirrors [URL] : Use a custom GitHub proxy URL (same as --mirror)\n"
   printf "  -h, --help            : Display this help message\n"
   exit 0
   ;;
@@ -292,24 +300,47 @@ while [ $# -gt 0 ]; do
     UNINSTALL=true
     ;;
   --mirror* | --china-mirrors*)
-    # Check if there's a value after the = sign
-    if echo "$1" | grep -q "="; then
-      # Extract the value after =
-      CUSTOM_PROXY=$(echo "$1" | cut -d'=' -f2)
-      if [ -n "$CUSTOM_PROXY" ]; then
-        GITHUB_PROXY_URL="$CUSTOM_PROXY"
-        GITHUB_URL="$(ensure_trailing_slash "$CUSTOM_PROXY")https://github.com"
+    case "$1" in
+    --china-mirrors | --china-mirrors=*)
+      # For --china-mirrors with no URL, default to gh.aether.dev (domain replacement mirror).
+      if echo "$1" | grep -q "="; then
+        CUSTOM_PROXY=$(echo "$1" | cut -d'=' -f2)
+        if [ -n "$CUSTOM_PROXY" ]; then
+          GITHUB_PROXY_URL="$CUSTOM_PROXY"
+          GITHUB_URL="$(ensure_trailing_slash "$CUSTOM_PROXY")https://github.com"
+        else
+          GITHUB_PROXY_URL="https://gh.aether.dev"
+          GITHUB_URL="https://gh.aether.dev"
+        fi
+      elif [ "$2" != "" ] && ! echo "$2" | grep -q '^-'; then
+        # Custom proxy URL provided as next argument (prefix-style, same behavior as --mirror).
+        GITHUB_PROXY_URL="$2"
+        GITHUB_URL="$(ensure_trailing_slash "$2")https://github.com"
+        shift
+      else
+        GITHUB_PROXY_URL="https://gh.aether.dev"
+        GITHUB_URL="https://gh.aether.dev"
+      fi
+      ;;
+    *)
+      # --mirror: expects a prefix-style proxy URL like https://ghproxy.com/
+      if echo "$1" | grep -q "="; then
+        CUSTOM_PROXY=$(echo "$1" | cut -d'=' -f2)
+        if [ -n "$CUSTOM_PROXY" ]; then
+          GITHUB_PROXY_URL="$CUSTOM_PROXY"
+          GITHUB_URL="$(ensure_trailing_slash "$CUSTOM_PROXY")https://github.com"
+        else
+          echo "No proxy URL provided; using default GitHub"
+        fi
+      elif [ "$2" != "" ] && ! echo "$2" | grep -q '^-'; then
+        GITHUB_PROXY_URL="$2"
+        GITHUB_URL="$(ensure_trailing_slash "$2")https://github.com"
+        shift
       else
         echo "No proxy URL provided; using default GitHub"
       fi
-    elif [ "$2" != "" ] && ! echo "$2" | grep -q '^-'; then
-      # use custom proxy URL provided as next argument
-      GITHUB_PROXY_URL="$2"
-      GITHUB_URL="$(ensure_trailing_slash "$2")https://github.com"
-      shift
-    else
-      echo "No proxy URL provided; using default GitHub"
-    fi
+      ;;
+    esac
     ;;
   --auto-update*)
     # Check if there's a value after the = sign
@@ -404,7 +435,7 @@ if [ "$UNINSTALL" = true ]; then
 
     # Remove log files
     echo "Removing log files..."
-    rm -f /var/log/aether-agent.log
+    rm -f /var/log/aether_agent.log
 
     # Remove env file and directories
     echo "Removing environment configuration file..."
@@ -650,7 +681,13 @@ rm -rf "$TEMP_DIR"
 
 # Make sure /etc/machine-id exists for persistent fingerprint
 if [ ! -f /etc/machine-id ]; then
-  cat /proc/sys/kernel/random/uuid | tr -d '-' > /etc/machine-id
+  if [ -r /proc/sys/kernel/random/uuid ]; then
+    cat /proc/sys/kernel/random/uuid | tr -d '-' > /etc/machine-id
+  elif command -v uuidgen >/dev/null 2>&1; then
+    uuidgen | tr -d '-' > /etc/machine-id
+  else
+    echo "Warning: Could not create /etc/machine-id (no /proc uuid and no uuidgen found)."
+  fi
 fi
 
 # Check for NVIDIA GPUs and grant device permissions for systemd service
@@ -817,10 +854,10 @@ elif is_freebsd; then
   # Create environment configuration file with proper permissions
   echo "Creating environment configuration file..."
   cat >"$AGENT_DIR/env" <<EOF
-LISTEN=$PORT
+LISTEN="$PORT"
 KEY="$KEY"
-TOKEN=$TOKEN
-HUB_URL=$HUB_URL
+TOKEN="$TOKEN"
+HUB_URL="$HUB_URL"
 EOF
   chmod 640 "$AGENT_DIR/env"
   chown root:aether "$AGENT_DIR/env"

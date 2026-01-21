@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"aether"
@@ -26,6 +27,16 @@ func main() {
 		}
 		fmt.Print("ok")
 		return
+	}
+
+	// 允许“直接运行 ./aether”时自动读取同目录 env 文件。
+	// systemd 模式下 EnvironmentFile 已负责注入环境变量；这里不会覆盖非空的已存在变量。
+	if exe, err := os.Executable(); err == nil {
+		if err := loadEnvFileFromDir(filepath.Dir(exe)); err != nil {
+			log.Fatal("Failed to load env file: ", err)
+		}
+	} else {
+		log.Fatal("Failed to resolve executable path: ", err)
 	}
 
 	baseApp := getBaseApp()

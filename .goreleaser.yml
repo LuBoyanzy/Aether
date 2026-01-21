@@ -5,6 +5,9 @@ project_name: aether
 before:
   hooks:
     - go mod tidy
+    # Hub 在编译时通过 go:embed 读取 internal/site/dist；该目录为构建产物且不入库。
+    # 为避免发布时缺失/陈旧的前端资源，发布流程需先构建 Web UI。
+    - make build-web-ui
 
 builds:
   - id: aether
@@ -176,6 +179,33 @@ nfpms:
         # Currently broken due to a bug in goreleaser
         # https://github.com/goreleaser/goreleaser/issues/5487
         #config: ./supplemental/debian/config.sh
+
+  - id: aether
+    package_name: aether
+    description: |-
+      Hub for Aether
+      Aether 是轻量服务器监控平台，包含 Docker 统计、历史数据与告警。
+      具备友好 Web 界面、开箱即用的配置，并支持多用户、OAuth 与 API 访问。
+    maintainer: loboyanzy
+    section: net
+    ids:
+      - aether
+    formats:
+      - deb
+    contents:
+      - src: ./supplemental/debian/aether.service
+        dst: lib/systemd/system/aether.service
+        packager: deb
+      - src: ./supplemental/debian/copyright
+        dst: usr/share/doc/aether/copyright
+        packager: deb
+    scripts:
+      postinstall: ./supplemental/debian/aether-postinstall.sh
+      preremove: ./supplemental/debian/aether-prerm.sh
+      postremove: ./supplemental/debian/aether-postrm.sh
+    deb:
+      predepends:
+        - adduser
 
 scoops:
   - ids: [aether-agent]

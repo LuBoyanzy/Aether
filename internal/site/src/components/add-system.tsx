@@ -255,8 +255,7 @@ export const SystemDialog = ({ setOpen, system }: { setOpen: (open: boolean) => 
 									},
 									{
 										text: t({ message: "Windows command", context: "Button to copy install command" }),
-										onClick: async () =>
-											copyWindowsCommand(isUnixSocket ? hostValue : port.current?.value, publicKey, token),
+										onClick: async () => copyWindowsCommand(port.current?.value || "45876", publicKey, token),
 										icons: [WindowsIcon],
 									},
 									{

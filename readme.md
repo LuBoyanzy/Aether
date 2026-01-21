@@ -81,9 +81,11 @@ services:
 ```
 
 启动后访问：
+
 - `http://localhost:19090`
 
 说明：
+
 - `0.0.0.0` 是监听地址，不是浏览器可访问的目标地址；浏览器请使用 `localhost/127.0.0.1` 或服务器真实 IP。
 - Agent 的 `HUB_URL` 必须从 Agent 所在机器可访问到 Hub（例如 `http://<hub所在机器IP>:19090`）。
 
@@ -94,32 +96,51 @@ services:
 下载入口：`https://github.com/LuBoyanzy/Aether/releases`
 
 Hub（Linux/macOS/Windows）示例：
+
 ```bash
 aether serve --http=0.0.0.0:19090
 ```
 
 Windows 示例（在 `cmd.exe` 或 PowerShell 里运行）：
+
 ```bash
 aether.exe serve --http=0.0.0.0:19090
 ```
 
 ### 方式 2：安装脚本（推荐）
 
-Hub（Linux/macOS/FreeBSD）：
+Hub（Linux/FreeBSD）：
+
 ```bash
 curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-hub.sh \
   -o install-hub.sh && chmod +x install-hub.sh
 ./install-hub.sh
 ```
 
-Agent（Linux/macOS/FreeBSD）：
+Agent（Linux/FreeBSD）：
+
 ```bash
 curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent.sh \
   -o install-agent.sh && chmod +x install-agent.sh
 ./install-agent.sh -k "ssh-ed25519 ...你的公钥..." -t "<你的token>" -url "http://<hub地址>:19090"
 ```
 
+提示：
+
+- 网络受限环境可追加 `--china-mirrors`（默认使用 `gh.aether.dev`）或 `--mirror <URL>` 指定自定义代理
+
+macOS Agent（LaunchAgent）：
+
+```bash
+curl -sL https://raw.githubusercontent.com/LuBoyanzy/Aether/main/supplemental/scripts/install-agent-brew.sh \
+  -o install-agent-brew.sh && chmod +x install-agent-brew.sh
+./install-agent-brew.sh -k "ssh-ed25519 ...你的公钥..." -t "<你的token>" -url "http://<hub地址>:19090"
+```
+
+说明：该脚本会安装并加载 LaunchAgent（默认日志：`~/.cache/aether/aether-agent.log`）。
+
 Windows Agent：
+
 - `supplemental/scripts/install-agent.ps1`
 
 ### 自更新
@@ -141,9 +162,12 @@ Windows Agent：
 ### 2) GitHub Releases（二进制/安装包）
 
 Releases 会产出（以实际发布页为准）：
+
 - Hub：`aether_<os>_<arch>.tar.gz`（Windows 为 `.zip`）
 - Agent：`aether-agent_<os>_<arch>.tar.gz`（Windows 为 `.zip`）
-- Linux `deb`：`aether-agent_<version>_linux_<arch>.deb`
+- Linux `deb`：
+  - Hub：`aether_<version>_linux_<arch>.deb`
+  - Agent：`aether-agent_<version>_linux_<arch>.deb`
 - 校验：`aether_<version>_checksums.txt`
 
 ## 配置要点
@@ -159,28 +183,28 @@ Releases 会产出（以实际发布页为准）：
 ### 1) Windows 双击 `aether.exe` 弹窗 “This is a command line tool”
 
 这是预期行为：请在 `cmd.exe` 或 PowerShell 中运行，例如：
+
 ```bash
 aether.exe serve --http=0.0.0.0:19090
 ```
 
-### 2) 我监听了 `0.0.0.0:19090`，浏览器为什么不能访问 `http://0.0.0.0:19090`？
-
-`0.0.0.0` 表示“监听所有网卡”，不是可路由的访问地址。请用：
-- 本机：`http://localhost:19090`
-- 局域网：`http://<服务器IP>:19090`（并确保防火墙放行该端口）
-
 ## 本地开发
 
-1) 启动前端（默认 19091，可改 `PORT`）：
-`PORT=19091 make dev-server`
+1. 启动前端（默认 19091，可改 `PORT`）：
+   `PORT=19091 make dev-server`
 
-2) 启动 Hub（默认 19090）：
-`APP_URL=http://localhost:19090 make dev-hub`
+2. 启动 Hub（默认 19090）：
+   `APP_URL=http://localhost:19090 make dev-hub`
 
-3) 启动 Agent（示例参数请替换）：
-`KEY="ssh-ed25519 xxx" TOKEN="xxx" HUB_URL="http://localhost:19090" make dev-agent`
+3. 启动 Agent（示例参数请替换）：
+   `KEY="ssh-ed25519 xxx" TOKEN="xxx" HUB_URL="http://localhost:19090" make dev-agent`
 
 > 若端口冲突，请先释放 19090/19091 或调整上述变量。
+
+## 致谢
+
+- 本项目最初 fork 自 [Beszel](https://github.com/henrygd/beszel)（仅作为起点），感谢原作者 [henrygd](https://github.com/henrygd) 及所有贡献者。
+- 当前 Aether 已完成大规模重构并独立维护；运行与部署不依赖 Beszel。
 
 ## 许可
 
