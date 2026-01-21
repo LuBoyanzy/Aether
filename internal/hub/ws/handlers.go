@@ -465,6 +465,25 @@ func (ws *WsConn) RequestDataCleanupESCleanup(
 	return result, nil
 }
 
+func (ws *WsConn) RequestDataCleanupJobStatus(
+	ctx context.Context,
+	req common.DataCleanupJobStatusRequest,
+) (common.DockerDataCleanupResult, error) {
+	if !ws.IsConnected() {
+		return common.DockerDataCleanupResult{}, gws.ErrConnClosed
+	}
+	handleReq, err := ws.requestManager.SendRequestWithTimeout(ctx, common.DataCleanupJobStatus, req, dataCleanupListTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	var result common.DockerDataCleanupResult
+	handler := &dataCleanupResultHandler{result: &result, errorMsg: "no data cleanup job status in response"}
+	if err := ws.handleAgentRequest(handleReq, handler); err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	return result, nil
+}
+
 type dockerImagesHandler struct {
 	BaseHandler
 	result *[]docker.Image

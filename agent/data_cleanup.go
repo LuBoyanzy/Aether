@@ -29,9 +29,10 @@ import (
 )
 
 const (
-	dataCleanupListTimeout   = 20 * time.Second
-	dataCleanupActionTimeout = 30 * time.Minute
-	dataCleanupScanCount     = 500
+	dataCleanupListTimeout        = 20 * time.Second
+	dataCleanupActionTimeout      = 30 * time.Minute
+	dataCleanupScanCount          = 500
+	dataCleanupMinioProgressBatch = 5000
 )
 
 type dataCleanupIndexItem struct {
@@ -53,6 +54,24 @@ func formatDataCleanupError(context string, err error, fields map[string]any) er
 		fields,
 		string(debug.Stack()),
 	)
+}
+
+func encodeDataCleanupJobStatusDetail(snapshot dataCleanupJobSnapshot) (string, error) {
+	detail := common.DataCleanupJobStatusDetail{
+		JobID:   snapshot.JobID,
+		Module:  snapshot.Module,
+		Status:  snapshot.Status,
+		Current: snapshot.Current,
+		Done:    snapshot.Done,
+		Total:   snapshot.Total,
+		Seq:     snapshot.Seq,
+		Error:   snapshot.Error,
+	}
+	encoded, err := json.Marshal(detail)
+	if err != nil {
+		return "", err
+	}
+	return string(encoded), nil
 }
 
 func requireHostPort(host string, port int, fields map[string]any) (string, error) {
@@ -555,6 +574,73 @@ func cleanupMinioPrefix(ctx context.Context, client *minio.Client, bucket, prefi
 	return deleted, nil
 }
 
+func cleanupMinioPrefixWithProgress(
+	ctx context.Context,
+	client *minio.Client,
+	bucket, prefix string,
+	onBatchDeleted func(int64),
+) (int64, error) {
+	target := normalizeMinioPrefix(prefix)
+	if target == "" {
+		return 0, formatDataCleanupError("minio prefix is required", errors.New("prefix is required"), map[string]any{"bucket": bucket})
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	objectsCh := make(chan minio.ObjectInfo)
+	listErrCh := make(chan error, 1)
+	go func() {
+		defer close(objectsCh)
+		opts := minio.ListObjectsOptions{Prefix: target, Recursive: true}
+		for object := range client.ListObjects(ctx, bucket, opts) {
+			if object.Err != nil {
+				listErrCh <- object.Err
+				cancel()
+				return
+			}
+			objectsCh <- object
+		}
+	}()
+
+	var deleted int64
+	var batch int64
+	for result := range client.RemoveObjectsWithResult(ctx, bucket, objectsCh, minio.RemoveObjectsOptions{}) {
+		if result.Err != nil {
+			select {
+			case err := <-listErrCh:
+				if err != nil {
+					return deleted, formatDataCleanupError("list minio objects failed", err, map[string]any{"bucket": bucket, "prefix": target})
+				}
+			default:
+			}
+			return deleted, formatDataCleanupError("remove minio objects failed", result.Err, map[string]any{"bucket": bucket, "prefix": target})
+		}
+		deleted++
+		batch++
+		if batch >= dataCleanupMinioProgressBatch {
+			if onBatchDeleted != nil {
+				onBatchDeleted(batch)
+			}
+			batch = 0
+		}
+	}
+
+	if batch > 0 && onBatchDeleted != nil {
+		onBatchDeleted(batch)
+	}
+
+	select {
+	case err := <-listErrCh:
+		if err != nil {
+			return deleted, formatDataCleanupError("list minio objects failed", err, map[string]any{"bucket": bucket, "prefix": target})
+		}
+	default:
+	}
+
+	return deleted, nil
+}
+
 func cleanupMinio(ctx context.Context, req common.DataCleanupMinioCleanupRequest) (int64, error) {
 	if strings.TrimSpace(req.Bucket) == "" {
 		return 0, formatDataCleanupError("bucket is required", errors.New("bucket is required"), map[string]any{"host": req.Host, "port": req.Port})
@@ -744,6 +830,49 @@ func (h *DataCleanupMySQLDeleteTablesHandler) Handle(hctx *HandlerContext) error
 	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
 		return formatDataCleanupError("decode mysql delete request failed", err, map[string]any{})
 	}
+	jobID := strings.TrimSpace(req.JobID)
+	if jobID != "" {
+		if len(req.Tables) == 0 {
+			return formatDataCleanupError("mysql tables required", errors.New("tables are required"), map[string]any{"host": req.Host, "port": req.Port, "db": req.Database})
+		}
+
+		snapshot, err := hctx.Agent.dataCleanupJobs.Start(jobID, "mysql", len(req.Tables), dataCleanupActionTimeout, func(ctx context.Context, job *dataCleanupJob) error {
+			slog.Info("mysql cleanup job start", "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.Database, "tables", len(req.Tables))
+			var totalDeleted int64
+
+			for _, table := range req.Tables {
+				table = strings.TrimSpace(table)
+				if table == "" {
+					return formatDataCleanupError("mysql table required", errors.New("table is required"), map[string]any{"host": req.Host, "port": req.Port, "db": req.Database})
+				}
+				job.setCurrent(table)
+
+				perReq := req
+				perReq.Tables = []string{table}
+				perReq.JobID = ""
+
+				deleted, err := deleteMySQLTables(ctx, perReq)
+				if err != nil {
+					slog.Error("mysql cleanup failed", "err", err, "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.Database, "table", table)
+					return err
+				}
+				totalDeleted += deleted
+				job.markItemDoneWithDeleted(deleted)
+			}
+
+			slog.Info("mysql cleanup job done", "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.Database, "deleted", totalDeleted)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		detail, err := encodeDataCleanupJobStatusDetail(snapshot)
+		if err != nil {
+			return formatDataCleanupError("encode data cleanup job status failed", err, map[string]any{"jobId": jobID, "module": "mysql"})
+		}
+		return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: snapshot.Deleted, Detail: detail}, hctx.RequestID)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), dataCleanupActionTimeout)
 	defer cancel()
 
@@ -782,6 +911,49 @@ func (h *DataCleanupRedisCleanupHandler) Handle(hctx *HandlerContext) error {
 	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
 		return formatDataCleanupError("decode redis cleanup request failed", err, map[string]any{})
 	}
+	jobID := strings.TrimSpace(req.JobID)
+	if jobID != "" {
+		if len(req.Patterns) == 0 {
+			return formatDataCleanupError("redis patterns required", errors.New("patterns are required"), map[string]any{"host": req.Host, "port": req.Port, "db": req.DB})
+		}
+
+		snapshot, err := hctx.Agent.dataCleanupJobs.Start(jobID, "redis", len(req.Patterns), dataCleanupActionTimeout, func(ctx context.Context, job *dataCleanupJob) error {
+			slog.Info("redis cleanup job start", "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.DB, "patterns", len(req.Patterns))
+			var totalDeleted int64
+
+			for _, pattern := range req.Patterns {
+				pattern = strings.TrimSpace(pattern)
+				if pattern == "" {
+					return formatDataCleanupError("redis pattern required", errors.New("pattern is required"), map[string]any{"host": req.Host, "port": req.Port, "db": req.DB})
+				}
+				job.setCurrent(pattern)
+
+				perReq := req
+				perReq.Patterns = []string{pattern}
+				perReq.JobID = ""
+
+				deleted, err := cleanupRedis(ctx, perReq)
+				if err != nil {
+					slog.Error("redis cleanup failed", "err", err, "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.DB, "pattern", pattern)
+					return err
+				}
+				totalDeleted += deleted
+				job.markItemDoneWithDeleted(deleted)
+			}
+
+			slog.Info("redis cleanup job done", "jobId", jobID, "host", req.Host, "port", req.Port, "db", req.DB, "deleted", totalDeleted)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		detail, err := encodeDataCleanupJobStatusDetail(snapshot)
+		if err != nil {
+			return formatDataCleanupError("encode data cleanup job status failed", err, map[string]any{"jobId": jobID, "module": "redis"})
+		}
+		return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: snapshot.Deleted, Detail: detail}, hctx.RequestID)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), dataCleanupActionTimeout)
 	defer cancel()
 
@@ -838,6 +1010,61 @@ func (h *DataCleanupMinioCleanupHandler) Handle(hctx *HandlerContext) error {
 	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
 		return formatDataCleanupError("decode minio cleanup request failed", err, map[string]any{})
 	}
+	jobID := strings.TrimSpace(req.JobID)
+	if jobID != "" {
+		if strings.TrimSpace(req.Bucket) == "" {
+			return formatDataCleanupError("bucket is required", errors.New("bucket is required"), map[string]any{"host": req.Host, "port": req.Port})
+		}
+		if len(req.Prefixes) == 0 {
+			return formatDataCleanupError("minio prefixes required", errors.New("prefixes are required"), map[string]any{"bucket": req.Bucket})
+		}
+
+		snapshot, err := hctx.Agent.dataCleanupJobs.Start(jobID, "minio", len(req.Prefixes), dataCleanupActionTimeout, func(ctx context.Context, job *dataCleanupJob) error {
+			slog.Info("minio cleanup job start", "jobId", jobID, "host", req.Host, "port", req.Port, "bucket", req.Bucket, "prefixes", len(req.Prefixes))
+
+			client, err := newMinioClient(common.DataCleanupMinioBucketsRequest{
+				Host:      req.Host,
+				Port:      req.Port,
+				AccessKey: req.AccessKey,
+				SecretKey: req.SecretKey,
+			})
+			if err != nil {
+				slog.Error("minio cleanup failed", "err", err, "jobId", jobID, "host", req.Host, "port", req.Port, "bucket", req.Bucket)
+				return err
+			}
+
+			var totalDeleted int64
+			for _, prefix := range req.Prefixes {
+				prefix = strings.TrimSpace(prefix)
+				if prefix == "" {
+					return formatDataCleanupError("minio prefix is required", errors.New("prefix is required"), map[string]any{"bucket": req.Bucket})
+				}
+				job.setCurrent(prefix)
+
+				count, err := cleanupMinioPrefixWithProgress(ctx, client, req.Bucket, prefix, func(batch int64) {
+					job.addDeleted(batch)
+				})
+				totalDeleted += count
+				if err != nil {
+					slog.Error("minio cleanup failed", "err", err, "jobId", jobID, "host", req.Host, "port", req.Port, "bucket", req.Bucket, "prefix", prefix)
+					return err
+				}
+				job.markItemDone()
+			}
+
+			slog.Info("minio cleanup job done", "jobId", jobID, "host", req.Host, "port", req.Port, "bucket", req.Bucket, "deleted", totalDeleted)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		detail, err := encodeDataCleanupJobStatusDetail(snapshot)
+		if err != nil {
+			return formatDataCleanupError("encode data cleanup job status failed", err, map[string]any{"jobId": jobID, "module": "minio"})
+		}
+		return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: snapshot.Deleted, Detail: detail}, hctx.RequestID)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), dataCleanupActionTimeout)
 	defer cancel()
 
@@ -876,6 +1103,49 @@ func (h *DataCleanupESCleanupHandler) Handle(hctx *HandlerContext) error {
 	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
 		return formatDataCleanupError("decode es cleanup request failed", err, map[string]any{})
 	}
+	jobID := strings.TrimSpace(req.JobID)
+	if jobID != "" {
+		if len(req.Indices) == 0 {
+			return formatDataCleanupError("es indices required", errors.New("indices are required"), map[string]any{"host": req.Host, "port": req.Port})
+		}
+
+		snapshot, err := hctx.Agent.dataCleanupJobs.Start(jobID, "es", len(req.Indices), dataCleanupActionTimeout, func(ctx context.Context, job *dataCleanupJob) error {
+			slog.Info("es cleanup job start", "jobId", jobID, "host", req.Host, "port", req.Port, "indices", len(req.Indices))
+			var totalDeleted int64
+
+			for _, index := range req.Indices {
+				index = strings.TrimSpace(index)
+				if index == "" {
+					return formatDataCleanupError("es index required", errors.New("index is required"), map[string]any{"host": req.Host, "port": req.Port})
+				}
+				job.setCurrent(index)
+
+				perReq := req
+				perReq.Indices = []string{index}
+				perReq.JobID = ""
+
+				deleted, err := cleanupESIndices(ctx, perReq)
+				if err != nil {
+					slog.Error("es cleanup failed", "err", err, "jobId", jobID, "host", req.Host, "port", req.Port, "index", index)
+					return err
+				}
+				totalDeleted += deleted
+				job.markItemDoneWithDeleted(deleted)
+			}
+
+			slog.Info("es cleanup job done", "jobId", jobID, "host", req.Host, "port", req.Port, "deleted", totalDeleted)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		detail, err := encodeDataCleanupJobStatusDetail(snapshot)
+		if err != nil {
+			return formatDataCleanupError("encode data cleanup job status failed", err, map[string]any{"jobId": jobID, "module": "es"})
+		}
+		return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: snapshot.Deleted, Detail: detail}, hctx.RequestID)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), dataCleanupActionTimeout)
 	defer cancel()
 
@@ -887,4 +1157,26 @@ func (h *DataCleanupESCleanupHandler) Handle(hctx *HandlerContext) error {
 	}
 	slog.Info("es cleanup done", "host", req.Host, "port", req.Port, "deleted", deleted)
 	return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: deleted}, hctx.RequestID)
+}
+
+type DataCleanupJobStatusHandler struct{}
+
+func (h *DataCleanupJobStatusHandler) Handle(hctx *HandlerContext) error {
+	var req common.DataCleanupJobStatusRequest
+	if err := cbor.Unmarshal(hctx.Request.Data, &req); err != nil {
+		return formatDataCleanupError("decode data cleanup job status request failed", err, map[string]any{})
+	}
+	jobID := strings.TrimSpace(req.JobID)
+	if jobID == "" {
+		return formatDataCleanupError("jobId is required", errors.New("jobId is required"), map[string]any{})
+	}
+	snapshot, err := hctx.Agent.dataCleanupJobs.Snapshot(jobID)
+	if err != nil {
+		return formatDataCleanupError("data cleanup job not found", err, map[string]any{"jobId": jobID})
+	}
+	detail, err := encodeDataCleanupJobStatusDetail(snapshot)
+	if err != nil {
+		return formatDataCleanupError("encode data cleanup job status failed", err, map[string]any{"jobId": jobID})
+	}
+	return hctx.SendResponse(&common.DockerDataCleanupResult{Deleted: snapshot.Deleted, Detail: detail}, hctx.RequestID)
 }

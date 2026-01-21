@@ -192,3 +192,21 @@ func (sys *System) CleanupESFromAgent(
 	}
 	return *resp.DataCleanupResult, nil
 }
+
+func (sys *System) FetchDataCleanupJobStatusFromAgent(
+	req common.DataCleanupJobStatusRequest,
+) (common.DockerDataCleanupResult, error) {
+	if sys.WsConn != nil && sys.WsConn.IsConnected() {
+		ctx, cancel := context.WithTimeout(context.Background(), dataCleanupListTimeout)
+		defer cancel()
+		return sys.WsConn.RequestDataCleanupJobStatus(ctx, req)
+	}
+	resp, err := sys.fetchDockerResponseViaSSH(common.DataCleanupJobStatus, req, dataCleanupListTimeout)
+	if err != nil {
+		return common.DockerDataCleanupResult{}, err
+	}
+	if resp.DataCleanupResult == nil {
+		return common.DockerDataCleanupResult{}, errors.New("no data cleanup job status in response")
+	}
+	return *resp.DataCleanupResult, nil
+}

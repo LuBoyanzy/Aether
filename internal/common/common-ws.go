@@ -85,6 +85,8 @@ const (
 	DataCleanupESIndices
 	// Cleanup ES indices for data cleanup
 	DataCleanupESCleanup
+	// Query data cleanup job status
+	DataCleanupJobStatus
 	// Add new actions here...
 )
 
@@ -284,6 +286,7 @@ type DataCleanupMySQLDeleteTablesRequest struct {
 	Password string   `cbor:"3,keyasint,omitempty"`
 	Database string   `cbor:"4,keyasint"`
 	Tables   []string `cbor:"5,keyasint,omitempty"`
+	JobID    string   `cbor:"6,keyasint,omitempty"`
 }
 
 type DataCleanupRedisDatabasesRequest struct {
@@ -300,6 +303,7 @@ type DataCleanupRedisCleanupRequest struct {
 	Password string   `cbor:"3,keyasint,omitempty"`
 	DB       int      `cbor:"4,keyasint"`
 	Patterns []string `cbor:"5,keyasint,omitempty"`
+	JobID    string   `cbor:"6,keyasint,omitempty"`
 }
 
 type DataCleanupMinioBucketsRequest struct {
@@ -324,6 +328,7 @@ type DataCleanupMinioCleanupRequest struct {
 	SecretKey string   `cbor:"3,keyasint,omitempty"`
 	Bucket    string   `cbor:"4,keyasint"`
 	Prefixes  []string `cbor:"5,keyasint,omitempty"`
+	JobID     string   `cbor:"6,keyasint,omitempty"`
 }
 
 type DataCleanupESIndicesRequest struct {
@@ -339,4 +344,22 @@ type DataCleanupESCleanupRequest struct {
 	Username string   `cbor:"2,keyasint,omitempty"`
 	Password string   `cbor:"3,keyasint,omitempty"`
 	Indices  []string `cbor:"4,keyasint,omitempty"`
+	JobID    string   `cbor:"5,keyasint,omitempty"`
+}
+
+type DataCleanupJobStatusRequest struct {
+	JobID string `cbor:"0,keyasint"`
+}
+
+// DataCleanupJobStatusDetail is serialized as JSON into DockerDataCleanupResult.Detail
+// to avoid expanding the AgentResponse schema for incremental status reporting.
+type DataCleanupJobStatusDetail struct {
+	JobID   string `json:"jobId"`
+	Module  string `json:"module"`
+	Status  string `json:"status"` // running|success|failed
+	Current string `json:"current,omitempty"`
+	Done    int    `json:"done"`
+	Total   int    `json:"total"`
+	Seq     uint64 `json:"seq"`
+	Error   string `json:"error,omitempty"`
 }

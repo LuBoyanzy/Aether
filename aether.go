@@ -6,7 +6,7 @@ import "github.com/blang/semver"
 
 const (
 	// Version is the current version of the application.
-	Version = "1.0.0"
+	Version = "1.0.1"
 	// AppName is the name of the application.
 	AppName = "aether"
 )

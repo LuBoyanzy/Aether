@@ -196,6 +196,10 @@ func (a *Agent) handleSSHRequest(w io.Writer, req *common.HubRequest[cbor.RawMes
 			response.DockerConfig = v
 		case []repo.Source:
 			response.RepoSources = v
+		case *common.DockerDataCleanupList:
+			response.DataCleanupList = v
+		case *common.DockerDataCleanupResult:
+			response.DataCleanupResult = v
 		default:
 			response.Error = fmt.Sprintf("unsupported response type: %T", data)
 		}

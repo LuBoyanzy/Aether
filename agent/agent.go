@@ -52,6 +52,7 @@ type Agent struct {
 	keys                      []gossh.PublicKey                                     // SSH public keys
 	smartManager              *SmartManager                                         // Manages SMART data
 	systemdManager            *systemdManager                                       // Manages systemd services
+	dataCleanupJobs           *dataCleanupJobManager                                // 数据清理后台任务
 }
 
 // NewAgent creates a new agent with the given data directory for persisting data.
@@ -128,6 +129,7 @@ func NewAgent(dataDir ...string) (agent *Agent, err error) {
 
 	// initialize handler registry
 	agent.handlerRegistry = NewHandlerRegistry()
+	agent.dataCleanupJobs = newDataCleanupJobManager()
 
 	// initialize disk info
 	agent.initializeDiskInfo()

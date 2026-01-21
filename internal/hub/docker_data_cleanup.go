@@ -3,6 +3,7 @@
 package hub
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -744,6 +745,23 @@ func (h *Hub) startDataCleanupRun(e *core.RequestEvent) error {
 	if _, err := h.resolveSystemRecordForUser(e, systemID); err != nil {
 		return respondSystemAccessError(e, err)
 	}
+
+	// 同一系统一次只允许一个进行中的清理任务，避免重复触发导致负载与状态混乱。
+	var existingRun struct {
+		ID string `db:"id"`
+	}
+	existingErr := h.DB().
+		NewQuery("SELECT id FROM " + dataCleanupRunsCollection + " WHERE system = {:system} AND status IN ('pending','running') LIMIT 1").
+		Bind(dbx.Params{"system": systemID}).
+		One(&existingRun)
+	if existingErr == nil {
+		return e.JSON(http.StatusConflict, map[string]string{"error": "cleanup run already in progress"})
+	}
+	if existingErr != nil && !errors.Is(existingErr, sql.ErrNoRows) {
+		h.logDataCleanupError("check existing cleanup run failed", existingErr, "system", systemID)
+		return e.JSON(http.StatusInternalServerError, map[string]string{"error": existingErr.Error()})
+	}
+
 	configRecord, err := h.findCleanupConfig(systemID)
 	if err != nil {
 		h.logDataCleanupError("load cleanup config failed", err, "system", systemID)
@@ -802,8 +820,6 @@ func (h *Hub) retryDataCleanupRun(e *core.RequestEvent) error {
 }
 
 func (h *Hub) executeDataCleanupRun(runID, systemID, configID, userID string) {
-	steps := []string{"mysql", "redis", "minio", "es"}
-	_ = steps
 	logs := make([]string, 0, 16)
 	results := make([]dataCleanupRunResult, 0, 4)
 
@@ -923,158 +939,272 @@ func (h *Hub) executeDataCleanupRun(runID, systemID, configID, userID string) {
 	completedOps := 0
 	failures := 0
 
-	if mysqlStored.Host != "" && mysqlStored.Port > 0 && mysqlStored.Database != "" && len(mysqlTables) > 0 {
-		logs = append(logs, fmt.Sprintf("[%s] start mysql cleanup", time.Now().Format(time.RFC3339)))
-		mysqlFailed := false
-		for _, table := range mysqlTables {
-			result, err := system.CleanupMySQLTablesFromAgent(common.DataCleanupMySQLDeleteTablesRequest{
-				Host:     mysqlStored.Host,
-				Port:     mysqlStored.Port,
-				Username: mysqlStored.Username,
-				Password: mysqlPassword,
-				Database: mysqlStored.Database,
-				Tables:   []string{table},
-			})
-			if err != nil {
-				mysqlFailed = true
-				failures++
-				logs = append(logs, fmt.Sprintf("[%s] mysql table %s failed: %s", time.Now().Format(time.RFC3339), table, err.Error()))
-				results = append(results, dataCleanupRunResult{
-					Module: "mysql",
-					Status: "failed",
-					Detail: err.Error(),
-				})
-				break
-			}
-			logs = append(logs, fmt.Sprintf("[%s] mysql table %s deleted %d rows", time.Now().Format(time.RFC3339), table, result.Deleted))
-			completedOps++
-			progress := int(float64(completedOps) / float64(totalOps) * 100)
-			if err := h.updateDataCleanupRun(runID, "running", progress, "mysql", logs, results); err != nil {
-				h.logDataCleanupError("update cleanup run failed", err, "run", runID)
-				return
-			}
+	fetchJobStatus := func(module, jobID string) (common.DataCleanupJobStatusDetail, int64, error) {
+		result, err := system.FetchDataCleanupJobStatusFromAgent(common.DataCleanupJobStatusRequest{JobID: jobID})
+		if err != nil {
+			return common.DataCleanupJobStatusDetail{}, 0, err
 		}
-		if !mysqlFailed {
-			results = append(results, dataCleanupRunResult{
-				Module: "mysql",
-				Status: "success",
-			})
+		raw := strings.TrimSpace(result.Detail)
+		if raw == "" {
+			return common.DataCleanupJobStatusDetail{}, 0, formatDataCleanupError(
+				"data cleanup job status empty",
+				errors.New("empty status detail"),
+				map[string]any{"jobId": jobID, "module": module},
+			)
+		}
+		var detail common.DataCleanupJobStatusDetail
+		if err := json.Unmarshal([]byte(raw), &detail); err != nil {
+			return common.DataCleanupJobStatusDetail{}, 0, formatDataCleanupError(
+				"decode data cleanup job status failed",
+				err,
+				map[string]any{"jobId": jobID, "module": module, "detail": raw},
+			)
+		}
+		return detail, result.Deleted, nil
+	}
+
+	waitJob := func(module, jobID string) (common.DataCleanupJobStatusDetail, int64, error) {
+		ticker := time.NewTicker(2 * time.Second)
+		defer ticker.Stop()
+
+		var lastDone int
+		var lastDeleted int64
+		var lastStatus string
+
+		for {
+			detail, deleted, err := fetchJobStatus(module, jobID)
+			if err != nil {
+				return common.DataCleanupJobStatusDetail{}, 0, err
+			}
+
+			changed := detail.Done != lastDone || deleted != lastDeleted || detail.Status != lastStatus
+			if changed {
+				logs = append(
+					logs,
+					fmt.Sprintf(
+						"[%s] %s %s %d/%d current=%s deleted=%d",
+						time.Now().Format(time.RFC3339),
+						module,
+						detail.Status,
+						detail.Done,
+						detail.Total,
+						detail.Current,
+						deleted,
+					),
+				)
+				lastDone = detail.Done
+				lastDeleted = deleted
+				lastStatus = detail.Status
+
+				progress := int(float64(completedOps+detail.Done) / float64(totalOps) * 100)
+				if progress < 0 {
+					progress = 0
+				}
+				if progress > 100 {
+					progress = 100
+				}
+				if err := h.updateDataCleanupRun(runID, "running", progress, module, logs, results); err != nil {
+					h.logDataCleanupError("update cleanup run failed", err, "run", runID)
+					return common.DataCleanupJobStatusDetail{}, 0, err
+				}
+			}
+
+			switch detail.Status {
+			case "running":
+				<-ticker.C
+				continue
+			case "success", "failed":
+				return detail, deleted, nil
+			default:
+				return common.DataCleanupJobStatusDetail{}, 0, formatDataCleanupError(
+					"data cleanup job status invalid",
+					errors.New("unexpected job status"),
+					map[string]any{"jobId": jobID, "module": module, "status": detail.Status},
+				)
+			}
 		}
 	}
 
-	if redisStored.Host != "" && redisStored.Port > 0 && len(redisPatterns) > 0 {
-		logs = append(logs, fmt.Sprintf("[%s] start redis cleanup", time.Now().Format(time.RFC3339)))
-		redisFailed := false
-		for _, pattern := range redisPatterns {
-			result, err := system.CleanupRedisFromAgent(common.DataCleanupRedisCleanupRequest{
-				Host:     redisStored.Host,
-				Port:     redisStored.Port,
-				Username: redisStored.Username,
-				Password: redisPassword,
-				DB:       redisStored.DB,
-				Patterns: []string{pattern},
-			})
+	if mysqlTargets > 0 {
+		module := "mysql"
+		jobID := fmt.Sprintf("%s:%s", runID, module)
+		logs = append(logs, fmt.Sprintf("[%s] start mysql cleanup job", time.Now().Format(time.RFC3339)))
+		_, err := system.CleanupMySQLTablesFromAgent(common.DataCleanupMySQLDeleteTablesRequest{
+			Host:     mysqlStored.Host,
+			Port:     mysqlStored.Port,
+			Username: mysqlStored.Username,
+			Password: mysqlPassword,
+			Database: mysqlStored.Database,
+			Tables:   mysqlTables,
+			JobID:    jobID,
+		})
+		if err != nil {
+			failures++
+			logs = append(logs, fmt.Sprintf("[%s] mysql job start failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+			results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+		} else {
+			detail, deleted, err := waitJob(module, jobID)
 			if err != nil {
-				redisFailed = true
 				failures++
-				logs = append(logs, fmt.Sprintf("[%s] redis pattern %s failed: %s", time.Now().Format(time.RFC3339), pattern, err.Error()))
-				results = append(results, dataCleanupRunResult{
-					Module: "redis",
-					Status: "failed",
-					Detail: err.Error(),
-				})
-				break
+				logs = append(logs, fmt.Sprintf("[%s] mysql job poll failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+			} else if detail.Status == "failed" {
+				failures++
+				errMsg := strings.TrimSpace(detail.Error)
+				if errMsg == "" {
+					errMsg = "mysql cleanup job failed"
+				}
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: errMsg})
+			} else {
+				completedOps += mysqlTargets
+				logs = append(logs, fmt.Sprintf("[%s] mysql job completed deleted=%d", time.Now().Format(time.RFC3339), deleted))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "success"})
 			}
-			logs = append(logs, fmt.Sprintf("[%s] redis pattern %s deleted %d keys", time.Now().Format(time.RFC3339), pattern, result.Deleted))
-			completedOps++
 			progress := int(float64(completedOps) / float64(totalOps) * 100)
-			if err := h.updateDataCleanupRun(runID, "running", progress, "redis", logs, results); err != nil {
+			if progress > 100 {
+				progress = 100
+			}
+			if err := h.updateDataCleanupRun(runID, "running", progress, module, logs, results); err != nil {
 				h.logDataCleanupError("update cleanup run failed", err, "run", runID)
 				return
 			}
-		}
-		if !redisFailed {
-			results = append(results, dataCleanupRunResult{
-				Module: "redis",
-				Status: "success",
-			})
 		}
 	}
 
-	if minioStored.Host != "" && minioStored.Port > 0 && minioStored.Bucket != "" && len(minioPrefixes) > 0 {
-		logs = append(logs, fmt.Sprintf("[%s] start minio cleanup", time.Now().Format(time.RFC3339)))
-		minioFailed := false
-		for _, prefix := range minioPrefixes {
-			result, err := system.CleanupMinioFromAgent(common.DataCleanupMinioCleanupRequest{
-				Host:      minioStored.Host,
-				Port:      minioStored.Port,
-				AccessKey: minioStored.AccessKey,
-				SecretKey: minioSecret,
-				Bucket:    minioStored.Bucket,
-				Prefixes:  []string{prefix},
-			})
+	if redisTargets > 0 {
+		module := "redis"
+		jobID := fmt.Sprintf("%s:%s", runID, module)
+		logs = append(logs, fmt.Sprintf("[%s] start redis cleanup job", time.Now().Format(time.RFC3339)))
+		_, err := system.CleanupRedisFromAgent(common.DataCleanupRedisCleanupRequest{
+			Host:     redisStored.Host,
+			Port:     redisStored.Port,
+			Username: redisStored.Username,
+			Password: redisPassword,
+			DB:       redisStored.DB,
+			Patterns: redisPatterns,
+			JobID:    jobID,
+		})
+		if err != nil {
+			failures++
+			logs = append(logs, fmt.Sprintf("[%s] redis job start failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+			results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+		} else {
+			detail, deleted, err := waitJob(module, jobID)
 			if err != nil {
-				minioFailed = true
 				failures++
-				logs = append(logs, fmt.Sprintf("[%s] minio prefix %s failed: %s", time.Now().Format(time.RFC3339), prefix, err.Error()))
-				results = append(results, dataCleanupRunResult{
-					Module: "minio",
-					Status: "failed",
-					Detail: err.Error(),
-				})
-				break
+				logs = append(logs, fmt.Sprintf("[%s] redis job poll failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+			} else if detail.Status == "failed" {
+				failures++
+				errMsg := strings.TrimSpace(detail.Error)
+				if errMsg == "" {
+					errMsg = "redis cleanup job failed"
+				}
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: errMsg})
+			} else {
+				completedOps += redisTargets
+				logs = append(logs, fmt.Sprintf("[%s] redis job completed deleted=%d", time.Now().Format(time.RFC3339), deleted))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "success"})
 			}
-			logs = append(logs, fmt.Sprintf("[%s] minio prefix %s deleted %d objects", time.Now().Format(time.RFC3339), prefix, result.Deleted))
-			completedOps++
 			progress := int(float64(completedOps) / float64(totalOps) * 100)
-			if err := h.updateDataCleanupRun(runID, "running", progress, "minio", logs, results); err != nil {
+			if progress > 100 {
+				progress = 100
+			}
+			if err := h.updateDataCleanupRun(runID, "running", progress, module, logs, results); err != nil {
 				h.logDataCleanupError("update cleanup run failed", err, "run", runID)
 				return
 			}
-		}
-		if !minioFailed {
-			results = append(results, dataCleanupRunResult{
-				Module: "minio",
-				Status: "success",
-			})
 		}
 	}
 
-	if esStored.Host != "" && esStored.Port > 0 && len(esIndices) > 0 {
-		logs = append(logs, fmt.Sprintf("[%s] start es cleanup", time.Now().Format(time.RFC3339)))
-		esFailed := false
-		for _, index := range esIndices {
-			result, err := system.CleanupESFromAgent(common.DataCleanupESCleanupRequest{
-				Host:     esStored.Host,
-				Port:     esStored.Port,
-				Username: esStored.Username,
-				Password: esPassword,
-				Indices:  []string{index},
-			})
+	if minioTargets > 0 {
+		module := "minio"
+		jobID := fmt.Sprintf("%s:%s", runID, module)
+		logs = append(logs, fmt.Sprintf("[%s] start minio cleanup job", time.Now().Format(time.RFC3339)))
+		_, err := system.CleanupMinioFromAgent(common.DataCleanupMinioCleanupRequest{
+			Host:      minioStored.Host,
+			Port:      minioStored.Port,
+			AccessKey: minioStored.AccessKey,
+			SecretKey: minioSecret,
+			Bucket:    minioStored.Bucket,
+			Prefixes:  minioPrefixes,
+			JobID:     jobID,
+		})
+		if err != nil {
+			failures++
+			logs = append(logs, fmt.Sprintf("[%s] minio job start failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+			results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+		} else {
+			detail, deleted, err := waitJob(module, jobID)
 			if err != nil {
-				esFailed = true
 				failures++
-				logs = append(logs, fmt.Sprintf("[%s] es index %s failed: %s", time.Now().Format(time.RFC3339), index, err.Error()))
-				results = append(results, dataCleanupRunResult{
-					Module: "es",
-					Status: "failed",
-					Detail: err.Error(),
-				})
-				break
+				logs = append(logs, fmt.Sprintf("[%s] minio job poll failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+			} else if detail.Status == "failed" {
+				failures++
+				errMsg := strings.TrimSpace(detail.Error)
+				if errMsg == "" {
+					errMsg = "minio cleanup job failed"
+				}
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: errMsg})
+			} else {
+				completedOps += minioTargets
+				logs = append(logs, fmt.Sprintf("[%s] minio job completed deleted=%d", time.Now().Format(time.RFC3339), deleted))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "success"})
 			}
-			logs = append(logs, fmt.Sprintf("[%s] es index %s deleted %d docs", time.Now().Format(time.RFC3339), index, result.Deleted))
-			completedOps++
 			progress := int(float64(completedOps) / float64(totalOps) * 100)
-			if err := h.updateDataCleanupRun(runID, "running", progress, "es", logs, results); err != nil {
+			if progress > 100 {
+				progress = 100
+			}
+			if err := h.updateDataCleanupRun(runID, "running", progress, module, logs, results); err != nil {
 				h.logDataCleanupError("update cleanup run failed", err, "run", runID)
 				return
 			}
 		}
-		if !esFailed {
-			results = append(results, dataCleanupRunResult{
-				Module: "es",
-				Status: "success",
-			})
+	}
+
+	if esTargets > 0 {
+		module := "es"
+		jobID := fmt.Sprintf("%s:%s", runID, module)
+		logs = append(logs, fmt.Sprintf("[%s] start es cleanup job", time.Now().Format(time.RFC3339)))
+		_, err := system.CleanupESFromAgent(common.DataCleanupESCleanupRequest{
+			Host:     esStored.Host,
+			Port:     esStored.Port,
+			Username: esStored.Username,
+			Password: esPassword,
+			Indices:  esIndices,
+			JobID:    jobID,
+		})
+		if err != nil {
+			failures++
+			logs = append(logs, fmt.Sprintf("[%s] es job start failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+			results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+		} else {
+			detail, deleted, err := waitJob(module, jobID)
+			if err != nil {
+				failures++
+				logs = append(logs, fmt.Sprintf("[%s] es job poll failed: %s", time.Now().Format(time.RFC3339), err.Error()))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: err.Error()})
+			} else if detail.Status == "failed" {
+				failures++
+				errMsg := strings.TrimSpace(detail.Error)
+				if errMsg == "" {
+					errMsg = "es cleanup job failed"
+				}
+				results = append(results, dataCleanupRunResult{Module: module, Status: "failed", Detail: errMsg})
+			} else {
+				completedOps += esTargets
+				logs = append(logs, fmt.Sprintf("[%s] es job completed deleted=%d", time.Now().Format(time.RFC3339), deleted))
+				results = append(results, dataCleanupRunResult{Module: module, Status: "success"})
+			}
+			progress := int(float64(completedOps) / float64(totalOps) * 100)
+			if progress > 100 {
+				progress = 100
+			}
+			if err := h.updateDataCleanupRun(runID, "running", progress, module, logs, results); err != nil {
+				h.logDataCleanupError("update cleanup run failed", err, "run", runID)
+				return
+			}
 		}
 	}
 

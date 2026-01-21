@@ -12,7 +12,9 @@ before:
 builds:
   - id: aether
     binary: aether
-    main: internal/cmd/hub/hub.go
+    # IMPORTANT: must be a package dir (not a single .go file), otherwise helper files
+    # (e.g. envfile.go) won't be included and the build will fail.
+    main: ./internal/cmd/hub
     env:
       - CGO_ENABLED=0
     goos:
@@ -38,7 +40,9 @@ builds:
 
   - id: aether-agent
     binary: aether-agent
-    main: internal/cmd/agent/agent.go
+    # IMPORTANT: must be a package dir (not a single .go file), otherwise helper files
+    # (e.g. envfile.go) won't be included and the build will fail.
+    main: ./internal/cmd/agent
     env:
       - CGO_ENABLED=0
     goos:

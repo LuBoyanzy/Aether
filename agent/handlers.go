@@ -88,6 +88,7 @@ func NewHandlerRegistry() *HandlerRegistry {
 	registry.Register(common.DataCleanupMinioCleanup, &DataCleanupMinioCleanupHandler{})
 	registry.Register(common.DataCleanupESIndices, &DataCleanupESIndicesHandler{})
 	registry.Register(common.DataCleanupESCleanup, &DataCleanupESCleanupHandler{})
+	registry.Register(common.DataCleanupJobStatus, &DataCleanupJobStatusHandler{})
 
 	return registry
 }
