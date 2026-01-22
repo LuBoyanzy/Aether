@@ -17,30 +17,42 @@ import { saveSettings } from "./layout"
 import { QuietHours } from "./quiet-hours"
 import { SmtpSettingsDialog } from "./smtp-settings-dialog"
 
-interface ShoutrrrUrlCardProps {
+type WebhookConfig = {
+	name: string
 	url: string
+}
+
+interface WebhookUrlCardProps {
+	name: string
+	url: string
+	onNameChange: ChangeEventHandler<HTMLInputElement>
 	onUrlChange: ChangeEventHandler<HTMLInputElement>
 	onRemove: () => void
 }
 
 const NotificationSchema = v.object({
 	emails: v.array(v.pipe(v.string(), v.email())),
-	webhooks: v.array(v.pipe(v.string(), v.url())),
+	webhooks: v.array(
+		v.object({
+			name: v.string(),
+			url: v.pipe(v.string(), v.url()),
+		}),
+	),
 })
 
 const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSettings }) => {
-	const [webhooks, setWebhooks] = useState(userSettings.webhooks ?? [])
+	const [webhooks, setWebhooks] = useState<WebhookConfig[]>(normalizeWebhooks(userSettings.webhooks))
 	const [emails, setEmails] = useState<string[]>(userSettings.emails ?? [])
 	const [isLoading, setIsLoading] = useState(false)
 
 	// update values when userSettings changes
 	useEffect(() => {
-		setWebhooks(userSettings.webhooks ?? [])
+		setWebhooks(normalizeWebhooks(userSettings.webhooks))
 		setEmails(userSettings.emails ?? [])
 	}, [userSettings])
 
 	function addWebhook() {
-		setWebhooks([...webhooks, ""])
+		setWebhooks([...webhooks, { name: "", url: "" }])
 		// focus on the new input
 		queueMicrotask(() => {
 			const inputs = document.querySelectorAll("#webhooks input") as NodeListOf<HTMLInputElement>
@@ -49,16 +61,32 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 	}
 	const removeWebhook = (index: number) => setWebhooks(webhooks.filter((_, i) => i !== index))
 
-	function updateWebhook(index: number, value: string) {
+	function updateWebhookName(index: number, value: string) {
 		const newWebhooks = [...webhooks]
-		newWebhooks[index] = value
+		newWebhooks[index] = { ...newWebhooks[index], name: value }
+		setWebhooks(newWebhooks)
+	}
+
+	function updateWebhookUrl(index: number, value: string) {
+		const newWebhooks = [...webhooks]
+		newWebhooks[index] = { ...newWebhooks[index], url: value }
 		setWebhooks(newWebhooks)
 	}
 
 	async function updateSettings() {
 		setIsLoading(true)
 		try {
-			const parsedData = v.parse(NotificationSchema, { emails, webhooks })
+			const trimmedWebhooks = webhooks.map((webhook) => ({
+				name: webhook.name.trim(),
+				url: webhook.url.trim(),
+			}))
+			if (trimmedWebhooks.some((webhook) => !webhook.name || !webhook.url)) {
+				throw new Error(t`Name and URL are required`)
+			}
+			if (hasDuplicateWebhookNames(trimmedWebhooks)) {
+				throw new Error(t`Webhook names must be unique`)
+			}
+			const parsedData = v.parse(NotificationSchema, { emails, webhooks: trimmedWebhooks })
 			await saveSettings(parsedData)
 		} catch (e: any) {
 			toast({
@@ -123,7 +151,7 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 							</h3>
 							<p className="text-sm text-muted-foreground leading-relaxed">
 								<Trans>
-									Aether uses{" "}
+									Aether integrates with{" "}
 									<a
 										href="#"
 										className="link"
@@ -133,8 +161,7 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 										}}
 									>
 										Shoutrrr
-									</a>{" "}
-									to integrate with popular notification services. Documentation is not ready yet.
+									</a>-compatible notification services and supports WeLink webhooks; documentation is coming soon.
 								</Trans>
 							</p>
 						</div>
@@ -153,10 +180,12 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 					{webhooks.length > 0 && (
 						<div className="grid gap-2.5" id="webhooks">
 							{webhooks.map((webhook, index) => (
-								<ShoutrrrUrlCard
+								<WebhookUrlCard
 									key={index}
-									url={webhook}
-									onUrlChange={(e: React.ChangeEvent<HTMLInputElement>) => updateWebhook(index, e.target.value)}
+									name={webhook.name}
+									url={webhook.url}
+									onNameChange={(e: React.ChangeEvent<HTMLInputElement>) => updateWebhookName(index, e.target.value)}
+									onUrlChange={(e: React.ChangeEvent<HTMLInputElement>) => updateWebhookUrl(index, e.target.value)}
 									onRemove={() => removeWebhook(index)}
 								/>
 							))}
@@ -182,8 +211,16 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 	)
 }
 
-const ShoutrrrUrlCard = ({ url, onUrlChange, onRemove }: ShoutrrrUrlCardProps) => {
+const WebhookUrlCard = ({ name, url, onNameChange, onUrlChange, onRemove }: WebhookUrlCardProps) => {
 	const [isLoading, setIsLoading] = useState(false)
+	const [isEditingUrl, setIsEditingUrl] = useState(false)
+	const displayUrl = isEditingUrl ? url : maskWebhookUrl(url)
+	const handleUrlChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+		if (!isEditingUrl) {
+			return
+		}
+		onUrlChange(event)
+	}
 
 	const sendTestNotification = async () => {
 		setIsLoading(true)
@@ -205,32 +242,89 @@ const ShoutrrrUrlCard = ({ url, onUrlChange, onRemove }: ShoutrrrUrlCardProps) =
 
 	return (
 		<Card className="bg-table-header p-2 md:p-3">
-			<div className="flex items-center gap-1">
+			<div className="flex flex-col gap-2 md:flex-row md:items-center">
+				<Input
+					type="text"
+					className="light:bg-card md:w-40"
+					required
+					placeholder={t`Name`}
+					aria-label={t`Name`}
+					value={name}
+					onChange={onNameChange}
+				/>
 				<Input
 					type="url"
-					className="light:bg-card"
+					className="light:bg-card md:flex-1"
 					required
 					placeholder="generic://webhook.site/xxxxxx"
-					value={url}
-					onChange={onUrlChange}
+					aria-label={t`URL`}
+					value={displayUrl}
+					readOnly={!isEditingUrl}
+					onChange={handleUrlChange}
+					onFocus={() => setIsEditingUrl(true)}
+					onBlur={() => setIsEditingUrl(false)}
 				/>
-				<Button type="button" variant="outline" disabled={isLoading || url === ""} onClick={sendTestNotification}>
-					{isLoading ? (
-						<LoaderCircleIcon className="h-4 w-4 animate-spin" />
-					) : (
-						<span>
-							<Trans>
-								Test <span className="hidden sm:inline">URL</span>
-							</Trans>
-						</span>
-					)}
-				</Button>
-				<Button type="button" variant="outline" size="icon" className="shrink-0" aria-label="Delete" onClick={onRemove}>
-					<Trash2Icon className="h-4 w-4" />
-				</Button>
+				<div className="flex items-center gap-1">
+					<Button type="button" variant="outline" disabled={isLoading || url === ""} onClick={sendTestNotification}>
+						{isLoading ? (
+							<LoaderCircleIcon className="h-4 w-4 animate-spin" />
+						) : (
+							<span>
+								<Trans>
+									Test <span className="hidden sm:inline">URL</span>
+								</Trans>
+							</span>
+						)}
+					</Button>
+					<Button type="button" variant="outline" size="icon" className="shrink-0" aria-label="Delete" onClick={onRemove}>
+						<Trash2Icon className="h-4 w-4" />
+					</Button>
+				</div>
 			</div>
 		</Card>
 	)
 }
 
 export default SettingsNotificationsPage
+
+function normalizeWebhooks(webhooks: UserSettings["webhooks"]): WebhookConfig[] {
+	if (!webhooks || webhooks.length === 0) {
+		return []
+	}
+	return webhooks.map((webhook) =>
+		typeof webhook === "string"
+			? {
+					name: "",
+					url: webhook,
+				}
+			: {
+					name: webhook.name ?? "",
+					url: webhook.url ?? "",
+				},
+	)
+}
+
+function hasDuplicateWebhookNames(webhooks: WebhookConfig[]): boolean {
+	const seen = new Set<string>()
+	for (const webhook of webhooks) {
+		if (seen.has(webhook.name)) {
+			return true
+		}
+		seen.add(webhook.name)
+	}
+	return false
+}
+
+function maskWebhookUrl(url: string): string {
+	if (!url) {
+		return url
+	}
+	const queryIndex = url.indexOf("?")
+	if (queryIndex === -1) {
+		return url
+	}
+	const hashIndex = url.indexOf("#", queryIndex)
+	const base = url.slice(0, queryIndex)
+	const hash = hashIndex === -1 ? "" : url.slice(hashIndex)
+	return `${base}?****${hash}`
+}

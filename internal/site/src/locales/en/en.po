@@ -99,6 +99,8 @@ msgstr "Action"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -119,6 +121,10 @@ msgstr "Active Alerts"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Active state"
 msgstr "Active state"
+
+#: src/components/routes/api-tests.tsx
+msgid "Add"
+msgstr "Add"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -156,6 +162,10 @@ msgstr "Adjust the width of the main layout"
 msgid "Admin"
 msgstr "Admin"
 
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
+msgstr "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
+
 #: src/components/login/auth-form.tsx
 #~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
 #~ msgstr "Aether supports OpenID Connect and many OAuth2 authentication providers."
@@ -168,10 +178,6 @@ msgstr "Aether translations are being set up; contribution details will be share
 #~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
 #~ msgstr "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
 
-#: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
-msgstr "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
-
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
 msgstr "After"
@@ -180,16 +186,52 @@ msgstr "After"
 msgid "Agent"
 msgstr "Agent"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert"
+msgstr "Alert"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert enabled"
+msgstr "Alert enabled"
+
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Alert History"
 msgstr "Alert History"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert on recovery"
+msgstr "Alert on recovery"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold"
+msgstr "Alert threshold"
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold must be greater than 0"
+msgstr "Alert threshold must be greater than 0"
+
 #: src/components/alerts/alert-button.tsx
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Alerts"
 msgstr "Alerts"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All cases"
+msgstr "All cases"
+
+#: src/components/routes/api-tests.tsx
+msgid "All cases executed"
+msgstr "All cases executed"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All collections"
+msgstr "All collections"
 
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
@@ -206,6 +248,12 @@ msgstr "All Containers"
 #: src/components/systems-table/systems-table.tsx
 msgid "All Systems"
 msgstr "All Systems"
+
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+#: src/components/routes/api-tests.tsx
+msgid "API Tests"
+msgstr "API Tests"
 
 #: src/components/docker/overview.tsx
 msgid "API Version"
@@ -294,6 +342,11 @@ msgstr "Backups"
 msgid "Bandwidth"
 msgstr "Bandwidth"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Base URL"
+msgstr "Base URL"
+
 #. Battery label in systems table header
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
@@ -332,6 +385,14 @@ msgstr "Binary"
 msgid "Bits (Kbps, Mbps, Gbps)"
 msgstr "Bits (Kbps, Mbps, Gbps)"
 
+#: src/components/routes/api-tests.tsx
+msgid "Body"
+msgstr "Body"
+
+#: src/components/routes/api-tests.tsx
+msgid "Body type"
+msgstr "Body type"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Boot state"
 msgstr "Boot state"
@@ -366,6 +427,8 @@ msgstr "Can stop"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
@@ -380,6 +443,31 @@ msgstr "Capabilities"
 #: src/components/routes/system/smart-table.tsx
 msgid "Capacity"
 msgstr "Capacity"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case"
+msgstr "Case"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case deleted"
+msgstr "Case deleted"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case executed"
+msgstr "Case executed"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case name is required"
+msgstr "Case name is required"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case saved"
+msgstr "Case saved"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Cases"
+msgstr "Cases"
 
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Category"
@@ -483,6 +571,36 @@ msgstr "Click to copy"
 #: src/components/docker/data-cleanup.tsx
 msgid "Close"
 msgstr "Close"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection"
+msgstr "Collection"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection deleted"
+msgstr "Collection deleted"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection executed"
+msgstr "Collection executed"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collection is required"
+msgstr "Collection is required"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection name is required"
+msgstr "Collection name is required"
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection saved"
+msgstr "Collection saved"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collections"
+msgstr "Collections"
 
 #: src/components/login/forgot-pass-form.tsx
 #: src/components/login/forgot-pass-form.tsx
@@ -854,6 +972,8 @@ msgstr "Define system-level rules to filter the container list."
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -893,12 +1013,22 @@ msgstr "Delete service config?"
 msgid "Delete Template"
 msgstr "Delete Template"
 
+#: src/components/routes/api-tests.tsx
+msgid "Delete this case?"
+msgstr "Delete this case?"
+
+#: src/components/routes/api-tests.tsx
+msgid "Delete this collection?"
+msgstr "Delete this collection?"
+
 #: src/components/docker/volumes.tsx
 msgid "Delete Volume"
 msgstr "Delete Volume"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "Description"
@@ -1003,12 +1133,16 @@ msgid "Driver"
 msgstr "Driver"
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Duration"
 msgstr "Duration"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -1018,6 +1152,14 @@ msgstr "Edit"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "Edit {foo}"
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit case"
+msgstr "Edit case"
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit collection"
+msgstr "Edit collection"
 
 #: src/components/docker/registries.tsx
 msgid "Edit Registry"
@@ -1054,9 +1196,17 @@ msgstr "Email notifications"
 msgid "Empty"
 msgstr "Empty"
 
+#: src/components/routes/api-tests.tsx
+msgid "Enable alerts"
+msgstr "Enable alerts"
+
 #: src/components/docker/networks.tsx
 msgid "Enable IPv6"
 msgstr "Enable IPv6"
+
+#: src/components/routes/api-tests.tsx
+msgid "Enable schedule"
+msgstr "Enable schedule"
 
 #: src/components/audit/audit-logs-table.tsx
 #~ msgid "End"
@@ -1187,6 +1337,8 @@ msgstr "Environment"
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1220,6 +1372,14 @@ msgstr "Existing systems not defined in <0>config.yml</0> will be deleted. Pleas
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Exited active"
 msgstr "Exited active"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status"
+msgstr "Expected status"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status must be greater than 0"
+msgstr "Expected status must be greater than 0"
 
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Export"
@@ -1271,6 +1431,14 @@ msgstr "Failed to create network"
 msgid "Failed to create volume"
 msgstr "Failed to create volume"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete case"
+msgstr "Failed to delete case"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete collection"
+msgstr "Failed to delete collection"
+
 #: src/components/docker/compose.tsx
 msgid "Failed to delete compose project"
 msgstr "Failed to delete compose project"
@@ -1307,9 +1475,17 @@ msgstr "Failed to import focus rules"
 msgid "Failed to load audit logs"
 msgstr "Failed to load audit logs"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load cases"
+msgstr "Failed to load cases"
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to load cleanup config"
 msgstr "Failed to load cleanup config"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load collections"
+msgstr "Failed to load collections"
 
 #: src/components/docker/compose.tsx
 msgid "Failed to load compose projects"
@@ -1398,6 +1574,14 @@ msgstr "Failed to load registries"
 msgid "Failed to load repository sources"
 msgstr "Failed to load repository sources"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load run history"
+msgstr "Failed to load run history"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load schedule"
+msgstr "Failed to load schedule"
+
 #: src/components/docker/service-configs.tsx
 msgid "Failed to load service configs"
 msgstr "Failed to load service configs"
@@ -1426,9 +1610,29 @@ msgstr "Failed to remove image"
 msgid "Failed to retry cleanup"
 msgstr "Failed to retry cleanup"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run all cases"
+msgstr "Failed to run all cases"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run case"
+msgstr "Failed to run case"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run collection"
+msgstr "Failed to run collection"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save case"
+msgstr "Failed to save case"
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to save cleanup config"
 msgstr "Failed to save cleanup config"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save collection"
+msgstr "Failed to save collection"
 
 #: src/components/docker/compose.tsx
 msgid "Failed to save compose project"
@@ -1441,6 +1645,10 @@ msgstr "Failed to save compose template"
 #: src/components/docker/registries.tsx
 msgid "Failed to save registry"
 msgstr "Failed to save registry"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save schedule"
+msgstr "Failed to save schedule"
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to save service config"
@@ -1471,6 +1679,10 @@ msgstr "Failed to start cleanup"
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
 msgstr "Failed to update alert"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to update case"
+msgstr "Failed to update case"
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to update config content"
@@ -1586,6 +1798,14 @@ msgstr "Force removal"
 msgid "Forgot password?"
 msgstr "Forgot password?"
 
+#: src/components/routes/api-tests.tsx
+msgid "Form body"
+msgstr "Form body"
+
+#: src/components/routes/api-tests.tsx
+msgid "Form body is invalid"
+msgstr "Form body is invalid"
+
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgctxt "Button to copy install command"
@@ -1636,9 +1856,22 @@ msgstr "h"
 #~ msgid "h"
 #~ msgstr "h"
 
+#: src/components/routes/api-tests.tsx
+msgid "Headers"
+msgstr "Headers"
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
 #~ msgstr "Health"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "History"
+msgstr "History"
+
+#: src/components/routes/api-tests.tsx
+msgid "History retention (days)"
+msgstr "History retention (days)"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -1728,6 +1961,14 @@ msgstr "Inspect"
 msgid "Internal"
 msgstr "Internal"
 
+#: src/components/routes/api-tests.tsx
+msgid "Interval (minutes)"
+msgstr "Interval (minutes)"
+
+#: src/components/routes/api-tests.tsx
+msgid "Interval must be greater than 0"
+msgstr "Interval must be greater than 0"
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "Invalid email address."
@@ -1750,6 +1991,10 @@ msgstr "Invalid time range"
 
 #~ msgid "IPv6"
 #~ msgstr "IPv6"
+
+#: src/components/routes/api-tests.tsx
+msgid "JSON body is invalid"
+msgstr "JSON body is invalid"
 
 #. Linux kernel
 #: src/components/routes/system.tsx
@@ -1789,6 +2034,22 @@ msgstr "Labels (JSON)"
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Language"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last error"
+msgstr "Last error"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last run"
+msgstr "Last run"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Run"
+msgstr "Last Run"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Status"
+msgstr "Last Status"
 
 #: src/components/docker/compose.tsx
 msgid "Latest output from compose."
@@ -1874,6 +2135,10 @@ msgstr "Load Tables"
 msgid "Loading"
 msgstr "Loading"
 
+#: src/components/routes/api-tests.tsx
+msgid "Loading schedule..."
+msgstr "Loading schedule..."
+
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Loading SMTP settings..."
 msgstr "Loading SMTP settings..."
@@ -1944,6 +2209,14 @@ msgstr "Maintain reusable Docker Compose templates."
 msgid "Maintain service configuration endpoints for the selected system."
 msgstr "Maintain service configuration endpoints for the selected system."
 
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API cases"
+msgstr "Manage and run API cases"
+
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API tests."
+msgstr "Manage and run API tests."
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "Manage display and notification preferences."
@@ -2010,6 +2283,11 @@ msgstr "Memory Usage"
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Memory usage of docker containers"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Method"
+msgstr "Method"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "MinIO host and port are required"
@@ -2090,6 +2368,10 @@ msgstr "MySQL port is invalid"
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
@@ -2107,6 +2389,9 @@ msgstr "Name and server are required"
 #: src/components/docker/service-configs.tsx
 msgid "Name and URL are required"
 msgstr "Name and URL are required"
+
+msgid "Webhook names must be unique"
+msgstr "Webhook names must be unique"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
@@ -2150,9 +2435,29 @@ msgstr "Network unit"
 msgid "Networks"
 msgstr "Networks"
 
+#: src/components/routes/api-tests.tsx
+msgid "New case"
+msgstr "New case"
+
+#: src/components/routes/api-tests.tsx
+msgid "New Case"
+msgstr "New Case"
+
+#: src/components/routes/api-tests.tsx
+msgid "New collection"
+msgstr "New collection"
+
+#: src/components/routes/api-tests.tsx
+msgid "New Collection"
+msgstr "New Collection"
+
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
 msgstr "Next"
+
+#: src/components/routes/api-tests.tsx
+msgid "Next run"
+msgstr "Next run"
 
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -2163,6 +2468,14 @@ msgstr "No"
 #: src/components/audit/audit-logs-table.tsx
 msgid "No audit logs found."
 msgstr "No audit logs found."
+
+#: src/components/routes/api-tests.tsx
+msgid "No cases yet"
+msgstr "No cases yet"
+
+#: src/components/routes/api-tests.tsx
+msgid "No collections yet"
+msgstr "No collections yet"
 
 #: src/components/docker/compose.tsx
 msgid "No compose projects found."
@@ -2188,6 +2501,18 @@ msgstr "No focus rules found."
 msgid "No folders loaded."
 msgstr "No folders loaded."
 
+#: src/components/routes/api-tests.tsx
+msgid "No form fields"
+msgstr "No form fields"
+
+#: src/components/routes/api-tests.tsx
+msgid "No headers"
+msgstr "No headers"
+
+#: src/components/routes/api-tests.tsx
+msgid "No history yet"
+msgstr "No history yet"
+
 #: src/components/docker/images.tsx
 msgid "No images found."
 msgstr "No images found."
@@ -2207,6 +2532,10 @@ msgstr "No network mounts detected"
 #: src/components/docker/networks.tsx
 msgid "No networks found."
 msgstr "No networks found."
+
+#: src/components/routes/api-tests.tsx
+msgid "No params"
+msgstr "No params"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "No password stored"
@@ -2301,6 +2630,10 @@ msgstr "One-time password"
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Only administrators can edit these settings."
 msgstr "Only administrators can edit these settings."
+
+#: src/components/routes/api-tests.tsx
+msgid "Only scheduled cases will run"
+msgstr "Only scheduled cases will run"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -2606,6 +2939,10 @@ msgstr "Push"
 msgid "Push Image"
 msgstr "Push Image"
 
+#: src/components/routes/api-tests.tsx
+msgid "Query params"
+msgstr "Query params"
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
 msgstr "Quiet Hours"
@@ -2650,6 +2987,7 @@ msgstr "Redis port is invalid"
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "Refresh"
@@ -2707,6 +3045,10 @@ msgstr "Request a one-time password"
 msgid "Request OTP"
 msgstr "Request OTP"
 
+#: src/components/routes/api-tests.tsx
+msgid "Request URL is required"
+msgstr "Request URL is required"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Required by"
 msgstr "Required by"
@@ -2750,6 +3092,10 @@ msgstr "Restarts"
 msgid "Resume"
 msgstr "Resume"
 
+#: src/components/routes/api-tests.tsx
+msgid "Retention must be greater than 0"
+msgstr "Retention must be greater than 0"
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Retry"
 msgstr "Retry"
@@ -2788,6 +3134,22 @@ msgstr "Rule type is required"
 msgid "Rules are exact matches. Use the values shown in the container list or details."
 msgstr "Rules are exact matches. Use the values shown in the container list or details."
 
+#: src/components/routes/api-tests.tsx
+msgid "Run"
+msgstr "Run"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run All"
+msgstr "Run All"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Collection"
+msgstr "Run Collection"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Now"
+msgstr "Run Now"
+
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
 msgid "Running"
@@ -2811,6 +3173,9 @@ msgstr "S.M.A.R.T. Self-Test"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Save"
 msgstr "Save"
@@ -2836,9 +3201,28 @@ msgstr "Save system"
 msgid "Saved"
 msgstr "Saved"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
 msgstr "Schedule"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule enabled"
+msgstr "Schedule enabled"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes"
+msgstr "Schedule minutes"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes must be greater than 0"
+msgstr "Schedule minutes must be greater than 0"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule not loaded"
+msgstr "Schedule not loaded"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent, such as during maintenance periods."
@@ -2847,6 +3231,10 @@ msgstr "Schedule quiet hours where notifications will not be sent, such as durin
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "Schedule quiet hours where notifications will not be sent."
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule saved"
+msgstr "Schedule saved"
 
 #~ msgid "Scope"
 #~ msgstr "Scope"
@@ -2899,9 +3287,17 @@ msgstr "Select a system"
 msgid "Select a system to manage Docker resources."
 msgstr "Select a system to manage Docker resources."
 
+#: src/components/routes/api-tests.tsx
+msgid "Select body type"
+msgstr "Select body type"
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Select bucket"
 msgstr "Select bucket"
+
+#: src/components/routes/api-tests.tsx
+msgid "Select collection"
+msgstr "Select collection"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Select database"
@@ -2910,6 +3306,10 @@ msgstr "Select database"
 #: src/components/docker/data-cleanup.tsx
 msgid "Select DB"
 msgstr "Select DB"
+
+#: src/components/routes/api-tests.tsx
+msgid "Select method"
+msgstr "Select method"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Select rule type"
@@ -3043,6 +3443,12 @@ msgstr "SMTP username"
 msgid "Sort By"
 msgstr "Sort By"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Sort order"
+msgstr "Sort order"
+
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Source"
@@ -3080,6 +3486,8 @@ msgstr "State"
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -3174,6 +3582,9 @@ msgid "Table"
 msgstr "Table"
 
 #: src/components/docker/images.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Tags"
 msgstr "Tags"
 
@@ -3273,6 +3684,7 @@ msgid "Throughput of root filesystem"
 msgstr "Throughput of root filesystem"
 
 #: src/components/docker/networks.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr "Time"
 
@@ -3283,6 +3695,14 @@ msgstr "Time format"
 #: src/components/audit/audit-date-range.tsx
 msgid "Time Range"
 msgstr "Time Range"
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout (ms)"
+msgstr "Timeout (ms)"
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout must be greater than 0"
+msgstr "Timeout must be greater than 0"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -3484,6 +3904,7 @@ msgstr "Update service name or endpoint URL."
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -3503,6 +3924,8 @@ msgstr "Upload"
 msgid "Uptime"
 msgstr "Uptime"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "URL"
 msgstr "URL"

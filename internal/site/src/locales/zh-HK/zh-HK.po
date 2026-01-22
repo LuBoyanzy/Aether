@@ -104,6 +104,8 @@ msgstr "操作"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -124,6 +126,10 @@ msgstr "活動警報"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Active state"
 msgstr "活動狀態"
+
+#: src/components/routes/api-tests.tsx
+msgid "Add"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -161,6 +167,10 @@ msgstr "調整主版面寬度"
 msgid "Admin"
 msgstr "管理員"
 
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 #~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
 #~ msgstr "Aether支持OpenID Connect和許多OAuth2認證提供者。"
@@ -174,8 +184,8 @@ msgstr ""
 #~ msgstr "Aether 使用 <0>Shoutrrr</0> 與流行的通知服務集成。"
 
 #: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
-msgstr ""
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
@@ -185,16 +195,52 @@ msgstr "之後"
 msgid "Agent"
 msgstr "客户端"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert enabled"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Alert History"
 msgstr "警報歷史"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert on recovery"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold must be greater than 0"
+msgstr ""
+
 #: src/components/alerts/alert-button.tsx
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Alerts"
 msgstr "警報"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "All cases executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All collections"
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
@@ -211,6 +257,12 @@ msgstr "所有容器"
 #: src/components/systems-table/systems-table.tsx
 msgid "All Systems"
 msgstr "所有系統"
+
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+#: src/components/routes/api-tests.tsx
+msgid "API Tests"
+msgstr ""
 
 #: src/components/docker/overview.tsx
 msgid "API Version"
@@ -299,6 +351,11 @@ msgstr "備份"
 msgid "Bandwidth"
 msgstr "帶寬"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Base URL"
+msgstr ""
+
 #. Battery label in systems table header
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
@@ -337,6 +394,14 @@ msgstr "執行檔"
 msgid "Bits (Kbps, Mbps, Gbps)"
 msgstr "位元 (Kbps, Mbps, Gbps)"
 
+#: src/components/routes/api-tests.tsx
+msgid "Body"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Body type"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Boot state"
 msgstr "啟動狀態"
@@ -371,6 +436,8 @@ msgstr "可停止"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
@@ -385,6 +452,31 @@ msgstr "能力"
 #: src/components/routes/system/smart-table.tsx
 msgid "Capacity"
 msgstr "容量"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case deleted"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case name is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case saved"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Cases"
+msgstr ""
 
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Category"
@@ -487,6 +579,36 @@ msgstr "點擊以複製"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Close"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection deleted"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collection is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection name is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection saved"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collections"
 msgstr ""
 
 #: src/components/login/forgot-pass-form.tsx
@@ -859,6 +981,8 @@ msgstr ""
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -898,12 +1022,22 @@ msgstr ""
 msgid "Delete Template"
 msgstr "刪除模板"
 
+#: src/components/routes/api-tests.tsx
+msgid "Delete this case?"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Delete this collection?"
+msgstr ""
+
 #: src/components/docker/volumes.tsx
 msgid "Delete Volume"
 msgstr "刪除存儲卷"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "描述"
@@ -1008,12 +1142,16 @@ msgid "Driver"
 msgstr "驅動"
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Duration"
 msgstr "持續時間"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -1022,6 +1160,14 @@ msgstr "編輯"
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit collection"
 msgstr ""
 
 #: src/components/docker/registries.tsx
@@ -1059,9 +1205,17 @@ msgstr "電子郵件通知"
 msgid "Empty"
 msgstr "空電"
 
+#: src/components/routes/api-tests.tsx
+msgid "Enable alerts"
+msgstr ""
+
 #: src/components/docker/networks.tsx
 msgid "Enable IPv6"
 msgstr "啟用 IPv6"
+
+#: src/components/routes/api-tests.tsx
+msgid "Enable schedule"
+msgstr ""
 
 #: src/components/audit/audit-logs-table.tsx
 #~ msgid "End"
@@ -1192,6 +1346,8 @@ msgstr "環境變數"
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1225,6 +1381,14 @@ msgstr "未在<0>config.yml</0>中定義的現有系統將被刪除。請定期�
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Exited active"
 msgstr "退出活動狀態"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status must be greater than 0"
+msgstr ""
 
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Export"
@@ -1276,6 +1440,14 @@ msgstr "建立網絡失敗"
 msgid "Failed to create volume"
 msgstr "建立存儲卷失敗"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete collection"
+msgstr ""
+
 #: src/components/docker/compose.tsx
 msgid "Failed to delete compose project"
 msgstr "刪除編排項目失敗"
@@ -1312,8 +1484,16 @@ msgstr ""
 msgid "Failed to load audit logs"
 msgstr "載入審查日誌失敗"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load cases"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to load cleanup config"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load collections"
 msgstr ""
 
 #: src/components/docker/compose.tsx
@@ -1403,6 +1583,14 @@ msgstr "載入倉庫失敗"
 msgid "Failed to load repository sources"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load run history"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load schedule"
+msgstr ""
+
 #: src/components/docker/service-configs.tsx
 msgid "Failed to load service configs"
 msgstr ""
@@ -1431,8 +1619,28 @@ msgstr "刪除鏡像失敗"
 msgid "Failed to retry cleanup"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run all cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save case"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to save cleanup config"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save collection"
 msgstr ""
 
 #: src/components/docker/compose.tsx
@@ -1446,6 +1654,10 @@ msgstr "保存編排模板失敗"
 #: src/components/docker/registries.tsx
 msgid "Failed to save registry"
 msgstr "保存倉庫失敗"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save schedule"
+msgstr ""
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to save service config"
@@ -1476,6 +1688,10 @@ msgstr ""
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
 msgstr "更新警報失敗"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to update case"
+msgstr ""
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to update config content"
@@ -1591,6 +1807,14 @@ msgstr "強制移除"
 msgid "Forgot password?"
 msgstr "忘記密碼？"
 
+#: src/components/routes/api-tests.tsx
+msgid "Form body"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Form body is invalid"
+msgstr ""
+
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgctxt "Button to copy install command"
@@ -1641,9 +1865,22 @@ msgstr ""
 #~ msgid "h"
 #~ msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Headers"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
 #~ msgstr "健康狀態"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "History"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "History retention (days)"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -1733,6 +1970,14 @@ msgstr "檢視"
 msgid "Internal"
 msgstr "內部"
 
+#: src/components/routes/api-tests.tsx
+msgid "Interval (minutes)"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Interval must be greater than 0"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "無效的電子郵件地址。"
@@ -1755,6 +2000,10 @@ msgstr "時間範圍無效"
 
 #~ msgid "IPv6"
 #~ msgstr "IPv6"
+
+#: src/components/routes/api-tests.tsx
+msgid "JSON body is invalid"
+msgstr ""
 
 #. Linux kernel
 #: src/components/routes/system.tsx
@@ -1794,6 +2043,22 @@ msgstr "標籤 (JSON)"
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "語言"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last error"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Status"
+msgstr ""
 
 #: src/components/docker/compose.tsx
 msgid "Latest output from compose."
@@ -1879,6 +2144,10 @@ msgstr ""
 msgid "Loading"
 msgstr "載入中"
 
+#: src/components/routes/api-tests.tsx
+msgid "Loading schedule..."
+msgstr ""
+
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Loading SMTP settings..."
 msgstr ""
@@ -1949,6 +2218,14 @@ msgstr "維護可重用的 Docker Compose 模板。"
 msgid "Maintain service configuration endpoints for the selected system."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API tests."
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "管理顯示和通知偏好。"
@@ -2015,6 +2292,11 @@ msgstr "記憶體使用"
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Docker 容器的記憶體使用量"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Method"
+msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
 msgid "MinIO host and port are required"
@@ -2095,6 +2377,10 @@ msgstr ""
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
@@ -2155,9 +2441,29 @@ msgstr "網路單位"
 msgid "Networks"
 msgstr "網絡"
 
+#: src/components/routes/api-tests.tsx
+msgid "New case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New Case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New Collection"
+msgstr ""
+
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
 msgstr "下一頁"
+
+#: src/components/routes/api-tests.tsx
+msgid "Next run"
+msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -2168,6 +2474,14 @@ msgstr "否"
 #: src/components/audit/audit-logs-table.tsx
 msgid "No audit logs found."
 msgstr "未找到審查日誌記錄。"
+
+#: src/components/routes/api-tests.tsx
+msgid "No cases yet"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No collections yet"
+msgstr ""
 
 #: src/components/docker/compose.tsx
 msgid "No compose projects found."
@@ -2193,6 +2507,18 @@ msgstr ""
 msgid "No folders loaded."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "No form fields"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No headers"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No history yet"
+msgstr ""
+
 #: src/components/docker/images.tsx
 msgid "No images found."
 msgstr "未找到鏡像。"
@@ -2212,6 +2538,10 @@ msgstr ""
 #: src/components/docker/networks.tsx
 msgid "No networks found."
 msgstr "未找到網絡。"
+
+#: src/components/routes/api-tests.tsx
+msgid "No params"
+msgstr ""
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "No password stored"
@@ -2305,6 +2635,10 @@ msgstr "一次性密碼"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Only administrators can edit these settings."
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Only scheduled cases will run"
 msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2611,6 +2945,10 @@ msgstr "推送"
 msgid "Push Image"
 msgstr "推送鏡像"
 
+#: src/components/routes/api-tests.tsx
+msgid "Query params"
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
 msgstr "靜音時段"
@@ -2655,6 +2993,7 @@ msgstr ""
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "重新整理"
@@ -2712,6 +3051,10 @@ msgstr "請求一次性密碼"
 msgid "Request OTP"
 msgstr "請求 OTP"
 
+#: src/components/routes/api-tests.tsx
+msgid "Request URL is required"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Required by"
 msgstr "被需要"
@@ -2755,6 +3098,10 @@ msgstr "重啟次數"
 msgid "Resume"
 msgstr "恢復"
 
+#: src/components/routes/api-tests.tsx
+msgid "Retention must be greater than 0"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Retry"
 msgstr ""
@@ -2793,6 +3140,22 @@ msgstr ""
 msgid "Rules are exact matches. Use the values shown in the container list or details."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run All"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Now"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
 msgid "Running"
@@ -2816,6 +3179,9 @@ msgstr "S.M.A.R.T. 自檢"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Save"
 msgstr "儲存"
@@ -2841,8 +3207,27 @@ msgstr "儲存系統"
 msgid "Saved"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule enabled"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes must be greater than 0"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule not loaded"
 msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2852,6 +3237,10 @@ msgstr "安排不會發送通知的靜音時段，例如在維護期間。"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "安排不會發送通知的靜音時段。"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule saved"
+msgstr ""
 
 #~ msgid "Scope"
 #~ msgstr "範圍"
@@ -2904,8 +3293,16 @@ msgstr "選擇系統"
 msgid "Select a system to manage Docker resources."
 msgstr "選擇系統以管理 Docker 資源。"
 
+#: src/components/routes/api-tests.tsx
+msgid "Select body type"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Select bucket"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Select collection"
 msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
@@ -2914,6 +3311,10 @@ msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Select DB"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Select method"
 msgstr ""
 
 #: src/components/docker/focus-rules-dialog.tsx
@@ -3048,6 +3449,12 @@ msgstr ""
 msgid "Sort By"
 msgstr "排序依據"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Sort order"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Source"
@@ -3085,6 +3492,8 @@ msgstr "狀態"
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -3179,6 +3588,9 @@ msgid "Table"
 msgstr "表格"
 
 #: src/components/docker/images.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Tags"
 msgstr "標籤"
 
@@ -3278,6 +3690,7 @@ msgid "Throughput of root filesystem"
 msgstr "根文件系統的吞吐量"
 
 #: src/components/docker/networks.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr ""
 
@@ -3288,6 +3701,14 @@ msgstr "時間格式"
 #: src/components/audit/audit-date-range.tsx
 msgid "Time Range"
 msgstr "時間範圍"
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout (ms)"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout must be greater than 0"
+msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -3489,6 +3910,7 @@ msgstr ""
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -3508,6 +3930,8 @@ msgstr "上傳"
 msgid "Uptime"
 msgstr "正常運行時間"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "URL"
 msgstr ""

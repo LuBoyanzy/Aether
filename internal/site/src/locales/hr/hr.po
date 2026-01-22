@@ -104,6 +104,8 @@ msgstr ""
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -124,6 +126,10 @@ msgstr "Aktivna upozorenja"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Active state"
 msgstr "Aktivno stanje"
+
+#: src/components/routes/api-tests.tsx
+msgid "Add"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -161,6 +167,10 @@ msgstr "Prilagodite širinu glavnog rasporeda"
 msgid "Admin"
 msgstr "Admin"
 
+#: src/components/routes/settings/notifications.tsx
+msgid "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 #~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
 #~ msgstr "Aether podržava OpenID Connect i mnoge druge OAuth2 davatalje autentifikacije."
@@ -174,8 +184,8 @@ msgstr ""
 #~ msgstr "Aether koristi <0>Shoutrrr</0> za integraciju sa popularnim servisima za notifikacije."
 
 #: src/components/routes/settings/notifications.tsx
-msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
-msgstr ""
+#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services. Documentation is not ready yet."
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
@@ -185,16 +195,52 @@ msgstr "Nakon"
 msgid "Agent"
 msgstr "Agent"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert enabled"
+msgstr ""
+
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Alert History"
 msgstr "Povijest Upozorenja"
 
+#: src/components/routes/api-tests.tsx
+msgid "Alert on recovery"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Alert threshold must be greater than 0"
+msgstr ""
+
 #: src/components/alerts/alert-button.tsx
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Alerts"
 msgstr "Upozorenja"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "All cases executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "All collections"
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
@@ -211,6 +257,12 @@ msgstr "Svi spremnici"
 #: src/components/systems-table/systems-table.tsx
 msgid "All Systems"
 msgstr "Svi Sistemi"
+
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+#: src/components/routes/api-tests.tsx
+msgid "API Tests"
+msgstr ""
 
 #: src/components/docker/overview.tsx
 msgid "API Version"
@@ -299,6 +351,11 @@ msgstr "Sigurnosne kopije"
 msgid "Bandwidth"
 msgstr "Propusnost"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Base URL"
+msgstr ""
+
 #. Battery label in systems table header
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
@@ -337,6 +394,14 @@ msgstr "Binarni"
 msgid "Bits (Kbps, Mbps, Gbps)"
 msgstr "Bitovi (Kbps, Mbps, Gbps)"
 
+#: src/components/routes/api-tests.tsx
+msgid "Body"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Body type"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Boot state"
 msgstr "Stanje pokretanja"
@@ -371,6 +436,8 @@ msgstr "Može se zaustaviti"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
@@ -385,6 +452,31 @@ msgstr ""
 #: src/components/routes/system/smart-table.tsx
 msgid "Capacity"
 msgstr "Kapacitet"
+
+#: src/components/routes/api-tests.tsx
+msgid "Case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case deleted"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case name is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Case saved"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Cases"
+msgstr ""
 
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Category"
@@ -487,6 +579,36 @@ msgstr "Pritisnite za kopiranje"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Close"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection deleted"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection executed"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collection is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection name is required"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Collection saved"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Collections"
 msgstr ""
 
 #: src/components/login/forgot-pass-form.tsx
@@ -859,6 +981,8 @@ msgstr ""
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -898,12 +1022,22 @@ msgstr ""
 msgid "Delete Template"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Delete this case?"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Delete this collection?"
+msgstr ""
+
 #: src/components/docker/volumes.tsx
 msgid "Delete Volume"
 msgstr ""
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "Opis"
@@ -1008,12 +1142,16 @@ msgid "Driver"
 msgstr ""
 
 #: src/components/alerts-history-columns.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Duration"
 msgstr "Trajanje"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -1022,6 +1160,14 @@ msgstr "Uredi"
 #: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Edit collection"
 msgstr ""
 
 #: src/components/docker/registries.tsx
@@ -1059,8 +1205,16 @@ msgstr "Email notifikacije"
 msgid "Empty"
 msgstr "Prazna"
 
+#: src/components/routes/api-tests.tsx
+msgid "Enable alerts"
+msgstr ""
+
 #: src/components/docker/networks.tsx
 msgid "Enable IPv6"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Enable schedule"
 msgstr ""
 
 #: src/components/audit/audit-date-range.tsx
@@ -1188,6 +1342,8 @@ msgstr ""
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1221,6 +1377,14 @@ msgstr "Postojeći sistemi koji nisu definirani u <0>config.yml</0> će biti izb
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Exited active"
 msgstr "Izašlo aktivno"
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Expected status must be greater than 0"
+msgstr ""
 
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Export"
@@ -1272,6 +1436,14 @@ msgstr ""
 msgid "Failed to create volume"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to delete collection"
+msgstr ""
+
 #: src/components/docker/compose.tsx
 msgid "Failed to delete compose project"
 msgstr ""
@@ -1308,8 +1480,16 @@ msgstr ""
 msgid "Failed to load audit logs"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load cases"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to load cleanup config"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load collections"
 msgstr ""
 
 #: src/components/docker/compose.tsx
@@ -1399,6 +1579,14 @@ msgstr ""
 msgid "Failed to load repository sources"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load run history"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to load schedule"
+msgstr ""
+
 #: src/components/docker/service-configs.tsx
 msgid "Failed to load service configs"
 msgstr ""
@@ -1427,8 +1615,28 @@ msgstr ""
 msgid "Failed to retry cleanup"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run all cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to run collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save case"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to save cleanup config"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save collection"
 msgstr ""
 
 #: src/components/docker/compose.tsx
@@ -1441,6 +1649,10 @@ msgstr ""
 
 #: src/components/docker/registries.tsx
 msgid "Failed to save registry"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to save schedule"
 msgstr ""
 
 #: src/components/docker/service-configs.tsx
@@ -1472,6 +1684,10 @@ msgstr ""
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Failed to update alert"
 msgstr "Ažuriranje upozorenja nije uspjelo"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to update case"
+msgstr ""
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to update config content"
@@ -1587,6 +1803,14 @@ msgstr ""
 msgid "Forgot password?"
 msgstr "Zaboravljena lozinka?"
 
+#: src/components/routes/api-tests.tsx
+msgid "Form body"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Form body is invalid"
+msgstr ""
+
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgctxt "Button to copy install command"
@@ -1637,9 +1861,22 @@ msgstr ""
 #~ msgid "h"
 #~ msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Headers"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "Health"
 #~ msgstr "Zdravlje"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "History"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "History retention (days)"
+msgstr ""
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -1729,6 +1966,14 @@ msgstr ""
 msgid "Internal"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Interval (minutes)"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Interval must be greater than 0"
+msgstr ""
+
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "Nevažeća adresa e-pošte."
@@ -1747,6 +1992,10 @@ msgstr ""
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Invalid time range"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "JSON body is invalid"
 msgstr ""
 
 #. Linux kernel
@@ -1787,6 +2036,22 @@ msgstr ""
 #: src/components/routes/settings/general.tsx
 msgid "Language"
 msgstr "Jezik"
+
+#: src/components/routes/api-tests.tsx
+msgid "Last error"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Last Status"
+msgstr ""
 
 #: src/components/docker/compose.tsx
 msgid "Latest output from compose."
@@ -1872,6 +2137,10 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Loading schedule..."
+msgstr ""
+
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Loading SMTP settings..."
 msgstr ""
@@ -1942,6 +2211,14 @@ msgstr ""
 msgid "Maintain service configuration endpoints for the selected system."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Manage and run API tests."
+msgstr ""
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "Upravljajte postavkama prikaza i obavijesti."
@@ -2008,6 +2285,11 @@ msgstr "Upotreba memorije"
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Upotreba memorije Docker spremnika"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Method"
+msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
 msgid "MinIO host and port are required"
@@ -2088,6 +2370,10 @@ msgstr ""
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
@@ -2148,8 +2434,28 @@ msgstr "Mjerna jedinica za mrežu"
 msgid "Networks"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "New case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New Case"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "New Collection"
+msgstr ""
+
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Next run"
 msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
@@ -2160,6 +2466,14 @@ msgstr "Ne"
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "No audit logs found."
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No cases yet"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No collections yet"
 msgstr ""
 
 #: src/components/docker/compose.tsx
@@ -2186,6 +2500,18 @@ msgstr ""
 msgid "No folders loaded."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "No form fields"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No headers"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No history yet"
+msgstr ""
+
 #: src/components/docker/images.tsx
 msgid "No images found."
 msgstr ""
@@ -2204,6 +2530,10 @@ msgstr ""
 
 #: src/components/docker/networks.tsx
 msgid "No networks found."
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "No params"
 msgstr ""
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
@@ -2298,6 +2628,10 @@ msgstr "Jednokratna lozinka"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Only administrators can edit these settings."
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Only scheduled cases will run"
 msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
@@ -2604,6 +2938,10 @@ msgstr ""
 msgid "Push Image"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Query params"
+msgstr ""
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
 msgstr "Tihi sati"
@@ -2648,6 +2986,7 @@ msgstr ""
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "Osvježi"
@@ -2705,6 +3044,10 @@ msgstr "Zatraži jednokratnu lozinku"
 msgid "Request OTP"
 msgstr "Zatraži OTP"
 
+#: src/components/routes/api-tests.tsx
+msgid "Request URL is required"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Required by"
 msgstr "Zahtijeva"
@@ -2748,6 +3091,10 @@ msgstr "Ponovna pokretanja"
 msgid "Resume"
 msgstr "Nastavi"
 
+#: src/components/routes/api-tests.tsx
+msgid "Retention must be greater than 0"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Retry"
 msgstr ""
@@ -2786,6 +3133,22 @@ msgstr ""
 msgid "Rules are exact matches. Use the values shown in the container list or details."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Run"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run All"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Collection"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run Now"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
 msgid "Running"
@@ -2809,6 +3172,9 @@ msgstr "S.M.A.R.T. Samotestiranje"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Save"
 msgstr ""
@@ -2834,9 +3200,28 @@ msgstr "Spremi sustav"
 msgid "Saved"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
 msgstr "Raspored"
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule enabled"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule minutes must be greater than 0"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule not loaded"
+msgstr ""
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent, such as during maintenance periods."
@@ -2845,6 +3230,10 @@ msgstr "Rasporedi tihe sate kada se obavijesti neće slati, na primjer tijekom r
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "Rasporedi tihe sate kada se obavijesti neće slati."
+
+#: src/components/routes/api-tests.tsx
+msgid "Schedule saved"
+msgstr ""
 
 #: src/components/navbar.tsx
 msgid "Search"
@@ -2894,8 +3283,16 @@ msgstr ""
 msgid "Select a system to manage Docker resources."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Select body type"
+msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Select bucket"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Select collection"
 msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
@@ -2904,6 +3301,10 @@ msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Select DB"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Select method"
 msgstr ""
 
 #: src/components/docker/focus-rules-dialog.tsx
@@ -3038,6 +3439,12 @@ msgstr ""
 msgid "Sort By"
 msgstr "Sortiraj po"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Sort order"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Source"
@@ -3075,6 +3482,8 @@ msgstr "Stanje"
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -3169,6 +3578,9 @@ msgid "Table"
 msgstr "Tablica"
 
 #: src/components/docker/images.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Tags"
 msgstr ""
 
@@ -3268,6 +3680,7 @@ msgid "Throughput of root filesystem"
 msgstr "Protok root datotečnog sustava"
 
 #: src/components/docker/networks.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr ""
 
@@ -3277,6 +3690,14 @@ msgstr "Format vremena"
 
 #: src/components/audit/audit-date-range.tsx
 msgid "Time Range"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout (ms)"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Timeout must be greater than 0"
 msgstr ""
 
 #: src/components/routes/settings/notifications.tsx
@@ -3479,6 +3900,7 @@ msgstr ""
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -3498,6 +3920,8 @@ msgstr "Otpremi"
 msgid "Uptime"
 msgstr "Vrijeme rada"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "URL"
 msgstr ""

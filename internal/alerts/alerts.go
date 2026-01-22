@@ -2,12 +2,19 @@
 package alerts
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"net/mail"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
+	"github.com/google/uuid"
 	"github.com/nicholas-fedor/shoutrrr"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
@@ -35,9 +42,48 @@ type AlertMessageData struct {
 	LinkText string
 }
 
+type WebhookConfig struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type WebhookList []WebhookConfig
+
 type UserNotificationSettings struct {
-	Emails   []string `json:"emails"`
-	Webhooks []string `json:"webhooks"`
+	Emails   []string    `json:"emails"`
+	Webhooks WebhookList `json:"webhooks"`
+}
+
+func (w *WebhookList) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 || string(data) == "null" {
+		*w = WebhookList{}
+		return nil
+	}
+	var raw []json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	parsed := make([]WebhookConfig, 0, len(raw))
+	for index, item := range raw {
+		var url string
+		if err := json.Unmarshal(item, &url); err == nil {
+			if strings.TrimSpace(url) == "" {
+				return fmt.Errorf("webhook url is required at index %d", index)
+			}
+			parsed = append(parsed, WebhookConfig{URL: url})
+			continue
+		}
+		var entry WebhookConfig
+		if err := json.Unmarshal(item, &entry); err != nil {
+			return err
+		}
+		if strings.TrimSpace(entry.URL) == "" {
+			return fmt.Errorf("webhook url is required at index %d", index)
+		}
+		parsed = append(parsed, entry)
+	}
+	*w = parsed
+	return nil
 }
 
 type SystemAlertStats struct {
@@ -69,6 +115,31 @@ type SystemAlertData struct {
 	min          uint8
 	mapSums      map[string]float32
 	descriptor   string // override descriptor in notification body (for temp sensor, disk partition, etc)
+}
+
+const (
+	weLinkHost = "open.welink.huaweicloud.com"
+	weLinkPath = "/api/werobot/v1/webhook/send"
+)
+
+type weLinkWebhookContent struct {
+	Text string `json:"text"`
+}
+
+type weLinkWebhookPayload struct {
+	MessageType string               `json:"messageType"`
+	Content     weLinkWebhookContent `json:"content"`
+	TimeStamp   int64                `json:"timeStamp"`
+	UUID        string               `json:"uuid"`
+	IsAt        bool                 `json:"isAt"`
+	IsAtAll     bool                 `json:"isAtAll"`
+	AtAccounts  []string             `json:"atAccounts"`
+}
+
+type weLinkWebhookResponse struct {
+	Code    string `json:"code"`
+	Data    string `json:"data"`
+	Message string `json:"message"`
 }
 
 // notification services that support title param
@@ -194,15 +265,15 @@ func (am *AlertManager) SendAlert(data AlertMessageData) error {
 	// unmarshal user settings
 	userAlertSettings := UserNotificationSettings{
 		Emails:   []string{},
-		Webhooks: []string{},
+		Webhooks: WebhookList{},
 	}
 	if err := record.UnmarshalJSONField("settings", &userAlertSettings); err != nil {
 		am.hub.Logger().Error("Failed to unmarshal user settings", "logger", "alerts", "err", err)
 	}
 	// send alerts via webhooks
 	for _, webhook := range userAlertSettings.Webhooks {
-		if err := am.SendShoutrrrAlert(webhook, data.Title, data.Message, data.Link, data.LinkText); err != nil {
-			am.hub.Logger().Error("Failed to send shoutrrr alert", "logger", "alerts", "err", err)
+		if err := am.SendWebhookAlert(webhook.URL, data.Title, data.Message, data.Link, data.LinkText); err != nil {
+			am.hub.Logger().Error("Failed to send webhook alert", "logger", "alerts", "err", err)
 		}
 	}
 	// send alerts via email
@@ -284,6 +355,109 @@ func (am *AlertManager) SendShoutrrrAlert(notificationUrl, title, message, link,
 	return nil
 }
 
+// SendWebhookAlert sends an alert via WeLink or Shoutrrr depending on the URL.
+func (am *AlertManager) SendWebhookAlert(notificationUrl, title, message, link, linkText string) error {
+	parsedURL, err := url.Parse(notificationUrl)
+	if err != nil {
+		return fmt.Errorf("failed to parse webhook url: %v", err)
+	}
+	if isWeLinkWebhookURL(parsedURL) {
+		return am.SendWeLinkAlert(parsedURL, title, message, link)
+	}
+	return am.SendShoutrrrAlert(notificationUrl, title, message, link, linkText)
+}
+
+// SendWeLinkAlert sends an alert via WeLink webhook URL.
+func (am *AlertManager) SendWeLinkAlert(parsedURL *url.URL, title, message, link string) error {
+	queryParams := parsedURL.Query()
+	token := queryParams.Get("token")
+	channel := queryParams.Get("channel")
+	if token == "" || channel == "" {
+		return fmt.Errorf("welink webhook missing token or channel (url=%s)", redactWeLinkURL(parsedURL))
+	}
+	text := buildWeLinkText(title, message, link)
+	textLen := utf8.RuneCountInString(text)
+	if textLen < 1 || textLen > 500 {
+		return fmt.Errorf("welink content length out of range: %d (expected 1-500)", textLen)
+	}
+	payload := weLinkWebhookPayload{
+		MessageType: "text",
+		Content: weLinkWebhookContent{
+			Text: text,
+		},
+		TimeStamp:  time.Now().UnixMilli(),
+		UUID:       uuid.NewString(),
+		IsAt:       false,
+		IsAtAll:    false,
+		AtAccounts: []string{},
+	}
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal welink payload: %v", err)
+	}
+	req, err := http.NewRequest(http.MethodPost, parsedURL.String(), bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("failed to create welink request: %v", err)
+	}
+	req.Header.Set("Accept-Charset", "UTF-8")
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		am.hub.Logger().Error("Failed to send welink alert", "logger", "alerts", "err", err)
+		return fmt.Errorf("welink request failed: %v", err)
+	}
+	defer resp.Body.Close()
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		am.hub.Logger().Error("Failed to read welink response", "logger", "alerts", "err", err)
+		return fmt.Errorf("failed to read welink response body: %v", err)
+	}
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		err = fmt.Errorf("welink response status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(respBody)))
+		am.hub.Logger().Error("WeLink request returned non-2xx", "logger", "alerts", "err", err)
+		return err
+	}
+	var result weLinkWebhookResponse
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return fmt.Errorf("failed to parse welink response: %v (body=%s)", err, strings.TrimSpace(string(respBody)))
+	}
+	if result.Code != "0" {
+		err = fmt.Errorf("welink response code=%s message=%s data=%s", result.Code, result.Message, result.Data)
+		am.hub.Logger().Error("WeLink responded with error", "logger", "alerts", "err", err)
+		return err
+	}
+	am.hub.Logger().Info("Sent welink alert", "logger", "alerts")
+	return nil
+}
+
+func isWeLinkWebhookURL(parsedURL *url.URL) bool {
+	if parsedURL == nil {
+		return false
+	}
+	path := strings.TrimSuffix(parsedURL.Path, "/")
+	return strings.EqualFold(parsedURL.Host, weLinkHost) && path == weLinkPath
+}
+
+func redactWeLinkURL(parsedURL *url.URL) string {
+	if parsedURL == nil {
+		return ""
+	}
+	redacted := *parsedURL
+	query := redacted.Query()
+	if query.Has("token") {
+		query.Set("token", "REDACTED")
+	}
+	redacted.RawQuery = query.Encode()
+	return redacted.String()
+}
+
+func buildWeLinkText(title, message, link string) string {
+	text := title + "\n\n" + message
+	text += "\n\n" + link
+	return text
+}
+
 func (am *AlertManager) SendTestNotification(e *core.RequestEvent) error {
 	var data struct {
 		URL string `json:"url"`
@@ -292,7 +466,7 @@ func (am *AlertManager) SendTestNotification(e *core.RequestEvent) error {
 	if err != nil || data.URL == "" {
 		return e.BadRequestError("URL is required", err)
 	}
-	err = am.SendShoutrrrAlert(data.URL, "Test Alert", "This is a notification from Aether.", am.hub.Settings().Meta.AppURL, "View Aether")
+	err = am.SendWebhookAlert(data.URL, "Test Alert", "This is a notification from Aether.", am.hub.Settings().Meta.AppURL, "View Aether")
 	if err != nil {
 		return e.JSON(200, map[string]string{"err": err.Error()})
 	}

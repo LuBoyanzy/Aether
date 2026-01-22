@@ -435,6 +435,7 @@ export interface DockerFocusServiceRecord extends RecordModel {
 	match_type: DockerFocusMatchType
 	value: string
 	value2?: string
+	description?: string
 	created: string
 	updated: string
 }
@@ -513,10 +514,15 @@ export interface ChartTimeData {
 	}
 }
 
+export interface WebhookConfig {
+	name: string
+	url: string
+}
+
 export interface UserSettings {
 	chartTime: ChartTimes
 	emails?: string[]
-	webhooks?: string[]
+	webhooks?: (string | WebhookConfig)[]
 	unitTemp?: Unit
 	unitNet?: Unit
 	unitDisk?: Unit
