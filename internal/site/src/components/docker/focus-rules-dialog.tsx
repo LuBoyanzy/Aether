@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/components/ui/use-toast"
 import { isReadOnlyUser } from "@/lib/api"
-import { createDockerFocusService, deleteDockerFocusService } from "@/lib/docker-focus"
+import { createDockerFocusService, deleteDockerFocusService, updateDockerFocusService } from "@/lib/docker-focus"
 import type { DockerFocusMatchType, DockerFocusServiceRecord } from "@/types"
 import { AlertCircleIcon, LoaderCircleIcon, MoreHorizontalIcon } from "lucide-react"
 
@@ -33,6 +33,7 @@ type FocusRuleImportItem = {
 	match_type: DockerFocusMatchType
 	value: string
 	value2?: string
+	description?: string
 }
 
 function formatRuleValue(rule: DockerFocusServiceRecord) {
@@ -70,6 +71,8 @@ export default memo(function DockerFocusRulesDialog({
 	const [matchType, setMatchType] = useState<DockerFocusMatchType | "">("")
 	const [value, setValue] = useState("")
 	const [value2, setValue2] = useState("")
+	const [description, setDescription] = useState("")
+	const [editingRule, setEditingRule] = useState<DockerFocusServiceRecord | null>(null)
 	const [saving, setSaving] = useState(false)
 	const [importing, setImporting] = useState(false)
 	const [deleteTarget, setDeleteTarget] = useState<DockerFocusServiceRecord | null>(null)
@@ -86,14 +89,21 @@ export default memo(function DockerFocusRulesDialog({
 	const isValidMatchType = (value: string): value is DockerFocusMatchType =>
 		Object.prototype.hasOwnProperty.call(matchTypeLabels, value)
 
+	const resetForm = useCallback(() => {
+		setMatchType("")
+		setValue("")
+		setValue2("")
+		setDescription("")
+		setEditingRule(null)
+	}, [])
+
 	useEffect(() => {
 		if (open) {
-			setMatchType("")
-			setValue("")
-			setValue2("")
+			resetForm()
 		}
-	}, [open])
+	}, [open, resetForm])
 
+	const isEditing = Boolean(editingRule)
 	const showValue2 = matchType === "compose_service" || matchType === "label"
 	const valueLabel = (() => {
 		switch (matchType) {
@@ -117,7 +127,7 @@ export default memo(function DockerFocusRulesDialog({
 		return t`Value`
 	})()
 
-	const handleCreate = useCallback(async () => {
+	const handleSubmit = useCallback(async () => {
 		if (!systemId) return
 		if (readOnly) {
 			toast({ title: t`Forbidden`, description: t`You have read-only access`, variant: "destructive" })
@@ -129,6 +139,7 @@ export default memo(function DockerFocusRulesDialog({
 		}
 		const trimmedValue = value.trim()
 		const trimmedValue2 = value2.trim()
+		const trimmedDescription = description.trim()
 		if (!trimmedValue) {
 			toast({ variant: "destructive", title: t`Error`, description: t`Value is required` })
 			return
@@ -139,23 +150,40 @@ export default memo(function DockerFocusRulesDialog({
 		}
 		setSaving(true)
 		try {
-			await createDockerFocusService({
-				system: systemId,
-				match_type: matchType,
-				value: trimmedValue,
-				value2: showValue2 ? trimmedValue2 : undefined,
-			})
-			setValue("")
-			setValue2("")
+			if (editingRule) {
+				await updateDockerFocusService(editingRule.id, {
+					match_type: editingRule.match_type,
+					value: trimmedValue,
+					value2: showValue2 ? trimmedValue2 : undefined,
+					description: trimmedDescription ? trimmedDescription : undefined,
+				})
+			} else {
+				await createDockerFocusService({
+					system: systemId,
+					match_type: matchType,
+					value: trimmedValue,
+					value2: showValue2 ? trimmedValue2 : undefined,
+					description: trimmedDescription ? trimmedDescription : undefined,
+				})
+			}
+			resetForm()
 			await onReload()
 		} catch (err) {
-			console.error("create docker focus rule failed", err)
+			console.error("save docker focus rule failed", err)
 			toast({ variant: "destructive", title: t`Error`, description: t`Failed to create focus rule` })
 			throw err
 		} finally {
 			setSaving(false)
 		}
-	}, [systemId, readOnly, matchType, value, value2, showValue2, onReload])
+	}, [systemId, readOnly, matchType, value, value2, description, showValue2, editingRule, resetForm, onReload])
+
+	const handleEdit = useCallback((rule: DockerFocusServiceRecord) => {
+		setEditingRule(rule)
+		setMatchType(rule.match_type)
+		setValue(rule.value)
+		setValue2(rule.value2 || "")
+		setDescription(rule.description || "")
+	}, [])
 
 	const handleDelete = useCallback(async () => {
 		if (!deleteTarget) return
@@ -165,6 +193,9 @@ export default memo(function DockerFocusRulesDialog({
 		}
 		try {
 			await deleteDockerFocusService(deleteTarget.id)
+			if (editingRule?.id === deleteTarget.id) {
+				resetForm()
+			}
 			setDeleteTarget(null)
 			await onReload()
 		} catch (err) {
@@ -172,13 +203,14 @@ export default memo(function DockerFocusRulesDialog({
 			toast({ variant: "destructive", title: t`Error`, description: t`Failed to delete focus rule` })
 			throw err
 		}
-	}, [deleteTarget, readOnly, onReload])
+	}, [deleteTarget, editingRule, readOnly, resetForm, onReload])
 
 	const handleExport = useCallback(() => {
 		const payload = rules.map((rule) => ({
 			match_type: rule.match_type,
 			value: rule.value,
 			value2: rule.value2 || undefined,
+			description: rule.description || undefined,
 		}))
 		const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
 		const url = URL.createObjectURL(blob)
@@ -232,7 +264,7 @@ export default memo(function DockerFocusRulesDialog({
 						console.error("invalid focus rule import item", { index, item: raw })
 						throw new Error(`Invalid focus rule at index ${index}: expected an object.`)
 					}
-					const record = raw as { match_type?: unknown; value?: unknown; value2?: unknown }
+					const record = raw as { match_type?: unknown; value?: unknown; value2?: unknown; description?: unknown }
 					if (typeof record.match_type !== "string" || !isValidMatchType(record.match_type)) {
 						console.error("invalid focus rule import match_type", { index, item: raw })
 						throw new Error(`Invalid focus rule at index ${index}: match_type is invalid.`)
@@ -251,7 +283,12 @@ export default memo(function DockerFocusRulesDialog({
 						console.error("invalid focus rule import value2", { index, item: raw })
 						throw new Error(`Invalid focus rule at index ${index}: value2 must be a string.`)
 					}
+					if (record.description !== undefined && typeof record.description !== "string") {
+						console.error("invalid focus rule import description", { index, item: raw })
+						throw new Error(`Invalid focus rule at index ${index}: description must be a string.`)
+					}
 					const trimmedValue2 = typeof record.value2 === "string" ? record.value2.trim() : undefined
+					const trimmedDescription = typeof record.description === "string" ? record.description.trim() : undefined
 					if (requiresValue2 && !trimmedValue2) {
 						console.error("invalid focus rule import value2 empty", { index, item: raw })
 						throw new Error(`Invalid focus rule at index ${index}: value2 is required.`)
@@ -264,6 +301,7 @@ export default memo(function DockerFocusRulesDialog({
 						match_type: record.match_type,
 						value: trimmedValue,
 						value2: requiresValue2 ? trimmedValue2 : undefined,
+						description: trimmedDescription || undefined,
 					}
 					const key = buildFocusRuleKey(normalized)
 					if (existingKeys.has(key)) {
@@ -368,7 +406,7 @@ export default memo(function DockerFocusRulesDialog({
 				<div className="space-y-4">
 					<div className="rounded-md border p-4 space-y-4">
 						<div className="text-sm font-medium">
-							<Trans>Add rule</Trans>
+							{isEditing ? <Trans>Edit</Trans> : <Trans>Add rule</Trans>}
 						</div>
 						<div className="grid gap-3 md:grid-cols-2">
 							<div className="grid gap-2">
@@ -376,8 +414,9 @@ export default memo(function DockerFocusRulesDialog({
 									<Trans>Rule type</Trans>
 								</Label>
 								<Select
-									value={matchType || undefined}
+									value={matchType}
 									onValueChange={(next) => setMatchType(next as DockerFocusMatchType)}
+									disabled={isEditing}
 								>
 									<SelectTrigger id="docker-focus-type" ref={focusTypeRef}>
 										<SelectValue placeholder={t`Select rule type`} />
@@ -411,6 +450,17 @@ export default memo(function DockerFocusRulesDialog({
 									/>
 								</div>
 							) : null}
+							<div className="grid gap-2 md:col-span-2">
+								<Label htmlFor="docker-focus-description">
+									<Trans>Description</Trans>
+								</Label>
+								<Input
+									id="docker-focus-description"
+									value={description}
+									onChange={(event) => setDescription(event.target.value)}
+									placeholder={t`Optional description`}
+								/>
+							</div>
 						</div>
 						<div className="flex flex-wrap items-center justify-end gap-2">
 							<input
@@ -439,8 +489,13 @@ export default memo(function DockerFocusRulesDialog({
 									<Trans>Import rules</Trans>
 								</span>
 							</Button>
+							{isEditing ? (
+								<Button variant="outline" size="sm" onClick={resetForm}>
+									<Trans>Cancel</Trans>
+								</Button>
+							) : null}
 							<Button
-								onClick={() => void handleCreate()}
+								onClick={() => void handleSubmit()}
 								disabled={saving || readOnly || !systemId}
 								className="relative min-w-[6rem]"
 							>
@@ -450,7 +505,7 @@ export default memo(function DockerFocusRulesDialog({
 									</div>
 								)}
 								<span className={saving ? "invisible" : ""}>
-									<Trans>Add rule</Trans>
+									{isEditing ? <Trans>Save</Trans> : <Trans>Add rule</Trans>}
 								</span>
 							</Button>
 						</div>
@@ -516,6 +571,9 @@ export default memo(function DockerFocusRulesDialog({
 														</Button>
 													</DropdownMenuTrigger>
 													<DropdownMenuContent align="end">
+														<DropdownMenuItem onSelect={() => handleEdit(rule)}>
+															<Trans>Edit</Trans>
+														</DropdownMenuItem>
 														<DropdownMenuItem onSelect={() => setDeleteTarget(rule)}>
 															<Trans>Delete</Trans>
 														</DropdownMenuItem>

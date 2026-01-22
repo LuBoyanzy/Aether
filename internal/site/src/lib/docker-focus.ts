@@ -6,7 +6,7 @@ import { pb } from "@/lib/api"
 import type { DockerFocusMatchType, DockerFocusServiceRecord } from "@/types"
 
 const COLLECTION = pb.collection<DockerFocusServiceRecord>("docker_focus_services")
-const FIELDS = "id,system,match_type,value,value2,created,updated"
+const FIELDS = "id,system,match_type,value,value2,description,created,updated"
 
 export const listDockerFocusServices = async (systemId: string) =>
 	await COLLECTION.getFullList({
@@ -20,6 +20,17 @@ export const createDockerFocusService = async (payload: {
 	match_type: DockerFocusMatchType
 	value: string
 	value2?: string
+	description?: string
 }) => await COLLECTION.create(payload)
+
+export const updateDockerFocusService = async (
+	id: string,
+	payload: {
+		match_type: DockerFocusMatchType
+		value: string
+		value2?: string
+		description?: string
+	}
+) => await COLLECTION.update(id, payload)
 
 export const deleteDockerFocusService = async (id: string) => await COLLECTION.delete(id)

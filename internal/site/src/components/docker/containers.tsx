@@ -4,7 +4,7 @@
  */
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
-import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -21,7 +21,7 @@ import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord } from 
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
 import DockerFocusRulesDialog from "@/components/docker/focus-rules-dialog"
-import { AlertCircleIcon, LoaderCircleIcon, MoreHorizontalIcon, RefreshCwIcon } from "lucide-react"
+import { AlertCircleIcon, ChevronRightIcon, LoaderCircleIcon, MoreHorizontalIcon, RefreshCwIcon } from "lucide-react"
 import { MeterState } from "@/lib/enums"
 import { cn, decimalString, formatBytes, formatSecondsToHuman, getMeterState } from "@/lib/utils"
 
@@ -62,10 +62,6 @@ function matchesFocusRule(container: DockerContainer, rule: DockerFocusServiceRe
 	}
 }
 
-function matchesFocusRules(container: DockerContainer, rules: DockerFocusServiceRecord[]): boolean {
-	return rules.some((rule) => matchesFocusRule(container, rule))
-}
-
 function formatPorts(ports?: DockerContainer["ports"]) {
 	if (!ports || ports.length === 0) return "-"
 	return ports
@@ -74,6 +70,55 @@ function formatPorts(ports?: DockerContainer["ports"]) {
 			return `${host} -> ${port.privatePort}/${port.type}`
 		})
 		.join(", ")
+}
+
+function formatFocusRuleLabel(rule: DockerFocusServiceRecord) {
+	switch (rule.match_type) {
+		case "compose_service":
+			return rule.value2 ? `${rule.value} / ${rule.value2}` : rule.value
+		case "label":
+			return rule.value2 ? `${rule.value}=${rule.value2}` : rule.value
+		default:
+			return rule.value
+	}
+}
+
+function isContainerActive(container: DockerContainer) {
+	return !["exited", "created", "dead"].includes(container.state)
+}
+
+function matchesSearchTerm(container: DockerContainer, term: string) {
+	if (!term) return true
+	const ports = formatPorts(container.ports)
+	const networks = formatTagList(container.networks)
+	return [
+		container.name,
+		container.image,
+		container.state,
+		container.status,
+		ports,
+		networks,
+		container.command,
+		container.createdBy,
+	]
+		.filter(Boolean)
+		.join(" ")
+		.toLowerCase()
+		.includes(term)
+}
+
+type FocusGroupStatus = "running" | "partial" | "exited"
+
+const focusGroupStatusVariantMap: Record<FocusGroupStatus, "success" | "warning" | "secondary"> = {
+	running: "success",
+	partial: "warning",
+	exited: "secondary",
+}
+
+function getFocusGroupStatus(runningCount: number, totalCount: number): FocusGroupStatus {
+	if (totalCount === 0 || runningCount === 0) return "exited"
+	if (runningCount === totalCount) return "running"
+	return "partial"
 }
 
 export default memo(function DockerContainersPanel({ systemId }: { systemId?: string }) {
@@ -93,13 +138,15 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const [inspectLoading, setInspectLoading] = useState(false)
 	const [activeContainer, setActiveContainer] = useState<DockerContainer | null>(null)
 	const [usageMap, setUsageMap] = useState<Map<string, ContainerRecord>>(new Map())
+	const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
 
 	const loadContainers = useCallback(async () => {
 		if (!systemId) return
 		setLoading(true)
 		try {
+			const requestAll = focusOnly ? true : showAll
 			const [items, usageList] = await Promise.all([
-				listDockerContainers(systemId, showAll),
+				listDockerContainers(systemId, requestAll),
 				pb.collection<ContainerRecord>("containers").getList(0, 2000, {
 					fields: "id,cpu,memory,net,uptime,updated",
 					filter: pb.filter("system={:system}", { system: systemId }),
@@ -126,7 +173,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		} finally {
 			setLoading(false)
 		}
-	}, [systemId, showAll])
+	}, [systemId, showAll, focusOnly])
 
 	const loadFocusRules = useCallback(async () => {
 		if (!systemId) return
@@ -159,28 +206,48 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		}
 	}, [systemId, loadFocusRules])
 
+	useEffect(() => {
+		setExpandedGroups({})
+	}, [systemId, focusOnly])
+
 	const handleRefresh = useCallback(async () => {
 		await Promise.all([loadContainers(), loadFocusRules()])
 	}, [loadContainers, loadFocusRules])
 
-	const filtered = useMemo(() => {
-		const term = filter.trim().toLowerCase()
-		const base = focusOnly
-			? focusRules.length === 0
-				? []
-				: data.filter((item) => matchesFocusRules(item, focusRules))
-			: data
-		if (!term) return base
-		return base.filter((item) => {
-			const ports = formatPorts(item.ports)
-			const networks = formatTagList(item.networks)
-			return [item.name, item.image, item.state, item.status, ports, networks, item.command, item.createdBy]
-				.filter(Boolean)
-				.join(" ")
-				.toLowerCase()
-				.includes(term)
+	const toggleGroup = useCallback((groupId: string) => {
+		setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
+	}, [])
+
+	const searchTerm = useMemo(() => filter.trim().toLowerCase(), [filter])
+
+	const filteredContainers = useMemo(() => {
+		if (focusOnly) return []
+		if (!searchTerm) return data
+		return data.filter((item) => matchesSearchTerm(item, searchTerm))
+	}, [data, focusOnly, searchTerm])
+
+	const focusGroups = useMemo(() => {
+		if (!focusOnly) return []
+		return focusRules.map((rule) => {
+			const matched = data.filter((item) => matchesFocusRule(item, rule))
+			const totalCount = matched.length
+			const runningCount = matched.reduce((count, item) => count + (item.state === "running" ? 1 : 0), 0)
+			const visibleContainers = matched.filter((item) => {
+				if (!showAll && !isContainerActive(item)) return false
+				return matchesSearchTerm(item, searchTerm)
+			})
+			return {
+				id: rule.id,
+				rule,
+				label: formatFocusRuleLabel(rule),
+				description: rule.description,
+				totalCount,
+				runningCount,
+				status: getFocusGroupStatus(runningCount, totalCount),
+				visibleContainers,
+			}
 		})
-	}, [data, filter, focusOnly, focusRules])
+	}, [data, focusOnly, focusRules, searchTerm, showAll])
 
 	const handleOperate = useCallback(
 		async (container: DockerContainer, operation: string) => {
@@ -271,6 +338,150 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 			}
 		},
 		[systemId]
+	)
+
+	const renderContainerRow = (item: DockerContainer, rowKey?: string, indent?: boolean) => (
+		<TableRow
+			key={rowKey ?? item.id}
+			className={cn("group animate-in fade-in slide-in-from-top-1 duration-200", indent && "bg-muted/5")}
+		>
+			<TableCell className={cn("max-w-[100px] py-3", indent && "ps-8")}>
+				<div className="font-medium text-foreground truncate" title={item.name}>
+					{item.name}
+				</div>
+				<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+					<span className="truncate font-mono opacity-80">{formatShortId(item.id)}</span>
+				</div>
+				{item.createdBy && (
+					<div className="text-xs text-muted-foreground truncate" title={item.createdBy}>
+						<Trans>Compose</Trans>: {item.createdBy}
+					</div>
+				)}
+			</TableCell>
+			<TableCell className="max-w-[180px] py-3">
+				<div className="truncate text-foreground/90" title={item.image}>
+					{item.image}
+				</div>
+			</TableCell>
+			<TableCell className="p-2">
+				<div className="flex flex-col gap-1.5">
+					<Badge
+						variant={statusVariantMap[item.state] ?? "secondary"}
+						className="w-fit px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-none"
+					>
+						{item.state}
+					</Badge>
+					<span className="text-xs font-medium text-muted-foreground capitalize">{item.status}</span>
+				</div>
+			</TableCell>
+			<TableCell className="py-3">
+				{(() => {
+					const shortId = item.id ? item.id.slice(0, 12) : ""
+					const usage = shortId ? usageMap.get(shortId) : undefined
+					const cpu = usage?.cpu ?? 0
+					const memory = usage?.memory ?? 0
+					const net = usage?.net ?? 0
+					const threshold = getMeterState(cpu)
+					const meterClass = cn(
+						"h-full rounded-full",
+						(threshold === MeterState.Good && "bg-green-500") ||
+							(threshold === MeterState.Warn && "bg-yellow-500") ||
+							"bg-red-500"
+					)
+					const memFormatted = usage ? formatBytes(memory, false, undefined, true) : null
+					const netFormatted = usage ? formatBytes(net, true, undefined, true) : null
+					return (
+						<div className="flex flex-col gap-1.5 w-full max-w-[200px] text-xs">
+							<div className="flex items-center gap-2">
+								<span className="font-semibold text-muted-foreground/70 w-8">CPU</span>
+								<span className="tabular-nums font-medium w-12 text-foreground/90">
+									{usage ? `${decimalString(cpu, cpu >= 10 ? 1 : 2)}%` : "-"}
+								</span>
+								<div className="h-1.5 flex-1 bg-muted/30 rounded-full overflow-hidden">
+									<div className={meterClass} style={{ width: `${usage ? cpu : 0}%` }} />
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="flex items-center gap-2 overflow-hidden">
+									<span className="font-semibold text-muted-foreground/70 w-8">MEM</span>
+									<span className="tabular-nums truncate text-foreground/90">
+										{memFormatted ? decimalString(memFormatted.value, memFormatted.value >= 10 ? 1 : 2) : "-"}
+										{memFormatted && (
+											<span className="text-muted-foreground/60 text-[10px] ms-0.5">{memFormatted.unit}</span>
+										)}
+									</span>
+								</div>
+								<div className="flex items-center gap-2 overflow-hidden">
+									<span className="font-semibold text-muted-foreground/70 w-8">NET</span>
+									<span className="tabular-nums truncate text-foreground/90">
+										{netFormatted ? decimalString(netFormatted.value, netFormatted.value >= 10 ? 1 : 2) : "-"}
+										{netFormatted && (
+											<span className="text-muted-foreground/60 text-[10px] ms-0.5">{netFormatted.unit}</span>
+										)}
+									</span>
+								</div>
+							</div>
+						</div>
+					)
+				})()}
+			</TableCell>
+			<TableCell className="max-w-[200px] text-xs text-muted-foreground py-3">
+				<div className="line-clamp-2" title={formatPorts(item.ports)}>
+					{formatPorts(item.ports)}
+				</div>
+			</TableCell>
+			<TableCell className="max-w-[160px] text-xs text-muted-foreground py-3">
+				<div className="truncate" title={formatTagList(item.networks)}>
+					{formatTagList(item.networks)}
+				</div>
+			</TableCell>
+			<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
+				{(() => {
+					const shortId = item.id ? item.id.slice(0, 12) : ""
+					const usage = shortId ? usageMap.get(shortId) : undefined
+					const formatted = usage ? formatSecondsToHuman(usage.uptime ?? 0) : ""
+					return formatted || "-"
+				})()}
+			</TableCell>
+			<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
+				{formatUnixSeconds(item.created)}
+			</TableCell>
+			<TableCell className="text-center py-3">
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button size="icon" variant="ghost">
+							<MoreHorizontalIcon className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "start")}>
+							<Trans>Start</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "stop")}>
+							<Trans>Stop</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "restart")}>
+							<Trans>Restart</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "kill")}>
+							<Trans>Kill</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "pause")}>
+							<Trans>Pause</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void handleOperate(item, "unpause")}>
+							<Trans>Unpause</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void openLogs(item)}>
+							<Trans>Logs</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem onSelect={() => void openInspect(item)}>
+							<Trans>Inspect</Trans>
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</TableCell>
+		</TableRow>
 	)
 
 	if (!systemId) {
@@ -382,161 +593,87 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 									</div>
 								</TableCell>
 							</TableRow>
-						) : filtered.length === 0 ? (
+						) : focusOnly ? (
+							focusGroups.length === 0 ? (
+								<TableRow>
+									<TableCell colSpan={9} className="text-center text-sm text-muted-foreground">
+										<Trans>No containers found.</Trans>
+									</TableCell>
+								</TableRow>
+							) : (
+								focusGroups.map((group) => {
+									const isExpanded = !!expandedGroups[group.id]
+									const hasContainers = group.totalCount > 0
+									return (
+										<Fragment key={group.id}>
+											<TableRow className="bg-muted/10">
+												<TableCell className="max-w-[100px] py-3">
+													<div className="flex items-start gap-2">
+														<button
+															type="button"
+															onClick={() => toggleGroup(group.id)}
+															disabled={!hasContainers}
+															aria-label={t`Toggle focus group`}
+															className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-sm text-muted-foreground/70 transition hover:text-foreground disabled:opacity-40"
+														>
+															<ChevronRightIcon
+																className={cn(
+																	"h-4 w-4 transition-transform duration-200",
+																	isExpanded && "rotate-90",
+																	!hasContainers && "opacity-40"
+																)}
+															/>
+														</button>
+														<div className="min-w-0">
+															<div className="font-medium text-foreground truncate" title={group.label}>
+																{group.label}
+															</div>
+															{group.description ? (
+																<div className="text-xs text-muted-foreground line-clamp-2" title={group.description}>
+																	{group.description}
+																</div>
+															) : null}
+														</div>
+													</div>
+												</TableCell>
+												<TableCell className="max-w-[180px] py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="p-2">
+													<div className="flex flex-col gap-1.5">
+														<Badge
+															variant={focusGroupStatusVariantMap[group.status] ?? "secondary"}
+															className="w-fit px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-none"
+														>
+															{group.status}
+														</Badge>
+														<span className="text-xs font-medium text-muted-foreground">
+															{group.runningCount}/{group.totalCount}
+														</span>
+													</div>
+												</TableCell>
+												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="text-center py-3 text-xs text-muted-foreground">-</TableCell>
+											</TableRow>
+											{isExpanded
+												? group.visibleContainers.map((item) =>
+														renderContainerRow(item, `${group.id}-${item.id}`, true)
+													)
+												: null}
+										</Fragment>
+									)
+								})
+							)
+						) : filteredContainers.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={9} className="text-center text-sm text-muted-foreground">
 									<Trans>No containers found.</Trans>
 								</TableCell>
 							</TableRow>
 						) : (
-							filtered.map((item) => (
-								<TableRow key={item.id} className="group">
-									<TableCell className="max-w-[100px] py-3">
-										<div className="font-medium text-foreground truncate" title={item.name}>
-											{item.name}
-										</div>
-										<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-											<span className="truncate font-mono opacity-80">{formatShortId(item.id)}</span>
-										</div>
-										{item.createdBy && (
-											<div className="text-xs text-muted-foreground truncate" title={item.createdBy}>
-												<Trans>Compose</Trans>: {item.createdBy}
-											</div>
-										)}
-									</TableCell>
-									<TableCell className="max-w-[180px] py-3">
-										<div className="truncate text-foreground/90" title={item.image}>
-											{item.image}
-										</div>
-									</TableCell>
-									<TableCell className="p-2">
-										<div className="flex flex-col gap-1.5">
-											<Badge
-												variant={statusVariantMap[item.state] ?? "secondary"}
-												className="w-fit px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-none"
-											>
-												{item.state}
-											</Badge>
-											<span className="text-xs font-medium text-muted-foreground capitalize">{item.status}</span>
-										</div>
-									</TableCell>
-									<TableCell className="py-3">
-										{(() => {
-											const shortId = item.id ? item.id.slice(0, 12) : ""
-											const usage = shortId ? usageMap.get(shortId) : undefined
-											const cpu = usage?.cpu ?? 0
-											const memory = usage?.memory ?? 0
-											const net = usage?.net ?? 0
-											const threshold = getMeterState(cpu)
-											const meterClass = cn(
-												"h-full rounded-full",
-												(threshold === MeterState.Good && "bg-green-500") ||
-													(threshold === MeterState.Warn && "bg-yellow-500") ||
-													"bg-red-500"
-											)
-											const memFormatted = usage ? formatBytes(memory, false, undefined, true) : null
-											const netFormatted = usage ? formatBytes(net, true, undefined, true) : null
-											return (
-												<div className="flex flex-col gap-1.5 w-full max-w-[200px] text-xs">
-													<div className="flex items-center gap-2">
-														<span className="font-semibold text-muted-foreground/70 w-8">CPU</span>
-														<span className="tabular-nums font-medium w-12 text-foreground/90">
-															{usage ? `${decimalString(cpu, cpu >= 10 ? 1 : 2)}%` : "-"}
-														</span>
-														<div className="h-1.5 flex-1 bg-muted/30 rounded-full overflow-hidden">
-															<div className={meterClass} style={{ width: `${usage ? cpu : 0}%` }} />
-														</div>
-													</div>
-													<div className="grid grid-cols-2 gap-4">
-														<div className="flex items-center gap-2 overflow-hidden">
-															<span className="font-semibold text-muted-foreground/70 w-8">MEM</span>
-															<span className="tabular-nums truncate text-foreground/90">
-																{memFormatted
-																	? decimalString(memFormatted.value, memFormatted.value >= 10 ? 1 : 2)
-																	: "-"}
-																{memFormatted && (
-																	<span className="text-muted-foreground/60 text-[10px] ms-0.5">
-																		{memFormatted.unit}
-																	</span>
-																)}
-															</span>
-														</div>
-														<div className="flex items-center gap-2 overflow-hidden">
-															<span className="font-semibold text-muted-foreground/70 w-8">NET</span>
-															<span className="tabular-nums truncate text-foreground/90">
-																{netFormatted
-																	? decimalString(netFormatted.value, netFormatted.value >= 10 ? 1 : 2)
-																	: "-"}
-																{netFormatted && (
-																	<span className="text-muted-foreground/60 text-[10px] ms-0.5">
-																		{netFormatted.unit}
-																	</span>
-																)}
-															</span>
-														</div>
-													</div>
-												</div>
-											)
-										})()}
-									</TableCell>
-									<TableCell className="max-w-[200px] text-xs text-muted-foreground py-3">
-										<div className="line-clamp-2" title={formatPorts(item.ports)}>
-											{formatPorts(item.ports)}
-										</div>
-									</TableCell>
-									<TableCell className="max-w-[160px] text-xs text-muted-foreground py-3">
-										<div className="truncate" title={formatTagList(item.networks)}>
-											{formatTagList(item.networks)}
-										</div>
-									</TableCell>
-									<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
-										{(() => {
-											const shortId = item.id ? item.id.slice(0, 12) : ""
-											const usage = shortId ? usageMap.get(shortId) : undefined
-											const formatted = usage ? formatSecondsToHuman(usage.uptime ?? 0) : ""
-											return formatted || "-"
-										})()}
-									</TableCell>
-									<TableCell className="text-xs text-muted-foreground whitespace-nowrap py-3">
-										{formatUnixSeconds(item.created)}
-									</TableCell>
-									<TableCell className="text-center py-3">
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button size="icon" variant="ghost">
-													<MoreHorizontalIcon className="h-4 w-4" />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "start")}>
-													<Trans>Start</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "stop")}>
-													<Trans>Stop</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "restart")}>
-													<Trans>Restart</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "kill")}>
-													<Trans>Kill</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "pause")}>
-													<Trans>Pause</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void handleOperate(item, "unpause")}>
-													<Trans>Unpause</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void openLogs(item)}>
-													<Trans>Logs</Trans>
-												</DropdownMenuItem>
-												<DropdownMenuItem onSelect={() => void openInspect(item)}>
-													<Trans>Inspect</Trans>
-												</DropdownMenuItem>
-											</DropdownMenuContent>
-										</DropdownMenu>
-									</TableCell>
-								</TableRow>
-							))
+							filteredContainers.map((item) => renderContainerRow(item))
 						)}
 					</TableBody>
 				</table>
