@@ -3,6 +3,7 @@ package systems
 import (
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"aether/internal/hub/ws"
@@ -52,6 +53,7 @@ type hubLike interface {
 	GetSSHKey(dataDir string) (ssh.Signer, error)
 	HandleSystemAlerts(systemRecord *core.Record, data *system.CombinedData) error
 	HandleStatusAlerts(status string, systemRecord *core.Record) error
+	HandleDockerFocusAlerts(systemRecord *core.Record) error
 }
 
 // NewSystemManager creates a new SystemManager instance with the provided hub.
@@ -210,6 +212,21 @@ func (sm *SystemManager) onRecordAfterUpdateSuccess(e *core.RecordEvent) error {
 	if newStatus == up {
 		if err := sm.hub.HandleSystemAlerts(e.Record, system.data); err != nil {
 			e.App.Logger().Error("Error handling system alerts", "logger", "systems", "err", err)
+		}
+		if err := sm.hub.HandleDockerFocusAlerts(e.Record); err != nil {
+			e.App.Logger().Error(
+				"Error handling docker focus alerts",
+				"logger",
+				"systems",
+				"err",
+				err,
+				"errType",
+				fmt.Sprintf("%T", err),
+				"stack",
+				string(debug.Stack()),
+				"system",
+				e.Record.Id,
+			)
 		}
 	}
 

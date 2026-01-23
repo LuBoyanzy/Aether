@@ -29,6 +29,8 @@ func (h *BaseHandler) HandleLegacy(rawData []byte) error {
 	return errors.New("legacy format not supported")
 }
 
+const systemDataRequestTimeout = 65 * time.Second
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -55,7 +57,7 @@ func (ws *WsConn) RequestSystemData(ctx context.Context, data *system.CombinedDa
 		return gws.ErrConnClosed
 	}
 
-	req, err := ws.requestManager.SendRequest(ctx, common.GetData, options)
+	req, err := ws.requestManager.SendRequestWithTimeout(ctx, common.GetData, options, systemDataRequestTimeout)
 	if err != nil {
 		return err
 	}
