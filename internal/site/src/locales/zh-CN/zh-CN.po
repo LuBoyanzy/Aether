@@ -1086,6 +1086,10 @@ msgstr "磁盘单位"
 msgid "Disk Usage"
 msgstr "磁盘使用"
 
+#: src/lib/alerts.ts
+msgid "Root Disk I/O Throughput"
+msgstr "根磁盘 I/O 吞吐量"
+
 #: src/components/routes/system.tsx
 msgid "Disk usage of {extraFsName}"
 msgstr "{extraFsName}的磁盘使用"
@@ -3831,6 +3835,10 @@ msgstr "当 GPU 使用率超过阈值时触发"
 #: src/lib/alerts.ts
 msgid "Triggers when memory usage exceeds a threshold"
 msgstr "当内存使用率超过阈值时触发"
+
+#: src/lib/alerts.ts
+msgid "Triggers when root disk I/O throughput exceeds a threshold"
+msgstr "当根磁盘 I/O 吞吐量超过阈值时触发"
 
 #: src/lib/alerts.ts
 msgid "Triggers when status switches between up and down"

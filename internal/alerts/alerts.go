@@ -91,6 +91,8 @@ type SystemAlertStats struct {
 	Cpu          float64                       `json:"cpu"`
 	Mem          float64                       `json:"mp"`
 	Disk         float64                       `json:"dp"`
+	DiskReadPs   float64                       `json:"dr"`
+	DiskWritePs  float64                       `json:"dw"`
 	NetSent      float64                       `json:"ns"`
 	NetRecv      float64                       `json:"nr"`
 	GPU          map[string]SystemAlertGPUData `json:"g"`

@@ -33,6 +33,12 @@ var alertDisplayTextByName = map[string]alertDisplayText{
 		DescZh:  "当任何磁盘的使用率超过阈值时触发",
 		DescEn:  "Triggers when usage of any disk exceeds a threshold",
 	},
+	"DiskIO": {
+		TitleZh: "根磁盘 I/O 吞吐量",
+		TitleEn: "Root Disk I/O Throughput",
+		DescZh:  "当根磁盘 I/O 吞吐量超过阈值时触发",
+		DescEn:  "Triggers when root disk I/O throughput exceeds a threshold",
+	},
 	"Bandwidth": {
 		TitleZh: "带宽",
 		TitleEn: "Bandwidth",

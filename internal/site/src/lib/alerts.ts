@@ -35,6 +35,12 @@ export const alertInfo: Record<string, AlertInfo> = {
 		icon: HardDriveIcon,
 		desc: () => t`Triggers when usage of any disk exceeds a threshold`,
 	},
+	DiskIO: {
+		name: () => t`Root Disk I/O Throughput`,
+		unit: " MB/s",
+		icon: HardDriveIcon,
+		desc: () => t`Triggers when root disk I/O throughput exceeds a threshold`,
+	},
 	Bandwidth: {
 		name: () => t`Bandwidth`,
 		unit: " MB/s",

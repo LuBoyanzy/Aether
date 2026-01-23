@@ -1,3 +1,5 @@
+// 告警系统的系统指标处理与触发逻辑。
+// 负责根据系统指标计算阈值并发送告警。
 package alerts
 
 import (
@@ -50,6 +52,9 @@ func (am *AlertManager) HandleSystemAlerts(systemRecord *core.Record, data *syst
 				}
 			}
 			val = maxUsedPct
+		case "DiskIO":
+			val = data.Stats.DiskReadPs + data.Stats.DiskWritePs
+			unit = " MB/s"
 		case "Temperature":
 			if data.Info.DashboardTemp < 1 {
 				continue
@@ -197,6 +202,8 @@ func (am *AlertManager) HandleSystemAlerts(systemRecord *core.Record, data *syst
 				alert.val += stats.Mem
 			case "Bandwidth":
 				alert.val += stats.NetSent + stats.NetRecv
+			case "DiskIO":
+				alert.val += stats.DiskReadPs + stats.DiskWritePs
 			case "Disk":
 				if alert.mapSums == nil {
 					alert.mapSums = make(map[string]float32, len(data.Stats.ExtraFs)+1)
