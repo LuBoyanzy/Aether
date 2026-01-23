@@ -6,7 +6,7 @@ import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { memo, useCallback, useEffect, useRef, useState, type ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -340,16 +340,15 @@ export default memo(function DockerFocusRulesDialog({
 	)
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent
-				className="max-w-3xl"
+		<Sheet open={open} onOpenChange={onOpenChange}>
+			<SheetContent
+				className="w-full sm:max-w-3xl overflow-y-auto"
 				onOpenAutoFocus={(event) => {
 					event.preventDefault()
-					focusTypeRef.current?.focus()
 				}}
 			>
-				<DialogHeader>
-					<DialogTitle className="flex items-center gap-2">
+				<SheetHeader>
+					<SheetTitle className="flex items-center gap-2">
 						<Trans>Focus rules</Trans>
 						<Tooltip>
 							<TooltipTrigger asChild>
@@ -398,16 +397,14 @@ export default memo(function DockerFocusRulesDialog({
 								</div>
 							</TooltipContent>
 						</Tooltip>
-					</DialogTitle>
-					<DialogDescription>
+					</SheetTitle>
+					<SheetDescription>
 						<Trans>Define system-level rules to filter the container list.</Trans>
-					</DialogDescription>
-				</DialogHeader>
-				<div className="space-y-4">
+					</SheetDescription>
+				</SheetHeader>
+				<div className="space-y-4 mt-6 px-4 pb-4">
 					<div className="rounded-md border p-4 space-y-4">
-						<div className="text-sm font-medium">
-							{isEditing ? <Trans>Edit</Trans> : <Trans>Add rule</Trans>}
-						</div>
+						<div className="text-sm font-medium">{isEditing ? <Trans>Edit</Trans> : <Trans>Add rule</Trans>}</div>
 						<div className="grid gap-3 md:grid-cols-2">
 							<div className="grid gap-2">
 								<Label htmlFor="docker-focus-type">
@@ -614,7 +611,7 @@ export default memo(function DockerFocusRulesDialog({
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>
-			</DialogContent>
-		</Dialog>
+			</SheetContent>
+		</Sheet>
 	)
 })

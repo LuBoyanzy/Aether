@@ -1,3 +1,4 @@
+// 前端类型声明，集中维护页面与接口的类型约束。
 import type { RecordModel } from "pocketbase"
 import type { Unit, Os, BatteryState, HourFormat, ConnectionType, ServiceStatus, ServiceSubState } from "@/lib/enums"
 
@@ -436,6 +437,16 @@ export interface DockerFocusServiceRecord extends RecordModel {
 	value: string
 	value2?: string
 	description?: string
+	created: string
+	updated: string
+}
+
+export interface DockerFocusAlertSettingsRecord extends RecordModel {
+	id: string
+	system: string
+	enabled: boolean
+	recovery_seconds: number
+	alert_on_no_match: boolean
 	created: string
 	updated: string
 }

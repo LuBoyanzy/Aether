@@ -313,6 +313,7 @@ func (am *AlertManager) HandleSystemAlerts(systemRecord *core.Record, data *syst
 func (am *AlertManager) sendSystemAlert(alert SystemAlertData) {
 	// log.Printf("Sending alert %s: val %f | count %d | threshold %f\n", alert.name, alert.val, alert.count, alert.threshold)
 	systemName := alert.systemRecord.GetString("name")
+	systemHost := strings.TrimSpace(alert.systemRecord.GetString("host"))
 
 	lang, err := am.NotificationLanguage()
 	if err != nil {
@@ -333,6 +334,7 @@ func (am *AlertManager) sendSystemAlert(alert SystemAlertData) {
 	}
 	content := NotificationContent{
 		SystemName:   systemName,
+		Host:         systemHost,
 		AlertType:    alertType,
 		Descriptor:   alert.descriptor,
 		State:        state,

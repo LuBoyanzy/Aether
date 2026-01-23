@@ -3553,6 +3553,42 @@ msgstr "Subnet"
 msgid "Success"
 msgstr "Success"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert rules"
+msgstr "Alert rules"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Configure Docker focus alert rules for this system."
+msgstr "Configure Docker focus alert rules for this system."
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Toggle Docker focus alerts for this system."
+msgstr "Toggle Docker focus alerts for this system."
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery stability (seconds)"
+msgstr "Recovery stability (seconds)"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Send recovery alerts after this many seconds of stability."
+msgstr "Send recovery alerts after this many seconds of stability."
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert when no containers match"
+msgstr "Alert when no containers match"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Trigger alerts when a focus rule matches zero containers."
+msgstr "Trigger alerts when a focus rule matches zero containers."
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Failed to load alert settings"
+msgstr "Failed to load alert settings"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery seconds must be greater than 0"
+msgstr "Recovery seconds must be greater than 0"
+
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
 msgstr "Swap space used by the system"

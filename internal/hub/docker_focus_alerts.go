@@ -2,6 +2,7 @@
 package hub
 
 import (
+	"encoding/json"
 	"fmt"
 	"runtime/debug"
 	"strings"
@@ -12,27 +13,74 @@ import (
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/types"
 )
 
 const (
-	dockerFocusRulesCollection  = "docker_focus_services"
-	dockerFocusAlertsCollection = "docker_focus_alerts"
-	composeProjectLabel         = "com.docker.compose.project"
-	composeServiceLabel         = "com.docker.compose.service"
-	dockerFocusRecoverySeconds  = 15
-	dockerFocusAlertTypeZh      = "Docker 关注服务"
-	dockerFocusAlertTypeEn      = "Docker Focus Service"
-	maxFocusAlertContainers     = 5
+	dockerFocusRulesCollection         = "docker_focus_services"
+	dockerFocusAlertsCollection        = "docker_focus_alerts"
+	dockerFocusAlertSettingsCollection = "docker_focus_alert_settings"
+	composeProjectLabel                = "com.docker.compose.project"
+	composeServiceLabel                = "com.docker.compose.service"
+	dockerFocusRecoverySeconds         = 15
+	dockerFocusAlertTypeZh             = "Docker 关注服务"
+	dockerFocusAlertTypeEn             = "Docker Focus Service"
+	maxFocusAlertContainers            = 5
 )
 
+type dockerFocusAlertSettings struct {
+	Enabled         bool
+	RecoverySeconds int
+	AlertOnNoMatch  bool
+}
+
 type dockerFocusAlertAction struct {
-	ShouldSend      bool
-	State           alerts.NotificationState
-	RuleLabel       string
-	RuleDescription string
-	RunningCount    int
-	TotalCount      int
-	DownContainers  []docker.Container
+	ShouldSend              bool
+	State                   alerts.NotificationState
+	RuleLabel               string
+	RuleDescription         string
+	RunningCount            int
+	TotalCount              int
+	DownContainers          []docker.Container
+	LastDownContainerLabels []string
+	LastNoMatch             bool
+}
+
+func defaultDockerFocusAlertSettings() dockerFocusAlertSettings {
+	return dockerFocusAlertSettings{
+		Enabled:         true,
+		RecoverySeconds: dockerFocusRecoverySeconds,
+		AlertOnNoMatch:  true,
+	}
+}
+
+func (h *Hub) getDockerFocusAlertSettings(systemID string) (dockerFocusAlertSettings, error) {
+	settings := defaultDockerFocusAlertSettings()
+	if strings.TrimSpace(systemID) == "" {
+		return settings, fmt.Errorf("system id is required")
+	}
+	records, err := h.FindRecordsByFilter(
+		dockerFocusAlertSettingsCollection,
+		"system={:system}",
+		"-updated",
+		1,
+		0,
+		dbx.Params{"system": systemID},
+	)
+	if err != nil {
+		return settings, fmt.Errorf("读取关注告警设置失败: %w", err)
+	}
+	if len(records) == 0 {
+		return settings, nil
+	}
+	record := records[0]
+	settings.Enabled = record.GetBool("enabled")
+	settings.AlertOnNoMatch = record.GetBool("alert_on_no_match")
+	settings.RecoverySeconds = record.GetInt("recovery_seconds")
+	if settings.RecoverySeconds <= 0 {
+		return settings, fmt.Errorf("关注告警恢复时间无效: %d", settings.RecoverySeconds)
+	}
+	return settings, nil
 }
 
 // HandleDockerFocusAlerts evaluates focus rules against docker containers and sends notifications.
@@ -43,6 +91,13 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 	systemID := strings.TrimSpace(systemRecord.Id)
 	if systemID == "" {
 		return fmt.Errorf("system id is required")
+	}
+	settings, err := h.getDockerFocusAlertSettings(systemID)
+	if err != nil {
+		return err
+	}
+	if !settings.Enabled {
+		return h.cleanupDockerFocusAlerts(systemID)
 	}
 	rules, err := h.FindRecordsByFilter(
 		dockerFocusRulesCollection,
@@ -101,6 +156,7 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 	if systemName == "" {
 		systemName = systemID
 	}
+	systemHost := strings.TrimSpace(systemRecord.GetString("host"))
 	userIDs := systemRecord.GetStringSlice("users")
 	if len(userIDs) == 0 {
 		return fmt.Errorf("关注告警未找到系统用户: %s", systemID)
@@ -115,7 +171,10 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 		matched := filterDockerFocusContainers(containers, rule)
 		totalCount := len(matched)
 		runningCount, downContainers := countDockerFocusStatus(matched)
-		shouldTrigger := totalCount == 0 || runningCount < totalCount
+		shouldTrigger := runningCount < totalCount
+		if totalCount == 0 {
+			shouldTrigger = settings.AlertOnNoMatch
+		}
 
 		alertRecord := alertByRule[rule.Id]
 		if alertRecord == nil {
@@ -123,16 +182,63 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 			alertRecord.Set("system", systemID)
 			alertRecord.Set("focus_rule", rule.Id)
 		}
+		lastDownContainers, lastNoMatch, err := readDockerFocusAlertSnapshot(alertRecord)
+		if err != nil {
+			h.Logger().Error(
+				"读取关注告警详情失败",
+				"logger",
+				"alerts",
+				"err",
+				err,
+				"errType",
+				fmt.Sprintf("%T", err),
+				"stack",
+				string(debug.Stack()),
+				"system",
+				systemName,
+				"rule",
+				ruleLabel,
+			)
+			return fmt.Errorf("读取关注告警详情失败: %w", err)
+		}
 		triggered := alertRecord.GetBool("triggered")
 		action := dockerFocusAlertAction{
-			RuleLabel:       ruleLabel,
-			RuleDescription: strings.TrimSpace(rule.GetString("description")),
-			RunningCount:    runningCount,
-			TotalCount:      totalCount,
-			DownContainers:  downContainers,
+			RuleLabel:               ruleLabel,
+			RuleDescription:         strings.TrimSpace(rule.GetString("description")),
+			RunningCount:            runningCount,
+			TotalCount:              totalCount,
+			DownContainers:          downContainers,
+			LastDownContainerLabels: lastDownContainers,
+			LastNoMatch:             lastNoMatch,
 		}
 		now := time.Now().UTC()
 		if shouldTrigger {
+			snapshotLabels := dockerFocusDownContainerLabels(downContainers)
+			snapshotNoMatch := totalCount == 0
+			if err := writeDockerFocusAlertSnapshot(alertRecord, snapshotLabels, snapshotNoMatch); err != nil {
+				h.Logger().Error(
+					"保存关注告警详情失败",
+					"logger",
+					"alerts",
+					"err",
+					err,
+					"errType",
+					fmt.Sprintf("%T", err),
+					"stack",
+					string(debug.Stack()),
+					"system",
+					systemName,
+					"rule",
+					ruleLabel,
+					"total",
+					totalCount,
+					"running",
+					runningCount,
+				)
+				return fmt.Errorf("保存关注告警详情失败: %w", err)
+			}
+			action.LastDownContainerLabels = snapshotLabels
+			action.LastNoMatch = snapshotNoMatch
 			if !triggered {
 				action.ShouldSend = true
 				action.State = alerts.NotificationStateTriggered
@@ -144,7 +250,7 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 				recoverySince := alertRecord.GetDateTime("recovery_since").Time()
 				if recoverySince.IsZero() {
 					alertRecord.Set("recovery_since", now)
-				} else if now.Sub(recoverySince) >= dockerFocusRecoveryDuration() {
+				} else if now.Sub(recoverySince) >= dockerFocusRecoveryDuration(settings.RecoverySeconds) {
 					action.ShouldSend = true
 					action.State = alerts.NotificationStateResolved
 					triggered = false
@@ -162,7 +268,7 @@ func (h *Hub) HandleDockerFocusAlerts(systemRecord *core.Record) error {
 			return fmt.Errorf("保存关注告警状态失败: %w", err)
 		}
 		if action.ShouldSend {
-			if err := h.sendDockerFocusAlert(systemID, systemName, userIDs, lang, action); err != nil {
+			if err := h.sendDockerFocusAlert(systemID, systemName, systemHost, userIDs, lang, action, settings.RecoverySeconds); err != nil {
 				return err
 			}
 			h.Logger().Info(
@@ -307,19 +413,64 @@ func formatDockerFocusRuleLabel(rule *core.Record) string {
 	}
 }
 
-func (h *Hub) sendDockerFocusAlert(systemID, systemName string, userIDs []string, lang alerts.NotificationLanguage, action dockerFocusAlertAction) error {
+func readDockerFocusAlertSnapshot(record *core.Record) ([]string, bool, error) {
+	if record == nil {
+		return nil, false, fmt.Errorf("alert record is required")
+	}
+	labels, err := parseDockerFocusAlertLabels(record)
+	if err != nil {
+		return nil, false, err
+	}
+	return labels, record.GetBool("last_no_match"), nil
+}
+
+func parseDockerFocusAlertLabels(record *core.Record) ([]string, error) {
+	raw, err := types.ParseJSONRaw(record.Get("last_down_containers"))
+	if err != nil {
+		return nil, err
+	}
+	if len(raw) == 0 || raw.String() == "null" {
+		return nil, nil
+	}
+	var labels []string
+	if err := json.Unmarshal(raw, &labels); err != nil {
+		return nil, err
+	}
+	return labels, nil
+}
+
+func writeDockerFocusAlertSnapshot(record *core.Record, labels []string, noMatch bool) error {
+	if record == nil {
+		return fmt.Errorf("alert record is required")
+	}
+	raw, err := toDockerFocusJSONRaw(labels)
+	if err != nil {
+		return err
+	}
+	record.Set("last_down_containers", raw)
+	record.Set("last_no_match", noMatch)
+	return nil
+}
+
+func toDockerFocusJSONRaw(value any) (types.JSONRaw, error) {
+	encoded, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+	return types.JSONRaw(encoded), nil
+}
+
+func (h *Hub) sendDockerFocusAlert(systemID, systemName, systemHost string, userIDs []string, lang alerts.NotificationLanguage, action dockerFocusAlertAction, recoverySeconds int) error {
 	alertType := dockerFocusAlertType(lang)
 	currentValue, thresholdValue := formatDockerFocusValues(lang, action.RunningCount, action.TotalCount)
 	duration := alerts.FormatImmediateDuration(lang)
 	if action.State == alerts.NotificationStateResolved {
-		duration = formatDockerFocusRecoveryDuration(lang)
+		duration = formatDockerFocusRecoveryDuration(lang, recoverySeconds)
 	}
-	details := ""
-	if action.State == alerts.NotificationStateTriggered {
-		details = formatDockerFocusDetails(lang, action)
-	}
+	details := formatDockerFocusDetails(lang, action)
 	content := alerts.NotificationContent{
 		SystemName:   systemName,
+		Host:         systemHost,
 		AlertType:    alertType,
 		Descriptor:   action.RuleLabel,
 		State:        action.State,
@@ -372,8 +523,7 @@ func formatDockerFocusValues(lang alerts.NotificationLanguage, runningCount, tot
 	return fmt.Sprintf("running %d/%d", runningCount, totalCount), fmt.Sprintf("expected %d/%d", totalCount, totalCount)
 }
 
-func formatDockerFocusRecoveryDuration(lang alerts.NotificationLanguage) string {
-	seconds := dockerFocusRecoverySeconds
+func formatDockerFocusRecoveryDuration(lang alerts.NotificationLanguage, seconds int) string {
 	if lang == alerts.NotificationLanguageZhCN {
 		return fmt.Sprintf("%d 秒", seconds)
 	}
@@ -382,14 +532,20 @@ func formatDockerFocusRecoveryDuration(lang alerts.NotificationLanguage) string 
 
 func formatDockerFocusDetails(lang alerts.NotificationLanguage, action dockerFocusAlertAction) string {
 	parts := make([]string, 0, 2)
-	if action.TotalCount == 0 {
+	noMatch := action.TotalCount == 0
+	labels := dockerFocusDownContainerLabels(action.DownContainers)
+	if action.State == alerts.NotificationStateResolved {
+		noMatch = action.LastNoMatch
+		labels = action.LastDownContainerLabels
+	}
+	if noMatch {
 		if lang == alerts.NotificationLanguageZhCN {
 			parts = append(parts, "未匹配到容器")
 		} else {
 			parts = append(parts, "No containers matched")
 		}
-	} else if len(action.DownContainers) > 0 {
-		parts = append(parts, formatDockerFocusDownContainers(lang, action.DownContainers))
+	} else if len(labels) > 0 {
+		parts = append(parts, formatDockerFocusDownContainerLabels(lang, labels))
 	}
 	if action.RuleDescription != "" {
 		if lang == alerts.NotificationLanguageZhCN {
@@ -408,6 +564,11 @@ func formatDockerFocusDetails(lang alerts.NotificationLanguage, action dockerFoc
 }
 
 func formatDockerFocusDownContainers(lang alerts.NotificationLanguage, containers []docker.Container) string {
+	labels := dockerFocusDownContainerLabels(containers)
+	return formatDockerFocusDownContainerLabels(lang, labels)
+}
+
+func dockerFocusDownContainerLabels(containers []docker.Container) []string {
 	limit := maxFocusAlertContainers
 	if len(containers) < limit {
 		limit = len(containers)
@@ -428,12 +589,19 @@ func formatDockerFocusDownContainers(lang alerts.NotificationLanguage, container
 	if len(containers) > limit {
 		labels = append(labels, "...")
 	}
+	return labels
+}
+
+func formatDockerFocusDownContainerLabels(lang alerts.NotificationLanguage, labels []string) string {
+	if len(labels) == 0 {
+		return ""
+	}
 	if lang == alerts.NotificationLanguageZhCN {
 		return "异常容器: " + strings.Join(labels, ", ")
 	}
 	return "Affected containers: " + strings.Join(labels, ", ")
 }
 
-func dockerFocusRecoveryDuration() time.Duration {
-	return time.Duration(dockerFocusRecoverySeconds) * time.Second
+func dockerFocusRecoveryDuration(seconds int) time.Duration {
+	return time.Duration(seconds) * time.Second
 }

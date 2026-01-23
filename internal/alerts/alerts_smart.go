@@ -1,8 +1,11 @@
+// SMART 告警处理逻辑。
+// 负责磁盘健康状态变更时的告警发送。
 package alerts
 
 import (
 	"fmt"
 	"runtime/debug"
+	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
 )
@@ -31,6 +34,7 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 	}
 
 	systemName := systemRecord.GetString("name")
+	systemHost := strings.TrimSpace(systemRecord.GetString("host"))
 	deviceName := e.Record.GetString("name")
 	model := e.Record.GetString("model")
 
@@ -45,6 +49,7 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 	}
 	content := NotificationContent{
 		SystemName:   systemName,
+		Host:         systemHost,
 		AlertType:    "SMART",
 		Descriptor:   descriptor,
 		State:        NotificationStateTriggered,

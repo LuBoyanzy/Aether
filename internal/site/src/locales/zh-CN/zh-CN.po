@@ -3550,6 +3550,42 @@ msgstr "子网"
 msgid "Success"
 msgstr "成功"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert rules"
+msgstr "告警规则"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Configure Docker focus alert rules for this system."
+msgstr "配置此系统的 Docker 关注告警规则。"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Toggle Docker focus alerts for this system."
+msgstr "控制此系统的 Docker 关注告警开关。"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery stability (seconds)"
+msgstr "恢复稳定时间（秒）"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Send recovery alerts after this many seconds of stability."
+msgstr "容器稳定达到该秒数后发送恢复告警。"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert when no containers match"
+msgstr "无匹配容器时告警"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Trigger alerts when a focus rule matches zero containers."
+msgstr "当关注规则未匹配到容器时触发告警。"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Failed to load alert settings"
+msgstr "加载告警设置失败"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery seconds must be greater than 0"
+msgstr "恢复时间必须大于 0 秒"
+
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
 msgstr "系统使用的 SWAP 空间"

@@ -22,6 +22,7 @@ const (
 
 type NotificationContent struct {
 	SystemName   string
+	Host         string
 	AlertType    string
 	Descriptor   string
 	State        NotificationState
@@ -80,12 +81,17 @@ func FormatNotification(lang NotificationLanguage, content NotificationContent) 
 	titlePrefix := formatTitlePrefix(lang, content.State)
 	messageLines := []string{
 		fmt.Sprintf("%s: %s", formatLabel(lang, "system"), content.SystemName),
+	}
+	if strings.TrimSpace(content.Host) != "" {
+		messageLines = append(messageLines, fmt.Sprintf("%s: %s", formatLabel(lang, "host"), content.Host))
+	}
+	messageLines = append(messageLines,
 		fmt.Sprintf("%s: %s", formatLabel(lang, "alertType"), alertType),
 		fmt.Sprintf("%s: %s", formatLabel(lang, "state"), stateLabel),
 		fmt.Sprintf("%s: %s", formatLabel(lang, "currentValue"), content.CurrentValue),
 		fmt.Sprintf("%s: %s", formatLabel(lang, "threshold"), content.Threshold),
 		fmt.Sprintf("%s: %s", formatLabel(lang, "duration"), content.Duration),
-	}
+	)
 	if strings.TrimSpace(content.Details) != "" {
 		messageLines = append(messageLines, fmt.Sprintf("%s: %s", formatLabel(lang, "details"), content.Details))
 	}
@@ -170,6 +176,8 @@ func formatLabel(lang NotificationLanguage, key string) string {
 			return "系统"
 		case "alertType":
 			return "告警类型"
+		case "host":
+			return "主机/IP"
 		case "state":
 			return "状态"
 		case "currentValue":
@@ -187,6 +195,8 @@ func formatLabel(lang NotificationLanguage, key string) string {
 			return "System"
 		case "alertType":
 			return "Alert Type"
+		case "host":
+			return "Host/IP"
 		case "state":
 			return "State"
 		case "currentValue":

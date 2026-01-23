@@ -1,8 +1,11 @@
+// 状态告警处理与延迟调度逻辑。
+// 负责系统上下线告警与延迟发送。
 package alerts
 
 import (
 	"fmt"
 	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/dbx"
@@ -12,12 +15,14 @@ import (
 type alertTask struct {
 	action      string // "schedule" or "cancel"
 	systemName  string
+	systemHost  string
 	alertRecord *core.Record
 	delay       time.Duration
 }
 
 type alertInfo struct {
 	systemName  string
+	systemHost  string
 	alertRecord *core.Record
 	expireTime  time.Time
 }
@@ -40,6 +45,7 @@ func (am *AlertManager) startWorker() {
 			case "schedule":
 				am.pendingAlerts.Store(task.alertRecord.Id, &alertInfo{
 					systemName:  task.systemName,
+					systemHost:  task.systemHost,
 					alertRecord: task.alertRecord,
 					expireTime:  time.Now().Add(task.delay),
 				})
@@ -55,7 +61,7 @@ func (am *AlertManager) startWorker() {
 				info := value.(*alertInfo)
 				if now.After(info.expireTime) {
 					// Downtime delay has passed, process alert
-					am.sendStatusAlert("down", info.systemName, info.alertRecord)
+					am.sendStatusAlert("down", info.systemName, info.systemHost, info.alertRecord)
 					am.pendingAlerts.Delete(key)
 				}
 			}
@@ -83,10 +89,11 @@ func (am *AlertManager) HandleStatusAlerts(newStatus string, systemRecord *core.
 	}
 
 	systemName := systemRecord.GetString("name")
+	systemHost := strings.TrimSpace(systemRecord.GetString("host"))
 	if newStatus == "down" {
-		am.handleSystemDown(systemName, alertRecords)
+		am.handleSystemDown(systemName, systemHost, alertRecords)
 	} else {
-		am.handleSystemUp(systemName, alertRecords)
+		am.handleSystemUp(systemName, systemHost, alertRecords)
 	}
 	return nil
 }
@@ -104,7 +111,7 @@ func (am *AlertManager) getSystemStatusAlerts(systemID string) ([]*core.Record, 
 }
 
 // Schedules delayed "down" alerts for each alert record.
-func (am *AlertManager) handleSystemDown(systemName string, alertRecords []*core.Record) {
+func (am *AlertManager) handleSystemDown(systemName, systemHost string, alertRecords []*core.Record) {
 	for _, alertRecord := range alertRecords {
 		// Continue if alert is already scheduled
 		if _, exists := am.pendingAlerts.Load(alertRecord.Id); exists {
@@ -118,6 +125,7 @@ func (am *AlertManager) handleSystemDown(systemName string, alertRecords []*core
 		am.alertQueue <- alertTask{
 			action:      "schedule",
 			systemName:  systemName,
+			systemHost:  systemHost,
 			alertRecord: alertRecord,
 			delay:       time.Duration(min) * time.Minute,
 		}
@@ -126,7 +134,7 @@ func (am *AlertManager) handleSystemDown(systemName string, alertRecords []*core
 
 // handleSystemUp manages the logic when a system status changes to "up".
 // It cancels any pending alerts and sends "up" alerts.
-func (am *AlertManager) handleSystemUp(systemName string, alertRecords []*core.Record) {
+func (am *AlertManager) handleSystemUp(systemName, systemHost string, alertRecords []*core.Record) {
 	for _, alertRecord := range alertRecords {
 		alertRecordID := alertRecord.Id
 		// If alert exists for record, delete and continue (down alert not sent)
@@ -138,14 +146,14 @@ func (am *AlertManager) handleSystemUp(systemName string, alertRecords []*core.R
 			continue
 		}
 		// No alert scheduled for this record, send "up" alert
-		if err := am.sendStatusAlert("up", systemName, alertRecord); err != nil {
+		if err := am.sendStatusAlert("up", systemName, systemHost, alertRecord); err != nil {
 			am.hub.Logger().Error("Failed to send alert", "logger", "alerts", "err", err)
 		}
 	}
 }
 
 // sendStatusAlert sends a status alert ("up" or "down") to the users associated with the alert records.
-func (am *AlertManager) sendStatusAlert(alertStatus string, systemName string, alertRecord *core.Record) error {
+func (am *AlertManager) sendStatusAlert(alertStatus, systemName, systemHost string, alertRecord *core.Record) error {
 	switch alertStatus {
 	case "up":
 		alertRecord.Set("triggered", false)
@@ -180,6 +188,7 @@ func (am *AlertManager) sendStatusAlert(alertStatus string, systemName string, a
 	duration := FormatDurationMinutes(durationMinutes, lang)
 	content := NotificationContent{
 		SystemName:   systemName,
+		Host:         systemHost,
 		AlertType:    alertType,
 		State:        state,
 		CurrentValue: alertStatus,

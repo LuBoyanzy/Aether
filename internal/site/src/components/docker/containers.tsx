@@ -20,6 +20,7 @@ import { isReadOnlyUser, pb } from "@/lib/api"
 import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord } from "@/types"
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
+import FocusAlertSettingsSheet from "@/components/docker/focus-alert-settings-sheet"
 import DockerFocusRulesDialog from "@/components/docker/focus-rules-dialog"
 import { AlertCircleIcon, ChevronRightIcon, LoaderCircleIcon, MoreHorizontalIcon, RefreshCwIcon } from "lucide-react"
 import { MeterState } from "@/lib/enums"
@@ -129,6 +130,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const [focusRules, setFocusRules] = useState<DockerFocusServiceRecord[]>([])
 	const [focusLoading, setFocusLoading] = useState(false)
 	const [focusDialogOpen, setFocusDialogOpen] = useState(false)
+	const [alertSettingsOpen, setAlertSettingsOpen] = useState(false)
 	const [filter, setFilter] = useState("")
 	const [logOpen, setLogOpen] = useState(false)
 	const [logContent, setLogContent] = useState("")
@@ -518,6 +520,9 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 							{focusRules.length}
 						</Badge>
 					</Button>
+					<Button variant="outline" size="sm" onClick={() => setAlertSettingsOpen(true)}>
+						<Trans>Alert rules</Trans>
+					</Button>
 					<Input
 						className="w-56"
 						placeholder={t`Filter containers...`}
@@ -736,6 +741,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 				loading={focusLoading}
 				onReload={loadFocusRules}
 			/>
+			<FocusAlertSettingsSheet open={alertSettingsOpen} onOpenChange={setAlertSettingsOpen} systemId={systemId} />
 		</div>
 	)
 })
