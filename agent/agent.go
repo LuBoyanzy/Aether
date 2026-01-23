@@ -259,9 +259,11 @@ func (a *Agent) gatherStats(options common.DataRequestOptions) *system.CombinedD
 	}
 	slog.Debug("Extra FS", "data", data.Stats.ExtraFs)
 
-	if networkMounts, err := a.getNetworkMounts(); err != nil {
+	networkMounts, err := a.getNetworkMounts()
+	if err != nil {
 		slog.Error("Network mounts collection failed", "err", err)
-	} else {
+	}
+	if networkMounts != nil {
 		data.NetworkMounts = networkMounts
 	}
 

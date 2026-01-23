@@ -34,7 +34,7 @@ func syncSystemNetworkMounts(app core.App, systemID string, mounts []*system.Net
 		id := makeStableHashId(systemID, mount.MountPoint, mount.Source, mount.FsType)
 		ids = append(ids, id)
 		valueStrings = append(valueStrings, fmt.Sprintf(
-			"({:id%[1]s}, {:system}, {:source%[1]s}, {:sourceHost%[1]s}, {:sourcePath%[1]s}, {:mountPoint%[1]s}, {:fstype%[1]s}, {:totalBytes%[1]s}, {:usedBytes%[1]s}, {:usedPct%[1]s}, {:updated})",
+			"({:id%[1]s}, {:system}, {:source%[1]s}, {:sourceHost%[1]s}, {:sourcePath%[1]s}, {:mountPoint%[1]s}, {:fstype%[1]s}, {:totalBytes%[1]s}, {:usedBytes%[1]s}, {:usedPct%[1]s}, {:error%[1]s}, {:updated})",
 			suffix,
 		))
 		params["id"+suffix] = id
@@ -46,6 +46,7 @@ func syncSystemNetworkMounts(app core.App, systemID string, mounts []*system.Net
 		params["totalBytes"+suffix] = mount.TotalBytes
 		params["usedBytes"+suffix] = mount.UsedBytes
 		params["usedPct"+suffix] = mount.UsedPct
+		params["error"+suffix] = mount.Error
 	}
 
 	if len(valueStrings) == 0 {
@@ -53,7 +54,7 @@ func syncSystemNetworkMounts(app core.App, systemID string, mounts []*system.Net
 	}
 
 	query := fmt.Sprintf(
-		"INSERT INTO system_network_mounts (id, system, source, source_host, source_path, mount_point, fstype, total_bytes, used_bytes, used_pct, updated) VALUES %s ON CONFLICT(id) DO UPDATE SET system = excluded.system, source = excluded.source, source_host = excluded.source_host, source_path = excluded.source_path, mount_point = excluded.mount_point, fstype = excluded.fstype, total_bytes = excluded.total_bytes, used_bytes = excluded.used_bytes, used_pct = excluded.used_pct, updated = excluded.updated",
+		"INSERT INTO system_network_mounts (id, system, source, source_host, source_path, mount_point, fstype, total_bytes, used_bytes, used_pct, error, updated) VALUES %s ON CONFLICT(id) DO UPDATE SET system = excluded.system, source = excluded.source, source_host = excluded.source_host, source_path = excluded.source_path, mount_point = excluded.mount_point, fstype = excluded.fstype, total_bytes = excluded.total_bytes, used_bytes = excluded.used_bytes, used_pct = excluded.used_pct, error = excluded.error, updated = excluded.updated",
 		strings.Join(valueStrings, ","),
 	)
 	if _, err := app.DB().NewQuery(query).Bind(params).Execute(); err != nil {

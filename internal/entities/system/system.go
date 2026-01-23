@@ -116,6 +116,7 @@ type NetworkMount struct {
 	TotalBytes uint64  `json:"total_bytes" cbor:"5,keyasint"`
 	UsedBytes  uint64  `json:"used_bytes" cbor:"6,keyasint"`
 	UsedPct    float64 `json:"used_pct" cbor:"7,keyasint"`
+	Error      string  `json:"error,omitempty" cbor:"8,keyasint,omitempty"`
 }
 
 type Os = uint8

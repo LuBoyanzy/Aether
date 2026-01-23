@@ -11,7 +11,7 @@ import { cn, decimalString, formatBytes, getMeterState } from "@/lib/utils"
 import type { SystemNetworkMountRecord } from "@/types"
 
 const mountFields =
-	"id,system,source,source_host,source_path,mount_point,fstype,total_bytes,used_bytes,used_pct,updated"
+	"id,system,source,source_host,source_path,mount_point,fstype,total_bytes,used_bytes,used_pct,error,updated"
 
 function getUsageClass(pct: number) {
 	const threshold = getMeterState(pct)
@@ -122,13 +122,17 @@ export default function NetworkMountsCard({ systemId }: { systemId: string }) {
 
 	const empty = !loading && mounts.length === 0
 	const rows = useMemo(() => mounts.map((mount) => {
-		const hasUsage = mount.total_bytes > 0
+		const errorLabel = mount.error?.trim() ?? ""
+		const hasError = errorLabel.length > 0
+		const hasUsage = mount.total_bytes > 0 && !hasError
 		const pct = hasUsage ? mount.used_pct : 0
 		const usageLabel = hasUsage
 			? `${formatBytesLabel(mount.used_bytes)} / ${formatBytesLabel(mount.total_bytes)}`
 			: "-"
 		return {
 			...mount,
+			errorLabel,
+			hasError,
 			pct,
 			usageLabel,
 			sourceLabel: formatSource(mount),
@@ -187,20 +191,24 @@ export default function NetworkMountsCard({ systemId }: { systemId: string }) {
 										{mount.mount_point}
 									</TableCell>
 									<TableCell className="py-2">
-										<div className="flex flex-col gap-1">
-											<div className="flex gap-2 items-center tabular-nums">
-												<span className="min-w-10">
-													{mount.total_bytes > 0 ? `${decimalString(mount.pct, mount.pct >= 10 ? 1 : 2)}%` : "-"}
-												</span>
-												<span className="flex-1 min-w-16 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
-													<span
-														className={cn(getUsageClass(mount.pct), "rounded-full")}
-														style={{ width: `${mount.pct}%` }}
-													></span>
-												</span>
+										{mount.hasError ? (
+											<span className="text-xs text-destructive break-words">{mount.errorLabel}</span>
+										) : (
+											<div className="flex flex-col gap-1">
+												<div className="flex gap-2 items-center tabular-nums">
+													<span className="min-w-10">
+														{mount.total_bytes > 0 ? `${decimalString(mount.pct, mount.pct >= 10 ? 1 : 2)}%` : "-"}
+													</span>
+													<span className="flex-1 min-w-16 grid bg-muted/50 h-2.5 rounded-full overflow-hidden">
+														<span
+															className={cn(getUsageClass(mount.pct), "rounded-full")}
+															style={{ width: `${mount.pct}%` }}
+														></span>
+													</span>
+												</div>
+												<span className="text-xs text-muted-foreground tabular-nums">{mount.usageLabel}</span>
 											</div>
-											<span className="text-xs text-muted-foreground tabular-nums">{mount.usageLabel}</span>
-										</div>
+										)}
 									</TableCell>
 								</TableRow>
 							))}

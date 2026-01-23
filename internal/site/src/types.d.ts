@@ -643,6 +643,7 @@ export interface SystemNetworkMountRecord extends RecordModel {
 	total_bytes: number
 	used_bytes: number
 	used_pct: number
+	error?: string
 	updated: number
 }
 

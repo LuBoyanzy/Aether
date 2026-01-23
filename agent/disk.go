@@ -1,11 +1,13 @@
 package agent
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -35,6 +37,10 @@ var networkFsTypes = map[string]struct{}{
 	"sshfs":      {},
 	"fuse.sshfs": {},
 }
+
+const networkMountUsageTimeout = 60 * time.Second
+
+var errNetworkMountUsageTimeout = errors.New("network mount usage timeout")
 
 // Sets up the filesystems to monitor for disk usage and I/O.
 func (a *Agent) initializeDiskInfo() {
@@ -378,34 +384,135 @@ func (a *Agent) getNetworkMounts() ([]*system.NetworkMount, error) {
 		return nil, fmt.Errorf("get disk partitions for network mounts failed: %w", err)
 	}
 
-	var mounts []*system.NetworkMount
+	type networkMountUsageRequest struct {
+		mount *system.NetworkMount
+	}
+	type networkMountUsageResult struct {
+		mount    *system.NetworkMount
+		usage    *disk.UsageStat
+		err      error
+		duration time.Duration
+		timedOut bool
+	}
+
+	var (
+		mounts   []*system.NetworkMount
+		requests []networkMountUsageRequest
+	)
+
 	for _, p := range partitions {
 		if !isNetworkFsType(p.Fstype) {
 			continue
 		}
-		totalBytes := uint64(0)
-		usedBytes := uint64(0)
-		usedPct := float64(0)
-		if usage, usageErr := disk.Usage(p.Mountpoint); usageErr != nil {
-			slog.Error("Error getting network mount usage", "mountpoint", p.Mountpoint, "fstype", p.Fstype, "err", usageErr)
-		} else {
-			totalBytes = usage.Total
-			usedBytes = usage.Used
-			if usage.Total > 0 {
-				usedPct = twoDecimals(float64(usage.Used) / float64(usage.Total) * 100)
-			}
-		}
 		host, path := parseNetworkSource(p.Device)
-		mounts = append(mounts, &system.NetworkMount{
+		mount := &system.NetworkMount{
 			Source:     p.Device,
 			SourceHost: host,
 			SourcePath: path,
 			MountPoint: p.Mountpoint,
 			FsType:     strings.ToLower(p.Fstype),
-			TotalBytes: totalBytes,
-			UsedBytes:  usedBytes,
-			UsedPct:    usedPct,
-		})
+		}
+		mounts = append(mounts, mount)
+		requests = append(requests, networkMountUsageRequest{mount: mount})
+	}
+
+	if len(requests) == 0 {
+		return mounts, nil
+	}
+
+	results := make(chan networkMountUsageResult, len(requests))
+	for _, req := range requests {
+		req := req
+		go func() {
+			start := time.Now()
+			usageCh := make(chan *disk.UsageStat, 1)
+			errCh := make(chan error, 1)
+
+			go func() {
+				usage, usageErr := disk.Usage(req.mount.MountPoint)
+				if usageErr != nil {
+					errCh <- usageErr
+					return
+				}
+				usageCh <- usage
+			}()
+
+			timer := time.NewTimer(networkMountUsageTimeout)
+			defer timer.Stop()
+
+			select {
+			case usage := <-usageCh:
+				results <- networkMountUsageResult{
+					mount:    req.mount,
+					usage:    usage,
+					duration: time.Since(start),
+				}
+			case usageErr := <-errCh:
+				results <- networkMountUsageResult{
+					mount:    req.mount,
+					err:      usageErr,
+					duration: time.Since(start),
+				}
+			case <-timer.C:
+				results <- networkMountUsageResult{
+					mount:    req.mount,
+					err:      fmt.Errorf("%w after %s", errNetworkMountUsageTimeout, networkMountUsageTimeout),
+					duration: time.Since(start),
+					timedOut: true,
+				}
+			}
+		}()
+	}
+
+	var errs []error
+	for i := 0; i < len(requests); i++ {
+		result := <-results
+		if result.mount == nil {
+			continue
+		}
+		if result.err != nil {
+			result.mount.Error = result.err.Error()
+			slog.Error(
+				"Network mount usage failed",
+				"mountpoint",
+				result.mount.MountPoint,
+				"fstype",
+				result.mount.FsType,
+				"source",
+				result.mount.Source,
+				"durationMs",
+				result.duration.Milliseconds(),
+				"timeout",
+				networkMountUsageTimeout.String(),
+				"timedOut",
+				result.timedOut,
+				"err",
+				result.err,
+				"stack",
+				string(debug.Stack()),
+			)
+			errs = append(errs, fmt.Errorf(
+				"network mount usage failed: mountpoint=%s fstype=%s source=%s duration=%s timeout=%s timedOut=%t: %w",
+				result.mount.MountPoint,
+				result.mount.FsType,
+				result.mount.Source,
+				result.duration,
+				networkMountUsageTimeout,
+				result.timedOut,
+				result.err,
+			))
+			continue
+		}
+		if result.usage != nil {
+			result.mount.TotalBytes = result.usage.Total
+			result.mount.UsedBytes = result.usage.Used
+			if result.usage.Total > 0 {
+				result.mount.UsedPct = twoDecimals(float64(result.usage.Used) / float64(result.usage.Total) * 100)
+			}
+		}
+	}
+	if len(errs) > 0 {
+		return mounts, errors.Join(errs...)
 	}
 	return mounts, nil
 }
