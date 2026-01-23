@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/mail"
 	"runtime/debug"
 	"strings"
 
+	"aether/internal/alerts"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/pocketbase/pocketbase/forms"
 	"github.com/pocketbase/pocketbase/tools/mailer"
 )
 
@@ -223,20 +225,64 @@ func (h *Hub) TestMailSettings(e *core.RequestEvent) error {
 			"email":  payload.Email,
 		})
 	}
-
-	form := forms.NewTestEmailSend(e.App)
-	form.Email = payload.Email
-	form.Template = forms.TestTemplateAuthAlert
-
-	if err := form.Submit(); err != nil {
+	settings, err := e.App.Settings().Clone()
+	if err != nil {
+		return h.respondMailSettingsError(e, http.StatusInternalServerError, "failed to load smtp settings", err, map[string]any{
+			"action": "test",
+			"email":  payload.Email,
+		})
+	}
+	lang, err := alerts.GetNotificationLanguage(h)
+	if err != nil {
+		return h.respondMailSettingsError(e, http.StatusInternalServerError, "读取通知语言失败", err, map[string]any{
+			"action": "test",
+			"email":  payload.Email,
+		})
+	}
+	appName := strings.TrimSpace(settings.Meta.AppName)
+	if appName == "" {
+		appName = "Aether"
+	}
+	alertType := "Test Notification"
+	currentValue := "Test"
+	threshold := "N/A"
+	if lang == alerts.NotificationLanguageZhCN {
+		alertType = "测试通知"
+		currentValue = "测试"
+		threshold = "不适用"
+	}
+	content := alerts.NotificationContent{
+		SystemName:   appName,
+		AlertType:    alertType,
+		State:        alerts.NotificationStateTriggered,
+		CurrentValue: currentValue,
+		Threshold:    threshold,
+		Duration:     alerts.FormatImmediateDuration(lang),
+	}
+	text, err := alerts.FormatNotification(lang, content)
+	if err != nil {
+		return h.respondMailSettingsError(e, http.StatusInternalServerError, "failed to format test email", err, map[string]any{
+			"action": "test",
+			"email":  payload.Email,
+		})
+	}
+	message := mailer.Message{
+		To: []mail.Address{{Address: payload.Email}},
+		From: mail.Address{
+			Address: settings.Meta.SenderAddress,
+			Name:    settings.Meta.SenderName,
+		},
+		Subject: text.Title,
+		Text:    text.Message + fmt.Sprintf("\n\n%s", settings.Meta.AppURL),
+	}
+	if err := h.NewMailClient().Send(&message); err != nil {
 		status := http.StatusInternalServerError
 		if isValidationError(err) {
 			status = http.StatusBadRequest
 		}
 		return h.respondMailSettingsError(e, status, "failed to send test email", err, map[string]any{
-			"action":   "test",
-			"email":    payload.Email,
-			"template": form.Template,
+			"action": "test",
+			"email":  payload.Email,
 		})
 	}
 

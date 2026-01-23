@@ -8,11 +8,12 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { InputTags } from "@/components/ui/input-tags"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/use-toast"
-import { pb } from "@/lib/api"
+import { getNotificationSettings, pb, updateNotificationSettings } from "@/lib/api"
 import { showDocsUnavailable } from "@/lib/utils"
-import type { UserSettings } from "@/types"
+import type { NotificationLanguage, UserSettings } from "@/types"
 import { saveSettings } from "./layout"
 import { QuietHours } from "./quiet-hours"
 import { SmtpSettingsDialog } from "./smtp-settings-dialog"
@@ -43,6 +44,8 @@ const NotificationSchema = v.object({
 const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSettings }) => {
 	const [webhooks, setWebhooks] = useState<WebhookConfig[]>(normalizeWebhooks(userSettings.webhooks))
 	const [emails, setEmails] = useState<string[]>(userSettings.emails ?? [])
+	const [notificationLanguage, setNotificationLanguage] = useState<NotificationLanguage>("zh-CN")
+	const [isNotificationSettingsLoading, setIsNotificationSettingsLoading] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
 	// update values when userSettings changes
@@ -50,6 +53,34 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 		setWebhooks(normalizeWebhooks(userSettings.webhooks))
 		setEmails(userSettings.emails ?? [])
 	}, [userSettings])
+
+	useEffect(() => {
+		let active = true
+		const loadNotificationSettings = async () => {
+			setIsNotificationSettingsLoading(true)
+			try {
+				// 后端接口定义见 internal/hub/notification_settings.go
+				const settings = await getNotificationSettings()
+				if (active && settings?.language) {
+					setNotificationLanguage(settings.language)
+				}
+			} catch (e: any) {
+				toast({
+					title: t`Failed to load notification settings`,
+					description: e.message,
+					variant: "destructive",
+				})
+			} finally {
+				if (active) {
+					setIsNotificationSettingsLoading(false)
+				}
+			}
+		}
+		loadNotificationSettings()
+		return () => {
+			active = false
+		}
+	}, [])
 
 	function addWebhook() {
 		setWebhooks([...webhooks, { name: "", url: "" }])
@@ -87,7 +118,15 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 				throw new Error(t`Webhook names must be unique`)
 			}
 			const parsedData = v.parse(NotificationSchema, { emails, webhooks: trimmedWebhooks })
-			await saveSettings(parsedData)
+			await Promise.all([
+				saveSettings(parsedData, { showToast: false, throwOnError: true }),
+				// 后端接口定义见 internal/hub/notification_settings.go
+				updateNotificationSettings({ language: notificationLanguage }),
+			])
+			toast({
+				title: t`Settings saved`,
+				description: t`Your notification settings have been updated.`,
+			})
 		} catch (e: any) {
 			toast({
 				title: t`Failed to save settings`,
@@ -116,6 +155,37 @@ const SettingsNotificationsPage = ({ userSettings }: { userSettings: UserSetting
 			</div>
 			<Separator className="my-4" />
 			<div className="space-y-5">
+				<div className="grid gap-2">
+					<div className="mb-2">
+						<h3 className="mb-1 text-lg font-medium">
+							<Trans>Notification language</Trans>
+						</h3>
+						<p className="text-sm text-muted-foreground leading-relaxed">
+							<Trans>Choose the language used for alert notifications.</Trans>
+						</p>
+					</div>
+					<Label className="block" htmlFor="notification-language">
+						<Trans>Notification language</Trans>
+					</Label>
+					<Select
+						value={notificationLanguage}
+						onValueChange={(value) => setNotificationLanguage(value as NotificationLanguage)}
+						disabled={isNotificationSettingsLoading}
+					>
+						<SelectTrigger id="notification-language">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="zh-CN">
+								<Trans>Chinese</Trans>
+							</SelectItem>
+							<SelectItem value="en">
+								<Trans>English</Trans>
+							</SelectItem>
+						</SelectContent>
+					</Select>
+				</div>
+				<Separator />
 				<div className="grid gap-2">
 					<div className="mb-2">
 						<h3 className="mb-1 text-lg font-medium">

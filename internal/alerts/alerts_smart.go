@@ -2,6 +2,7 @@ package alerts
 
 import (
 	"fmt"
+	"runtime/debug"
 
 	"github.com/pocketbase/pocketbase/core"
 )
@@ -33,13 +34,28 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 	deviceName := e.Record.GetString("name")
 	model := e.Record.GetString("model")
 
-	// Build alert message
-	title := fmt.Sprintf("SMART failure on %s: %s \U0001F534", systemName, deviceName)
-	var message string
+	lang, err := am.NotificationLanguage()
+	if err != nil {
+		e.App.Logger().Error("读取通知语言失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "system", systemName, "device", deviceName)
+		return e.Next()
+	}
+	descriptor := deviceName
 	if model != "" {
-		message = fmt.Sprintf("Disk %s (%s) SMART status changed to FAILED", deviceName, model)
-	} else {
-		message = fmt.Sprintf("Disk %s SMART status changed to FAILED", deviceName)
+		descriptor = fmt.Sprintf("%s %s", deviceName, model)
+	}
+	content := NotificationContent{
+		SystemName:   systemName,
+		AlertType:    "SMART",
+		Descriptor:   descriptor,
+		State:        NotificationStateTriggered,
+		CurrentValue: "FAILED",
+		Threshold:    "PASSED",
+		Duration:     FormatImmediateDuration(lang),
+	}
+	text, err := FormatNotification(lang, content)
+	if err != nil {
+		e.App.Logger().Error("SMART 告警格式化失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "system", systemName, "device", deviceName)
+		return e.Next()
 	}
 
 	// Get users associated with the system
@@ -53,12 +69,12 @@ func (am *AlertManager) handleSmartDeviceAlert(e *core.RecordEvent) error {
 		if err := am.SendAlert(AlertMessageData{
 			UserID:   userID,
 			SystemID: systemID,
-			Title:    title,
-			Message:  message,
+			Title:    text.Title,
+			Message:  text.Message,
 			Link:     am.hub.MakeLink("system", systemID),
-			LinkText: "View " + systemName,
+			LinkText: text.LinkText,
 		}); err != nil {
-			e.App.Logger().Error("Failed to send SMART alert", "logger", "alerts", "err", err, "userID", userID)
+			e.App.Logger().Error("发送 SMART 告警失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "userID", userID, "system", systemName)
 		}
 	}
 

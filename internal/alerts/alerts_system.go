@@ -3,6 +3,7 @@ package alerts
 import (
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -92,7 +93,10 @@ func (am *AlertManager) HandleSystemAlerts(systemRecord *core.Record, data *syst
 			}
 		}
 
-		min := max(1, cast.ToUint8(alertRecord.Get("min")))
+		min := cast.ToUint8(alertRecord.Get("min"))
+		if min < 1 {
+			min = 1
+		}
 
 		alert := SystemAlertData{
 			systemRecord: systemRecord,
@@ -303,60 +307,70 @@ func (am *AlertManager) sendSystemAlert(alert SystemAlertData) {
 	// log.Printf("Sending alert %s: val %f | count %d | threshold %f\n", alert.name, alert.val, alert.count, alert.threshold)
 	systemName := alert.systemRecord.GetString("name")
 
-	// change Disk to Disk usage
-	if alert.name == "Disk" {
-		alert.name += " usage"
+	lang, err := am.NotificationLanguage()
+	if err != nil {
+		am.hub.Logger().Error("读取通知语言失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "system", systemName, "alertName", alert.name)
+		return
 	}
-	// format LoadAvg5 and LoadAvg15
-	if after, ok := strings.CutPrefix(alert.name, "LoadAvg"); ok {
-		alert.name = after + "m Load"
-	}
-
-	// make title alert name lowercase if not CPU or GPU
-	titleAlertName := alert.name
-	if titleAlertName != "CPU" && titleAlertName != "GPU" {
-		titleAlertName = strings.ToLower(titleAlertName)
-	}
-
-	var subject string
-	lowAlert := isLowAlert(alert.name)
-	if alert.triggered {
-		if lowAlert {
-			subject = fmt.Sprintf("%s %s below threshold", systemName, titleAlertName)
-		} else {
-			subject = fmt.Sprintf("%s %s above threshold", systemName, titleAlertName)
-		}
+	alertType := alert.name
+	details := ""
+	if displayTitle, displayDetails, ok := AlertDisplayText(alert.name, lang); ok {
+		alertType = displayTitle
+		details = displayDetails
 	} else {
-		if lowAlert {
-			subject = fmt.Sprintf("%s %s above threshold", systemName, titleAlertName)
-		} else {
-			subject = fmt.Sprintf("%s %s below threshold", systemName, titleAlertName)
-		}
+		alertType = formatLegacySystemAlertType(alert.name)
 	}
-	minutesLabel := "minute"
-	if alert.min > 1 {
-		minutesLabel += "s"
+	state := NotificationStateResolved
+	if alert.triggered {
+		state = NotificationStateTriggered
 	}
-	if alert.descriptor == "" {
-		alert.descriptor = alert.name
+	content := NotificationContent{
+		SystemName:   systemName,
+		AlertType:    alertType,
+		Descriptor:   alert.descriptor,
+		State:        state,
+		CurrentValue: FormatMetricValue(alert.val, alert.unit),
+		Threshold:    FormatMetricValue(alert.threshold, alert.unit),
+		Duration:     FormatDurationMinutes(int(alert.min), lang),
+		Details:      details,
 	}
-	body := fmt.Sprintf("%s averaged %.2f%s for the previous %v %s.", alert.descriptor, alert.val, alert.unit, alert.min, minutesLabel)
+	text, err := FormatNotification(lang, content)
+	if err != nil {
+		am.hub.Logger().Error("告警通知格式化失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "system", systemName, "alertName", alert.name, "triggered", alert.triggered, "currentValue", alert.val, "threshold", alert.threshold, "durationMinutes", alert.min)
+		return
+	}
 
 	alert.alertRecord.Set("triggered", alert.triggered)
 	if err := am.hub.Save(alert.alertRecord); err != nil {
-		// app.Logger().Error("failed to save alert record", "err", err)
+		am.hub.Logger().Error("保存告警记录失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "alertId", alert.alertRecord.Id, "system", systemName)
 		return
 	}
-	am.SendAlert(AlertMessageData{
+	if err := am.SendAlert(AlertMessageData{
 		UserID:   alert.alertRecord.GetString("user"),
 		SystemID: alert.systemRecord.Id,
-		Title:    subject,
-		Message:  body,
+		Title:    text.Title,
+		Message:  text.Message,
 		Link:     am.hub.MakeLink("system", alert.systemRecord.Id),
-		LinkText: "View " + systemName,
-	})
+		LinkText: text.LinkText,
+	}); err != nil {
+		am.hub.Logger().Error("发送告警通知失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "system", systemName, "alertName", alert.name)
+	}
 }
 
 func isLowAlert(name string) bool {
 	return name == "Battery"
+}
+
+func formatLegacySystemAlertType(alertName string) string {
+	alertType := alertName
+	if alertType == "Disk" {
+		alertType += " usage"
+	}
+	if after, ok := strings.CutPrefix(alertType, "LoadAvg"); ok {
+		alertType = after + "m Load"
+	}
+	if alertType != "CPU" && alertType != "GPU" {
+		alertType = strings.ToLower(alertType)
+	}
+	return alertType
 }

@@ -222,6 +222,22 @@ msgstr "告警阈值必须大于 0"
 msgid "Alerts"
 msgstr "警报"
 
+#: src/components/alerts/alerts-sheet.tsx
+msgid "Alert timing note"
+msgstr "提醒时间说明"
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "Alerts do not repeat every minute."
+msgstr "不会每分钟重复提醒。"
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "You'll get one when the value goes over your limit, and one when it returns to normal."
+msgstr "只有数值从正常到超出设定值、再回到正常时各提醒一次。"
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "The 1-minute setting only checks the current value."
+msgstr "“1 分钟”只是看当前数值。"
+
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "All cases"
@@ -4115,6 +4131,30 @@ msgstr "更改已保存。"
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "您的用户设置已更新。"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Notification language"
+msgstr "通知语言"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Choose the language used for alert notifications."
+msgstr "选择告警通知使用的语言。"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Chinese"
+msgstr "中文"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "English"
+msgstr "英文"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Failed to load notification settings"
+msgstr "加载通知设置失败"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Your notification settings have been updated."
+msgstr "通知设置已更新。"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/mail"
 	"net/url"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -466,7 +467,38 @@ func (am *AlertManager) SendTestNotification(e *core.RequestEvent) error {
 	if err != nil || data.URL == "" {
 		return e.BadRequestError("URL is required", err)
 	}
-	err = am.SendWebhookAlert(data.URL, "Test Alert", "This is a notification from Aether.", am.hub.Settings().Meta.AppURL, "View Aether")
+	lang, langErr := am.NotificationLanguage()
+	if langErr != nil {
+		am.hub.Logger().Error("读取通知语言失败", "logger", "alerts", "err", langErr, "errType", fmt.Sprintf("%T", langErr), "stack", string(debug.Stack()), "url", data.URL)
+		return e.JSON(200, map[string]string{"err": fmt.Sprintf("通知语言错误: %v", langErr)})
+	}
+	appName := strings.TrimSpace(am.hub.Settings().Meta.AppName)
+	if appName == "" {
+		appName = "Aether"
+	}
+	alertType := "Test Notification"
+	currentValue := "Test"
+	threshold := "N/A"
+	if lang == NotificationLanguageZhCN {
+		alertType = "测试通知"
+		currentValue = "测试"
+		threshold = "不适用"
+	}
+	content := NotificationContent{
+		SystemName:   appName,
+		AlertType:    alertType,
+		State:        NotificationStateTriggered,
+		CurrentValue: currentValue,
+		Threshold:    threshold,
+		Duration:     FormatImmediateDuration(lang),
+		LinkText:     formatDefaultLinkText(lang, appName),
+	}
+	text, formatErr := FormatNotification(lang, content)
+	if formatErr != nil {
+		am.hub.Logger().Error("测试通知格式化失败", "logger", "alerts", "err", formatErr, "errType", fmt.Sprintf("%T", formatErr), "stack", string(debug.Stack()), "url", data.URL)
+		return e.JSON(200, map[string]string{"err": fmt.Sprintf("通知格式错误: %v", formatErr)})
+	}
+	err = am.SendWebhookAlert(data.URL, text.Title, text.Message, am.hub.Settings().Meta.AppURL, text.LinkText)
 	if err != nil {
 		return e.JSON(200, map[string]string{"err": err.Error()})
 	}

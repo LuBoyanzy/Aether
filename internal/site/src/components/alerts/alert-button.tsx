@@ -26,7 +26,12 @@ export default memo(function AlertsButton({ system }: { system: SystemRecord }) 
 						/>
 					</Button>
 				</SheetTrigger>
-				<SheetContent className="max-h-full overflow-auto w-150 !max-w-full p-4 sm:p-6">
+				<SheetContent
+					className="max-h-full overflow-auto w-150 !max-w-full p-4 sm:p-6"
+					onOpenAutoFocus={(event) => {
+						event.preventDefault()
+					}}
+				>
 					{opened && <AlertDialogContent system={system} />}
 				</SheetContent>
 			</Sheet>

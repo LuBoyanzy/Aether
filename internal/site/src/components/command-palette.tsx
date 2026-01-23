@@ -7,6 +7,7 @@ import { DialogDescription } from "@radix-ui/react-dialog"
 import {
 	AlertOctagonIcon,
 	BookIcon,
+	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
 	FingerprintIcon,
@@ -16,6 +17,7 @@ import {
 	Server,
 	ServerIcon,
 	SettingsIcon,
+	TestTube2 as TestTube2Icon,
 	UsersIcon,
 } from "lucide-react"
 import { memo, useEffect, useMemo } from "react"
@@ -107,6 +109,34 @@ export default memo(function CommandPalette({ open, setOpen }: { open: boolean; 
 							<ContainerIcon className="me-2 size-4" />
 							<span>
 								<Trans>Docker</Trans>
+							</span>
+							<CommandShortcut>
+								<Trans>Page</Trans>
+							</CommandShortcut>
+						</CommandItem>
+						<CommandItem
+							onSelect={() => {
+								navigate(getPagePath($router, "api_tests"))
+								setOpen(false)
+							}}
+						>
+							<TestTube2Icon className="me-2 size-4" />
+							<span>
+								<Trans>API Tests</Trans>
+							</span>
+							<CommandShortcut>
+								<Trans>Page</Trans>
+							</CommandShortcut>
+						</CommandItem>
+						<CommandItem
+							onSelect={() => {
+								navigate(getPagePath($router, "audit_logs"))
+								setOpen(false)
+							}}
+						>
+							<ClipboardListIcon className="me-2 size-4" />
+							<span>
+								<Trans>Audit Logs</Trans>
 							</span>
 							<CommandShortcut>
 								<Trans>Page</Trans>

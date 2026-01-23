@@ -2,7 +2,7 @@ package alerts
 
 import (
 	"fmt"
-	"strings"
+	"runtime/debug"
 	"time"
 
 	"github.com/pocketbase/dbx"
@@ -111,7 +111,10 @@ func (am *AlertManager) handleSystemDown(systemName string, alertRecords []*core
 			continue
 		}
 		// Schedule by adding to queue
-		min := max(1, alertRecord.GetInt("min"))
+		min := alertRecord.GetInt("min")
+		if min < 1 {
+			min = 1
+		}
 		am.alertQueue <- alertTask{
 			action:      "schedule",
 			systemName:  systemName,
@@ -149,17 +152,46 @@ func (am *AlertManager) sendStatusAlert(alertStatus string, systemName string, a
 	case "down":
 		alertRecord.Set("triggered", true)
 	}
-	am.hub.Save(alertRecord)
-
-	var emoji string
-	if alertStatus == "up" {
-		emoji = "\u2705" // Green checkmark emoji
-	} else {
-		emoji = "\U0001F534" // Red alert emoji
+	if err := am.hub.Save(alertRecord); err != nil {
+		am.hub.Logger().Error("保存状态告警记录失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "alertStatus", alertStatus, "system", systemName, "alertId", alertRecord.Id)
+		return fmt.Errorf("保存状态告警记录失败: %w", err)
 	}
 
-	title := fmt.Sprintf("Connection to %s is %s %v", systemName, alertStatus, emoji)
-	message := strings.TrimSuffix(title, emoji)
+	lang, err := am.NotificationLanguage()
+	if err != nil {
+		am.hub.Logger().Error("读取通知语言失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "alertStatus", alertStatus, "system", systemName)
+		return fmt.Errorf("读取通知语言失败: %w", err)
+	}
+
+	state := NotificationStateResolved
+	if alertStatus == "down" {
+		state = NotificationStateTriggered
+	}
+	alertType := "Status"
+	details := ""
+	if displayTitle, displayDetails, ok := AlertDisplayText("Status", lang); ok {
+		alertType = displayTitle
+		details = displayDetails
+	}
+	durationMinutes := alertRecord.GetInt("min")
+	if durationMinutes < 1 {
+		durationMinutes = 1
+	}
+	duration := FormatDurationMinutes(durationMinutes, lang)
+	content := NotificationContent{
+		SystemName:   systemName,
+		AlertType:    alertType,
+		State:        state,
+		CurrentValue: alertStatus,
+		Threshold:    "up",
+		Duration:     duration,
+		Details:      details,
+	}
+	text, err := FormatNotification(lang, content)
+	if err != nil {
+		am.hub.Logger().Error("状态告警格式化失败", "logger", "alerts", "err", err, "errType", fmt.Sprintf("%T", err), "stack", string(debug.Stack()), "alertStatus", alertStatus, "system", systemName, "durationMinutes", alertRecord.GetInt("min"))
+		return fmt.Errorf("格式化状态告警失败: %w", err)
+	}
 
 	// Get system ID for the link
 	systemID := alertRecord.GetString("system")
@@ -167,10 +199,10 @@ func (am *AlertManager) sendStatusAlert(alertStatus string, systemName string, a
 	return am.SendAlert(AlertMessageData{
 		UserID:   alertRecord.GetString("user"),
 		SystemID: systemID,
-		Title:    title,
-		Message:  message,
+		Title:    text.Title,
+		Message:  text.Message,
 		Link:     am.hub.MakeLink("system", systemID),
-		LinkText: "View " + systemName,
+		LinkText: text.LinkText,
 	})
 }
 

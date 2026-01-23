@@ -217,6 +217,22 @@ msgstr "Alert threshold must be greater than 0"
 msgid "Alerts"
 msgstr "Alerts"
 
+#: src/components/alerts/alerts-sheet.tsx
+msgid "Alert timing note"
+msgstr "Alert timing note"
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "Alerts do not repeat every minute."
+msgstr "Alerts do not repeat every minute."
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "You'll get one when the value goes over your limit, and one when it returns to normal."
+msgstr "You'll get one when the value goes over your limit, and one when it returns to normal."
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "The 1-minute setting only checks the current value."
+msgstr "The 1-minute setting only checks the current value."
+
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "All cases"
@@ -4122,6 +4138,30 @@ msgstr "Your changes have been saved."
 #: src/components/routes/settings/layout.tsx
 msgid "Your user settings have been updated."
 msgstr "Your user settings have been updated."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Notification language"
+msgstr "Notification language"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Choose the language used for alert notifications."
+msgstr "Choose the language used for alert notifications."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Chinese"
+msgstr "Chinese"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "English"
+msgstr "English"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Failed to load notification settings"
+msgstr "Failed to load notification settings"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Your notification settings have been updated."
+msgstr "Your notification settings have been updated."
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"

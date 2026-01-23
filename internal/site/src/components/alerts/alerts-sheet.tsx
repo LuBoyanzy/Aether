@@ -2,13 +2,14 @@ import { t } from "@lingui/core/macro"
 import { Plural, Trans } from "@lingui/react/macro"
 import { useStore } from "@nanostores/react"
 import { getPagePath } from "@nanostores/router"
-import { GlobeIcon, ServerIcon } from "lucide-react"
+import { AlertCircleIcon, GlobeIcon, ServerIcon } from "lucide-react"
 import { lazy, memo, Suspense, useMemo, useState } from "react"
 import { $router, Link } from "@/components/router"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
 import { alertInfo } from "@/lib/alerts"
 import { pb } from "@/lib/api"
@@ -78,8 +79,34 @@ export const AlertDialogContent = memo(function AlertDialogContent({ system }: {
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle className="text-xl">
+				<DialogTitle className="text-xl flex items-center gap-2">
 					<Trans>Alerts</Trans>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<button
+								type="button"
+								aria-label={t`Alert timing note`}
+								className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground/70 hover:text-muted-foreground"
+							>
+								<AlertCircleIcon className="h-3.5 w-3.5" />
+							</button>
+						</TooltipTrigger>
+						<TooltipContent side="bottom" align="start" sideOffset={6} className="max-w-xs text-xs leading-relaxed">
+							<div className="space-y-1">
+								<p>
+									<Trans>Alerts do not repeat every minute.</Trans>
+								</p>
+								<p>
+									<Trans>
+										You'll get one when the value goes over your limit, and one when it returns to normal.
+									</Trans>
+								</p>
+								<p>
+									<Trans>The 1-minute setting only checks the current value.</Trans>
+								</p>
+							</div>
+						</TooltipContent>
+					</Tooltip>
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>

@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro"
 import PocketBase from "pocketbase"
 import { basePath } from "@/components/router"
 import { toast } from "@/components/ui/use-toast"
-import type { ChartTimes, UserSettings } from "@/types"
+import type { ChartTimes, NotificationSettings, UserSettings } from "@/types"
 import { $alerts, $allSystemsById, $allSystemsByName, $userSettings } from "./stores"
 import { chartTimeData } from "./utils"
 
@@ -64,4 +64,12 @@ export function getPbTimestamp(timeString: ChartTimes, d?: Date) {
 	const seconds = String(d.getUTCSeconds()).padStart(2, "0")
 
 	return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+export async function getNotificationSettings(): Promise<NotificationSettings> {
+	return pb.send<NotificationSettings>("/api/aether/notification-settings", { method: "GET" })
+}
+
+export async function updateNotificationSettings(settings: NotificationSettings): Promise<NotificationSettings> {
+	return pb.send<NotificationSettings>("/api/aether/notification-settings", { method: "PUT", body: settings })
 }

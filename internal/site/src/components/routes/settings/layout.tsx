@@ -26,7 +26,14 @@ const ConfigYamlSettings = lazy(configYamlSettingsImport)
 const FingerprintsSettings = lazy(fingerprintsSettingsImport)
 const AlertsHistoryDataTableSettings = lazy(alertsHistoryDataTableSettingsImport)
 
-export async function saveSettings(newSettings: Partial<UserSettings>) {
+type SaveSettingsOptions = {
+	showToast?: boolean
+	throwOnError?: boolean
+}
+
+export async function saveSettings(newSettings: Partial<UserSettings>, options: SaveSettingsOptions = {}) {
+	const showToast = options.showToast !== false
+	const throwOnError = options.throwOnError === true
 	try {
 		// get fresh copy of settings
 		const req = await pb.collection("user_settings").getFirstListItem("", {
@@ -40,17 +47,25 @@ export async function saveSettings(newSettings: Partial<UserSettings>) {
 			},
 		})
 		$userSettings.set(updatedSettings.settings)
-		toast({
-			title: t`Settings saved`,
-			description: t`Your user settings have been updated.`,
-		})
+		if (showToast) {
+			toast({
+				title: t`Settings saved`,
+				description: t`Your user settings have been updated.`,
+			})
+		}
+		return true
 	} catch (e) {
-		// console.error('update settings', e)
-		toast({
-			title: t`Failed to save settings`,
-			description: t`Check logs for more details.`,
-			variant: "destructive",
-		})
+		if (showToast) {
+			toast({
+				title: t`Failed to save settings`,
+				description: t`Check logs for more details.`,
+				variant: "destructive",
+			})
+		}
+		if (throwOnError) {
+			throw e
+		}
+		return false
 	}
 }
 

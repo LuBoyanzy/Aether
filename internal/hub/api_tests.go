@@ -141,9 +141,14 @@ type apiTestExecutionResult struct {
 }
 
 type apiTestAlertAction struct {
-	ShouldSend bool
-	Title      string
-	Message    string
+	ShouldSend          bool
+	State               alerts.NotificationState
+	CaseName            string
+	ConsecutiveFailures int
+	Threshold           int
+	DurationMinutes     int
+	StatusCode          int
+	ErrorMessage        string
 }
 
 var apiTestRunning int32
@@ -782,6 +787,11 @@ func (h *Hub) persistApiTestRun(caseRecord *core.Record, collectionRecord *core.
 		consecutive := caseRecord.GetInt("consecutive_failures")
 		triggered := caseRecord.GetBool("alert_triggered")
 		alertEnabled := caseRecord.GetBool("alert_enabled")
+		previousConsecutive := consecutive
+		intervalMinutes := apiTestDefaultIntervalMinutes
+		if config != nil && config.GetInt("interval_minutes") > 0 {
+			intervalMinutes = config.GetInt("interval_minutes")
+		}
 
 		if result.Success {
 			if consecutive > 0 {
@@ -789,9 +799,13 @@ func (h *Hub) persistApiTestRun(caseRecord *core.Record, collectionRecord *core.
 			}
 			if triggered && config != nil && config.GetBool("alert_on_recover") {
 				alertAction = apiTestAlertAction{
-					ShouldSend: true,
-					Title:      fmt.Sprintf("接口恢复: %s", caseRecord.GetString("name")),
-					Message:    fmt.Sprintf("接口已恢复正常，状态码 %d", result.Status),
+					ShouldSend:          true,
+					State:               alerts.NotificationStateResolved,
+					CaseName:            caseRecord.GetString("name"),
+					ConsecutiveFailures: previousConsecutive,
+					Threshold:           threshold,
+					DurationMinutes:     previousConsecutive * intervalMinutes,
+					StatusCode:          result.Status,
 				}
 			}
 			triggered = false
@@ -799,9 +813,14 @@ func (h *Hub) persistApiTestRun(caseRecord *core.Record, collectionRecord *core.
 			consecutive++
 			if alertEnabled && config != nil && config.GetBool("alert_enabled") && !triggered && consecutive >= threshold {
 				alertAction = apiTestAlertAction{
-					ShouldSend: true,
-					Title:      fmt.Sprintf("接口失败: %s", caseRecord.GetString("name")),
-					Message:    fmt.Sprintf("失败原因: %s", result.Error),
+					ShouldSend:          true,
+					State:               alerts.NotificationStateTriggered,
+					CaseName:            caseRecord.GetString("name"),
+					ConsecutiveFailures: consecutive,
+					Threshold:           threshold,
+					DurationMinutes:     consecutive * intervalMinutes,
+					StatusCode:          result.Status,
+					ErrorMessage:        result.Error,
 				}
 				triggered = true
 			}
@@ -854,6 +873,63 @@ func (h *Hub) sendApiTestAlert(action apiTestAlertAction) error {
 	if !action.ShouldSend {
 		return nil
 	}
+	lang, err := alerts.GetNotificationLanguage(h)
+	if err != nil {
+		h.logApiTestError("读取通知语言失败", err, "action", action)
+		return err
+	}
+	appName := strings.TrimSpace(h.Settings().Meta.AppName)
+	if appName == "" {
+		appName = "Aether"
+	}
+	alertType := "API Test"
+	if strings.TrimSpace(action.CaseName) != "" {
+		alertType = fmt.Sprintf("%s: %s", alertType, action.CaseName)
+	}
+	thresholdValue := action.Threshold
+	if thresholdValue <= 0 {
+		thresholdValue = apiTestDefaultAlertThreshold
+	}
+	currentValue := fmt.Sprintf("%d", action.ConsecutiveFailures)
+	threshold := fmt.Sprintf("%d", thresholdValue)
+	if lang == alerts.NotificationLanguageZhCN {
+		currentValue = fmt.Sprintf("%d 次", action.ConsecutiveFailures)
+		threshold = fmt.Sprintf("%d 次", thresholdValue)
+	} else {
+		currentValue = fmt.Sprintf("%d times", action.ConsecutiveFailures)
+		threshold = fmt.Sprintf("%d times", thresholdValue)
+	}
+	duration := alerts.FormatImmediateDuration(lang)
+	if action.DurationMinutes > 0 {
+		duration = alerts.FormatDurationMinutes(action.DurationMinutes, lang)
+	}
+	details := strings.TrimSpace(action.ErrorMessage)
+	if details == "" && action.StatusCode > 0 {
+		if lang == alerts.NotificationLanguageZhCN {
+			details = fmt.Sprintf("状态码: %d", action.StatusCode)
+		} else {
+			details = fmt.Sprintf("Status Code: %d", action.StatusCode)
+		}
+	}
+	linkText := "View API tests"
+	if lang == alerts.NotificationLanguageZhCN {
+		linkText = "查看接口管理"
+	}
+	content := alerts.NotificationContent{
+		SystemName:   appName,
+		AlertType:    alertType,
+		State:        action.State,
+		CurrentValue: currentValue,
+		Threshold:    threshold,
+		Duration:     duration,
+		Details:      details,
+		LinkText:     linkText,
+	}
+	text, err := alerts.FormatNotification(lang, content)
+	if err != nil {
+		h.logApiTestError("接口告警格式化失败", err, "action", action)
+		return err
+	}
 	userSettings, err := h.FindAllRecords("user_settings", nil)
 	if err != nil {
 		return err
@@ -871,10 +947,10 @@ func (h *Hub) sendApiTestAlert(action apiTestAlertAction) error {
 		err := h.AlertManager.SendAlert(alerts.AlertMessageData{
 			UserID:   userID,
 			SystemID: "",
-			Title:    action.Title,
-			Message:  action.Message,
+			Title:    text.Title,
+			Message:  text.Message,
 			Link:     h.MakeLink("api-tests"),
-			LinkText: "接口管理",
+			LinkText: text.LinkText,
 		})
 		if err != nil {
 			failures = append(failures, fmt.Sprintf("user=%s err=%v", userID, err))

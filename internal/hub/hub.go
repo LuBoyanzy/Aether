@@ -363,6 +363,8 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	})
 	// send test notification
 	apiAuth.POST("/test-notification", h.SendTestNotification)
+	apiAuth.GET("/notification-settings", h.GetNotificationSettings)
+	apiAuth.PUT("/notification-settings", h.UpdateNotificationSettings)
 	// get config.yml content
 	apiAuth.GET("/config-yaml", config.GetYamlConfig)
 	apiAuth.GET("/mail-settings", h.GetMailSettings)

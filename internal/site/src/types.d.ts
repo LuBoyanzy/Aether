@@ -519,6 +519,12 @@ export interface WebhookConfig {
 	url: string
 }
 
+export type NotificationLanguage = "zh-CN" | "en"
+
+export interface NotificationSettings {
+	language: NotificationLanguage
+}
+
 export interface UserSettings {
 	chartTime: ChartTimes
 	emails?: string[]

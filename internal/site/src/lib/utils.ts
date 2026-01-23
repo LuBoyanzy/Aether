@@ -108,11 +108,29 @@ export const formatDay = (timestamp: string) => {
 
 export const updateFavicon = (() => {
 	let prevDownCount = 0
+	let initialIconHref: string | null = null
+	const encodeSvgDataUrl = (svg: string) => {
+		const encoded = encodeURIComponent(svg).replaceAll("%0A", "").replaceAll("%09", "")
+		return `data:image/svg+xml;utf8,${encoded}`
+	}
 	return (downCount = 0) => {
 		if (downCount === prevDownCount) {
 			return
 		}
 		prevDownCount = downCount
+		const iconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement | null
+		if (!iconLink) {
+			return
+		}
+		if (initialIconHref === null) {
+			initialIconHref = iconLink.href || null
+		}
+		if (downCount <= 0) {
+			if (initialIconHref) {
+				iconLink.href = initialIconHref
+			}
+			return
+		}
 		const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 70">
   <defs>
@@ -128,12 +146,10 @@ export const updateFavicon = (() => {
 		<circle cx="40" cy="50" r="22" fill="#f00"/>
   	<text x="40" y="60" font-size="34" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold">${downCount}</text>
 	`
-	}
+		}
 </svg>
 	`
-		const blob = new Blob([svg], { type: "image/svg+xml" })
-		const url = URL.createObjectURL(blob)
-		;(document.querySelector("link[rel='icon']") as HTMLLinkElement).href = url
+		iconLink.href = encodeSvgDataUrl(svg)
 	}
 })()
 
