@@ -832,17 +832,19 @@ export default memo(function ApiTestsPage() {
 														onCheckedChange={(checked) => updateCaseToggle(record, { alert_enabled: !!checked })}
 													/>
 												</TableCell>
-												<TableCell className="text-right space-x-2">
-													<Button variant="outline" size="sm" onClick={() => handleRunCase(record)}>
-														<PlayIcon className="me-2 h-4 w-4" />
-														<Trans>Run</Trans>
-													</Button>
-													<Button variant="outline" size="sm" onClick={() => openEditCase(record)}>
-														<Trans>Edit</Trans>
-													</Button>
-													<Button variant="destructive" size="sm" onClick={() => deleteCase(record)}>
-														<Trans>Delete</Trans>
-													</Button>
+												<TableCell className="text-right">
+													<div className="flex items-center justify-end gap-2">
+														<Button variant="outline" size="sm" onClick={() => handleRunCase(record)}>
+															<PlayIcon className="me-2 h-4 w-4" />
+															<Trans>Run</Trans>
+														</Button>
+														<Button variant="outline" size="sm" onClick={() => openEditCase(record)}>
+															<Trans>Edit</Trans>
+														</Button>
+														<Button variant="destructive" size="sm" onClick={() => deleteCase(record)}>
+															<Trans>Delete</Trans>
+														</Button>
+													</div>
 												</TableCell>
 											</TableRow>
 										))}
@@ -1115,229 +1117,281 @@ export default memo(function ApiTestsPage() {
 					<DialogHeader>
 						<DialogTitle>{caseDraft.id ? t`Edit case` : t`New case`}</DialogTitle>
 					</DialogHeader>
-					<div className="grid gap-4">
-						<div className="grid gap-4 md:grid-cols-2">
-							<div className="space-y-2">
-								<Label>
-									<Trans>Collection</Trans>
-								</Label>
-								<Select
-									value={caseDraft.collection}
-									onValueChange={(value) => setCaseDraft({ ...caseDraft, collection: value })}
-								>
-									<SelectTrigger>
-										<SelectValue placeholder={t`Select collection`} />
-									</SelectTrigger>
-									<SelectContent>
-										{collections.map((record) => (
-											<SelectItem key={record.id} value={record.id}>
-												{record.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
+					<div className="grid gap-4 py-2">
+						{/* Top Section: Basic Info */}
+						<div className="grid gap-4">
+							<div className="grid gap-4 md:grid-cols-12">
+								<div className="md:col-span-4 space-y-2">
+									<Label>
+										<Trans>Collection</Trans>
+									</Label>
+									<Select
+										value={caseDraft.collection}
+										onValueChange={(value) => setCaseDraft({ ...caseDraft, collection: value })}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder={t`Select collection`} />
+										</SelectTrigger>
+										<SelectContent>
+											{collections.map((record) => (
+												<SelectItem key={record.id} value={record.id}>
+													{record.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								<div className="md:col-span-8 space-y-2">
+									<Label>
+										<Trans>Name</Trans>
+									</Label>
+									<Input
+										value={caseDraft.name}
+										onChange={(event) => setCaseDraft({ ...caseDraft, name: event.target.value })}
+									/>
+								</div>
 							</div>
-							<div className="space-y-2">
-								<Label>
-									<Trans>Name</Trans>
-								</Label>
-								<Input
-									value={caseDraft.name}
-									onChange={(event) => setCaseDraft({ ...caseDraft, name: event.target.value })}
-								/>
-							</div>
-						</div>
-						<div className="grid gap-4 md:grid-cols-3">
-							<div className="space-y-2">
-								<Label>
-									<Trans>Method</Trans>
-								</Label>
-								<Select
-									value={caseDraft.method}
-									onValueChange={(value) => setCaseDraft({ ...caseDraft, method: value as ApiTestMethod })}
-								>
-									<SelectTrigger>
-										<SelectValue placeholder={t`Select method`} />
-									</SelectTrigger>
-									<SelectContent>
-										{methodOptions.map((method) => (
-											<SelectItem key={method} value={method}>
-												{method}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-							<div className="space-y-2 md:col-span-2">
-								<Label>
-									<Trans>URL</Trans>
-								</Label>
-								<Input
-									value={caseDraft.url}
-									onChange={(event) => setCaseDraft({ ...caseDraft, url: event.target.value })}
-								/>
-							</div>
-						</div>
-						<div className="space-y-2">
-							<Label>
-								<Trans>Description</Trans>
-							</Label>
-							<Textarea
-								value={caseDraft.description}
-								onChange={(event) => setCaseDraft({ ...caseDraft, description: event.target.value })}
-							/>
-						</div>
-						<div className="grid gap-4 md:grid-cols-3">
-							<div className="space-y-2">
-								<Label>
-									<Trans>Expected status</Trans>
-								</Label>
-								<Input
-									type="number"
-									value={caseDraft.expected_status}
-									onChange={(event) => setCaseDraft({ ...caseDraft, expected_status: Number(event.target.value) })}
-								/>
-							</div>
-							<div className="space-y-2">
-								<Label>
-									<Trans>Timeout (ms)</Trans>
-								</Label>
-								<Input
-									type="number"
-									value={caseDraft.timeout_ms}
-									onChange={(event) => setCaseDraft({ ...caseDraft, timeout_ms: Number(event.target.value) })}
-								/>
-							</div>
-							<div className="space-y-2">
-								<Label>
-									<Trans>Sort order</Trans>
-								</Label>
-								<Input
-									type="number"
-									value={caseDraft.sort_order}
-									onChange={(event) => setCaseDraft({ ...caseDraft, sort_order: Number(event.target.value) })}
-								/>
+							<div className="grid gap-4 md:grid-cols-12">
+								<div className="md:col-span-3 space-y-2">
+									<Label>
+										<Trans>Method</Trans>
+									</Label>
+									<Select
+										value={caseDraft.method}
+										onValueChange={(value) => setCaseDraft({ ...caseDraft, method: value as ApiTestMethod })}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder={t`Select method`} />
+										</SelectTrigger>
+										<SelectContent>
+											{methodOptions.map((method) => (
+												<SelectItem key={method} value={method}>
+													{method}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								<div className="md:col-span-9 space-y-2">
+									<Label>
+										<Trans>URL</Trans>
+									</Label>
+									<Input
+										value={caseDraft.url}
+										onChange={(event) => setCaseDraft({ ...caseDraft, url: event.target.value })}
+									/>
+								</div>
 							</div>
 						</div>
-						<div className="grid gap-4 md:grid-cols-2">
-							<div className="space-y-2">
-								<Label>
-									<Trans>Schedule enabled</Trans>
-								</Label>
-								<Switch
-									checked={caseDraft.schedule_enabled}
-									onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, schedule_enabled: !!checked })}
-								/>
-							</div>
-							<div className="space-y-2">
-								<Label>
-									<Trans>Schedule minutes</Trans>
-								</Label>
-								<Input
-									type="number"
-									value={caseDraft.schedule_minutes}
-									onChange={(event) => setCaseDraft({ ...caseDraft, schedule_minutes: Number(event.target.value) })}
-									disabled={!caseDraft.schedule_enabled}
-								/>
-							</div>
-						</div>
-						<div className="grid gap-4 md:grid-cols-2">
-							<div className="space-y-2">
-								<Label>
-									<Trans>Alert enabled</Trans>
-								</Label>
-								<Switch
-									checked={caseDraft.alert_enabled}
-									onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, alert_enabled: !!checked })}
-								/>
-							</div>
-							<div className="space-y-2">
-								<Label>
-									<Trans>Alert threshold</Trans>
-								</Label>
-								<Input
-									type="number"
-									value={caseDraft.alert_threshold}
-									onChange={(event) => setCaseDraft({ ...caseDraft, alert_threshold: Number(event.target.value) })}
-									disabled={!caseDraft.alert_enabled}
-								/>
-							</div>
-						</div>
-						<div className="space-y-2">
-							<Label>
-								<Trans>Tags</Trans>
-							</Label>
-							<InputTags value={caseDraft.tags} onChange={(tags: string[]) => setCaseDraft({ ...caseDraft, tags })} />
-						</div>
-						<div className="space-y-2">
-							<Label>
-								<Trans>Headers</Trans>
-							</Label>
-							<KeyValueEditor
-								value={caseDraft.headers}
-								onChange={(next) => setCaseDraft({ ...caseDraft, headers: next })}
-								emptyLabel={t`No headers`}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Label>
-								<Trans>Query params</Trans>
-							</Label>
-							<KeyValueEditor
-								value={caseDraft.params}
-								onChange={(next) => setCaseDraft({ ...caseDraft, params: next })}
-								emptyLabel={t`No params`}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Label>
-								<Trans>Body type</Trans>
-							</Label>
-							<Select
-								value={caseDraft.body_type}
-								onValueChange={(value) => setCaseDraft({ ...caseDraft, body_type: value as ApiTestBodyType })}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder={t`Select body type`} />
-								</SelectTrigger>
-								<SelectContent>
-									{bodyTypeOptions.map((bodyType) => (
-										<SelectItem key={bodyType} value={bodyType}>
-											{bodyType}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-						{caseDraft.body_type === "form" ? (
-							<div className="space-y-2">
-								<Label>
-									<Trans>Form body</Trans>
-								</Label>
-								{formBodyError && <div className="text-xs text-destructive">{formBodyError}</div>}
-								<KeyValueEditor
-									value={formItems}
-									onChange={(next) => {
-										setFormItems(next)
-										if (formBodyError) {
-											setFormBodyError("")
-										}
-									}}
-									emptyLabel={t`No form fields`}
-								/>
-							</div>
-						) : (
-							<div className="space-y-2">
-								<Label>
+
+						{/* Tabs Section */}
+						<Tabs defaultValue="body" className="w-full min-h-[400px]">
+							<TabsList className="grid w-full grid-cols-5">
+								<TabsTrigger value="body">
 									<Trans>Body</Trans>
-								</Label>
-								<Textarea
-									value={caseDraft.body}
-									onChange={(event) => setCaseDraft({ ...caseDraft, body: event.target.value })}
-									rows={6}
+								</TabsTrigger>
+								<TabsTrigger value="params">
+									<Trans>Params</Trans>
+								</TabsTrigger>
+								<TabsTrigger value="headers">
+									<Trans>Headers</Trans>
+								</TabsTrigger>
+								<TabsTrigger value="settings">
+									<Trans>Settings</Trans>
+								</TabsTrigger>
+								<TabsTrigger value="automation">
+									<Trans>Automation</Trans>
+								</TabsTrigger>
+							</TabsList>
+
+							{/* Tab: Body */}
+							<TabsContent value="body" className="mt-4 space-y-4">
+								<div className="flex items-center gap-4">
+									<Label className="whitespace-nowrap">
+										<Trans>Body type</Trans>
+									</Label>
+									<Select
+										value={caseDraft.body_type}
+										onValueChange={(value) => setCaseDraft({ ...caseDraft, body_type: value as ApiTestBodyType })}
+									>
+										<SelectTrigger className="w-[180px]">
+											<SelectValue placeholder={t`Select body type`} />
+										</SelectTrigger>
+										<SelectContent>
+											{bodyTypeOptions.map((bodyType) => (
+												<SelectItem key={bodyType} value={bodyType}>
+													{bodyType}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								{caseDraft.body_type === "form" ? (
+									<div className="space-y-2">
+										{formBodyError && <div className="text-xs text-destructive">{formBodyError}</div>}
+										<KeyValueEditor
+											value={formItems}
+											onChange={(next) => {
+												setFormItems(next)
+												if (formBodyError) {
+													setFormBodyError("")
+												}
+											}}
+											emptyLabel={t`No form fields`}
+										/>
+									</div>
+								) : (
+									<div className="space-y-2">
+										<Textarea
+											value={caseDraft.body}
+											onChange={(event) => setCaseDraft({ ...caseDraft, body: event.target.value })}
+											rows={12}
+											className="font-mono text-sm"
+										/>
+									</div>
+								)}
+							</TabsContent>
+
+							{/* Tab: Params */}
+							<TabsContent value="params" className="mt-4">
+								<KeyValueEditor
+									value={caseDraft.params}
+									onChange={(next) => setCaseDraft({ ...caseDraft, params: next })}
+									emptyLabel={t`No params`}
 								/>
-							</div>
-						)}
+							</TabsContent>
+
+							{/* Tab: Headers */}
+							<TabsContent value="headers" className="mt-4">
+								<KeyValueEditor
+									value={caseDraft.headers}
+									onChange={(next) => setCaseDraft({ ...caseDraft, headers: next })}
+									emptyLabel={t`No headers`}
+								/>
+							</TabsContent>
+
+							{/* Tab: Settings */}
+							<TabsContent value="settings" className="mt-4 space-y-4">
+								<div className="grid gap-4 md:grid-cols-3">
+									<div className="space-y-2">
+										<Label>
+											<Trans>Expected status</Trans>
+										</Label>
+										<Input
+											type="number"
+											value={caseDraft.expected_status}
+											onChange={(event) => setCaseDraft({ ...caseDraft, expected_status: Number(event.target.value) })}
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label>
+											<Trans>Timeout (ms)</Trans>
+										</Label>
+										<Input
+											type="number"
+											value={caseDraft.timeout_ms}
+											onChange={(event) => setCaseDraft({ ...caseDraft, timeout_ms: Number(event.target.value) })}
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label>
+											<Trans>Sort order</Trans>
+										</Label>
+										<Input
+											type="number"
+											value={caseDraft.sort_order}
+											onChange={(event) => setCaseDraft({ ...caseDraft, sort_order: Number(event.target.value) })}
+										/>
+									</div>
+								</div>
+								<div className="space-y-2">
+									<Label>
+										<Trans>Tags</Trans>
+									</Label>
+									<InputTags
+										value={caseDraft.tags}
+										onChange={(tags: string[]) => setCaseDraft({ ...caseDraft, tags })}
+									/>
+								</div>
+								<div className="space-y-2">
+									<Label>
+										<Trans>Description</Trans>
+									</Label>
+									<Textarea
+										value={caseDraft.description}
+										onChange={(event) => setCaseDraft({ ...caseDraft, description: event.target.value })}
+										rows={4}
+									/>
+								</div>
+							</TabsContent>
+
+							{/* Tab: Automation */}
+							<TabsContent value="automation" className="mt-4 space-y-4">
+								<div className="rounded-md border p-4 space-y-4">
+									<div className="flex items-center justify-between">
+										<div className="space-y-0.5">
+											<Label className="text-base">
+												<Trans>Schedule enabled</Trans>
+											</Label>
+											<div className="text-sm text-muted-foreground">
+												<Trans>Run this case periodically</Trans>
+											</div>
+										</div>
+										<Switch
+											checked={caseDraft.schedule_enabled}
+											onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, schedule_enabled: !!checked })}
+										/>
+									</div>
+									<div className="grid gap-4 md:grid-cols-2">
+										<div className="space-y-2">
+											<Label>
+												<Trans>Schedule minutes</Trans>
+											</Label>
+											<Input
+												type="number"
+												value={caseDraft.schedule_minutes}
+												onChange={(event) =>
+													setCaseDraft({ ...caseDraft, schedule_minutes: Number(event.target.value) })
+												}
+												disabled={!caseDraft.schedule_enabled}
+											/>
+										</div>
+									</div>
+								</div>
+
+								<div className="rounded-md border p-4 space-y-4">
+									<div className="flex items-center justify-between">
+										<div className="space-y-0.5">
+											<Label className="text-base">
+												<Trans>Alert enabled</Trans>
+											</Label>
+											<div className="text-sm text-muted-foreground">
+												<Trans>Notify when test fails</Trans>
+											</div>
+										</div>
+										<Switch
+											checked={caseDraft.alert_enabled}
+											onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, alert_enabled: !!checked })}
+										/>
+									</div>
+									<div className="grid gap-4 md:grid-cols-2">
+										<div className="space-y-2">
+											<Label>
+												<Trans>Alert threshold</Trans>
+											</Label>
+											<Input
+												type="number"
+												value={caseDraft.alert_threshold}
+												onChange={(event) =>
+													setCaseDraft({ ...caseDraft, alert_threshold: Number(event.target.value) })
+												}
+												disabled={!caseDraft.alert_enabled}
+											/>
+										</div>
+									</div>
+								</div>
+							</TabsContent>
+						</Tabs>
 					</div>
 					<DialogFooter>
 						<Button variant="outline" onClick={() => setCaseDialogOpen(false)}>
