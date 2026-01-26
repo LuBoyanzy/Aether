@@ -73,7 +73,6 @@ type CaseDraft = {
 	schedule_minutes: number
 	sort_order: number
 	tags: string[]
-	alert_enabled: boolean
 	alert_threshold: number
 }
 
@@ -108,7 +107,6 @@ const emptyCaseDraft: CaseDraft = {
 	schedule_minutes: 5,
 	sort_order: 0,
 	tags: [],
-	alert_enabled: false,
 	alert_threshold: 1,
 }
 
@@ -183,6 +181,37 @@ function CaseStatusBadge({ record }: { record: ApiTestCaseRecord }) {
 	return <Badge variant="secondary">Unknown</Badge>
 }
 
+function MethodBadge({ method }: { method: string }) {
+	let variant: "default" | "secondary" | "destructive" | "outline" | "success" | "danger" = "outline"
+	// Map methods to approximate intent colors
+	switch (method) {
+		case "GET":
+			variant = "secondary" // Blue-ish in many themes or gray
+			break
+		case "POST":
+			variant = "success" // Green usually implies creation/action
+			break
+		case "PUT":
+		case "PATCH":
+			variant = "secondary" // Often yellow/orange, but secondary is safe
+			break
+		case "DELETE":
+			variant = "danger" // Red
+			break
+	}
+	// Fallback/Custom logic can be added if we have more specific Badge variants
+	// Using outline for less emphasis if needed, but here we want color.
+	// Actually, let's use outline for GET and solid/colored for others to distinguish.
+	// But standard Badge variants: default, secondary, destructive, outline.
+	// Beszel codebase seems to have success/danger variants (see CaseStatusBadge).
+
+	return (
+		<Badge variant={variant} className="font-mono text-xs">
+			{method}
+		</Badge>
+	)
+}
+
 function KeyValueEditor({
 	value,
 	onChange,
@@ -241,6 +270,8 @@ export default memo(function ApiTestsPage() {
 	const [historyCaseId, setHistoryCaseId] = useState("")
 	const [collectionDialogOpen, setCollectionDialogOpen] = useState(false)
 	const [caseDialogOpen, setCaseDialogOpen] = useState(false)
+	const [caseDetailOpen, setCaseDetailOpen] = useState(false)
+	const [caseDetailId, setCaseDetailId] = useState<string | null>(null)
 	const [collectionDraft, setCollectionDraft] = useState<CollectionDraft>({ ...emptyCollectionDraft })
 	const [caseDraft, setCaseDraft] = useState<CaseDraft>({ ...emptyCaseDraft })
 	const [formItems, setFormItems] = useState<ApiTestKeyValue[]>([])
@@ -338,6 +369,13 @@ export default memo(function ApiTestsPage() {
 		return cases.filter((item) => item.collection === historyCollectionId)
 	}, [cases, historyCollectionId])
 
+	const caseDetailRecord = useMemo(() => {
+		if (!caseDetailId) {
+			return null
+		}
+		return cases.find((item) => item.id === caseDetailId) ?? null
+	}, [caseDetailId, cases])
+
 	useEffect(() => {
 		if (historyCaseId && !historyCases.some((item) => item.id === historyCaseId)) {
 			setHistoryCaseId("")
@@ -429,7 +467,6 @@ export default memo(function ApiTestsPage() {
 			schedule_minutes: record.schedule_minutes ?? 5,
 			sort_order: record.sort_order ?? 0,
 			tags: normalizeTags(record.tags),
-			alert_enabled: record.alert_enabled ?? false,
 			alert_threshold: record.alert_threshold ?? 1,
 		})
 		setFormItems(parsedForm.items)
@@ -456,7 +493,7 @@ export default memo(function ApiTestsPage() {
 		if (caseDraft.schedule_enabled && caseDraft.schedule_minutes <= 0) {
 			handleApiError(t`Schedule minutes must be greater than 0`, new Error("Invalid schedule minutes"))
 		}
-		if (caseDraft.alert_enabled && caseDraft.alert_threshold <= 0) {
+		if (caseDraft.alert_threshold <= 0) {
 			handleApiError(t`Alert threshold must be greater than 0`, new Error("Invalid alert threshold"))
 		}
 		let body = caseDraft.body
@@ -491,7 +528,6 @@ export default memo(function ApiTestsPage() {
 				schedule_minutes: caseDraft.schedule_minutes,
 				sort_order: caseDraft.sort_order,
 				tags: caseDraft.tags,
-				alert_enabled: caseDraft.alert_enabled,
 				alert_threshold: caseDraft.alert_threshold,
 			}
 			if (caseDraft.id) {
@@ -565,6 +601,11 @@ export default memo(function ApiTestsPage() {
 		} catch (error) {
 			handleApiError(t`Failed to run all cases`, error)
 		}
+	}
+
+	const openCaseDetail = (record: ApiTestCaseRecord) => {
+		setCaseDetailId(record.id)
+		setCaseDetailOpen(true)
 	}
 
 	const saveSchedule = async () => {
@@ -702,7 +743,19 @@ export default memo(function ApiTestsPage() {
 											<TableRow key={record.id}>
 												<TableCell>{record.name}</TableCell>
 												<TableCell>{record.base_url || "-"}</TableCell>
-												<TableCell>{record.tags?.length ? record.tags.join(", ") : "-"}</TableCell>
+												<TableCell>
+													{record.tags?.length ? (
+														<div className="flex flex-wrap gap-1">
+															{record.tags.map((tag) => (
+																<Badge key={tag} variant="secondary" className="font-normal text-xs px-1.5 py-0 h-5">
+																	{tag}
+																</Badge>
+															))}
+														</div>
+													) : (
+														"-"
+													)}
+												</TableCell>
 												<TableCell>{record.updated ? formatShortDate(record.updated) : "-"}</TableCell>
 												<TableCell className="text-right space-x-2">
 													<Button variant="outline" size="sm" onClick={() => openEditCollection(record)}>
@@ -767,13 +820,13 @@ export default memo(function ApiTestsPage() {
 											<TableHead>
 												<Trans>Name</Trans>
 											</TableHead>
-											<TableHead>
+											<TableHead className="px-6">
 												<Trans>Method</Trans>
 											</TableHead>
 											<TableHead>
 												<Trans>URL</Trans>
 											</TableHead>
-											<TableHead>
+											<TableHead className="px-2">
 												<Trans>Last Status</Trans>
 											</TableHead>
 											<TableHead>
@@ -782,14 +835,11 @@ export default memo(function ApiTestsPage() {
 											<TableHead>
 												<Trans>Duration</Trans>
 											</TableHead>
-											<TableHead>
-												<Trans>Error</Trans>
+											<TableHead className="px-4">
+												<Trans>Detail</Trans>
 											</TableHead>
 											<TableHead>
 												<Trans>Schedule</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Alert</Trans>
 											</TableHead>
 											<TableHead className="text-right">
 												<Trans>Actions</Trans>
@@ -799,7 +849,7 @@ export default memo(function ApiTestsPage() {
 									<TableBody>
 										{filteredCases.length === 0 && (
 											<TableRow>
-												<TableCell colSpan={11} className="text-center text-muted-foreground">
+												<TableCell colSpan={10} className="text-center text-muted-foreground">
 													<Trans>No cases yet</Trans>
 												</TableCell>
 											</TableRow>
@@ -810,26 +860,40 @@ export default memo(function ApiTestsPage() {
 													<CaseStatusBadge record={record} />
 												</TableCell>
 												<TableCell>{record.name}</TableCell>
-												<TableCell>{record.method}</TableCell>
+												<TableCell>
+													<MethodBadge method={record.method} />
+												</TableCell>
 												<TableCell className="max-w-[260px] truncate">{record.url}</TableCell>
 												<TableCell>
-													{record.last_status === undefined || record.last_status === null
-														? "-"
-														: String(record.last_status)}
+													{record.last_status === undefined || record.last_status === null ? (
+														<span className="text-muted-foreground">-</span>
+													) : (
+														<Badge
+															variant={record.last_status >= 200 && record.last_status < 300 ? "success" : "danger"}
+														>
+															{record.last_status}
+														</Badge>
+													)}
 												</TableCell>
 												<TableCell>{record.last_run_at ? formatShortDate(record.last_run_at) : "-"}</TableCell>
-												<TableCell>{formatDuration(record.last_duration_ms)}</TableCell>
-												<TableCell className="max-w-[220px] truncate">{record.last_error || "-"}</TableCell>
+												<TableCell>
+													{record.last_duration_ms === undefined || record.last_duration_ms === null ? (
+														<span className="text-muted-foreground">-</span>
+													) : (
+														<Badge variant="outline" className="font-mono font-normal">
+															{formatDuration(record.last_duration_ms)}
+														</Badge>
+													)}
+												</TableCell>
+												<TableCell className="px-2">
+													<Button variant="outline" size="sm" onClick={() => openCaseDetail(record)}>
+														<Trans>Detail</Trans>
+													</Button>
+												</TableCell>
 												<TableCell>
 													<Switch
 														checked={record.schedule_enabled}
 														onCheckedChange={(checked) => updateCaseToggle(record, { schedule_enabled: !!checked })}
-													/>
-												</TableCell>
-												<TableCell>
-													<Switch
-														checked={record.alert_enabled}
-														onCheckedChange={(checked) => updateCaseToggle(record, { alert_enabled: !!checked })}
 													/>
 												</TableCell>
 												<TableCell className="text-right">
@@ -1034,7 +1098,11 @@ export default memo(function ApiTestsPage() {
 													{record.success ? <Badge variant="success">OK</Badge> : <Badge variant="danger">Fail</Badge>}
 												</TableCell>
 												<TableCell>{caseNameById.get(record.caseId) ?? record.caseId}</TableCell>
-												<TableCell>{formatDuration(record.durationMs)}</TableCell>
+												<TableCell>
+													<Badge variant="outline" className="font-mono font-normal">
+														{formatDuration(record.durationMs)}
+													</Badge>
+												</TableCell>
 												<TableCell>{record.source}</TableCell>
 												<TableCell>{record.created ? formatShortDate(record.created) : "-"}</TableCell>
 												<TableCell className="max-w-[240px] truncate">{record.error || "-"}</TableCell>
@@ -1186,7 +1254,7 @@ export default memo(function ApiTestsPage() {
 
 						{/* Tabs Section */}
 						<Tabs defaultValue="body" className="w-full min-h-[400px]">
-							<TabsList className="grid w-full grid-cols-5">
+							<TabsList className="grid w-full grid-cols-4">
 								<TabsTrigger value="body">
 									<Trans>Body</Trans>
 								</TabsTrigger>
@@ -1198,9 +1266,6 @@ export default memo(function ApiTestsPage() {
 								</TabsTrigger>
 								<TabsTrigger value="settings">
 									<Trans>Settings</Trans>
-								</TabsTrigger>
-								<TabsTrigger value="automation">
-									<Trans>Automation</Trans>
 								</TabsTrigger>
 							</TabsList>
 
@@ -1325,72 +1390,6 @@ export default memo(function ApiTestsPage() {
 								</div>
 							</TabsContent>
 
-							{/* Tab: Automation */}
-							<TabsContent value="automation" className="mt-4 space-y-4">
-								<div className="rounded-md border p-4 space-y-4">
-									<div className="flex items-center justify-between">
-										<div className="space-y-0.5">
-											<Label className="text-base">
-												<Trans>Schedule enabled</Trans>
-											</Label>
-											<div className="text-sm text-muted-foreground">
-												<Trans>Run this case periodically</Trans>
-											</div>
-										</div>
-										<Switch
-											checked={caseDraft.schedule_enabled}
-											onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, schedule_enabled: !!checked })}
-										/>
-									</div>
-									<div className="grid gap-4 md:grid-cols-2">
-										<div className="space-y-2">
-											<Label>
-												<Trans>Schedule minutes</Trans>
-											</Label>
-											<Input
-												type="number"
-												value={caseDraft.schedule_minutes}
-												onChange={(event) =>
-													setCaseDraft({ ...caseDraft, schedule_minutes: Number(event.target.value) })
-												}
-												disabled={!caseDraft.schedule_enabled}
-											/>
-										</div>
-									</div>
-								</div>
-
-								<div className="rounded-md border p-4 space-y-4">
-									<div className="flex items-center justify-between">
-										<div className="space-y-0.5">
-											<Label className="text-base">
-												<Trans>Alert enabled</Trans>
-											</Label>
-											<div className="text-sm text-muted-foreground">
-												<Trans>Notify when test fails</Trans>
-											</div>
-										</div>
-										<Switch
-											checked={caseDraft.alert_enabled}
-											onCheckedChange={(checked) => setCaseDraft({ ...caseDraft, alert_enabled: !!checked })}
-										/>
-									</div>
-									<div className="grid gap-4 md:grid-cols-2">
-										<div className="space-y-2">
-											<Label>
-												<Trans>Alert threshold</Trans>
-											</Label>
-											<Input
-												type="number"
-												value={caseDraft.alert_threshold}
-												onChange={(event) =>
-													setCaseDraft({ ...caseDraft, alert_threshold: Number(event.target.value) })
-												}
-												disabled={!caseDraft.alert_enabled}
-											/>
-										</div>
-									</div>
-								</div>
-							</TabsContent>
 						</Tabs>
 					</div>
 					<DialogFooter>
@@ -1399,6 +1398,106 @@ export default memo(function ApiTestsPage() {
 						</Button>
 						<Button onClick={saveCase} disabled={saving}>
 							<Trans>Save</Trans>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog
+				open={caseDetailOpen}
+				onOpenChange={(open) => {
+					setCaseDetailOpen(open)
+					if (!open) {
+						setCaseDetailId(null)
+					}
+				}}
+			>
+				<DialogContent className="max-w-3xl max-h-[85vh] overflow-auto">
+					<DialogHeader className="space-y-2">
+						<DialogTitle className="flex flex-col gap-1">
+							<span className="text-xs uppercase tracking-wide text-muted-foreground">
+								<Trans>Detail</Trans>
+							</span>
+							<span>{caseDetailRecord?.name || "-"}</span>
+						</DialogTitle>
+						<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+							<Badge variant="outline">{caseDetailRecord?.method || "-"}</Badge>
+							<span className="break-all">{caseDetailRecord?.url || "-"}</span>
+						</div>
+					</DialogHeader>
+					<div className="grid gap-4">
+						<div className="grid gap-3 md:grid-cols-4">
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Status</Trans>
+								</div>
+								<div className="mt-2">
+									{caseDetailRecord ? (
+										<CaseStatusBadge record={caseDetailRecord} />
+									) : (
+										<Badge variant="secondary">Unknown</Badge>
+									)}
+								</div>
+							</div>
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Last Status</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">
+									{caseDetailRecord?.last_status === undefined || caseDetailRecord?.last_status === null
+										? "-"
+										: String(caseDetailRecord.last_status)}
+								</div>
+							</div>
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Last Run</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">
+									{caseDetailRecord?.last_run_at ? formatShortDate(caseDetailRecord.last_run_at) : "-"}
+								</div>
+							</div>
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Duration</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">{formatDuration(caseDetailRecord?.last_duration_ms)}</div>
+							</div>
+						</div>
+						<div className="grid gap-3 md:grid-cols-2">
+							<div className="rounded-lg border p-4">
+								<div className="mb-2 text-xs text-muted-foreground">
+									<Trans>Error</Trans>
+								</div>
+								<div
+									className={
+										caseDetailRecord?.last_error
+											? "text-sm text-destructive whitespace-pre-wrap"
+											: "text-sm text-muted-foreground"
+									}
+								>
+									{caseDetailRecord?.last_error || "-"}
+								</div>
+							</div>
+							<div className="rounded-lg border p-4">
+								<div className="mb-2 text-xs text-muted-foreground">
+									<Trans>Detail</Trans>
+								</div>
+								{caseDetailRecord?.last_response_snippet ? (
+									<pre className="max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-xs font-mono text-foreground">
+										{caseDetailRecord.last_response_snippet}
+									</pre>
+								) : (
+									<div className="text-sm text-muted-foreground">
+										<Trans>No details available.</Trans>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setCaseDetailOpen(false)}>
+							<Trans>Close</Trans>
 						</Button>
 					</DialogFooter>
 				</DialogContent>

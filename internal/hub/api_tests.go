@@ -786,7 +786,6 @@ func (h *Hub) persistApiTestRun(caseRecord *core.Record, collectionRecord *core.
 		}
 		consecutive := caseRecord.GetInt("consecutive_failures")
 		triggered := caseRecord.GetBool("alert_triggered")
-		alertEnabled := caseRecord.GetBool("alert_enabled")
 		previousConsecutive := consecutive
 		intervalMinutes := apiTestDefaultIntervalMinutes
 		if config != nil && config.GetInt("interval_minutes") > 0 {
@@ -811,7 +810,7 @@ func (h *Hub) persistApiTestRun(caseRecord *core.Record, collectionRecord *core.
 			triggered = false
 		} else {
 			consecutive++
-			if alertEnabled && config != nil && config.GetBool("alert_enabled") && !triggered && consecutive >= threshold {
+			if config != nil && config.GetBool("alert_enabled") && !triggered && consecutive >= threshold {
 				alertAction = apiTestAlertAction{
 					ShouldSend:          true,
 					State:               alerts.NotificationStateTriggered,

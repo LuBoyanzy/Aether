@@ -850,7 +850,6 @@ export interface ApiTestCaseRecord extends RecordModel {
 	schedule_minutes: number
 	sort_order: number
 	tags: string[]
-	alert_enabled: boolean
 	alert_threshold: number
 	consecutive_failures: number
 	alert_triggered: boolean

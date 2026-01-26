@@ -160,7 +160,6 @@ export const createCase = async (
 		schedule_minutes?: number
 		sort_order?: number
 		tags?: string[]
-		alert_enabled?: boolean
 		alert_threshold?: number
 	}
 ) => {
@@ -178,7 +177,6 @@ export const createCase = async (
 			schedule_minutes: 5,
 			sort_order: 0,
 			tags: [],
-			alert_enabled: false,
 			alert_threshold: 1,
 			...payload,
 		},
