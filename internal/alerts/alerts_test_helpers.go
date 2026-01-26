@@ -36,7 +36,7 @@ func (am *AlertManager) ProcessPendingAlerts() ([]*core.Record, error) {
 		info := value.(*alertInfo)
 		if now.After(info.expireTime) {
 			// Downtime delay has passed, process alert
-			if err := am.sendStatusAlert("down", info.systemName, info.alertRecord); err != nil {
+			if err := am.sendStatusAlert("down", info.systemName, info.systemHost, info.alertRecord); err != nil {
 				lastErr = err
 			}
 			processedAlerts = append(processedAlerts, info.alertRecord)
