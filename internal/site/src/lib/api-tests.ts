@@ -6,6 +6,9 @@ import type {
 	ApiTestCaseRecord,
 	ApiTestRunAllSummary,
 	ApiTestCollectionRunSummary,
+	ApiTestExportPayload,
+	ApiTestImportMode,
+	ApiTestImportResponse,
 	ApiTestRunResult,
 	ApiTestScheduleConfig,
 	ApiTestRunList,
@@ -81,5 +84,13 @@ export const listApiTestRuns = (params: {
 			...(params.collectionId ? { collection: params.collectionId } : {}),
 			...(params.page ? { page: String(params.page) } : {}),
 			...(params.perPage ? { perPage: String(params.perPage) } : {}),
-		},
+	},
+	})
+
+export const exportApiTests = () => pb.send<ApiTestExportPayload>("/api/aether/api-tests/export", {})
+
+export const importApiTests = (payload: { mode: ApiTestImportMode; data: ApiTestExportPayload }) =>
+	pb.send<ApiTestImportResponse>("/api/aether/api-tests/import", {
+		method: "POST",
+		body: payload,
 	})

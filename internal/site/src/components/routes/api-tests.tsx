@@ -2,8 +2,8 @@
 // 页面数据来自 Hub api-tests 接口与 PocketBase 集合。
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
-import { PlusIcon, PlayIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
-import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { DownloadIcon, LoaderCircleIcon, PlusIcon, PlayIcon, RefreshCwIcon, Trash2Icon, UploadIcon } from "lucide-react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { ActiveAlerts } from "@/components/active-alerts"
 import { FooterRepoLink } from "@/components/footer-repo-link"
 import { Badge } from "@/components/ui/badge"
@@ -26,6 +26,8 @@ import {
 	deleteApiTestCase,
 	deleteApiTestCollection,
 	fetchApiTestSchedule,
+	exportApiTests,
+	importApiTests,
 	listApiTestCases,
 	listApiTestCollections,
 	listApiTestRuns,
@@ -41,6 +43,8 @@ import type {
 	ApiTestBodyType,
 	ApiTestCaseRecord,
 	ApiTestCollectionRecord,
+	ApiTestExportPayload,
+	ApiTestImportMode,
 	ApiTestKeyValue,
 	ApiTestMethod,
 	ApiTestRunItem,
@@ -277,6 +281,12 @@ export default memo(function ApiTestsPage() {
 	const [formItems, setFormItems] = useState<ApiTestKeyValue[]>([])
 	const [formBodyError, setFormBodyError] = useState("")
 	const [saving, setSaving] = useState(false)
+	const [importDialogOpen, setImportDialogOpen] = useState(false)
+	const [importMode, setImportMode] = useState<ApiTestImportMode>("skip")
+	const [importFile, setImportFile] = useState<File | null>(null)
+	const [importing, setImporting] = useState(false)
+	const [exporting, setExporting] = useState(false)
+	const importFileRef = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {
 		document.title = BRAND_NAME
@@ -646,6 +656,74 @@ export default memo(function ApiTestsPage() {
 		}
 	}
 
+	const openImportDialog = useCallback(() => {
+		setImportDialogOpen(true)
+		setImportMode("skip")
+		setImportFile(null)
+		if (importFileRef.current) {
+			importFileRef.current.value = ""
+		}
+	}, [])
+
+	const closeImportDialog = useCallback(() => {
+		setImportDialogOpen(false)
+		setImportFile(null)
+		setImportMode("skip")
+		if (importFileRef.current) {
+			importFileRef.current.value = ""
+		}
+	}, [])
+
+	const handleImportFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0] ?? null
+		setImportFile(file)
+	}, [])
+
+	const handleExport = useCallback(async () => {
+		setExporting(true)
+		try {
+			const payload = await exportApiTests()
+			const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
+			const url = URL.createObjectURL(blob)
+			const anchor = document.createElement("a")
+			anchor.href = url
+			anchor.download = "api_tests_export.json"
+			anchor.click()
+			URL.revokeObjectURL(url)
+		} catch (error) {
+			handleApiError(t`Failed to export API tests`, error)
+		} finally {
+			setExporting(false)
+		}
+	}, [handleApiError])
+
+	const handleImport = useCallback(async () => {
+		if (!importFile) {
+			handleApiError(t`Select JSON file`, new Error("Import file missing"))
+			return
+		}
+		setImporting(true)
+		const text = await importFile.text()
+		let data: ApiTestExportPayload
+		try {
+			data = JSON.parse(text) as ApiTestExportPayload
+		} catch (error) {
+			setImporting(false)
+			handleApiError(t`JSON body is invalid`, error)
+			return
+		}
+		try {
+			await importApiTests({ mode: importMode, data })
+			toast({ title: t`Import completed` })
+			closeImportDialog()
+			await handleRefreshAll()
+		} catch (error) {
+			handleApiError(t`Failed to import API tests`, error)
+		} finally {
+			setImporting(false)
+		}
+	}, [importFile, importMode, handleApiError, handleRefreshAll, closeImportDialog])
+
 	return (
 		<>
 			<div className="grid gap-4">
@@ -705,10 +783,24 @@ export default memo(function ApiTestsPage() {
 								<h2 className="text-lg font-semibold">
 									<Trans>Collections</Trans>
 								</h2>
-								<Button onClick={openNewCollection}>
-									<PlusIcon className="me-2 h-4 w-4" />
-									<Trans>New Collection</Trans>
-								</Button>
+								<div className="flex items-center gap-2">
+									<Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
+										{exporting ? (
+											<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
+										) : (
+											<DownloadIcon className="me-2 h-4 w-4" />
+										)}
+										<Trans>Export</Trans>
+									</Button>
+									<Button variant="outline" size="sm" onClick={openImportDialog} disabled={importing}>
+										<UploadIcon className="me-2 h-4 w-4" />
+										<Trans>Import</Trans>
+									</Button>
+									<Button onClick={openNewCollection}>
+										<PlusIcon className="me-2 h-4 w-4" />
+										<Trans>New Collection</Trans>
+									</Button>
+								</div>
 							</div>
 							<div className="rounded-md border">
 								<Table>
@@ -1115,6 +1207,90 @@ export default memo(function ApiTestsPage() {
 					</Tabs>
 				</Card>
 			</div>
+
+			<Dialog
+				open={importDialogOpen}
+				onOpenChange={(open) => {
+					if (!open) {
+						closeImportDialog()
+						return
+					}
+					setImportDialogOpen(true)
+				}}
+			>
+				<DialogContent className="max-w-lg">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Import API tests</Trans>
+						</DialogTitle>
+					</DialogHeader>
+					<div className="grid gap-4">
+						<div className="grid gap-2">
+							<Label>
+								<Trans>Conflict strategy</Trans>
+							</Label>
+							<div className="flex flex-wrap gap-2 rounded-lg border bg-muted/30 p-1">
+								<Button
+									type="button"
+									size="sm"
+									variant={importMode === "skip" ? "default" : "ghost"}
+									onClick={() => setImportMode("skip")}
+								>
+									<Trans>Skip existing</Trans>
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant={importMode === "overwrite" ? "default" : "ghost"}
+									onClick={() => setImportMode("overwrite")}
+								>
+									<Trans>Overwrite existing</Trans>
+								</Button>
+							</div>
+						</div>
+						<div className="grid gap-2">
+							<Label>
+								<Trans>Select JSON file</Trans>
+							</Label>
+							<div className="flex flex-wrap items-center gap-3">
+								<input
+									ref={importFileRef}
+									type="file"
+									accept="application/json"
+									onChange={handleImportFileChange}
+									className="hidden"
+								/>
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									onClick={() => importFileRef.current?.click()}
+									disabled={importing}
+								>
+									<UploadIcon className="me-2 h-4 w-4" />
+									<Trans>Upload</Trans>
+								</Button>
+								<span className="text-sm text-muted-foreground max-w-[240px] truncate">
+									{importFile ? importFile.name : t`No file selected`}
+								</span>
+							</div>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={closeImportDialog} disabled={importing}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button onClick={handleImport} disabled={importing || !importFile}>
+							{importing ? (
+								<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
+							) : (
+								<UploadIcon className="me-2 h-4 w-4" />
+							)}
+							<Trans>Import</Trans>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			<Dialog open={collectionDialogOpen} onOpenChange={setCollectionDialogOpen}>
 				<DialogContent className="max-w-xl">

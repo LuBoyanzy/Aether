@@ -4,6 +4,9 @@ import {
 	createCollection,
 	deleteRecordIfExists,
 	env,
+	exportApiTests,
+	getRecord,
+	importApiTests,
 	getSchedule,
 	listRuns,
 	login,
@@ -83,6 +86,99 @@ test("接口管理 API：计划 读取/更新/恢复", async ({ request }) => {
 		if (snapshot) {
 			await updateSchedule(request, auth.token, snapshot)
 		}
+	}
+})
+
+test("接口管理 API：导入/导出 合集+用例", async ({ request }) => {
+	const auth = await login(request)
+	let collectionId = ""
+	let caseId = ""
+	let collectionName = ""
+	let caseName = ""
+
+	try {
+		const created = await createCollectionAndCase(request, auth.token)
+		collectionId = created.collectionId
+		caseId = created.caseId
+		collectionName = created.collectionName
+		caseName = created.caseName
+
+		const exported = await exportApiTests(request, auth.token)
+		const exportedCollection = exported.collections.find(
+			(item) => typeof item.name === "string" && item.name === collectionName
+		) as Record<string, unknown> | undefined
+		const exportedCase = exported.cases.find(
+			(item) =>
+				typeof item.name === "string" &&
+				item.name === caseName &&
+				typeof item.collection === "string" &&
+				item.collection === collectionName
+		) as Record<string, unknown> | undefined
+
+		expect(exportedCollection).toBeTruthy()
+		expect(exportedCase).toBeTruthy()
+		if (!exportedCollection || !exportedCase) {
+			throw new Error("Exported payload missing target collection or case.")
+		}
+
+		const nextTimeout = Number(exportedCase.timeout_ms ?? 15000) + 1000
+		const skipPayload = {
+			mode: "skip" as const,
+			data: {
+				collections: [
+					{
+						...exportedCollection,
+						description: "skip description update",
+					},
+				],
+				cases: [
+					{
+						...exportedCase,
+						timeout_ms: nextTimeout,
+					},
+				],
+			},
+		}
+		await importApiTests(request, auth.token, skipPayload)
+
+		const collectionRecord = await getRecord<{ description: string }>(
+			request,
+			auth.token,
+			"api_test_collections",
+			collectionId
+		)
+		const caseRecord = await getRecord<{ timeout_ms: number }>(
+			request,
+			auth.token,
+			"api_test_cases",
+			caseId
+		)
+		expect(collectionRecord.description).not.toBe("skip description update")
+		expect(caseRecord.timeout_ms).not.toBe(nextTimeout)
+
+		const overwritePayload = {
+			mode: "overwrite" as const,
+			data: skipPayload.data,
+		}
+		await importApiTests(request, auth.token, overwritePayload)
+
+		const updatedCollection = await getRecord<{ description: string }>(
+			request,
+			auth.token,
+			"api_test_collections",
+			collectionId
+		)
+		const updatedCase = await getRecord<{ timeout_ms: number }>(
+			request,
+			auth.token,
+			"api_test_cases",
+			caseId
+		)
+		expect(updatedCollection.description).toBe("skip description update")
+		expect(updatedCase.timeout_ms).toBe(nextTimeout)
+	} finally {
+		await deleteRecordIfExists(request, auth.token, "api_test_cases", caseId)
+		await deleteRecordIfExists(request, auth.token, "api_test_collections", collectionId)
 	}
 })
 

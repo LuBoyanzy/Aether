@@ -444,6 +444,8 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiTestsGroup := apiAuth.Group("/api-tests")
 	apiTestsGroup.GET("/schedule", h.getApiTestScheduleConfig)
 	apiTestsGroup.PUT("/schedule", h.updateApiTestScheduleConfig)
+	apiTestsGroup.GET("/export", h.exportApiTests)
+	apiTestsGroup.POST("/import", h.importApiTests)
 	apiTestsGroup.POST("/run-case", h.runApiTestCase)
 	apiTestsGroup.POST("/run-collection", h.runApiTestCollection)
 	apiTestsGroup.POST("/run-all", h.runAllApiTests)

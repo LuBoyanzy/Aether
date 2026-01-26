@@ -875,6 +875,51 @@ export interface ApiTestScheduleConfig {
 	historyRetentionDays: number
 }
 
+export type ApiTestImportMode = "skip" | "overwrite"
+
+export interface ApiTestExportCollection {
+	name: string
+	description: string
+	base_url: string
+	sort_order: number
+	tags: string[]
+}
+
+export interface ApiTestExportCase {
+	collection: string
+	name: string
+	method: ApiTestMethod
+	url: string
+	description: string
+	headers: ApiTestKeyValue[]
+	params: ApiTestKeyValue[]
+	body_type: ApiTestBodyType
+	body: string
+	expected_status: number
+	timeout_ms: number
+	schedule_enabled: boolean
+	schedule_minutes: number
+	sort_order: number
+	tags: string[]
+	alert_threshold: number
+}
+
+export interface ApiTestExportPayload {
+	collections: ApiTestExportCollection[]
+	cases: ApiTestExportCase[]
+}
+
+export interface ApiTestImportSummary {
+	created: number
+	updated: number
+	skipped: number
+}
+
+export interface ApiTestImportResponse {
+	collections: ApiTestImportSummary
+	cases: ApiTestImportSummary
+}
+
 export interface ApiTestRunResult {
 	caseId: string
 	collectionId: string

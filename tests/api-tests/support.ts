@@ -184,6 +184,48 @@ export const createCase = async (
 	return expectOkJson<{ id: string; name: string }>(response)
 }
 
+export const exportApiTests = async (request: APIRequestContext, token: string) => {
+	const response = await request.get(buildApiUrl("/api/aether/api-tests/export"), {
+		headers: authHeaders(token),
+	})
+	return expectOkJson<{
+		collections: Array<Record<string, unknown>>
+		cases: Array<Record<string, unknown>>
+	}>(response)
+}
+
+export const importApiTests = async (
+	request: APIRequestContext,
+	token: string,
+	payload: {
+		mode: "skip" | "overwrite"
+		data: Record<string, unknown>
+	}
+) => {
+	const response = await request.post(buildApiUrl("/api/aether/api-tests/import"), {
+		headers: authHeaders(token),
+		data: payload,
+	})
+	return expectOkJson<{
+		collections: { created: number; updated: number; skipped: number }
+		cases: { created: number; updated: number; skipped: number }
+	}>(response)
+}
+
+export const getRecord = async <T>(
+	request: APIRequestContext,
+	token: string,
+	collection: string,
+	recordId: string
+) => {
+	if (!recordId) {
+		throw new Error("recordId is required")
+	}
+	const recordUrl = buildApiUrl(`/api/collections/${encodeURIComponent(collection)}/records/${recordId}`)
+	const response = await request.get(recordUrl, { headers: authHeaders(token) })
+	return expectOkJson<T>(response)
+}
+
 export const deleteRecordIfExists = async (
 	request: APIRequestContext,
 	token: string,

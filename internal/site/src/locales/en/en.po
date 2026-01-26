@@ -187,12 +187,12 @@ msgid "Agent"
 msgstr "Agent"
 
 #: src/components/routes/api-tests.tsx
-msgid "Alert"
-msgstr "Alert"
+#~ msgid "Alert"
+#~ msgstr "Alert"
 
 #: src/components/routes/api-tests.tsx
-msgid "Alert enabled"
-msgstr "Alert enabled"
+#~ msgid "Alert enabled"
+#~ msgstr "Alert enabled"
 
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -204,13 +204,26 @@ msgstr "Alert History"
 msgid "Alert on recovery"
 msgstr "Alert on recovery"
 
+#: src/components/docker/containers.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert rules"
+msgstr "Alert rules"
+
 #: src/components/routes/api-tests.tsx
-msgid "Alert threshold"
-msgstr "Alert threshold"
+#~ msgid "Alert threshold"
+#~ msgstr "Alert threshold"
 
 #: src/components/routes/api-tests.tsx
 msgid "Alert threshold must be greater than 0"
 msgstr "Alert threshold must be greater than 0"
+
+#: src/components/alerts/alerts-sheet.tsx
+msgid "Alert timing note"
+msgstr "Alert timing note"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Alert when no containers match"
+msgstr "Alert when no containers match"
 
 #: src/components/alerts/alert-button.tsx
 #: src/components/alerts/alerts-sheet.tsx
@@ -218,20 +231,8 @@ msgid "Alerts"
 msgstr "Alerts"
 
 #: src/components/alerts/alerts-sheet.tsx
-msgid "Alert timing note"
-msgstr "Alert timing note"
-
-#: src/components/alerts/alerts-sheet.tsx
 msgid "Alerts do not repeat every minute."
 msgstr "Alerts do not repeat every minute."
-
-#: src/components/alerts/alerts-sheet.tsx
-msgid "You'll get one when the value goes over your limit, and one when it returns to normal."
-msgstr "You'll get one when the value goes over your limit, and one when it returns to normal."
-
-#: src/components/alerts/alerts-sheet.tsx
-msgid "The 1-minute setting only checks the current value."
-msgstr "The 1-minute setting only checks the current value."
 
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -265,6 +266,7 @@ msgstr "All Containers"
 msgid "All Systems"
 msgstr "All Systems"
 
+#: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
 #: src/components/routes/api-tests.tsx
@@ -296,6 +298,7 @@ msgid "Attachable"
 msgstr "Attachable"
 
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
 msgid "Audit Logs"
@@ -437,12 +440,15 @@ msgstr "Can stop"
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/images.tsx
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
@@ -546,9 +552,17 @@ msgstr "Check the inbox for the test message."
 msgid "Check your notification service"
 msgstr "Check your notification service"
 
+#: src/components/routes/settings/notifications.tsx
+msgid "Chinese"
+msgstr "Chinese"
+
 #: src/components/docker/data-cleanup.tsx
 msgid "Choose a database and clean keys by predefined patterns."
 msgstr "Choose a database and clean keys by predefined patterns."
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Choose the language used for alert notifications."
+msgstr "Choose the language used for alert notifications."
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Cleanup configuration saved"
@@ -585,6 +599,7 @@ msgid "Click to copy"
 msgstr "Click to copy"
 
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Close"
 msgstr "Close"
 
@@ -704,6 +719,10 @@ msgstr "Configure a new Docker network."
 msgid "Configure a new Docker volume."
 msgstr "Configure a new Docker volume."
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Configure Docker focus alert rules for this system."
+msgstr "Configure Docker focus alert rules for this system."
+
 #: src/components/docker/containers.tsx
 msgid "Configure focus rules"
 msgstr "Configure focus rules"
@@ -728,6 +747,10 @@ msgstr "Confirm cleanup"
 #: src/components/login/auth-form.tsx
 msgid "Confirm password"
 msgstr "Confirm password"
+
+#: src/components/routes/api-tests.tsx
+msgid "Conflict strategy"
+msgstr "Conflict strategy"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Conflicts"
@@ -1043,6 +1066,7 @@ msgstr "Delete Volume"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -1051,6 +1075,10 @@ msgstr "Description"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Detail"
 msgstr "Detail"
 
@@ -1151,10 +1179,13 @@ msgstr "Driver"
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Duration"
 msgstr "Duration"
 
 #: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/routes/api-tests.tsx
@@ -1212,6 +1243,7 @@ msgstr "Email notifications"
 msgid "Empty"
 msgstr "Empty"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Enable alerts"
 msgstr "Enable alerts"
@@ -1247,6 +1279,10 @@ msgstr "Enforce TLS"
 #: src/components/docker/overview.tsx
 msgid "Engine Details"
 msgstr "Engine Details"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "English"
+msgstr "English"
 
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
@@ -1316,6 +1352,9 @@ msgstr "Environment"
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1397,6 +1436,7 @@ msgstr "Expected status"
 msgid "Expected status must be greater than 0"
 msgstr "Expected status must be greater than 0"
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Export"
 msgstr "Export"
@@ -1483,9 +1523,21 @@ msgstr "Failed to delete service config"
 msgid "Failed to delete volume"
 msgstr "Failed to delete volume"
 
+#: src/components/routes/api-tests.tsx
+msgid "Failed to export API tests"
+msgstr "Failed to export API tests"
+
+#: src/components/routes/api-tests.tsx
+msgid "Failed to import API tests"
+msgstr "Failed to import API tests"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Failed to import focus rules"
 msgstr "Failed to import focus rules"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Failed to load alert settings"
+msgstr "Failed to load alert settings"
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Failed to load audit logs"
@@ -1575,6 +1627,10 @@ msgstr "Failed to load network mounts"
 #: src/components/docker/networks.tsx
 msgid "Failed to load networks"
 msgstr "Failed to load networks"
+
+#: src/components/routes/settings/notifications.tsx
+msgid "Failed to load notification settings"
+msgstr "Failed to load notification settings"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -1670,6 +1726,7 @@ msgstr "Failed to save schedule"
 msgid "Failed to save service config"
 msgstr "Failed to save service config"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/routes/settings/layout.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -1815,8 +1872,8 @@ msgid "Forgot password?"
 msgstr "Forgot password?"
 
 #: src/components/routes/api-tests.tsx
-msgid "Form body"
-msgstr "Form body"
+#~ msgid "Form body"
+#~ msgstr "Form body"
 
 #: src/components/routes/api-tests.tsx
 msgid "Form body is invalid"
@@ -1953,7 +2010,17 @@ msgstr "Image: use the Image column value (including tag)."
 msgid "Images"
 msgstr "Images"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Import"
+msgstr "Import"
+
+#: src/components/routes/api-tests.tsx
+msgid "Import API tests"
+msgstr "Import API tests"
+
 #: src/components/docker/focus-rules-dialog.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Import completed"
 msgstr "Import completed"
 
@@ -2009,6 +2076,7 @@ msgstr "Invalid time range"
 #~ msgstr "IPv6"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "JSON body is invalid"
 msgstr "JSON body is invalid"
 
@@ -2060,9 +2128,11 @@ msgid "Last run"
 msgstr "Last run"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Last Run"
 msgstr "Last Run"
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Last Status"
 msgstr "Last Status"
@@ -2162,6 +2232,8 @@ msgstr "Loading SMTP settings..."
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/images.tsx
 #: src/components/docker/networks.tsx
@@ -2388,6 +2460,8 @@ msgstr "MySQL port is invalid"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/settings/notifications.tsx
+#: src/components/routes/settings/notifications.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Name"
@@ -2403,11 +2477,9 @@ msgid "Name and server are required"
 msgstr "Name and server are required"
 
 #: src/components/docker/service-configs.tsx
+#: src/components/routes/settings/notifications.tsx
 msgid "Name and URL are required"
 msgstr "Name and URL are required"
-
-msgid "Webhook names must be unique"
-msgstr "Webhook names must be unique"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Net"
@@ -2498,12 +2570,18 @@ msgid "No compose projects found."
 msgstr "No compose projects found."
 
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "No containers found."
 msgstr "No containers found."
 
 #: src/components/docker/containers.tsx
+#: src/components/routes/api-tests.tsx
 msgid "No details available."
 msgstr "No details available."
+
+#: src/components/routes/api-tests.tsx
+msgid "No file selected"
+msgstr "No file selected"
 
 #: src/components/docker/containers.tsx
 msgid "No focus rules configured for this system."
@@ -2620,6 +2698,11 @@ msgstr "None"
 msgid "Not checked"
 msgstr "Not checked"
 
+#: src/components/routes/settings/notifications.tsx
+#: src/components/routes/settings/notifications.tsx
+msgid "Notification language"
+msgstr "Notification language"
+
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/layout.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -2643,6 +2726,7 @@ msgstr "One-time"
 msgid "One-time password"
 msgstr "One-time password"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Only administrators can edit these settings."
 msgstr "Only administrators can edit these settings."
@@ -2681,6 +2765,7 @@ msgid "Optional .env content"
 msgstr "Optional .env content"
 
 #: src/components/docker/compose-templates.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 msgid "Optional description"
 msgstr "Optional description"
 
@@ -2721,6 +2806,10 @@ msgstr "Other"
 msgid "Overview"
 msgstr "Overview"
 
+#: src/components/routes/api-tests.tsx
+msgid "Overwrite existing"
+msgstr "Overwrite existing"
+
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
 msgstr "Overwrite existing alerts"
@@ -2729,6 +2818,8 @@ msgstr "Overwrite existing alerts"
 msgid "Package manager sources configured on the server"
 msgstr "Package manager sources configured on the server"
 
+#: src/components/command-palette.tsx
+#: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
@@ -2748,6 +2839,10 @@ msgstr "Page {page}"
 #: src/components/command-palette.tsx
 msgid "Pages / Settings"
 msgstr "Pages / Settings"
+
+#: src/components/routes/api-tests.tsx
+msgid "Params"
+msgstr "Params"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -2956,8 +3051,8 @@ msgid "Push Image"
 msgstr "Push Image"
 
 #: src/components/routes/api-tests.tsx
-msgid "Query params"
-msgstr "Query params"
+#~ msgid "Query params"
+#~ msgstr "Query params"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
@@ -2976,6 +3071,14 @@ msgstr "Read-only users cannot modify focus rules."
 #: src/components/routes/system.tsx
 msgid "Received"
 msgstr "Received"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery seconds must be greater than 0"
+msgstr "Recovery seconds must be greater than 0"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Recovery stability (seconds)"
+msgstr "Recovery stability (seconds)"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Redis DB is invalid"
@@ -3129,6 +3232,10 @@ msgctxt "Root disk label"
 msgid "Root"
 msgstr "Root"
 
+#: src/lib/alerts.ts
+msgid "Root Disk I/O Throughput"
+msgstr "Root Disk I/O Throughput"
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Rotate token"
 msgstr "Rotate token"
@@ -3186,6 +3293,7 @@ msgstr "S.M.A.R.T. Self-Test"
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 #: src/components/docker/config.tsx
+#: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
@@ -3204,6 +3312,7 @@ msgstr "Save address using enter key or comma. Leave blank to disable email noti
 msgid "Save Config"
 msgstr "Save Config"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/routes/settings/general.tsx
 #: src/components/routes/settings/notifications.tsx
 msgid "Save Settings"
@@ -3225,12 +3334,12 @@ msgid "Schedule"
 msgstr "Schedule"
 
 #: src/components/routes/api-tests.tsx
-msgid "Schedule enabled"
-msgstr "Schedule enabled"
+#~ msgid "Schedule enabled"
+#~ msgstr "Schedule enabled"
 
 #: src/components/routes/api-tests.tsx
-msgid "Schedule minutes"
-msgstr "Schedule minutes"
+#~ msgid "Schedule minutes"
+#~ msgstr "Schedule minutes"
 
 #: src/components/routes/api-tests.tsx
 msgid "Schedule minutes must be greater than 0"
@@ -3324,12 +3433,21 @@ msgid "Select DB"
 msgstr "Select DB"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Select JSON file"
+msgstr "Select JSON file"
+
+#: src/components/routes/api-tests.tsx
 msgid "Select method"
 msgstr "Select method"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Select rule type"
 msgstr "Select rule type"
+
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Send recovery alerts after this many seconds of stability."
+msgstr "Send recovery alerts after this many seconds of stability."
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Send test email"
@@ -3398,11 +3516,14 @@ msgstr "Set percentage thresholds for meter colors."
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "Settings"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
 #: src/components/routes/settings/layout.tsx
+#: src/components/routes/settings/notifications.tsx
 msgid "Settings saved"
 msgstr "Settings saved"
 
@@ -3421,6 +3542,10 @@ msgstr "Sign in"
 #: src/components/docker/images.tsx
 msgid "Size"
 msgstr "Size"
+
+#: src/components/routes/api-tests.tsx
+msgid "Skip existing"
+msgstr "Skip existing"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "SMTP auth method"
@@ -3504,6 +3629,7 @@ msgstr "State"
 #: src/components/docker/data-cleanup.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -3552,42 +3678,6 @@ msgstr "Subnet"
 #: src/components/docker/data-cleanup.tsx
 msgid "Success"
 msgstr "Success"
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Alert rules"
-msgstr "Alert rules"
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Configure Docker focus alert rules for this system."
-msgstr "Configure Docker focus alert rules for this system."
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Toggle Docker focus alerts for this system."
-msgstr "Toggle Docker focus alerts for this system."
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Recovery stability (seconds)"
-msgstr "Recovery stability (seconds)"
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Send recovery alerts after this many seconds of stability."
-msgstr "Send recovery alerts after this many seconds of stability."
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Alert when no containers match"
-msgstr "Alert when no containers match"
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Trigger alerts when a focus rule matches zero containers."
-msgstr "Trigger alerts when a focus rule matches zero containers."
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Failed to load alert settings"
-msgstr "Failed to load alert settings"
-
-#: src/components/docker/focus-alert-settings-sheet.tsx
-msgid "Recovery seconds must be greater than 0"
-msgstr "Recovery seconds must be greater than 0"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -3683,6 +3773,10 @@ msgstr "Test email sent"
 msgid "Test notification sent"
 msgstr "Test notification sent"
 
+#: src/components/alerts/alerts-sheet.tsx
+msgid "The 1-minute setting only checks the current value."
+msgstr "The 1-minute setting only checks the current value."
+
 #: src/components/login/forgot-pass-form.tsx
 msgid "Then log into the backend and reset your user account password in the users table."
 msgstr "Then log into the backend and reset your user account password in the users table."
@@ -3760,6 +3854,14 @@ msgstr "Timeout must be greater than 0"
 msgid "To email(s)"
 msgstr "To email(s)"
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Toggle Docker focus alerts for this system."
+msgstr "Toggle Docker focus alerts for this system."
+
+#: src/components/docker/containers.tsx
+msgid "Toggle focus group"
+msgstr "Toggle focus group"
+
 #: src/components/routes/system/info-bar.tsx
 #: src/components/routes/system/info-bar.tsx
 msgid "Toggle grid"
@@ -3831,6 +3933,10 @@ msgstr "Total: {0}"
 msgid "Track cleanup steps, logs, and results in real time."
 msgstr "Track cleanup steps, logs, and results in real time."
 
+#: src/components/docker/focus-alert-settings-sheet.tsx
+msgid "Trigger alerts when a focus rule matches zero containers."
+msgstr "Trigger alerts when a focus rule matches zero containers."
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Triggered by"
 msgstr "Triggered by"
@@ -3874,6 +3980,10 @@ msgstr "Triggers when GPU usage exceeds a threshold"
 #: src/lib/alerts.ts
 msgid "Triggers when memory usage exceeds a threshold"
 msgstr "Triggers when memory usage exceeds a threshold"
+
+#: src/lib/alerts.ts
+msgid "Triggers when root disk I/O throughput exceeds a threshold"
+msgstr "Triggers when root disk I/O throughput exceeds a threshold"
 
 #: src/lib/alerts.ts
 msgid "Triggers when status switches between up and down"
@@ -3966,6 +4076,7 @@ msgstr "Updated"
 msgid "Updated every 10 minutes."
 msgstr "Updated every 10 minutes."
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-sheet.tsx
 msgid "Upload"
 msgstr "Upload"
@@ -3978,6 +4089,7 @@ msgstr "Uptime"
 
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/settings/notifications.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "URL"
 msgstr "URL"
@@ -4103,6 +4215,10 @@ msgstr "Warning thresholds"
 msgid "Webhook / Push notifications"
 msgstr "Webhook / Push notifications"
 
+#: src/components/routes/settings/notifications.tsx
+msgid "Webhook names must be unique"
+msgstr "Webhook names must be unique"
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "When enabled, this token allows agents to self-register without prior system creation. Expires after one hour or on hub restart."
 msgstr "When enabled, this token allows agents to self-register without prior system creation. Expires after one hour or on hub restart."
@@ -4167,37 +4283,21 @@ msgstr "Yes"
 msgid "You have read-only access"
 msgstr "You have read-only access"
 
+#: src/components/alerts/alerts-sheet.tsx
+msgid "You'll get one when the value goes over your limit, and one when it returns to normal."
+msgstr "You'll get one when the value goes over your limit, and one when it returns to normal."
+
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Your changes have been saved."
 msgstr "Your changes have been saved."
 
-#: src/components/routes/settings/layout.tsx
-msgid "Your user settings have been updated."
-msgstr "Your user settings have been updated."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Notification language"
-msgstr "Notification language"
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Choose the language used for alert notifications."
-msgstr "Choose the language used for alert notifications."
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Chinese"
-msgstr "Chinese"
-
-#: src/components/routes/settings/notifications.tsx
-msgid "English"
-msgstr "English"
-
-#: src/components/routes/settings/notifications.tsx
-msgid "Failed to load notification settings"
-msgstr "Failed to load notification settings"
-
 #: src/components/routes/settings/notifications.tsx
 msgid "Your notification settings have been updated."
 msgstr "Your notification settings have been updated."
+
+#: src/components/routes/settings/layout.tsx
+msgid "Your user settings have been updated."
+msgstr "Your user settings have been updated."
 
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
