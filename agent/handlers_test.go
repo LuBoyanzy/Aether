@@ -4,10 +4,12 @@
 package agent
 
 import (
+	"errors"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"aether/internal/common"
+
+	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -108,5 +110,49 @@ func TestCheckFingerprintHandler(t *testing.T) {
 		// Should fail to decode the fingerprint request
 		err := handler.Handle(ctx)
 		assert.Error(t, err)
+	})
+}
+
+func TestSendHandlerErrorResponse(t *testing.T) {
+	t.Run("send error response", func(t *testing.T) {
+		var gotErr error
+		var gotID *uint32
+		ctx := &HandlerContext{
+			SendResponse: func(data any, requestID *uint32) error {
+				err, ok := data.(error)
+				if ok {
+					gotErr = err
+				}
+				gotID = requestID
+				return nil
+			},
+		}
+		reqID := uint32(42)
+		originErr := errors.New("operate failed")
+
+		sendErr := sendHandlerErrorResponse(ctx, &reqID, originErr)
+
+		assert.NoError(t, sendErr)
+		assert.Equal(t, originErr, gotErr)
+		if assert.NotNil(t, gotID) {
+			assert.Equal(t, reqID, *gotID)
+		}
+	})
+
+	t.Run("ignore nil error", func(t *testing.T) {
+		ctx := &HandlerContext{
+			SendResponse: func(_ any, _ *uint32) error {
+				return errors.New("should not be called")
+			},
+		}
+		sendErr := sendHandlerErrorResponse(ctx, nil, nil)
+		assert.NoError(t, sendErr)
+	})
+
+	t.Run("missing sender", func(t *testing.T) {
+		reqID := uint32(7)
+		sendErr := sendHandlerErrorResponse(&HandlerContext{}, &reqID, errors.New("boom"))
+		assert.Error(t, sendErr)
+		assert.Contains(t, sendErr.Error(), "handler response sender not available")
 	})
 }

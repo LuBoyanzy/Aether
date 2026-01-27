@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -177,7 +178,19 @@ func (client *WebSocketClient) OnMessage(conn *gws.Conn, message *gws.Message) {
 	slog.Debug("WS request received", "action", HubRequest.Action, "requestID", requestID, "size", len(data))
 
 	if err := client.handleHubRequest(&HubRequest, HubRequest.Id); err != nil {
-		slog.Error("Error handling message", "action", HubRequest.Action, "requestID", requestID, "err", err)
+		slog.Error(
+			"Error handling message",
+			"action",
+			HubRequest.Action,
+			"requestID",
+			requestID,
+			"err",
+			err,
+			"errType",
+			fmt.Sprintf("%T", err),
+			"stack",
+			string(debug.Stack()),
+		)
 		slog.Debug("WS request done", "action", HubRequest.Action, "requestID", requestID, "durationMs", time.Since(start).Milliseconds(), "status", "error")
 		return
 	}
@@ -252,7 +265,39 @@ func (client *WebSocketClient) handleHubRequest(msg *common.HubRequest[cbor.RawM
 		HubVerified:  client.hubVerified,
 		SendResponse: client.sendResponse,
 	}
-	return client.agent.handlerRegistry.Handle(ctx)
+	if err := client.agent.handlerRegistry.Handle(ctx); err != nil {
+		if sendErr := sendHandlerErrorResponse(ctx, requestID, err); sendErr != nil {
+			slog.Error(
+				"Failed to send handler error response",
+				"action",
+				msg.Action,
+				"requestID",
+				formatRequestID(requestID),
+				"err",
+				sendErr,
+				"errType",
+				fmt.Sprintf("%T", sendErr),
+				"handlerErr",
+				err,
+				"handlerErrType",
+				fmt.Sprintf("%T", err),
+				"stack",
+				string(debug.Stack()),
+			)
+		}
+		return err
+	}
+	return nil
+}
+
+func sendHandlerErrorResponse(ctx *HandlerContext, requestID *uint32, err error) error {
+	if err == nil {
+		return nil
+	}
+	if ctx == nil || ctx.SendResponse == nil {
+		return fmt.Errorf("handler response sender not available")
+	}
+	return ctx.SendResponse(err, requestID)
 }
 
 func formatRequestID(requestID *uint32) string {
