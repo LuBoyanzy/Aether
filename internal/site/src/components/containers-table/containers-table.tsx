@@ -17,6 +17,7 @@ import { memo, RefObject, useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { pb, isReadOnlyUser } from "@/lib/api"
+import { formatContainerOperationError } from "@/lib/errors"
 import type { ContainerRecord } from "@/types"
 import { buildContainerChartCols } from "@/components/containers-table/containers-table-columns"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -213,6 +214,12 @@ export default function ContainersTable({ systemId }: { systemId?: string }) {
 					}, 1000)
 				}
 			} catch (err: any) {
+				console.error("container operation failed", err)
+				toast({
+					variant: "destructive",
+					title: t`Error`,
+					description: formatContainerOperationError(err),
+				})
 				throw err
 			}
 		},

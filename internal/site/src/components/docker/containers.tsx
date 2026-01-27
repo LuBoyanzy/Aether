@@ -17,6 +17,7 @@ import { toast } from "@/components/ui/use-toast"
 import { listDockerContainers } from "@/lib/docker"
 import { listDockerFocusServices } from "@/lib/docker-focus"
 import { isReadOnlyUser, pb } from "@/lib/api"
+import { formatContainerOperationError } from "@/lib/errors"
 import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord } from "@/types"
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
@@ -274,7 +275,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 				toast({
 					variant: "destructive",
 					title: t`Error`,
-					description: t`Failed to operate container`,
+					description: formatContainerOperationError(err),
 				})
 				throw err
 			}
