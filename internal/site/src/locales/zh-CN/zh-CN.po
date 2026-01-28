@@ -1822,7 +1822,7 @@ msgstr "固件"
 
 #: src/components/docker/containers.tsx
 msgid "Focus only"
-msgstr "仅看关注"
+msgstr "关注视图"
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/focus-rules-dialog.tsx

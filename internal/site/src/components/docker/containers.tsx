@@ -125,7 +125,7 @@ function getFocusGroupStatus(runningCount: number, totalCount: number): FocusGro
 
 export default memo(function DockerContainersPanel({ systemId }: { systemId?: string }) {
 	const [loading, setLoading] = useState(true)
-	const [showAll, setShowAll] = useState(false)
+	const [showAll, setShowAll] = useState(true)
 	const [focusOnly, setFocusOnly] = useState(true)
 	const [data, setData] = useState<DockerContainer[]>([])
 	const [focusRules, setFocusRules] = useState<DockerFocusServiceRecord[]>([])
