@@ -60,6 +60,7 @@ type dockerManager struct {
 	wg                  sync.WaitGroup              // WaitGroup to wait for all goroutines to finish
 	sem                 chan struct{}               // Semaphore to limit concurrent container requests
 	containerStatsMutex sync.RWMutex                // Mutex to prevent concurrent access to containerStatsMap
+	startedAtCacheMu    sync.RWMutex                // Mutex to prevent concurrent access to startedAtCache
 	apiContainerList    []*container.ApiInfo        // List of containers from Docker API
 	containerStatsMap   map[string]*container.Stats // Keeps track of container stats
 	validIds            map[string]struct{}         // Map of valid container ids, used to prune invalid containers from containerStatsMap
@@ -143,10 +144,6 @@ func (dm *dockerManager) getDockerStats(cacheTimeMs uint16) ([]*container.Stats,
 		return nil, err
 	}
 	slog.Debug("Found containers", "count", len(dm.apiContainerList))
-
-	if dm.startedAtCache == nil {
-		dm.startedAtCache = make(map[string]time.Time)
-	}
 
 	dm.isWindows = strings.Contains(resp.Header.Get("Server"), "windows")
 
@@ -460,14 +457,24 @@ func (dm *dockerManager) getStartedAt(ctr *container.ApiInfo) time.Time {
 	if ctr.StartedAt != "" {
 		if parsed, err := time.Parse(time.RFC3339Nano, ctr.StartedAt); err == nil {
 			// cache and return
+			dm.startedAtCacheMu.Lock()
+			if dm.startedAtCache == nil {
+				dm.startedAtCache = make(map[string]time.Time)
+			}
 			dm.startedAtCache[ctr.IdShort] = parsed
+			dm.startedAtCacheMu.Unlock()
 			return parsed
 		}
 	}
 
-	if val, ok := dm.startedAtCache[ctr.IdShort]; ok && !val.IsZero() {
-		return val
+	dm.startedAtCacheMu.RLock()
+	if dm.startedAtCache != nil {
+		if val, ok := dm.startedAtCache[ctr.IdShort]; ok && !val.IsZero() {
+			dm.startedAtCacheMu.RUnlock()
+			return val
+		}
 	}
+	dm.startedAtCacheMu.RUnlock()
 
 	// fetch once and cache
 	resp, err := dm.client.Get(fmt.Sprintf("http://localhost/containers/%s/json", ctr.Id))
@@ -491,7 +498,12 @@ func (dm *dockerManager) getStartedAt(ctr *container.ApiInfo) time.Time {
 		slog.Debug("Failed to parse StartedAt", "id", ctr.IdShort, "startedAt", details.State.StartedAt, "err", err)
 		return time.Time{}
 	}
+	dm.startedAtCacheMu.Lock()
+	if dm.startedAtCache == nil {
+		dm.startedAtCache = make(map[string]time.Time)
+	}
 	dm.startedAtCache[ctr.IdShort] = startedAt
+	dm.startedAtCacheMu.Unlock()
 	return startedAt
 }
 
@@ -749,6 +761,7 @@ func newDockerManager() *dockerManager {
 			Transport: userAgentTransport,
 		},
 		containerStatsMap: make(map[string]*container.Stats),
+		startedAtCache:    make(map[string]time.Time),
 		sem:               make(chan struct{}, 5),
 		apiContainerList:  []*container.ApiInfo{},
 		apiStats:          &container.ApiStats{},
