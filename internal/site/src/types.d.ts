@@ -279,6 +279,7 @@ export interface DockerContainer {
 	id: string
 	name: string
 	image: string
+	imageId?: string
 	state: string
 	status: string
 	created: number

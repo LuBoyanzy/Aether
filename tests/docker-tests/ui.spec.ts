@@ -113,6 +113,111 @@ test("Docker UI：容器 关注规则 新增/删除", async ({ page, request }) 
 	}
 })
 
+test("Docker UI：容器 关注视图服务行显示镜像大小", async ({ page, request }) => {
+	const { auth } = await openDockerPage(page, request)
+
+	const containersUrl = new URL(buildApiUrl("/api/aether/docker/containers"))
+	containersUrl.searchParams.set("system", env.systemId)
+	containersUrl.searchParams.set("all", "1")
+	const containersResp = await request.get(containersUrl.toString(), {
+		headers: authHeaders(auth.token),
+	})
+	const containers = await expectOkJson<Array<{ image?: string; imageId?: string }>>(containersResp)
+
+	const imagesUrl = new URL(buildApiUrl("/api/aether/docker/images"))
+	imagesUrl.searchParams.set("system", env.systemId)
+	imagesUrl.searchParams.set("all", "1")
+	const imagesResp = await request.get(imagesUrl.toString(), {
+		headers: authHeaders(auth.token),
+	})
+	const images = await expectOkJson<Array<{ id?: string; repoTags?: string[]; repoDigests?: string[] }>>(imagesResp)
+	const imageRefs = new Set<string>()
+	for (const image of images) {
+		if (image.id) {
+			imageRefs.add(image.id)
+		}
+		for (const tag of image.repoTags || []) {
+			if (tag && tag !== "<none>:<none>") {
+				imageRefs.add(tag)
+			}
+		}
+		for (const digest of image.repoDigests || []) {
+			if (digest && digest !== "<none>@<none>") {
+				imageRefs.add(digest)
+			}
+		}
+	}
+
+	const targetImage =
+		containers.find((item) => item.imageId && imageRefs.has(item.imageId) && item.image?.trim())?.image?.trim() ||
+		containers
+			.map((item) => (typeof item.image === "string" ? item.image.trim() : ""))
+			.find((image) => image && image !== "<none>" && imageRefs.has(image))
+	if (!targetImage) {
+		test.skip(true, "未找到可用容器镜像，跳过关注视图镜像大小测试")
+		return
+	}
+
+	await page.getByRole("tab", { name: "容器", exact: true }).click()
+
+	const ruleDescription = `pw-image-size-${Date.now()}`
+	try {
+		const focusBtn = page.getByRole("button", { name: /关注规则/ })
+		await expect(focusBtn).toBeVisible()
+		await focusBtn.click()
+
+		const dialog = page.getByRole("dialog", { name: /关注规则/ })
+		await expect(dialog).toBeVisible()
+
+		await dialog.locator("#docker-focus-type").click()
+		await page.getByRole("option", { name: "镜像" }).click()
+		await fillByLabel(dialog, "镜像", targetImage)
+		await fillByLabel(dialog, "描述", ruleDescription)
+		await dialog.getByRole("button", { name: "添加规则" }).click()
+
+		const createdRow = dialog.locator("tbody tr", { hasText: targetImage }).first()
+		await expect(createdRow).toBeVisible()
+
+		await page.keyboard.press("Escape")
+		await expect(dialog).toBeHidden()
+
+		const focusSwitch = page.getByRole("switch", { name: "关注视图" })
+		if (!(await focusSwitch.isChecked())) {
+			await focusSwitch.click()
+		}
+
+		const groupRow = page
+			.locator("tbody tr")
+			.filter({ hasText: targetImage })
+			.filter({ has: page.locator("td:first-child button") })
+			.first()
+		await expect(groupRow).toBeVisible()
+
+		const imageCell = groupRow.locator("td").nth(1)
+		await expect(imageCell).toContainText(targetImage)
+		await expect(imageCell).toContainText(/\(\d+(\.\d+)?\s?[KMGTP]?B\)/)
+	} finally {
+		// 兜底清理：删除本次创建的关注规则
+		const listUrl = new URL(buildApiUrl("/api/collections/docker_focus_services/records"))
+		listUrl.searchParams.set("perPage", "50")
+		listUrl.searchParams.set("page", "1")
+		listUrl.searchParams.set("filter", `system=${JSON.stringify(env.systemId)}`)
+		const list = await request.get(listUrl.toString(), {
+			headers: authHeaders(auth.token),
+		})
+		if (list.ok()) {
+			const data = (await list.json()) as { items?: Array<{ id: string; description?: string }> }
+			for (const item of data.items || []) {
+				if (item.description === ruleDescription) {
+					await request.delete(buildApiUrl(`/api/collections/docker_focus_services/records/${item.id}`), {
+						headers: authHeaders(auth.token),
+					})
+				}
+			}
+		}
+	}
+})
+
 test("Docker UI：仓库 新建/编辑/删除", async ({ page, request }) => {
 	const { auth } = await openDockerPage(page, request)
 

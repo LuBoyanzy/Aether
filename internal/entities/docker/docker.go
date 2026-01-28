@@ -28,6 +28,7 @@ type Container struct {
 	ID        string            `json:"id" cbor:"0,keyasint"`
 	Name      string            `json:"name" cbor:"1,keyasint"`
 	Image     string            `json:"image" cbor:"2,keyasint"`
+	ImageID   string            `json:"imageId" cbor:"11,keyasint,omitempty"`
 	State     string            `json:"state" cbor:"3,keyasint"`
 	Status    string            `json:"status" cbor:"4,keyasint"`
 	Created   int64             `json:"created" cbor:"5,keyasint"`

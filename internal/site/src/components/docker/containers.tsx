@@ -14,11 +14,11 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
-import { listDockerContainers } from "@/lib/docker"
+import { listDockerContainers, listDockerImages } from "@/lib/docker"
 import { listDockerFocusServices } from "@/lib/docker-focus"
 import { isReadOnlyUser, pb } from "@/lib/api"
 import { formatContainerOperationError } from "@/lib/errors"
-import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord } from "@/types"
+import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord, DockerImage } from "@/types"
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
 import FocusAlertSettingsSheet from "@/components/docker/focus-alert-settings-sheet"
@@ -38,6 +38,34 @@ const statusVariantMap: Record<string, "success" | "warning" | "danger" | "secon
 const usageWindowMs = 70_000
 const composeProjectLabel = "com.docker.compose.project"
 const composeServiceLabel = "com.docker.compose.service"
+type FocusImageSummary = {
+	name: string
+	size?: number
+}
+
+function formatImageSizeLabel(size?: number) {
+	if (size === undefined || size === null) return "-"
+	const { value, unit } = formatBytes(size)
+	const rounded = value >= 10 ? Math.round(value) : Math.round(value * 10) / 10
+	return `${rounded}${unit}`
+}
+
+function buildFocusImageSummaries(containers: DockerContainer[], sizeMap: Map<string, number>): FocusImageSummary[] {
+	const summaries: FocusImageSummary[] = []
+	const seen = new Set<string>()
+	for (const container of containers) {
+		const imageName = container.image?.trim()
+		if (!imageName || seen.has(imageName)) continue
+		seen.add(imageName)
+		const imageId = container.imageId?.trim()
+		const size = imageId ? sizeMap.get(imageId) : undefined
+		summaries.push({
+			name: imageName,
+			size: size ?? sizeMap.get(imageName),
+		})
+	}
+	return summaries
+}
 
 function matchesFocusRule(container: DockerContainer, rule: DockerFocusServiceRecord): boolean {
 	switch (rule.match_type) {
@@ -128,6 +156,7 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const [showAll, setShowAll] = useState(true)
 	const [focusOnly, setFocusOnly] = useState(true)
 	const [data, setData] = useState<DockerContainer[]>([])
+	const [images, setImages] = useState<DockerImage[]>([])
 	const [focusRules, setFocusRules] = useState<DockerFocusServiceRecord[]>([])
 	const [focusLoading, setFocusLoading] = useState(false)
 	const [focusDialogOpen, setFocusDialogOpen] = useState(false)
@@ -197,6 +226,23 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		}
 	}, [systemId])
 
+	const loadImages = useCallback(async () => {
+		if (!systemId) return
+		try {
+			// 后端接口：internal/hub/docker.go listDockerImages -> internal/entities/docker/docker.go Image
+			const items = await listDockerImages(systemId, true)
+			setImages(items)
+		} catch (err) {
+			console.error("load docker images failed", err)
+			toast({
+				variant: "destructive",
+				title: t`Error`,
+				description: t`Failed to load images`,
+			})
+			throw err
+		}
+	}, [systemId])
+
 	useEffect(() => {
 		if (systemId) {
 			void loadContainers()
@@ -210,12 +256,22 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	}, [systemId, loadFocusRules])
 
 	useEffect(() => {
+		if (systemId && focusOnly) {
+			void loadImages()
+		}
+	}, [systemId, focusOnly, loadImages])
+
+	useEffect(() => {
 		setExpandedGroups({})
 	}, [systemId, focusOnly])
 
 	const handleRefresh = useCallback(async () => {
+		if (focusOnly) {
+			await Promise.all([loadContainers(), loadFocusRules(), loadImages()])
+			return
+		}
 		await Promise.all([loadContainers(), loadFocusRules()])
-	}, [loadContainers, loadFocusRules])
+	}, [loadContainers, loadFocusRules, loadImages, focusOnly])
 
 	const toggleGroup = useCallback((groupId: string) => {
 		setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
@@ -228,6 +284,24 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		if (!searchTerm) return data
 		return data.filter((item) => matchesSearchTerm(item, searchTerm))
 	}, [data, focusOnly, searchTerm])
+
+	const imageSizeMap = useMemo(() => {
+		const map = new Map<string, number>()
+		for (const image of images) {
+			if (image.id) {
+				map.set(image.id, image.size)
+			}
+			for (const tag of image.repoTags || []) {
+				if (!tag || tag === "<none>:<none>") continue
+				map.set(tag, image.size)
+			}
+			for (const digest of image.repoDigests || []) {
+				if (!digest || digest === "<none>@<none>") continue
+				map.set(digest, image.size)
+			}
+		}
+		return map
+	}, [images])
 
 	const focusGroups = useMemo(() => {
 		if (!focusOnly) return []
@@ -248,9 +322,10 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 				runningCount,
 				status: getFocusGroupStatus(runningCount, totalCount),
 				visibleContainers,
+				imageSummaries: buildFocusImageSummaries(matched, imageSizeMap),
 			}
 		})
-	}, [data, focusOnly, focusRules, searchTerm, showAll])
+	}, [data, focusOnly, focusRules, searchTerm, showAll, imageSizeMap])
 
 	const handleOperate = useCallback(
 		async (container: DockerContainer, operation: string) => {
@@ -642,7 +717,24 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 														</div>
 													</div>
 												</TableCell>
-												<TableCell className="max-w-[180px] py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="max-w-[220px] py-3 text-xs text-muted-foreground">
+													{group.imageSummaries.length === 0 ? (
+														<span>-</span>
+													) : (
+														<div className="flex flex-col gap-1">
+															{group.imageSummaries.map((summary) => {
+																const sizeLabel = formatImageSizeLabel(summary.size)
+																const label = `${summary.name} (${sizeLabel})`
+																return (
+																	<div key={summary.name} className="truncate" title={label}>
+																		<span className="text-foreground/90">{summary.name}</span>
+																		<span className="text-muted-foreground"> ({sizeLabel})</span>
+																	</div>
+																)
+															})}
+														</div>
+													)}
+												</TableCell>
 												<TableCell className="p-2">
 													<div className="flex flex-col gap-1.5">
 														<Badge

@@ -62,6 +62,7 @@ func (dm *dockerSDKManager) ListContainers(all bool) ([]dockermodel.Container, e
 			ID:        item.ID,
 			Name:      name,
 			Image:     item.Image,
+			ImageID:   item.ImageID,
 			State:     item.State,
 			Status:    item.Status,
 			Created:   item.Created,
