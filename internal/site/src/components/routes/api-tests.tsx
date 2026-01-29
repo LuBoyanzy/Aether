@@ -1153,7 +1153,11 @@ export default memo(function ApiTestsPage() {
 																<div className="flex items-center gap-4 text-xs text-muted-foreground/60 mt-1">
 																	<div className="flex items-center gap-1.5">
 																		<TimerIcon className="h-3 w-3" />
-																		<span className="font-mono">{formatDurationMs(record.last_duration_ms ?? 0)}</span>
+																		<span className="font-mono">
+																			{record.last_duration_ms === undefined || record.last_duration_ms === null
+																				? "-"
+																				: formatDurationMs(record.last_duration_ms)}
+																		</span>
 																	</div>
 																	<div className="flex items-center gap-1.5">
 																		<CalendarIcon className="h-3 w-3" />
