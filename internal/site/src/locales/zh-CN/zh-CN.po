@@ -1829,6 +1829,10 @@ msgstr "关注视图"
 msgid "Focus rules"
 msgstr "关注规则"
 
+#: src/components/docker/containers.tsx
+msgid "Focus usage"
+msgstr "关注占用"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Focus rules help"
 msgstr "关注规则使用帮助"

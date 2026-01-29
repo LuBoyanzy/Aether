@@ -1828,6 +1828,10 @@ msgstr "Focus only"
 msgid "Focus rules"
 msgstr "Focus rules"
 
+#: src/components/docker/containers.tsx
+msgid "Focus usage"
+msgstr "Focus usage"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Focus rules help"
 msgstr "Focus rules help"

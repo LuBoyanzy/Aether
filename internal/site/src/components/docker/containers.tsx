@@ -4,7 +4,9 @@
  */
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
+import { useStore } from "@nanostores/react"
+import { timeTicks } from "d3-time"
+import { Fragment, memo, useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -14,18 +16,48 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
+import ChartTimeSelect from "@/components/charts/chart-time-select"
+import ContainerChart from "@/components/charts/container-chart"
+import { useContainerChartConfigs } from "@/components/charts/hooks"
 import { listDockerContainers, listDockerImages } from "@/lib/docker"
 import { listDockerFocusServices } from "@/lib/docker-focus"
-import { isReadOnlyUser, pb } from "@/lib/api"
+import { getPbTimestamp, isReadOnlyUser, pb } from "@/lib/api"
 import { formatContainerOperationError } from "@/lib/errors"
-import type { ContainerRecord, DockerContainer, DockerFocusServiceRecord, DockerImage } from "@/types"
+import type {
+	ChartData,
+	ChartTimes,
+	ContainerRecord,
+	ContainerStatsRecord,
+	DockerContainer,
+	DockerFocusServiceRecord,
+	DockerImage,
+	SystemRecord,
+} from "@/types"
 import { formatShortId, formatUnixSeconds, formatTagList } from "@/components/docker/utils"
 import DockerEmptyState from "@/components/docker/empty-state"
 import FocusAlertSettingsSheet from "@/components/docker/focus-alert-settings-sheet"
 import DockerFocusRulesDialog from "@/components/docker/focus-rules-dialog"
-import { AlertCircleIcon, ChevronRightIcon, LoaderCircleIcon, MoreHorizontalIcon, RefreshCwIcon } from "lucide-react"
-import { MeterState } from "@/lib/enums"
-import { cn, decimalString, formatBytes, formatSecondsToHuman, getMeterState } from "@/lib/utils"
+import {
+	AlertCircleIcon,
+	ChevronRightIcon,
+	LoaderCircleIcon,
+	MoreHorizontalIcon,
+	RefreshCwIcon,
+	XIcon,
+} from "lucide-react"
+import { ChartType, MeterState, SystemStatus } from "@/lib/enums"
+import { $allSystemsById, $chartTime, $containerFilter, $direction } from "@/lib/stores"
+import { ChartCard } from "@/components/routes/system"
+import {
+	chartTimeData,
+	cn,
+	compareSemVer,
+	decimalString,
+	formatBytes,
+	formatSecondsToHuman,
+	getMeterState,
+	parseSemVer,
+} from "@/lib/utils"
 
 const statusVariantMap: Record<string, "success" | "warning" | "danger" | "secondary"> = {
 	running: "success",
@@ -41,6 +73,80 @@ const composeServiceLabel = "com.docker.compose.service"
 type FocusImageSummary = {
 	name: string
 	size?: number
+}
+
+type FocusUsageSummary = {
+	cpu: number
+	memory: number
+	net: number
+}
+type ContainerStatsRecordLite = Pick<ContainerStatsRecord, "created" | "stats">
+
+function getTimeData(chartTime: ChartTimes) {
+	const now = new Date(Date.now())
+	const startTime = chartTimeData[chartTime].getOffset(now)
+	const ticks = timeTicks(startTime, now, chartTimeData[chartTime].ticks ?? 12).map((date) => date.getTime())
+	return {
+		ticks,
+		domain: [startTime.getTime(), now.getTime()],
+	}
+}
+
+function addEmptyValues<T extends { created: string | number | null }>(
+	prevRecords: T[],
+	newRecords: T[],
+	expectedInterval: number
+): T[] {
+	const modifiedRecords: T[] = []
+	let prevTime = (prevRecords.at(-1)?.created ?? 0) as number
+	for (let i = 0; i < newRecords.length; i++) {
+		const record = newRecords[i]
+		if (record.created !== null) {
+			record.created = new Date(record.created).getTime()
+		}
+		if (prevTime && record.created !== null) {
+			const interval = (record.created as number) - prevTime
+			if (interval > expectedInterval / 2 + expectedInterval) {
+				modifiedRecords.push({ created: null, ...("stats" in record ? { stats: null } : {}) } as T)
+			}
+		}
+		if (record.created !== null) {
+			prevTime = record.created as number
+		}
+		modifiedRecords.push(record)
+	}
+	return modifiedRecords
+}
+
+function buildFocusContainerData(
+	containers: ContainerStatsRecordLite[],
+	focusNames: Set<string>
+): ChartData["containerData"] {
+	if (focusNames.size === 0) return []
+	const containerData: ChartData["containerData"] = []
+	for (let { created, stats } of containers) {
+		if (!created) {
+			containerData.push({ created: null } as ChartData["containerData"][0])
+			continue
+		}
+		created = new Date(created).getTime()
+		const containerStats: ChartData["containerData"][0] = { created } as ChartData["containerData"][0]
+		if (Array.isArray(stats)) {
+			for (const stat of stats) {
+				if (!focusNames.has(stat.n)) continue
+				containerStats[stat.n] = stat
+			}
+		}
+		containerData.push(containerStats)
+	}
+	return containerData
+}
+
+function dockerOrPodman(str: string, isPodman: boolean): string {
+	if (isPodman) {
+		return str.replace("docker", "podman").replace("Docker", "Podman")
+	}
+	return str
 }
 
 function formatImageSizeLabel(size?: number) {
@@ -65,6 +171,24 @@ function buildFocusImageSummaries(containers: DockerContainer[], sizeMap: Map<st
 		})
 	}
 	return summaries
+}
+
+function buildFocusUsageSummary(
+	containers: DockerContainer[],
+	usageMap: Map<string, ContainerRecord>
+): FocusUsageSummary {
+	let cpu = 0
+	let memory = 0
+	let net = 0
+	for (const container of containers) {
+		const shortId = container.id ? container.id.slice(0, 12) : ""
+		const usage = shortId ? usageMap.get(shortId) : undefined
+		if (!usage) continue
+		cpu += usage.cpu ?? 0
+		memory += usage.memory ?? 0
+		net += usage.net ?? 0
+	}
+	return { cpu, memory, net }
 }
 
 function matchesFocusRule(container: DockerContainer, rule: DockerFocusServiceRecord): boolean {
@@ -151,6 +275,50 @@ function getFocusGroupStatus(runningCount: number, totalCount: number): FocusGro
 	return "partial"
 }
 
+const FocusUsageFilterBar = memo(function FocusUsageFilterBar() {
+	const storeValue = useStore($containerFilter)
+	const [inputValue, setInputValue] = useState(storeValue)
+
+	useEffect(() => {
+		setInputValue(storeValue)
+	}, [storeValue])
+
+	useEffect(() => {
+		if (inputValue === storeValue) {
+			return
+		}
+		const handle = window.setTimeout(() => $containerFilter.set(inputValue), 80)
+		return () => clearTimeout(handle)
+	}, [inputValue, storeValue])
+
+	const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+		setInputValue(e.target.value)
+	}, [])
+
+	const handleClear = useCallback(() => {
+		setInputValue("")
+		$containerFilter.set("")
+	}, [])
+
+	return (
+		<div className="relative w-full sm:w-44">
+			<Input placeholder={t`Filter...`} className="ps-4 pe-8 w-full" onChange={handleChange} value={inputValue} />
+			{inputValue && (
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon"
+					aria-label="Clear"
+					className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+					onClick={handleClear}
+				>
+					<XIcon className="h-4 w-4" />
+				</Button>
+			)}
+		</div>
+	)
+})
+
 export default memo(function DockerContainersPanel({ systemId }: { systemId?: string }) {
 	const [loading, setLoading] = useState(true)
 	const [showAll, setShowAll] = useState(true)
@@ -160,6 +328,9 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const [focusRules, setFocusRules] = useState<DockerFocusServiceRecord[]>([])
 	const [focusLoading, setFocusLoading] = useState(false)
 	const [focusDialogOpen, setFocusDialogOpen] = useState(false)
+	const [focusUsageOpen, setFocusUsageOpen] = useState(false)
+	const [focusUsageLoading, setFocusUsageLoading] = useState(false)
+	const [focusContainerData, setFocusContainerData] = useState<ChartData["containerData"]>([])
 	const [alertSettingsOpen, setAlertSettingsOpen] = useState(false)
 	const [filter, setFilter] = useState("")
 	const [logOpen, setLogOpen] = useState(false)
@@ -171,6 +342,28 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const [activeContainer, setActiveContainer] = useState<DockerContainer | null>(null)
 	const [usageMap, setUsageMap] = useState<Map<string, ContainerRecord>>(new Map())
 	const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+	const chartTime = useStore($chartTime)
+	const direction = useStore($direction)
+	const systemsById = useStore($allSystemsById)
+	const system = systemId ? (systemsById[systemId] as SystemRecord | undefined) : undefined
+	const agentVersion = useMemo(() => parseSemVer(system?.info?.v), [system?.info?.v])
+	const isPodman = system?.info?.p ?? false
+	const canUse1m = compareSemVer(agentVersion, parseSemVer("0.13.0")) >= 0
+	const searchTerm = useMemo(() => filter.trim().toLowerCase(), [filter])
+	const focusContainerNames = useMemo(() => {
+		if (focusRules.length === 0 || data.length === 0) return new Set<string>()
+		const names = new Set<string>()
+		for (const container of data) {
+			for (const rule of focusRules) {
+				if (matchesFocusRule(container, rule)) {
+					names.add(container.name)
+					break
+				}
+			}
+		}
+		return names
+	}, [data, focusRules])
+	const focusNamesKey = useMemo(() => Array.from(focusContainerNames).sort().join("|"), [focusContainerNames])
 
 	const loadContainers = useCallback(async () => {
 		if (!systemId) return
@@ -243,6 +436,44 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		}
 	}, [systemId])
 
+	const loadFocusUsage = useCallback(async () => {
+		if (!systemId) return
+		if (chartTime === "1m") return
+		if (focusContainerNames.size === 0) {
+			setFocusUsageLoading(false)
+			setFocusContainerData([])
+			return
+		}
+		setFocusUsageLoading(true)
+		try {
+			const records = await pb.collection<ContainerStatsRecord>("container_stats").getFullList({
+				filter: pb.filter("system={:id} && created > {:created} && type={:type}", {
+					id: systemId,
+					created: getPbTimestamp(chartTime),
+					type: chartTimeData[chartTime].type,
+				}),
+				fields: "created,stats",
+				sort: "created",
+			})
+			const normalized = addEmptyValues([], records, chartTimeData[chartTime].expectedInterval)
+			setFocusContainerData(buildFocusContainerData(normalized, focusContainerNames))
+		} catch (err) {
+			console.error("load focus usage failed", err, {
+				systemId,
+				chartTime,
+				focusNames: Array.from(focusContainerNames),
+			})
+			toast({
+				variant: "destructive",
+				title: t`Error`,
+				description: t`Failed to load containers`,
+			})
+			throw err
+		} finally {
+			setFocusUsageLoading(false)
+		}
+	}, [systemId, chartTime, focusContainerNames])
+
 	useEffect(() => {
 		if (systemId) {
 			void loadContainers()
@@ -265,6 +496,66 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 		setExpandedGroups({})
 	}, [systemId, focusOnly])
 
+	useEffect(() => {
+		if (!canUse1m && chartTime === "1m") {
+			$chartTime.set("1h")
+		}
+	}, [canUse1m, chartTime])
+
+	useEffect(() => {
+		if (!focusUsageOpen) {
+			setFocusContainerData([])
+			setFocusUsageLoading(false)
+			return
+		}
+		if (chartTime !== "1m") {
+			void loadFocusUsage()
+		}
+	}, [focusUsageOpen, chartTime, loadFocusUsage])
+
+	useEffect(() => {
+		let cancelled = false
+		let unsub: (() => void) | null = null
+		if (!focusUsageOpen || !systemId || chartTime !== "1m") {
+			return () => {}
+		}
+		if (!canUse1m || system?.status !== SystemStatus.Up) {
+			$chartTime.set("1h")
+			return () => {}
+		}
+		if (focusContainerNames.size === 0) {
+			setFocusContainerData([])
+			return () => {}
+		}
+		setFocusContainerData([])
+		setFocusUsageLoading(false)
+		pb.realtime
+			.subscribe(
+				`rt_metrics`,
+				(data: { container: ContainerStatsRecord["stats"] }) => {
+					if (!data.container?.length) return
+					const nextData = buildFocusContainerData(
+						[{ created: Date.now(), stats: data.container }],
+						focusContainerNames
+					)
+					if (nextData.length === 0) return
+					setFocusContainerData((prev) => addEmptyValues(prev, prev.slice(-59).concat(nextData), 1000))
+				},
+				{ query: { system: systemId } }
+			)
+			.then((us) => {
+				if (cancelled) {
+					us?.()
+					return
+				}
+				unsub = us
+			})
+		return () => {
+			cancelled = true
+			unsub?.()
+		}
+	}, [focusUsageOpen, systemId, chartTime, canUse1m, system?.status, focusNamesKey, focusContainerNames])
+
 	const handleRefresh = useCallback(async () => {
 		if (focusOnly) {
 			await Promise.all([loadContainers(), loadFocusRules(), loadImages()])
@@ -276,8 +567,6 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 	const toggleGroup = useCallback((groupId: string) => {
 		setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
 	}, [])
-
-	const searchTerm = useMemo(() => filter.trim().toLowerCase(), [filter])
 
 	const filteredContainers = useMemo(() => {
 		if (focusOnly) return []
@@ -323,9 +612,25 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 				status: getFocusGroupStatus(runningCount, totalCount),
 				visibleContainers,
 				imageSummaries: buildFocusImageSummaries(matched, imageSizeMap),
+				usageSummary: buildFocusUsageSummary(matched, usageMap),
 			}
 		})
-	}, [data, focusOnly, focusRules, searchTerm, showAll, imageSizeMap])
+	}, [data, focusOnly, focusRules, searchTerm, showAll, imageSizeMap, usageMap])
+
+	const focusChartData = useMemo(() => {
+		return {
+			systemStats: [],
+			containerData: focusContainerData,
+			chartTime,
+			orientation: direction === "rtl" ? "right" : "left",
+			...getTimeData(chartTime),
+			agentVersion: agentVersion,
+		} as ChartData
+	}, [focusContainerData, chartTime, direction, agentVersion])
+
+	const focusChartConfigs = useContainerChartConfigs(focusContainerData)
+	const focusChartEmpty = !focusUsageLoading && focusContainerData.length === 0
+	const focusFilterBar = focusContainerData.length ? <FocusUsageFilterBar /> : null
 
 	const handleOperate = useCallback(
 		async (container: DockerContainer, operation: string) => {
@@ -596,6 +901,9 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 							{focusRules.length}
 						</Badge>
 					</Button>
+					<Button variant="outline" size="sm" onClick={() => setFocusUsageOpen(true)}>
+						<Trans>Focus usage</Trans>
+					</Button>
 					<Button variant="outline" size="sm" onClick={() => setAlertSettingsOpen(true)}>
 						<Trans>Alert rules</Trans>
 					</Button>
@@ -748,7 +1056,53 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 														</span>
 													</div>
 												</TableCell>
-												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
+												<TableCell className="py-3">
+													{(() => {
+														const { cpu, memory, net } = group.usageSummary
+														const threshold = getMeterState(cpu)
+														const meterClass = cn(
+															"h-full rounded-full",
+															(threshold === MeterState.Good && "bg-green-500") ||
+																(threshold === MeterState.Warn && "bg-yellow-500") ||
+																"bg-red-500"
+														)
+														const memFormatted = formatBytes(memory, false, undefined, true)
+														const netFormatted = formatBytes(net, true, undefined, true)
+														return (
+															<div className="flex flex-col gap-1.5 w-full max-w-[200px] text-xs">
+																<div className="flex items-center gap-2">
+																	<span className="font-semibold text-muted-foreground/70 w-8">CPU</span>
+																	<span className="tabular-nums font-medium w-12 text-foreground/90">
+																		{`${decimalString(cpu, cpu >= 10 ? 1 : 2)}%`}
+																	</span>
+																	<div className="h-1.5 flex-1 bg-muted/30 rounded-full overflow-hidden">
+																		<div className={meterClass} style={{ width: `${cpu}%` }} />
+																	</div>
+																</div>
+																<div className="grid grid-cols-2 gap-4">
+																	<div className="flex items-center gap-2 overflow-hidden">
+																		<span className="font-semibold text-muted-foreground/70 w-8">MEM</span>
+																		<span className="tabular-nums truncate text-foreground/90">
+																			{decimalString(memFormatted.value, memFormatted.value >= 10 ? 1 : 2)}
+																			<span className="text-muted-foreground/60 text-[10px] ms-0.5">
+																				{memFormatted.unit}
+																			</span>
+																		</span>
+																	</div>
+																	<div className="flex items-center gap-2 overflow-hidden">
+																		<span className="font-semibold text-muted-foreground/70 w-8">NET</span>
+																		<span className="tabular-nums truncate text-foreground/90">
+																			{decimalString(netFormatted.value, netFormatted.value >= 10 ? 1 : 2)}
+																			<span className="text-muted-foreground/60 text-[10px] ms-0.5">
+																				{netFormatted.unit}
+																			</span>
+																		</span>
+																	</div>
+																</div>
+															</div>
+														)
+													})()}
+												</TableCell>
 												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
 												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
 												<TableCell className="py-3 text-xs text-muted-foreground">-</TableCell>
@@ -824,6 +1178,69 @@ export default memo(function DockerContainersPanel({ systemId }: { systemId?: st
 							</div>
 						)}
 					</div>
+				</DialogContent>
+			</Dialog>
+			<Dialog open={focusUsageOpen} onOpenChange={setFocusUsageOpen}>
+				<DialogContent className="w-[90vw] max-w-[1600px]">
+					<DialogHeader className="flex flex-row items-center justify-between space-y-0 pe-7">
+						<DialogTitle>
+							<Trans>Focus usage</Trans>
+						</DialogTitle>
+						{system ? <ChartTimeSelect className="h-8 w-32" agentVersion={agentVersion} /> : null}
+					</DialogHeader>
+					<div className="text-sm text-muted-foreground">
+						{focusRules.length === 0 ? (
+							<Trans>No focus rules configured for this system.</Trans>
+						) : focusContainerNames.size === 0 ? (
+							<Trans>No containers found.</Trans>
+						) : null}
+					</div>
+					{focusRules.length === 0 || focusContainerNames.size === 0 ? null : (
+						<div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+							<ChartCard
+								empty={focusChartEmpty}
+								grid={true}
+								title={dockerOrPodman(t`Docker CPU Usage`, isPodman)}
+								description={t`Average CPU utilization of containers`}
+								cornerEl={focusFilterBar}
+							>
+								<ContainerChart
+									chartData={focusChartData}
+									dataKey="c"
+									chartType={ChartType.CPU}
+									chartConfig={focusChartConfigs.cpu}
+								/>
+							</ChartCard>
+							<ChartCard
+								empty={focusChartEmpty}
+								grid={true}
+								title={dockerOrPodman(t`Docker Memory Usage`, isPodman)}
+								description={dockerOrPodman(t`Memory usage of docker containers`, isPodman)}
+								cornerEl={focusFilterBar}
+							>
+								<ContainerChart
+									chartData={focusChartData}
+									dataKey="m"
+									chartType={ChartType.Memory}
+									chartConfig={focusChartConfigs.memory}
+								/>
+							</ChartCard>
+							<ChartCard
+								empty={focusChartEmpty}
+								grid={true}
+								title={dockerOrPodman(t`Docker Network I/O`, isPodman)}
+								description={dockerOrPodman(t`Network traffic of docker containers`, isPodman)}
+								cornerEl={focusFilterBar}
+							>
+								<ContainerChart
+									chartData={focusChartData}
+									chartType={ChartType.Network}
+									dataKey="n"
+									chartConfig={focusChartConfigs.network}
+								/>
+							</ChartCard>
+						</div>
+					)}
 				</DialogContent>
 			</Dialog>
 			<DockerFocusRulesDialog

@@ -3,11 +3,32 @@ import { i18n } from "@lingui/core"
 import { t } from "@lingui/core/macro"
 import { detect, fromNavigator, fromStorage } from "@lingui/detect-locale"
 import languages from "@/lib/languages"
-import { messages as enMessages } from "@/locales/en/en"
+import * as enModule from "@/locales/en/en"
 import { BatteryState } from "./enums"
 import { $direction } from "./stores"
 
+type LocaleModule = {
+	messages?: Messages
+	default?: Messages
+}
+
 const rtlLanguages = new Set(["ar", "fa", "he"])
+
+function resolveMessages(module: LocaleModule, locale: string): Messages {
+	const resolved = module.messages ?? module.default
+	if (!resolved) {
+		const error = new Error(`Missing messages export for locale: ${locale}`)
+		console.error("Missing Lingui messages export", {
+			locale,
+			moduleKeys: Object.keys(module ?? {}),
+			error,
+		})
+		throw error
+	}
+	return resolved
+}
+
+const enMessages = resolveMessages(enModule, "en")
 
 // activates locale
 function activateLocale(locale: string, messages: Messages = enMessages) {
@@ -24,8 +45,8 @@ export async function dynamicActivate(locale: string) {
 		activateLocale(locale)
 	} else {
 		try {
-			const { messages }: { messages: Messages } = await import(`../locales/${locale}/${locale}.ts`)
-			activateLocale(locale, messages)
+			const module = (await import(`../locales/${locale}/${locale}.ts`)) as LocaleModule
+			activateLocale(locale, resolveMessages(module, locale))
 		} catch (error) {
 			console.error(`Error loading ${locale}`, error)
 			activateLocale("en")

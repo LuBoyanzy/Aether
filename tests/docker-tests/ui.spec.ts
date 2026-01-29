@@ -113,6 +113,24 @@ test("Docker UI：容器 关注规则 新增/删除", async ({ page, request }) 
 	}
 })
 
+test("Docker UI：容器 关注占用 弹窗展示", async ({ page, request }) => {
+	await openDockerPage(page, request)
+
+	await page.getByRole("tab", { name: "容器", exact: true }).click()
+
+	const focusUsageBtn = page.getByRole("button", { name: "关注占用" })
+	await expect(focusUsageBtn).toBeVisible()
+	await focusUsageBtn.click()
+
+	const dialog = page.getByRole("dialog", { name: "关注占用" })
+	await expect(dialog).toBeVisible()
+
+	await expect(dialog.getByRole("combobox").first()).toBeVisible()
+
+	await page.keyboard.press("Escape")
+	await expect(dialog).toBeHidden()
+})
+
 test("Docker UI：容器 关注视图服务行显示镜像大小", async ({ page, request }) => {
 	const { auth } = await openDockerPage(page, request)
 
@@ -196,6 +214,11 @@ test("Docker UI：容器 关注视图服务行显示镜像大小", async ({ page
 		const imageCell = groupRow.locator("td").nth(1)
 		await expect(imageCell).toContainText(targetImage)
 		await expect(imageCell).toContainText(/\(\d+(\.\d+)?\s?[KMGTP]?B\)/)
+
+		const usageCell = groupRow.locator("td").nth(3)
+		await expect(usageCell).toContainText("CPU")
+		await expect(usageCell).toContainText("MEM")
+		await expect(usageCell).toContainText("NET")
 	} finally {
 		// 兜底清理：删除本次创建的关注规则
 		const listUrl = new URL(buildApiUrl("/api/collections/docker_focus_services/records"))
