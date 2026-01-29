@@ -547,20 +547,33 @@ func formatDockerFocusDetails(lang alerts.NotificationLanguage, action dockerFoc
 	} else if len(labels) > 0 {
 		parts = append(parts, formatDockerFocusDownContainerLabels(lang, labels))
 	}
+	ruleLine := ""
 	if action.RuleDescription != "" {
 		if lang == alerts.NotificationLanguageZhCN {
-			parts = append(parts, "规则说明: "+action.RuleDescription)
+			ruleLine = "规则说明: " + action.RuleDescription
 		} else {
-			parts = append(parts, "Rule: "+action.RuleDescription)
+			ruleLine = "Rule: " + action.RuleDescription
 		}
 	}
-	if len(parts) == 0 {
+	if len(parts) == 0 && ruleLine == "" {
 		return ""
 	}
-	if lang == alerts.NotificationLanguageZhCN {
-		return strings.Join(parts, "；")
+
+	detailText := ""
+	if len(parts) > 0 {
+		separator := "；"
+		if lang != alerts.NotificationLanguageZhCN {
+			separator = "; "
+		}
+		detailText = strings.Join(parts, separator)
 	}
-	return strings.Join(parts, "; ")
+	if detailText != "" && ruleLine != "" {
+		return detailText + "\n" + ruleLine
+	}
+	if ruleLine != "" {
+		return ruleLine
+	}
+	return detailText
 }
 
 func formatDockerFocusDownContainers(lang alerts.NotificationLanguage, containers []docker.Container) string {
