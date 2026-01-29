@@ -255,6 +255,54 @@ msgstr "已执行全部用例"
 msgid "All collections"
 msgstr "全部合集"
 
+#: src/components/routes/api-tests.tsx
+msgid "Auto"
+msgstr "自动"
+
+#: src/components/routes/api-tests.tsx
+msgid "Auto-run schedule"
+msgstr "自动定时运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "BASE"
+msgstr "基础"
+
+#: src/components/routes/api-tests.tsx
+msgid "cases"
+msgstr "用例"
+
+#: src/components/routes/api-tests.tsx
+msgid "ENV"
+msgstr "环境"
+
+#: src/components/routes/api-tests.tsx
+msgid "EXPECT"
+msgstr "期望"
+
+#: src/components/routes/api-tests.tsx
+msgid "Fail"
+msgstr "失败"
+
+#: src/components/routes/api-tests.tsx
+msgid "New"
+msgstr "新建"
+
+#: src/components/routes/api-tests.tsx
+msgid "No detailed description..."
+msgstr "暂无详细描述..."
+
+#: src/components/routes/api-tests.tsx
+msgid "Pass"
+msgstr "成功"
+
+#: src/components/routes/api-tests.tsx
+msgid "STATUS"
+msgstr "状态"
+
+#: src/components/routes/api-tests.tsx
+msgid "Total cases"
+msgstr "用例总数"
+
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
 msgstr "所有容器"
@@ -3259,6 +3307,10 @@ msgid "Run"
 msgstr "运行"
 
 #: src/components/routes/api-tests.tsx
+msgid "Run result"
+msgstr "运行详情"
+
+#: src/components/routes/api-tests.tsx
 msgid "Run All"
 msgstr "全部运行"
 
@@ -3269,6 +3321,10 @@ msgstr "运行合集"
 #: src/components/routes/api-tests.tsx
 msgid "Run Now"
 msgstr "立即运行"
+
+#: src/components/routes/api-tests.tsx
+msgid "Response snippet"
+msgstr "响应摘要"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx

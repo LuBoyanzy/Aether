@@ -401,6 +401,15 @@ export function formatDuration(
 		.join(" ")
 }
 
+export function formatDurationMs(ms: number): string {
+	if (!ms) return "0ms"
+	if (ms < 1000) return `${Math.round(ms)}ms`
+	if (ms < 60000) return `${(ms / 1000).toFixed(2)}s`
+	const minutes = Math.floor(ms / 60000)
+	const seconds = ((ms % 60000) / 1000).toFixed(0)
+	return `${minutes}m ${seconds}s`
+}
+
 /** Parse semver string into major, minor, and patch numbers
  * @example
  * const semVer = "1.2.3"

@@ -2,7 +2,21 @@
 // 页面数据来自 Hub api-tests 接口与 PocketBase 集合。
 import { Trans } from "@lingui/react/macro"
 import { t } from "@lingui/core/macro"
-import { DownloadIcon, LoaderCircleIcon, PlusIcon, PlayIcon, RefreshCwIcon, Trash2Icon, UploadIcon } from "lucide-react"
+import {
+	CalendarIcon,
+	DownloadIcon,
+	EditIcon,
+	HourglassIcon,
+	LoaderCircleIcon,
+	MoreHorizontalIcon,
+	PlusIcon,
+	PlayIcon,
+	RefreshCwIcon,
+	TimerIcon,
+	Trash2Icon,
+	UploadIcon,
+	FolderIcon,
+} from "lucide-react"
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { ActiveAlerts } from "@/components/active-alerts"
 import { FooterRepoLink } from "@/components/footer-repo-link"
@@ -11,6 +25,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { InputTags } from "@/components/ui/input-tags"
 import { Label } from "@/components/ui/label"
@@ -38,7 +59,7 @@ import {
 	updateApiTestCollection,
 	updateApiTestSchedule,
 } from "@/lib/api-tests"
-import { BRAND_NAME, formatShortDate } from "@/lib/utils"
+import { BRAND_NAME, cn, formatDurationMs, formatShortDate } from "@/lib/utils"
 import type {
 	ApiTestBodyType,
 	ApiTestCaseRecord,
@@ -48,6 +69,7 @@ import type {
 	ApiTestKeyValue,
 	ApiTestMethod,
 	ApiTestRunItem,
+	ApiTestRunResult,
 	ApiTestScheduleConfig,
 } from "@/types"
 
@@ -172,20 +194,40 @@ function formatDuration(value?: number | null) {
 	return `${value}ms`
 }
 
-function CaseStatusBadge({ record }: { record: ApiTestCaseRecord }) {
-	if (!record.last_run_at) {
-		return <Badge variant="secondary">Unknown</Badge>
-	}
-	if (record.last_success === true) {
-		return <Badge variant="success">OK</Badge>
-	}
-	if (record.last_success === false) {
-		return <Badge variant="danger">Fail</Badge>
-	}
-	return <Badge variant="secondary">Unknown</Badge>
+function formatRunSource(source: ApiTestRunItem["source"]) {
+	return source === "schedule" ? t`Schedule` : t`Run`
 }
 
-function MethodBadge({ method }: { method: string }) {
+function CaseStatusBadge({ record }: { record: ApiTestCaseRecord }) {
+	if (!record.last_run_at) {
+		return (
+			<Badge variant="secondary">
+				<Trans>Unknown</Trans>
+			</Badge>
+		)
+	}
+	if (record.last_success === true) {
+		return (
+			<Badge variant="success">
+				<Trans>Success</Trans>
+			</Badge>
+		)
+	}
+	if (record.last_success === false) {
+		return (
+			<Badge variant="danger">
+				<Trans>Failed</Trans>
+			</Badge>
+		)
+	}
+	return (
+		<Badge variant="secondary">
+			<Trans>Unknown</Trans>
+		</Badge>
+	)
+}
+
+function MethodBadge({ method, className }: { method: string; className?: string }) {
 	let variant: "default" | "secondary" | "destructive" | "outline" | "success" | "danger" = "outline"
 	// Map methods to approximate intent colors
 	switch (method) {
@@ -210,7 +252,7 @@ function MethodBadge({ method }: { method: string }) {
 	// Beszel codebase seems to have success/danger variants (see CaseStatusBadge).
 
 	return (
-		<Badge variant={variant} className="font-mono text-xs">
+		<Badge variant={variant} className={cn("font-mono text-xs", className)}>
 			{method}
 		</Badge>
 	)
@@ -264,7 +306,7 @@ function KeyValueEditor({
 }
 
 export default memo(function ApiTestsPage() {
-	const [activeTab, setActiveTab] = useState("collections")
+	const [activeTab, setActiveTab] = useState("cases")
 	const [collections, setCollections] = useState<ApiTestCollectionRecord[]>([])
 	const [cases, setCases] = useState<ApiTestCaseRecord[]>([])
 	const [runs, setRuns] = useState<ApiTestRunItem[]>([])
@@ -276,6 +318,8 @@ export default memo(function ApiTestsPage() {
 	const [caseDialogOpen, setCaseDialogOpen] = useState(false)
 	const [caseDetailOpen, setCaseDetailOpen] = useState(false)
 	const [caseDetailId, setCaseDetailId] = useState<string | null>(null)
+	const [runResultOpen, setRunResultOpen] = useState(false)
+	const [runResult, setRunResult] = useState<ApiTestRunResult | null>(null)
 	const [collectionDraft, setCollectionDraft] = useState<CollectionDraft>({ ...emptyCollectionDraft })
 	const [caseDraft, setCaseDraft] = useState<CaseDraft>({ ...emptyCaseDraft })
 	const [formItems, setFormItems] = useState<ApiTestKeyValue[]>([])
@@ -371,6 +415,39 @@ export default memo(function ApiTestsPage() {
 	}, [cases, selectedCollectionId])
 
 	const caseNameById = useMemo(() => new Map(cases.map((item) => [item.id, item.name])), [cases])
+	const collectionById = useMemo(() => new Map(collections.map((item) => [item.id, item])), [collections])
+	const caseSummary = useMemo(() => {
+		let scheduled = 0
+		let ok = 0
+		let fail = 0
+		for (const item of cases) {
+			if (item.schedule_enabled) {
+				scheduled += 1
+			}
+			if (item.last_success === true) {
+				ok += 1
+			}
+			if (item.last_success === false) {
+				fail += 1
+			}
+		}
+		return { scheduled, ok, fail, total: cases.length }
+	}, [cases])
+	const collectionStats = useMemo(() => {
+		const stats = new Map<string, { total: number; ok: number; fail: number }>()
+		for (const item of cases) {
+			const current = stats.get(item.collection) ?? { total: 0, ok: 0, fail: 0 }
+			current.total += 1
+			if (item.last_success === true) {
+				current.ok += 1
+			}
+			if (item.last_success === false) {
+				current.fail += 1
+			}
+			stats.set(item.collection, current)
+		}
+		return stats
+	}, [cases])
 
 	const historyCases = useMemo(() => {
 		if (!historyCollectionId) {
@@ -579,7 +656,9 @@ export default memo(function ApiTestsPage() {
 
 	const handleRunCase = async (record: ApiTestCaseRecord) => {
 		try {
-			await runApiTestCase(record.id)
+			const result = await runApiTestCase(record.id)
+			setRunResult(result)
+			setRunResultOpen(true)
 			toast({ title: t`Case executed` })
 			await refreshCases()
 			await refreshRuns(historyCollectionId || undefined, historyCaseId || undefined)
@@ -751,460 +830,633 @@ export default memo(function ApiTestsPage() {
 							</div>
 						</div>
 					</CardHeader>
-					<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-						<TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
-							<TabsTrigger
-								value="collections"
-								className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
-							>
-								<Trans>Collections</Trans>
-							</TabsTrigger>
-							<TabsTrigger
-								value="cases"
-								className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
-							>
-								<Trans>Cases</Trans>
-							</TabsTrigger>
-							<TabsTrigger
-								value="schedule"
-								className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
-							>
-								<Trans>Schedule</Trans>
-							</TabsTrigger>
-							<TabsTrigger
-								value="history"
-								className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
-							>
-								<Trans>History</Trans>
-							</TabsTrigger>
-						</TabsList>
-						<TabsContent value="collections" className="mt-4 animate-fade-in duration-300">
-							<div className="flex flex-row items-center justify-between mb-4">
-								<h2 className="text-lg font-semibold">
+					<div className="grid gap-4">
+						<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+							<Card className="p-4">
+								<div className="text-xs text-muted-foreground">
 									<Trans>Collections</Trans>
-								</h2>
-								<div className="flex items-center gap-2">
-									<Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
-										{exporting ? (
-											<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
-										) : (
-											<DownloadIcon className="me-2 h-4 w-4" />
-										)}
-										<Trans>Export</Trans>
-									</Button>
-									<Button variant="outline" size="sm" onClick={openImportDialog} disabled={importing}>
-										<UploadIcon className="me-2 h-4 w-4" />
-										<Trans>Import</Trans>
-									</Button>
-									<Button onClick={openNewCollection}>
-										<PlusIcon className="me-2 h-4 w-4" />
-										<Trans>New Collection</Trans>
-									</Button>
 								</div>
-							</div>
-							<div className="rounded-md border">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>
-												<Trans>Name</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Base URL</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Tags</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Updated</Trans>
-											</TableHead>
-											<TableHead className="text-right">
-												<Trans>Actions</Trans>
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{collections.length === 0 && (
-											<TableRow>
-												<TableCell colSpan={5} className="text-center text-muted-foreground">
-													<Trans>No collections yet</Trans>
-												</TableCell>
-											</TableRow>
-										)}
-										{collections.map((record) => (
-											<TableRow key={record.id}>
-												<TableCell>{record.name}</TableCell>
-												<TableCell>{record.base_url || "-"}</TableCell>
-												<TableCell>
-													{record.tags?.length ? (
-														<div className="flex flex-wrap gap-1">
-															{record.tags.map((tag) => (
-																<Badge key={tag} variant="secondary" className="font-normal text-xs px-1.5 py-0 h-5">
-																	{tag}
-																</Badge>
-															))}
-														</div>
-													) : (
-														"-"
-													)}
-												</TableCell>
-												<TableCell>{record.updated ? formatShortDate(record.updated) : "-"}</TableCell>
-												<TableCell className="text-right space-x-2">
-													<Button variant="outline" size="sm" onClick={() => openEditCollection(record)}>
-														<Trans>Edit</Trans>
-													</Button>
-													<Button variant="destructive" size="sm" onClick={() => deleteCollection(record)}>
-														<Trans>Delete</Trans>
-													</Button>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</div>
-						</TabsContent>
-						<TabsContent value="cases" className="mt-4 animate-fade-in duration-300">
-							<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
-								<div className="space-y-1">
-									<h2 className="text-lg font-semibold">
-										<Trans>Cases</Trans>
-									</h2>
-									<div className="text-sm text-muted-foreground">
-										<Trans>Manage and run API cases</Trans>
-									</div>
+								<div className="mt-1 text-2xl font-semibold">{collections.length}</div>
+								<div className="mt-1 text-xs text-muted-foreground">
+									<Trans>Cases</Trans>: {cases.length}
 								</div>
-								<div className="flex flex-col gap-2 md:flex-row md:items-center">
-									<Select
-										value={toFilterSelectValue(selectedCollectionId)}
-										onValueChange={(value) => setSelectedCollectionId(fromFilterSelectValue(value))}
-									>
-										<SelectTrigger className="min-w-[200px]">
-											<SelectValue placeholder={t`All collections`} />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value={ALL_FILTER_VALUE}>
-												<Trans>All collections</Trans>
-											</SelectItem>
-											{collections.map((record) => (
-												<SelectItem key={record.id} value={record.id}>
-													{record.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<Button variant="outline" onClick={handleRunCollection} disabled={!selectedCollectionId}>
-										<PlayIcon className="me-2 h-4 w-4" />
-										<Trans>Run Collection</Trans>
-									</Button>
-									<Button onClick={openNewCase}>
-										<PlusIcon className="me-2 h-4 w-4" />
-										<Trans>New Case</Trans>
-									</Button>
-								</div>
-							</div>
-							<div className="rounded-md border">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>
-												<Trans>Status</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Name</Trans>
-											</TableHead>
-											<TableHead className="px-6">
-												<Trans>Method</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>URL</Trans>
-											</TableHead>
-											<TableHead className="px-2">
-												<Trans>Last Status</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Last Run</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Duration</Trans>
-											</TableHead>
-											<TableHead className="px-4">
-												<Trans>Detail</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Schedule</Trans>
-											</TableHead>
-											<TableHead className="text-right">
-												<Trans>Actions</Trans>
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{filteredCases.length === 0 && (
-											<TableRow>
-												<TableCell colSpan={10} className="text-center text-muted-foreground">
-													<Trans>No cases yet</Trans>
-												</TableCell>
-											</TableRow>
-										)}
-										{filteredCases.map((record) => (
-											<TableRow key={record.id}>
-												<TableCell>
-													<CaseStatusBadge record={record} />
-												</TableCell>
-												<TableCell>{record.name}</TableCell>
-												<TableCell>
-													<MethodBadge method={record.method} />
-												</TableCell>
-												<TableCell className="max-w-[260px] truncate">{record.url}</TableCell>
-												<TableCell>
-													{record.last_status === undefined || record.last_status === null ? (
-														<span className="text-muted-foreground">-</span>
-													) : (
-														<Badge
-															variant={record.last_status >= 200 && record.last_status < 300 ? "success" : "danger"}
-														>
-															{record.last_status}
-														</Badge>
-													)}
-												</TableCell>
-												<TableCell>{record.last_run_at ? formatShortDate(record.last_run_at) : "-"}</TableCell>
-												<TableCell>
-													{record.last_duration_ms === undefined || record.last_duration_ms === null ? (
-														<span className="text-muted-foreground">-</span>
-													) : (
-														<Badge variant="outline" className="font-mono font-normal">
-															{formatDuration(record.last_duration_ms)}
-														</Badge>
-													)}
-												</TableCell>
-												<TableCell className="px-2">
-													<Button variant="outline" size="sm" onClick={() => openCaseDetail(record)}>
-														<Trans>Detail</Trans>
-													</Button>
-												</TableCell>
-												<TableCell>
-													<Switch
-														checked={record.schedule_enabled}
-														onCheckedChange={(checked) => updateCaseToggle(record, { schedule_enabled: !!checked })}
-													/>
-												</TableCell>
-												<TableCell className="text-right">
-													<div className="flex items-center justify-end gap-2">
-														<Button variant="outline" size="sm" onClick={() => handleRunCase(record)}>
-															<PlayIcon className="me-2 h-4 w-4" />
-															<Trans>Run</Trans>
-														</Button>
-														<Button variant="outline" size="sm" onClick={() => openEditCase(record)}>
-															<Trans>Edit</Trans>
-														</Button>
-														<Button variant="destructive" size="sm" onClick={() => deleteCase(record)}>
-															<Trans>Delete</Trans>
-														</Button>
-													</div>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</div>
-						</TabsContent>
-						<TabsContent value="schedule" className="mt-4 animate-fade-in duration-300">
-							<div className="mb-4">
-								<h2 className="text-lg font-semibold">
+							</Card>
+							<Card className="p-4">
+								<div className="text-xs text-muted-foreground">
 									<Trans>Schedule</Trans>
-								</h2>
-							</div>
-							<div className="space-y-4">
-								{schedule ? (
-									<>
-										<div className="flex items-center justify-between">
-											<div>
-												<Label>
-													<Trans>Enable schedule</Trans>
-												</Label>
+								</div>
+								<div className="mt-1 text-2xl font-semibold">{caseSummary.scheduled}</div>
+								<div className="mt-1 text-xs text-muted-foreground">
+									{schedule ? (
+										<>
+											<Trans>Interval (minutes)</Trans>: {schedule.intervalMinutes}
+										</>
+									) : (
+										<Trans>Loading schedule...</Trans>
+									)}
+								</div>
+							</Card>
+							<Card className="p-4">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Success</Trans>
+								</div>
+								<div className="mt-1 text-2xl font-semibold">{caseSummary.ok}</div>
+							</Card>
+							<Card className="p-4">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Failed</Trans>
+								</div>
+								<div className="mt-1 text-2xl font-semibold">{caseSummary.fail}</div>
+							</Card>
+						</div>
+						<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+							<TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
+								<TabsTrigger
+									value="cases"
+									className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
+								>
+									<Trans>Cases</Trans>
+								</TabsTrigger>
+								<TabsTrigger
+									value="schedule"
+									className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
+								>
+									<Trans>Schedule</Trans>
+								</TabsTrigger>
+								<TabsTrigger
+									value="history"
+									className="rounded-full border border-transparent bg-muted/40 px-4 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm hover:bg-muted/60"
+								>
+									<Trans>History</Trans>
+								</TabsTrigger>
+							</TabsList>
+							<TabsContent value="cases" className="mt-4 animate-fade-in duration-300">
+								<div className="grid gap-4 lg:grid-cols-[320px_1fr]">
+									<Card className="flex h-full flex-col p-4">
+										<div className="mb-4 flex items-center justify-between gap-2">
+											<div className="space-y-0.5">
+												<div className="text-sm font-semibold">
+													<Trans>Collections</Trans>
+												</div>
 												<div className="text-xs text-muted-foreground">
-													<Trans>Only scheduled cases will run</Trans>
+													<Trans>Manage and run API tests.</Trans>
 												</div>
 											</div>
-											<Switch
-												checked={schedule.enabled}
-												onCheckedChange={(checked) => setSchedule({ ...schedule, enabled: !!checked })}
-											/>
-										</div>
-										<div className="grid gap-4 md:grid-cols-2">
-											<div className="space-y-2">
-												<Label>
-													<Trans>Interval (minutes)</Trans>
-												</Label>
-												<Input
-													type="number"
-													value={schedule.intervalMinutes}
-													onChange={(event) =>
-														setSchedule({ ...schedule, intervalMinutes: Number(event.target.value) })
-													}
-												/>
-											</div>
-											<div className="space-y-2">
-												<Label>
-													<Trans>History retention (days)</Trans>
-												</Label>
-												<Input
-													type="number"
-													value={schedule.historyRetentionDays}
-													onChange={(event) =>
-														setSchedule({ ...schedule, historyRetentionDays: Number(event.target.value) })
-													}
-												/>
+											<div className="flex items-center gap-1.5">
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button variant="outline" size="icon" className="h-8 w-8">
+															<MoreHorizontalIcon className="h-4 w-4" />
+														</Button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="end">
+														<DropdownMenuItem onClick={handleExport} disabled={exporting}>
+															{exporting ? (
+																<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
+															) : (
+																<DownloadIcon className="me-2 h-4 w-4" />
+															)}
+															<Trans>Export</Trans>
+														</DropdownMenuItem>
+														<DropdownMenuItem onClick={openImportDialog} disabled={importing}>
+															<UploadIcon className="me-2 h-4 w-4" />
+															<Trans>Import</Trans>
+														</DropdownMenuItem>
+													</DropdownMenuContent>
+												</DropdownMenu>
+												<Button size="sm" onClick={openNewCollection} className="h-8 px-3">
+													<PlusIcon className="me-1.5 h-3.5 w-3.5" />
+													<Trans>New</Trans>
+												</Button>
 											</div>
 										</div>
-										<div className="grid gap-4 md:grid-cols-2">
-											<div className="flex items-center justify-between">
-												<Label>
-													<Trans>Enable alerts</Trans>
-												</Label>
-												<Switch
-													checked={schedule.alertEnabled}
-													onCheckedChange={(checked) => setSchedule({ ...schedule, alertEnabled: !!checked })}
-												/>
-											</div>
-											<div className="flex items-center justify-between">
-												<Label>
-													<Trans>Alert on recovery</Trans>
-												</Label>
-												<Switch
-													checked={schedule.alertOnRecover}
-													onCheckedChange={(checked) => setSchedule({ ...schedule, alertOnRecover: !!checked })}
-												/>
-											</div>
-										</div>
-										<div className="grid gap-2 text-sm text-muted-foreground">
-											<div>
-												<Trans>Last run</Trans>: {schedule.lastRunAt ? formatShortDate(schedule.lastRunAt) : "-"}
-											</div>
-											<div>
-												<Trans>Next run</Trans>: {schedule.nextRunAt ? formatShortDate(schedule.nextRunAt) : "-"}
-											</div>
-											{schedule.lastError && (
-												<div className="text-destructive">
-													<Trans>Last error</Trans>: {schedule.lastError}
+										<div className="space-y-2">
+											<div
+												onClick={() => setSelectedCollectionId("")}
+												className={cn(
+													"group flex cursor-pointer items-center justify-between rounded-lg border px-3 py-3 text-sm transition-all hover:bg-accent/50",
+													!selectedCollectionId ? "border-primary/50 bg-accent shadow-sm" : "border-transparent bg-card"
+												)}
+											>
+												<div className="flex flex-col gap-1">
+													<span className="font-semibold">
+														<Trans>All collections</Trans>
+													</span>
+													<span className="text-xs text-muted-foreground">
+														<Trans>Total cases</Trans>: {cases.length}
+													</span>
 												</div>
+												<Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-normal">
+													{cases.length}
+												</Badge>
+											</div>
+											{collections.length === 0 ? (
+												<div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+													<Trans>No collections yet</Trans>
+												</div>
+											) : (
+												collections.map((record) => {
+													const stats = collectionStats.get(record.id)
+													const isActive = selectedCollectionId === record.id
+													return (
+														<div
+															key={record.id}
+															role="button"
+															tabIndex={0}
+															onClick={() => setSelectedCollectionId(record.id)}
+															onKeyDown={(event) => {
+																if (event.key === "Enter" || event.key === " ") {
+																	event.preventDefault()
+																	setSelectedCollectionId(record.id)
+																}
+															}}
+															className={cn(
+																"group relative flex flex-col gap-3 rounded-xl border p-4 text-left transition-all hover:bg-accent/50",
+																isActive ? "border-primary/20 bg-card shadow-md" : "border-transparent bg-transparent"
+															)}
+														>
+															<div className="flex items-start justify-between gap-2">
+																<div className="font-bold text-base text-foreground truncate pr-6">{record.name}</div>
+																<div className="shrink-0 text-xs text-muted-foreground">
+																	{stats?.total ?? 0} <Trans>cases</Trans>
+																</div>
+															</div>
+
+															<div className="text-xs text-muted-foreground line-clamp-2 min-h-[1.5em]">
+																{record.description || (
+																	<span className="opacity-50">
+																		<Trans>No detailed description...</Trans>
+																	</span>
+																)}
+															</div>
+
+															<div className="flex items-center justify-between mt-1">
+																<div className="rounded bg-muted/50 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground truncate max-w-[120px]">
+																	<Trans>BASE</Trans> {record.base_url || "..."}
+																</div>
+																<div className="flex items-center gap-3 text-[10px] font-medium shrink-0">
+																	<div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-500">
+																		<div className="h-1.5 w-1.5 rounded-full bg-current" />
+																		<Trans>Pass</Trans> {stats?.ok ?? 0}
+																	</div>
+																	<div className="flex items-center gap-1 text-red-600 dark:text-red-500">
+																		<div className="h-1.5 w-1.5 rounded-full bg-current" />
+																		<Trans>Fail</Trans> {stats?.fail ?? 0}
+																	</div>
+																</div>
+															</div>
+
+															<div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100">
+																<DropdownMenu>
+																	<DropdownMenuTrigger asChild>
+																		<Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+																			<MoreHorizontalIcon className="h-4 w-4" />
+																		</Button>
+																	</DropdownMenuTrigger>
+																	<DropdownMenuContent align="end">
+																		<DropdownMenuItem
+																			onClick={(event) => {
+																				event.stopPropagation()
+																				openEditCollection(record)
+																			}}
+																		>
+																			<EditIcon className="me-2 h-4 w-4" />
+																			<Trans>Edit</Trans>
+																		</DropdownMenuItem>
+																		<DropdownMenuSeparator />
+																		<DropdownMenuItem
+																			className="text-destructive focus:text-destructive"
+																			onClick={(event) => {
+																				event.stopPropagation()
+																				deleteCollection(record)
+																			}}
+																		>
+																			<Trash2Icon className="me-2 h-4 w-4" />
+																			<Trans>Delete</Trans>
+																		</DropdownMenuItem>
+																	</DropdownMenuContent>
+																</DropdownMenu>
+															</div>
+														</div>
+													)
+												})
 											)}
 										</div>
-										<div className="flex gap-2">
-											<Button onClick={saveSchedule} disabled={saving}>
-												<Trans>Save</Trans>
-											</Button>
-											<Button variant="outline" onClick={handleRunAll}>
-												<PlayIcon className="me-2 h-4 w-4" />
-												<Trans>Run Now</Trans>
-											</Button>
+									</Card>
+									<div className="grid gap-4">
+										<Card className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between mb-4">
+											<div className="space-y-0.5">
+												<div className="text-lg font-semibold">
+													<Trans>Cases</Trans>
+												</div>
+												<div className="text-xs text-muted-foreground">
+													<Trans>Manage and run API cases</Trans>
+												</div>
+											</div>
+											<div className="flex items-center gap-2">
+												<Button
+													variant="outline"
+													size="sm"
+													className="h-9 border-dashed"
+													onClick={handleRunCollection}
+													disabled={!selectedCollectionId}
+												>
+													<PlayIcon className="me-2 h-4 w-4" />
+													<Trans>Run Collection</Trans>
+												</Button>
+												<Button size="sm" className="h-9 shadow-sm" onClick={openNewCase}>
+													<PlusIcon className="me-2 h-4 w-4" />
+													<Trans>New Case</Trans>
+												</Button>
+											</div>
+										</Card>
+
+										<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+											{filteredCases.length === 0 ? (
+												<div className="col-span-full flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
+													<div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
+														<MoreHorizontalIcon className="h-6 w-6 opacity-50" />
+													</div>
+													<p>
+														<Trans>No cases yet</Trans>
+													</p>
+												</div>
+											) : (
+												filteredCases.map((record) => {
+													const collection = collectionById.get(record.collection)
+													return (
+														<Card
+															key={record.id}
+															className="group relative flex flex-col justify-between overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md hover:border-primary/50"
+														>
+															<div className="flex flex-col gap-4 p-5">
+																<div className="flex items-start justify-between gap-3">
+																	<div className="flex items-center gap-2 min-w-0">
+																		<MethodBadge method={record.method} className="shrink-0 shadow-sm" />
+																		<div className="truncate font-bold text-base leading-none tracking-tight text-foreground/90">
+																			{record.name}
+																		</div>
+																	</div>
+																	{record.last_status !== undefined && record.last_status !== null && (
+																		<Badge
+																			variant="outline"
+																			className={cn(
+																				"h-5 px-1.5 text-[10px] font-medium border-transparent",
+																				record.last_status >= 200 && record.last_status < 300
+																					? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+																					: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
+																			)}
+																		>
+																			{record.last_status >= 200 && record.last_status < 300 ? (
+																				<Trans>Pass</Trans>
+																			) : (
+																				<Trans>Fail</Trans>
+																			)}
+																		</Badge>
+																	)}
+																</div>
+
+																<div className="text-xs text-muted-foreground line-clamp-2 min-h-[1.5em]">
+																	{record.description || (
+																		<span className="opacity-50">
+																			<Trans>No detailed description...</Trans>
+																		</span>
+																	)}
+																</div>
+
+																<div className="rounded-lg bg-muted/30 p-3 flex flex-col gap-2 text-xs font-mono text-muted-foreground">
+																	<div className="flex gap-2 items-center">
+																		<span className="w-10 opacity-40 text-[10px] font-bold uppercase tracking-wider">
+																			<Trans>ENV</Trans>
+																		</span>
+																		<span className="truncate opacity-80">{collection?.base_url || "http://..."}</span>
+																	</div>
+																	<div className="flex gap-2 items-center">
+																		<span className="w-10 opacity-40 text-[10px] font-bold uppercase tracking-wider">
+																			<Trans>URL</Trans>
+																		</span>
+																		<span className="truncate opacity-80">{record.url}</span>
+																	</div>
+																	<div className="flex gap-2 items-center">
+																		<span className="w-10 opacity-40 text-[10px] font-bold uppercase tracking-wider">
+																			<Trans>EXPECT</Trans>
+																		</span>
+																		<Badge
+																			variant="outline"
+																			className="h-4 px-1 text-[9px] text-muted-foreground bg-background/50 border-muted-foreground/20"
+																		>
+																			<Trans>STATUS</Trans> {record.expected_status}
+																		</Badge>
+																	</div>
+																</div>
+
+																<div className="flex items-center gap-4 text-xs text-muted-foreground/60 mt-1">
+																	<div className="flex items-center gap-1.5">
+																		<TimerIcon className="h-3 w-3" />
+																		<span className="font-mono">{formatDurationMs(record.last_duration_ms ?? 0)}</span>
+																	</div>
+																	<div className="flex items-center gap-1.5">
+																		<CalendarIcon className="h-3 w-3" />
+																		<span>{record.last_run_at ? formatShortDate(record.last_run_at) : "-"}</span>
+																	</div>
+																</div>
+															</div>
+
+															<div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100 data-[state=open]:opacity-100">
+																<DropdownMenu>
+																	<DropdownMenuTrigger asChild>
+																		<Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+																			<MoreHorizontalIcon className="h-4 w-4" />
+																		</Button>
+																	</DropdownMenuTrigger>
+																	<DropdownMenuContent align="end">
+																		<DropdownMenuItem
+																			onClick={(event) => {
+																				event.stopPropagation()
+																				openEditCase(record)
+																			}}
+																		>
+																			<EditIcon className="me-2 h-4 w-4" />
+																			<Trans>Edit</Trans>
+																		</DropdownMenuItem>
+																		<DropdownMenuSeparator />
+																		<DropdownMenuItem
+																			className="text-destructive focus:text-destructive"
+																			onClick={(event) => {
+																				event.stopPropagation()
+																				deleteCase(record)
+																			}}
+																		>
+																			<Trash2Icon className="me-2 h-4 w-4" />
+																			<Trans>Delete</Trans>
+																		</DropdownMenuItem>
+																	</DropdownMenuContent>
+																</DropdownMenu>
+															</div>
+
+															<div className="flex items-center justify-between border-t bg-muted/5 px-4 py-3 text-xs transition-colors group-hover:bg-muted/10">
+																<div className="flex items-center gap-2" title={t`Auto-run schedule`}>
+																	<Switch
+																		checked={record.schedule_enabled}
+																		onCheckedChange={(checked) =>
+																			updateCaseToggle(record, {
+																				schedule_enabled: !!checked,
+																			})
+																		}
+																		className="scale-75 data-[state=checked]:bg-primary"
+																	/>
+																	<span
+																		className={cn(
+																			"text-[10px] uppercase tracking-wider font-semibold transition-colors",
+																			record.schedule_enabled ? "text-primary/80" : "text-muted-foreground/50"
+																		)}
+																	>
+																		<Trans>Auto</Trans>
+																	</span>
+																</div>
+
+																<div className="flex items-center gap-2">
+																	<Button
+																		variant="outline"
+																		size="sm"
+																		className="h-7 px-3 text-xs"
+																		onClick={() => openCaseDetail(record)}
+																	>
+																		<Trans>Detail</Trans>
+																	</Button>
+																	<Button
+																		size="sm"
+																		className="h-7 px-3 text-xs font-medium shadow-sm transition-all hover:shadow-md hover:bg-primary hover:text-primary-foreground"
+																		onClick={() => handleRunCase(record)}
+																	>
+																		<PlayIcon className="me-1.5 h-3 w-3" />
+																		<Trans>Run</Trans>
+																	</Button>
+																</div>
+															</div>
+														</Card>
+													)
+												})
+											)}
 										</div>
-									</>
-								) : (
-									<div className="text-sm text-muted-foreground">
-										<Trans>Loading schedule...</Trans>
 									</div>
-								)}
-							</div>
-						</TabsContent>
-						<TabsContent value="history" className="mt-4 animate-fade-in duration-300">
-							<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
-								<h2 className="text-lg font-semibold">
-									<Trans>History</Trans>
-								</h2>
-								<div className="flex flex-col gap-2 md:flex-row md:items-center">
-									<Select
-										value={toFilterSelectValue(historyCollectionId)}
-										onValueChange={(value) => setHistoryCollectionId(fromFilterSelectValue(value))}
-									>
-										<SelectTrigger className="min-w-[200px]">
-											<SelectValue placeholder={t`All collections`} />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value={ALL_FILTER_VALUE}>
-												<Trans>All collections</Trans>
-											</SelectItem>
-											{collections.map((record) => (
-												<SelectItem key={record.id} value={record.id}>
-													{record.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<Select
-										value={toFilterSelectValue(historyCaseId)}
-										onValueChange={(value) => setHistoryCaseId(fromFilterSelectValue(value))}
-										disabled={historyCases.length === 0}
-									>
-										<SelectTrigger className="min-w-[220px]">
-											<SelectValue placeholder={t`All cases`} />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value={ALL_FILTER_VALUE}>
-												<Trans>All cases</Trans>
-											</SelectItem>
-											{historyCases.map((record) => (
-												<SelectItem key={record.id} value={record.id}>
-													{record.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
 								</div>
-							</div>
-							<div className="rounded-md border">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>
-												<Trans>Status</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Case</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Duration</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Source</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Time</Trans>
-											</TableHead>
-											<TableHead>
-												<Trans>Error</Trans>
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{runs.length === 0 && (
-											<TableRow>
-												<TableCell colSpan={6} className="text-center text-muted-foreground">
-													<Trans>No history yet</Trans>
-												</TableCell>
-											</TableRow>
+							</TabsContent>
+							<TabsContent value="schedule" className="mt-4 animate-fade-in duration-300">
+								<Card className="p-4">
+									<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+										<div>
+											<div className="text-sm font-semibold">
+												<Trans>Schedule</Trans>
+											</div>
+											<div className="text-xs text-muted-foreground">
+												<Trans>Only scheduled cases will run</Trans>
+											</div>
+										</div>
+									</div>
+									<div className="mt-4 space-y-4">
+										{schedule ? (
+											<>
+												<div className="flex items-center justify-between">
+													<div>
+														<Label>
+															<Trans>Enable schedule</Trans>
+														</Label>
+														<div className="text-xs text-muted-foreground">
+															<Trans>Only scheduled cases will run</Trans>
+														</div>
+													</div>
+													<Switch
+														checked={schedule.enabled}
+														onCheckedChange={(checked) => setSchedule({ ...schedule, enabled: !!checked })}
+													/>
+												</div>
+												<div className="grid gap-4 md:grid-cols-2">
+													<div className="space-y-2">
+														<Label>
+															<Trans>Interval (minutes)</Trans>
+														</Label>
+														<Input
+															type="number"
+															value={schedule.intervalMinutes}
+															onChange={(event) =>
+																setSchedule({ ...schedule, intervalMinutes: Number(event.target.value) })
+															}
+														/>
+													</div>
+													<div className="space-y-2">
+														<Label>
+															<Trans>History retention (days)</Trans>
+														</Label>
+														<Input
+															type="number"
+															value={schedule.historyRetentionDays}
+															onChange={(event) =>
+																setSchedule({ ...schedule, historyRetentionDays: Number(event.target.value) })
+															}
+														/>
+													</div>
+												</div>
+												<div className="grid gap-4 md:grid-cols-2">
+													<div className="flex items-center justify-between">
+														<Label>
+															<Trans>Enable alerts</Trans>
+														</Label>
+														<Switch
+															checked={schedule.alertEnabled}
+															onCheckedChange={(checked) => setSchedule({ ...schedule, alertEnabled: !!checked })}
+														/>
+													</div>
+													<div className="flex items-center justify-between">
+														<Label>
+															<Trans>Alert on recovery</Trans>
+														</Label>
+														<Switch
+															checked={schedule.alertOnRecover}
+															onCheckedChange={(checked) => setSchedule({ ...schedule, alertOnRecover: !!checked })}
+														/>
+													</div>
+												</div>
+												<div className="grid gap-2 text-sm text-muted-foreground">
+													<div>
+														<Trans>Last run</Trans>: {schedule.lastRunAt ? formatShortDate(schedule.lastRunAt) : "-"}
+													</div>
+													<div>
+														<Trans>Next run</Trans>: {schedule.nextRunAt ? formatShortDate(schedule.nextRunAt) : "-"}
+													</div>
+													{schedule.lastError && (
+														<div className="text-destructive">
+															<Trans>Last error</Trans>: {schedule.lastError}
+														</div>
+													)}
+												</div>
+												<div className="flex flex-wrap gap-2">
+													<Button onClick={saveSchedule} disabled={saving}>
+														<Trans>Save</Trans>
+													</Button>
+													<Button variant="outline" onClick={handleRunAll}>
+														<PlayIcon className="me-2 h-4 w-4" />
+														<Trans>Run Now</Trans>
+													</Button>
+												</div>
+											</>
+										) : (
+											<div className="text-sm text-muted-foreground">
+												<Trans>Loading schedule...</Trans>
+											</div>
 										)}
-										{runs.map((record) => (
-											<TableRow key={record.id}>
-												<TableCell>
-													{record.success ? <Badge variant="success">OK</Badge> : <Badge variant="danger">Fail</Badge>}
-												</TableCell>
-												<TableCell>{caseNameById.get(record.caseId) ?? record.caseId}</TableCell>
-												<TableCell>
-													<Badge variant="outline" className="font-mono font-normal">
-														{formatDuration(record.durationMs)}
-													</Badge>
-												</TableCell>
-												<TableCell>{record.source}</TableCell>
-												<TableCell>{record.created ? formatShortDate(record.created) : "-"}</TableCell>
-												<TableCell className="max-w-[240px] truncate">{record.error || "-"}</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</div>
-						</TabsContent>
-					</Tabs>
+									</div>
+								</Card>
+							</TabsContent>
+							<TabsContent value="history" className="mt-4 animate-fade-in duration-300">
+								<Card className="p-4">
+									<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+										<div className="text-sm font-semibold">
+											<Trans>History</Trans>
+										</div>
+										<div className="flex flex-wrap items-center gap-2">
+											<Select
+												value={toFilterSelectValue(historyCollectionId)}
+												onValueChange={(value) => setHistoryCollectionId(fromFilterSelectValue(value))}
+											>
+												<SelectTrigger className="min-w-[160px]">
+													<SelectValue placeholder={t`All collections`} />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value={ALL_FILTER_VALUE}>
+														<Trans>All collections</Trans>
+													</SelectItem>
+													{collections.map((record) => (
+														<SelectItem key={record.id} value={record.id}>
+															{record.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<Select
+												value={toFilterSelectValue(historyCaseId)}
+												onValueChange={(value) => setHistoryCaseId(fromFilterSelectValue(value))}
+												disabled={historyCases.length === 0}
+											>
+												<SelectTrigger className="min-w-[180px]">
+													<SelectValue placeholder={t`All cases`} />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value={ALL_FILTER_VALUE}>
+														<Trans>All cases</Trans>
+													</SelectItem>
+													{historyCases.map((record) => (
+														<SelectItem key={record.id} value={record.id}>
+															{record.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</div>
+									</div>
+									<div className="mt-3 max-h-[360px] overflow-auto rounded-md border">
+										<Table>
+											<TableHeader>
+												<TableRow>
+													<TableHead>
+														<Trans>Status</Trans>
+													</TableHead>
+													<TableHead>
+														<Trans>Case</Trans>
+													</TableHead>
+													<TableHead>
+														<Trans>Duration</Trans>
+													</TableHead>
+													<TableHead>
+														<Trans>Source</Trans>
+													</TableHead>
+													<TableHead>
+														<Trans>Time</Trans>
+													</TableHead>
+													<TableHead>
+														<Trans>Error</Trans>
+													</TableHead>
+												</TableRow>
+											</TableHeader>
+											<TableBody>
+												{runs.length === 0 && (
+													<TableRow>
+														<TableCell colSpan={6} className="text-center text-muted-foreground">
+															<Trans>No history yet</Trans>
+														</TableCell>
+													</TableRow>
+												)}
+												{runs.map((record) => (
+													<TableRow key={record.id}>
+														<TableCell>
+															{record.success ? (
+																<Badge variant="success">
+																	<Trans>Success</Trans>
+																</Badge>
+															) : (
+																<Badge variant="danger">
+																	<Trans>Failed</Trans>
+																</Badge>
+															)}
+														</TableCell>
+														<TableCell>{caseNameById.get(record.caseId) ?? record.caseId}</TableCell>
+														<TableCell>
+															<Badge variant="outline" className="font-mono font-normal">
+																{formatDuration(record.durationMs)}
+															</Badge>
+														</TableCell>
+														<TableCell>{formatRunSource(record.source)}</TableCell>
+														<TableCell>{record.created ? formatShortDate(record.created) : "-"}</TableCell>
+														<TableCell className="max-w-[240px] truncate">{record.error || "-"}</TableCell>
+													</TableRow>
+												))}
+											</TableBody>
+										</Table>
+									</div>
+								</Card>
+							</TabsContent>
+						</Tabs>
+					</div>
 				</Card>
 			</div>
 
@@ -1565,7 +1817,6 @@ export default memo(function ApiTestsPage() {
 									/>
 								</div>
 							</TabsContent>
-
 						</Tabs>
 					</div>
 					<DialogFooter>
@@ -1574,6 +1825,97 @@ export default memo(function ApiTestsPage() {
 						</Button>
 						<Button onClick={saveCase} disabled={saving}>
 							<Trans>Save</Trans>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog
+				open={runResultOpen}
+				onOpenChange={(open) => {
+					setRunResultOpen(open)
+					if (!open) {
+						setRunResult(null)
+					}
+				}}
+			>
+				<DialogContent className="max-w-2xl max-h-[85vh] overflow-auto">
+					<DialogHeader className="space-y-2">
+						<div className="flex items-center justify-between gap-2">
+							<DialogTitle>
+								<Trans>Run result</Trans>
+							</DialogTitle>
+							{runResult && (
+								<Badge
+									variant="outline"
+									className={cn(
+										"border-transparent",
+										runResult.success
+											? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+											: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
+									)}
+								>
+									{runResult.success ? <Trans>Success</Trans> : <Trans>Failed</Trans>}
+								</Badge>
+							)}
+						</div>
+						<div className="text-sm text-muted-foreground truncate">{runResult?.name || "-"}</div>
+					</DialogHeader>
+					<div className="grid gap-4">
+						<div className="grid gap-3 md:grid-cols-3">
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Status</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">
+									{runResult?.status ? runResult.status : "-"}
+								</div>
+							</div>
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Duration</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">
+									{runResult ? formatDurationMs(runResult.durationMs) : "-"}
+								</div>
+							</div>
+							<div className="rounded-lg border bg-muted/30 p-3">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Time</Trans>
+								</div>
+								<div className="mt-2 text-sm font-medium">
+									{runResult?.runAt ? formatShortDate(runResult.runAt) : "-"}
+								</div>
+							</div>
+						</div>
+
+						{runResult?.error ? (
+							<div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive whitespace-pre-wrap">
+								<div className="text-xs text-muted-foreground">
+									<Trans>Error</Trans>
+								</div>
+								<div className="mt-2">{runResult.error}</div>
+							</div>
+						) : null}
+
+						<div className="grid gap-2">
+							<div className="text-xs text-muted-foreground">
+								<Trans>Response snippet</Trans>
+							</div>
+							{runResult?.responseSnippet ? (
+								<pre className="max-h-64 overflow-auto rounded-lg border bg-muted/30 p-3 text-xs whitespace-pre-wrap text-muted-foreground">
+									{runResult.responseSnippet}
+								</pre>
+							) : (
+								<div className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+									<Trans>No details available.</Trans>
+								</div>
+							)}
+						</div>
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setRunResultOpen(false)}>
+							<Trans>Close</Trans>
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -1611,7 +1953,9 @@ export default memo(function ApiTestsPage() {
 									{caseDetailRecord ? (
 										<CaseStatusBadge record={caseDetailRecord} />
 									) : (
-										<Badge variant="secondary">Unknown</Badge>
+										<Badge variant="secondary">
+											<Trans>Unknown</Trans>
+										</Badge>
 									)}
 								</div>
 							</div>
