@@ -153,7 +153,7 @@ function getNodeColor(kind?: StageKind) {
 	return "text-primary border-primary/30 bg-primary/10"
 }
 
-const LANE_GAP = 210
+const LANE_GAP = 280
 const COLUMN_GAP = 230
 const ROW_GAP = 78
 
