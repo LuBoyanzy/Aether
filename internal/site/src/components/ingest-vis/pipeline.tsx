@@ -137,12 +137,12 @@ const STAGE_EDGES: StageEdge[] = [
 	{ from: "minio.task.end", to: "infer.request", kind: "primary" },
 	{ from: "minio.task.end", to: "minio.task.retry", kind: "exception" },
 	{ from: "minio.task.retry", to: "minio.task.start", kind: "exception" },
-	{ from: "minio.task.end", to: "minio.query.prepare", kind: "branch" },
 
 	{ from: "minio.task.submit", to: "minio.task.locked", kind: "exception" },
 	{ from: "minio.task.submit", to: "minio.task.skip", kind: "exception" },
 	{ from: "minio.task.submit", to: "minio.task.not_found", kind: "exception" },
 
+	// 查询分支：查询准备 -> 推理请求 -> 查询执行
 	{ from: "minio.query.prepare", to: "infer.request", kind: "branch" },
 	{ from: "infer.request", to: "minio.query.execute", kind: "branch" },
 ]
@@ -171,20 +171,24 @@ function buildLayout() {
 		"mq.preprocess_message.ack": { col: 2, lane: "primary" },
 		"mq.preprocess_message.nack": { col: 2, lane: "exception" },
 		"minio.message.validate": { col: 3, lane: "primary" },
-		"minio.ingest.skip": { col: 4, lane: "branch" },
+		// 分支泳道：查询准备、智能跳过、仅上传 并列在同一列
+		"minio.query.prepare": { col: 4, lane: "branch", row: 0 },
+		"minio.ingest.skip": { col: 4, lane: "branch", row: 1 },
+		"minio.upload_only.execute": { col: 4, lane: "branch", row: 2 },
+		// 主线任务流程
 		"minio.task.submit": { col: 4, lane: "primary" },
 		"minio.task.locked": { col: 4, lane: "exception", row: 0 },
 		"minio.task.skip": { col: 4, lane: "exception", row: 1 },
 		"minio.task.not_found": { col: 4, lane: "exception", row: 2 },
-		"minio.upload_only.execute": { col: 5, lane: "branch" },
 		"minio.task.start": { col: 5, lane: "primary" },
 		"minio.message.handle": { col: 5, lane: "exception", row: 3 },
 		"minio.task.end": { col: 6, lane: "primary" },
 		"minio.task.retry": { col: 6, lane: "exception", row: 4 },
-		"minio.query.prepare": { col: 7, lane: "branch" },
-		"infer.request": { col: 8, lane: "primary" },
-		"minio.query.execute": { col: 9, lane: "branch" },
-		other: { col: 10, lane: "exception", row: 0 },
+		// 推理请求（入库和查询共用）
+		"infer.request": { col: 7, lane: "primary" },
+		// 查询执行放在推理请求后面
+		"minio.query.execute": { col: 8, lane: "branch", row: 0 },
+		other: { col: 9, lane: "exception", row: 0 },
 	}
 
 	const baseNodes: Node<PipelineNodeData>[] = STAGE_NODES.map((node) => {
@@ -222,16 +226,26 @@ function buildLayout() {
 		const dy = sourcePos && targetPos ? targetPos.y - sourcePos.y : 0
 		let sourceHandle = "source-right"
 		let targetHandle = "target-left"
-		// 特殊处理：从下方出发的边
-		const bottomSourceEdges: Array<[IngestPipelineStage, IngestPipelineStage]> = [
-			["minio.message.validate", "mq.preprocess_message.nack"], // 消息校验 -> MQ拒收
-			["minio.task.submit", "minio.task.locked"], // 任务提交 -> 任务锁定
-			["minio.task.submit", "minio.task.skip"], // 任务提交 -> 状态跳过
-			["minio.task.submit", "minio.task.not_found"], // 任务提交 -> 任务不存在
-		]
-		if (bottomSourceEdges.some(([from, to]) => edge.from === from && edge.to === to)) {
-			sourceHandle = "source-bottom"
-			targetHandle = "target-left"
+		// 特殊处理：自定义连接点的边
+		const customHandleEdges: Record<string, { source: string; target: string }> = {
+			// 从下方出发的边
+			"minio.message.validate->mq.preprocess_message.nack": { source: "source-bottom", target: "target-right" },
+			"minio.task.submit->minio.task.locked": { source: "source-bottom", target: "target-left" },
+			"minio.task.submit->minio.task.skip": { source: "source-bottom", target: "target-left" },
+			"minio.task.submit->minio.task.not_found": { source: "source-bottom", target: "target-left" },
+			// 消息校验到分支泳道的边（从上方出发，分叉到三个并列节点）
+			"minio.message.validate->minio.query.prepare": { source: "source-top", target: "target-left" },
+			"minio.message.validate->minio.ingest.skip": { source: "source-top", target: "target-left" },
+			"minio.message.validate->minio.upload_only.execute": { source: "source-top", target: "target-left" },
+			// 查询分支：查询准备 -> 推理请求 -> 查询执行
+			"minio.query.prepare->infer.request": { source: "source-right", target: "target-top" },
+			"infer.request->minio.query.execute": { source: "source-top", target: "target-left" },
+		}
+		const edgeKey = `${edge.from}->${edge.to}`
+		const customHandle = customHandleEdges[edgeKey]
+		if (customHandle) {
+			sourceHandle = customHandle.source
+			targetHandle = customHandle.target
 		} else if (dx < -10) {
 			sourceHandle = "source-left"
 			targetHandle = "target-right"
