@@ -222,7 +222,11 @@ function buildLayout() {
 		const dy = sourcePos && targetPos ? targetPos.y - sourcePos.y : 0
 		let sourceHandle = "source-right"
 		let targetHandle = "target-left"
-		if (dx < -10) {
+		// 特殊处理：消息校验 -> MQ拒收，从下方出发
+		if (edge.from === "minio.message.validate" && edge.to === "mq.preprocess_message.nack") {
+			sourceHandle = "source-bottom"
+			targetHandle = "target-right"
+		} else if (dx < -10) {
 			sourceHandle = "source-left"
 			targetHandle = "target-right"
 		} else if (Math.abs(dy) > 30 && Math.abs(dx) < 80) {
