@@ -222,10 +222,16 @@ function buildLayout() {
 		const dy = sourcePos && targetPos ? targetPos.y - sourcePos.y : 0
 		let sourceHandle = "source-right"
 		let targetHandle = "target-left"
-		// 特殊处理：消息校验 -> MQ拒收，从下方出发
-		if (edge.from === "minio.message.validate" && edge.to === "mq.preprocess_message.nack") {
+		// 特殊处理：从下方出发的边
+		const bottomSourceEdges: Array<[IngestPipelineStage, IngestPipelineStage]> = [
+			["minio.message.validate", "mq.preprocess_message.nack"], // 消息校验 -> MQ拒收
+			["minio.task.submit", "minio.task.locked"], // 任务提交 -> 任务锁定
+			["minio.task.submit", "minio.task.skip"], // 任务提交 -> 状态跳过
+			["minio.task.submit", "minio.task.not_found"], // 任务提交 -> 任务不存在
+		]
+		if (bottomSourceEdges.some(([from, to]) => edge.from === from && edge.to === to)) {
 			sourceHandle = "source-bottom"
-			targetHandle = "target-right"
+			targetHandle = "target-left"
 		} else if (dx < -10) {
 			sourceHandle = "source-left"
 			targetHandle = "target-right"
