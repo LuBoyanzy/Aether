@@ -37,7 +37,6 @@ export type IngestPipelineStage =
 	| "mq.preprocess_message.ack"
 	| "mq.preprocess_message.nack"
 	| "mq.preprocess_message.parse"
-	| "minio.message.validate"
 	| "minio.message.handle"
 	| "minio.task.submit"
 	| "minio.task.start"
@@ -95,7 +94,6 @@ const STAGE_NODES: StageNode[] = [
 	{ key: "mq.preprocess_message.parse", label: "MQ 解析失败", kind: "exception", icon: AlertCircle },
 	{ key: "mq.preprocess_message.nack", label: "MQ 拒收", kind: "exception", icon: CircleDashed },
 
-	{ key: "minio.message.validate", label: "消息校验", kind: "primary", icon: ShieldCheck },
 	{ key: "minio.message.handle", label: "消息异常", kind: "exception", icon: AlertCircle },
 
 	{ key: "minio.ingest.skip", label: "智能跳过", kind: "branch", icon: SkipForward },
@@ -121,15 +119,15 @@ const STAGE_EDGES: StageEdge[] = [
 	{ from: "mq.preprocess_message.consume", to: "mq.preprocess_message.validate", kind: "primary" },
 	{ from: "mq.preprocess_message.consume", to: "mq.preprocess_message.parse", kind: "exception" },
 	{ from: "mq.preprocess_message.parse", to: "mq.preprocess_message.nack", kind: "exception" },
-	{ from: "mq.preprocess_message.validate", to: "minio.message.validate", kind: "primary" },
+	{ from: "mq.preprocess_message.validate", to: "minio.task.submit", kind: "primary" },
 	{ from: "mq.preprocess_message.validate", to: "mq.preprocess_message.nack", kind: "exception" },
-	{ from: "minio.message.validate", to: "mq.preprocess_message.nack", kind: "exception" },
-	{ from: "minio.message.validate", to: "minio.task.submit", kind: "primary" },
-	{ from: "minio.message.validate", to: "minio.ingest.skip", kind: "branch" },
-	{ from: "minio.message.validate", to: "minio.upload_only.execute", kind: "branch" },
-	{ from: "minio.message.validate", to: "minio.query.prepare", kind: "branch" },
 	{ from: "minio.task.start", to: "minio.message.handle", kind: "exception" },
 	{ from: "minio.message.handle", to: "mq.preprocess_message.nack", kind: "exception" },
+
+	// 任务提交到分支泳道
+	{ from: "minio.task.submit", to: "minio.ingest.skip", kind: "branch" },
+	{ from: "minio.task.submit", to: "minio.upload_only.execute", kind: "branch" },
+	{ from: "minio.task.submit", to: "minio.query.prepare", kind: "branch" },
 
 	{ from: "minio.task.submit", to: "minio.task.start", kind: "primary" },
 	{ from: "minio.task.start", to: "minio.task.end", kind: "primary" },
@@ -168,31 +166,30 @@ const LANE_OFFSET: Record<StageKind, number> = {
 
 function buildLayout() {
 	const layoutMap: Record<IngestPipelineStage, { col: number; lane: StageKind; row?: number }> = {
+		// MQ 阶段
 		"mq.preprocess_message.consume": { col: 0, lane: "primary" },
 		"mq.preprocess_message.validate": { col: 1, lane: "primary" },
-		"mq.preprocess_message.parse": { col: 1, lane: "exception" },
-		"mq.preprocess_message.nack": { col: 2, lane: "exception" },
-		"minio.message.validate": { col: 2, lane: "primary" },
-		// 分支泳道：查询准备、智能跳过、仅上传 并列在同一列
-		"minio.query.prepare": { col: 3, lane: "branch", row: 0 },
-		"minio.ingest.skip": { col: 3, lane: "branch", row: 1 },
-		"minio.upload_only.execute": { col: 3, lane: "branch", row: 2 },
+		"mq.preprocess_message.parse": { col: 0, lane: "exception", row: 0 },
+		"mq.preprocess_message.nack": { col: 1, lane: "exception", row: 0 },
 		// 主线任务流程
-		"minio.task.submit": { col: 3, lane: "primary" },
-		"minio.task.locked": { col: 3, lane: "exception", row: 0 },
-		"minio.task.skip": { col: 3, lane: "exception", row: 1 },
-		"minio.task.not_found": { col: 3, lane: "exception", row: 2 },
-		"minio.task.start": { col: 4, lane: "primary" },
-		"minio.message.handle": { col: 4, lane: "exception", row: 3 },
-		"minio.task.end": { col: 5, lane: "primary" },
-		"minio.task.retry": { col: 5, lane: "exception", row: 4 },
-		// 推理请求（入库和查询共用）
-		"infer.request": { col: 6, lane: "primary" },
+		"minio.task.submit": { col: 2, lane: "primary" },
+		"minio.task.start": { col: 3, lane: "primary" },
+		"minio.task.end": { col: 4, lane: "primary" },
+		"infer.request": { col: 5, lane: "primary" },
+		"mq.preprocess_message.ack": { col: 6, lane: "primary" },
+		// 分支泳道：查询准备、智能跳过、仅上传 并列在同一列
+		"minio.query.prepare": { col: 2, lane: "branch", row: 0 },
+		"minio.ingest.skip": { col: 2, lane: "branch", row: 1 },
+		"minio.upload_only.execute": { col: 2, lane: "branch", row: 2 },
 		// 查询执行放在推理请求后面
-		"minio.query.execute": { col: 7, lane: "branch", row: 0 },
-		// MQ 确认放在最后（处理完成后确认）
-		"mq.preprocess_message.ack": { col: 8, lane: "primary" },
-		other: { col: 9, lane: "exception", row: 0 },
+		"minio.query.execute": { col: 6, lane: "branch", row: 0 },
+		// 异常泳道
+		"minio.task.locked": { col: 2, lane: "exception", row: 0 },
+		"minio.task.skip": { col: 2, lane: "exception", row: 1 },
+		"minio.task.not_found": { col: 2, lane: "exception", row: 2 },
+		"minio.message.handle": { col: 3, lane: "exception", row: 3 },
+		"minio.task.retry": { col: 4, lane: "exception", row: 0 },
+		other: { col: 6, lane: "exception", row: 0 },
 	}
 
 	const baseNodes: Node<PipelineNodeData>[] = STAGE_NODES.map((node) => {
@@ -232,17 +229,18 @@ function buildLayout() {
 		let targetHandle = "target-left"
 		// 特殊处理：自定义连接点的边
 		const customHandleEdges: Record<string, { source: string; target: string }> = {
-			// 从下方出发的边
-			"minio.message.validate->mq.preprocess_message.nack": { source: "source-bottom", target: "target-left" },
+			// MQ消费到MQ解析失败：垂直直线
+			"mq.preprocess_message.consume->mq.preprocess_message.parse": { source: "source-bottom", target: "target-top" },
+			// 任务提交到异常泳道（从下方出发）
 			"minio.task.submit->minio.task.locked": { source: "source-bottom", target: "target-left" },
 			"minio.task.submit->minio.task.skip": { source: "source-bottom", target: "target-left" },
 			"minio.task.submit->minio.task.not_found": { source: "source-bottom", target: "target-left" },
-			// 消息异常到MQ拒收：从底部出发，到底部进入，绕开中间节点
+			// 消息异常到MQ拒收：从底部出发，到底部进入，从下方绕行
 			"minio.message.handle->mq.preprocess_message.nack": { source: "source-bottom", target: "target-bottom" },
-			// 消息校验到分支泳道的边（从上方出发，分叉到三个并列节点）
-			"minio.message.validate->minio.query.prepare": { source: "source-top", target: "target-left" },
-			"minio.message.validate->minio.ingest.skip": { source: "source-top", target: "target-left" },
-			"minio.message.validate->minio.upload_only.execute": { source: "source-top", target: "target-left" },
+			// 任务提交到分支泳道的边（从上方出发，分叉到三个并列节点）
+			"minio.task.submit->minio.query.prepare": { source: "source-top", target: "target-left" },
+			"minio.task.submit->minio.ingest.skip": { source: "source-top", target: "target-left" },
+			"minio.task.submit->minio.upload_only.execute": { source: "source-top", target: "target-left" },
 			// 查询分支：查询准备 -> 推理请求 -> 查询执行
 			"minio.query.prepare->infer.request": { source: "source-right", target: "target-top" },
 			"infer.request->minio.query.execute": { source: "source-top", target: "target-left" },

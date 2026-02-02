@@ -37,8 +37,6 @@ function pipelineNodeFromEvent(e: Pick<IngestVisEvent, "action" | "outcome" | "i
 			return "mq.preprocess_message.nack"
 		case "mq.preprocess_message.parse":
 			return "mq.preprocess_message.parse"
-		case "minio.message.validate":
-			return "minio.message.validate"
 		case "minio.message.handle":
 			return "minio.message.handle"
 		case "minio.task.submit":
@@ -100,8 +98,6 @@ function pipelineLabel(node: IngestPipelineStage): string {
 			return "MQ：拒收"
 		case "mq.preprocess_message.parse":
 			return "MQ：解析失败"
-		case "minio.message.validate":
-			return "MinIO：消息校验"
 		case "minio.message.handle":
 			return "MinIO：消息异常"
 		case "minio.task.submit":
@@ -774,94 +770,98 @@ export default memo(() => {
 						if (!open) setPlaying(false)
 					}}
 				>
-					<DialogContent className="max-w-5xl">
-						<DialogHeader>
-							<DialogTitle>流水线回放</DialogTitle>
-							<DialogDescription>
-								{replayItemCode.trim() ? (
-									<span className="font-mono text-xs">
-										itemCode={replayItemCode.trim()}
-										{replayTraceId.trim() ? ` · traceId=${replayTraceId.trim()}` : ""}
-									</span>
-								) : (
-									<span>请先查询并输入 itemCode</span>
-								)}
-							</DialogDescription>
-						</DialogHeader>
-
-						<div className="grid gap-4">
-							<IngestPipeline tokens={replayPipelineTokens} className="h-[260px]" />
-
-							<div className="flex flex-wrap items-center gap-2">
-								<Button variant="outline" onClick={() => setPlaying((v) => !v)} disabled={!events.length}>
-									{playing ? <PauseCircleIcon className="me-2 h-4 w-4" /> : <PlayCircleIcon className="me-2 h-4 w-4" />}
-									{playing ? "暂停" : "播放"}
-								</Button>
-								<Button
-									variant="outline"
-									onClick={() => {
-										setCursor(0)
-										setPlaying(false)
-									}}
-									disabled={!events.length}
-								>
-									重置
-								</Button>
-								<div className="flex items-center gap-2">
-									<Label className="text-muted-foreground">倍速</Label>
-									<Select value={String(speed)} onValueChange={(v) => setSpeed(Number(v) as 0.5 | 1 | 2 | 4)}>
-										<SelectTrigger className="w-28">
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="0.5">0.5x</SelectItem>
-											<SelectItem value="1">1x</SelectItem>
-											<SelectItem value="2">2x</SelectItem>
-											<SelectItem value="4">4x</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-								<Badge variant="secondary">当前阶段：{pipelineLabel(currentPipelineNode)}</Badge>
-								<Badge variant="secondary">进度：{events.length ? `${cursor + 1}/${events.length}` : "0/0"}</Badge>
-							</div>
-
-							<Card>
-								<CardHeader className="pb-3">
-									<CardTitle className="text-base">当前事件</CardTitle>
-								</CardHeader>
-								<CardContent className="grid gap-2 text-sm">
-									{currentEvent ? (
-										<>
-											<div className="flex flex-wrap items-center gap-2">
-												<Badge variant="outline" className="font-mono text-xs">
-													{formatTs(currentEvent.timestamp)}
-												</Badge>
-												<Badge variant="outline" className="text-xs">
-													{currentEvent.service}
-												</Badge>
-												<Badge
-													variant={
-														currentEvent.outcome === "failure"
-															? "danger"
-															: currentEvent.outcome === "success"
-																? "success"
-																: "secondary"
-													}
-													className="text-xs"
-												>
-													{currentEvent.outcome}
-												</Badge>
-											</div>
-											<div className="font-mono text-xs break-all">{currentEvent.action}</div>
-											<div className="text-xs text-muted-foreground break-words">
-												{currentEvent.message || currentEvent.errorMessage || "-"}
-											</div>
-										</>
+					<DialogContent className="h-[92vh] w-[96vw] max-w-[96vw] overflow-hidden p-0">
+						<div className="flex h-full flex-col">
+							<DialogHeader className="px-6 pb-3 pt-6">
+								<DialogTitle>流水线回放</DialogTitle>
+								<DialogDescription>
+									{replayItemCode.trim() ? (
+										<span className="font-mono text-xs">
+											itemCode={replayItemCode.trim()}
+											{replayTraceId.trim() ? ` · traceId=${replayTraceId.trim()}` : ""}
+										</span>
 									) : (
-										<div className="text-sm text-muted-foreground">暂无事件</div>
+										<span>请先查询并输入 itemCode</span>
 									)}
-								</CardContent>
-							</Card>
+								</DialogDescription>
+							</DialogHeader>
+
+							<div className="flex-1 overflow-auto px-6 pb-6">
+								<div className="grid gap-4">
+									<IngestPipeline tokens={replayPipelineTokens} className="h-[60vh]" />
+
+									<div className="flex flex-wrap items-center gap-2">
+										<Button variant="outline" onClick={() => setPlaying((v) => !v)} disabled={!events.length}>
+											{playing ? <PauseCircleIcon className="me-2 h-4 w-4" /> : <PlayCircleIcon className="me-2 h-4 w-4" />}
+											{playing ? "暂停" : "播放"}
+										</Button>
+										<Button
+											variant="outline"
+											onClick={() => {
+												setCursor(0)
+												setPlaying(false)
+											}}
+											disabled={!events.length}
+										>
+											重置
+										</Button>
+										<div className="flex items-center gap-2">
+											<Label className="text-muted-foreground">倍速</Label>
+											<Select value={String(speed)} onValueChange={(v) => setSpeed(Number(v) as 0.5 | 1 | 2 | 4)}>
+												<SelectTrigger className="w-28">
+													<SelectValue />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="0.5">0.5x</SelectItem>
+													<SelectItem value="1">1x</SelectItem>
+													<SelectItem value="2">2x</SelectItem>
+													<SelectItem value="4">4x</SelectItem>
+												</SelectContent>
+											</Select>
+										</div>
+										<Badge variant="secondary">当前阶段：{pipelineLabel(currentPipelineNode)}</Badge>
+										<Badge variant="secondary">进度：{events.length ? `${cursor + 1}/${events.length}` : "0/0"}</Badge>
+									</div>
+
+									<Card>
+										<CardHeader className="pb-3">
+											<CardTitle className="text-base">当前事件</CardTitle>
+										</CardHeader>
+										<CardContent className="grid gap-2 text-sm">
+											{currentEvent ? (
+												<>
+													<div className="flex flex-wrap items-center gap-2">
+														<Badge variant="outline" className="font-mono text-xs">
+															{formatTs(currentEvent.timestamp)}
+														</Badge>
+														<Badge variant="outline" className="text-xs">
+															{currentEvent.service}
+														</Badge>
+														<Badge
+															variant={
+																currentEvent.outcome === "failure"
+																	? "danger"
+																	: currentEvent.outcome === "success"
+																		? "success"
+																		: "secondary"
+															}
+															className="text-xs"
+														>
+															{currentEvent.outcome}
+														</Badge>
+													</div>
+													<div className="font-mono text-xs break-all">{currentEvent.action}</div>
+													<div className="text-xs text-muted-foreground break-words">
+														{currentEvent.message || currentEvent.errorMessage || "-"}
+													</div>
+												</>
+											) : (
+												<div className="text-sm text-muted-foreground">暂无事件</div>
+											)}
+										</CardContent>
+									</Card>
+								</div>
+							</div>
 						</div>
 					</DialogContent>
 				</Dialog>
