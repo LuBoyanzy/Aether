@@ -86,6 +86,8 @@ type PipelineNodeData = {
 	active?: boolean
 }
 
+type PipelineNodeType = Node<PipelineNodeData, "pipeline">
+
 const STAGE_NODES: StageNode[] = [
 	{ key: "mq.preprocess_message.consume", label: "MQ 消费", kind: "primary", icon: MessageSquare },
 	{ key: "mq.preprocess_message.validate", label: "MQ 校验", kind: "primary", icon: ShieldCheck },
@@ -151,8 +153,6 @@ function getNodeColor(kind?: StageKind) {
 	return "text-primary border-primary/30 bg-primary/10"
 }
 
-const NODE_WIDTH = 170
-const NODE_HEIGHT = 58
 const LANE_GAP = 210
 const COLUMN_GAP = 230
 const ROW_GAP = 78
@@ -184,7 +184,7 @@ function buildLayout() {
 		"minio.query.prepare": { col: 7, lane: "branch" },
 		"infer.request": { col: 8, lane: "primary" },
 		"minio.query.execute": { col: 9, lane: "branch" },
-		"other": { col: 10, lane: "exception", row: 0 },
+		other: { col: 10, lane: "exception", row: 0 },
 	}
 
 	const baseNodes: Node<PipelineNodeData>[] = STAGE_NODES.map((node) => {
@@ -269,7 +269,7 @@ function buildLayout() {
 	return { baseNodes, baseEdges }
 }
 
-function PipelineNode({ data }: NodeProps<PipelineNodeData>) {
+function PipelineNode({ data }: NodeProps<PipelineNodeType>) {
 	const Icon = data.icon
 	const isActive = data.active
 	const isFailure = data.status === "failure"
