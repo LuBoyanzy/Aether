@@ -15,6 +15,7 @@ import {
 	TestTube2 as TestTube2Icon,
 	UserIcon,
 	UsersIcon,
+	WorkflowIcon,
 } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -119,6 +120,21 @@ export default function Navbar() {
 						<p>
 							<Trans>Audit Logs</Trans>
 						</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "ingest_visualization")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label="入库服务可视化"
+							onMouseEnter={runOnce(() => import("@/components/routes/ingest-visualization"))}
+						>
+							<WorkflowIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>入库服务可视化</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>

@@ -5,6 +5,7 @@ const routes = {
 	containers: "/containers",
 	audit_logs: "/audit-logs",
 	api_tests: "/api-tests",
+	ingest_visualization: "/ingest-visualization",
 	smart: "/smart",
 	system: `/system/:id`,
 	settings: `/settings/:name?`,

@@ -34,6 +34,7 @@ type Hub struct {
 	um     *users.UserManager
 	rm     *records.RecordManager
 	sm     *systems.SystemManager
+	ingest *ingestVisService
 	pubKey string
 	signer ssh.Signer
 	appURL string
@@ -48,6 +49,7 @@ func NewHub(app core.App) *Hub {
 	hub.um = users.NewUserManager(hub)
 	hub.rm = records.NewRecordManager(hub)
 	hub.sm = systems.NewSystemManager(hub)
+	hub.ingest = newIngestVisService(hub)
 	hub.appURL, _ = GetEnv("APP_URL")
 	return hub
 }
@@ -450,6 +452,13 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiTestsGroup.POST("/run-collection", h.runApiTestCollection)
 	apiTestsGroup.POST("/run-all", h.runAllApiTests)
 	apiTestsGroup.GET("/runs", h.listApiTestRuns)
+
+	// ingest visualization (ELK/ES-based)
+	ingestGroup := apiAuth.Group("/ingest-vis")
+	ingestGroup.GET("/runs", h.getIngestVisRuns)
+	ingestGroup.GET("/events", h.getIngestVisEvents)
+	ingestGroup.GET("/cache/status", h.getIngestVisCacheStatus)
+	ingestGroup.POST("/cache/clear", h.clearIngestVisCache)
 	return nil
 }
 
