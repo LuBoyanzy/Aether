@@ -56,11 +56,12 @@ type ingestVisService struct {
 }
 
 type ingestVisRunState struct {
-	itemCode  string
-	traceId   string
-	stage     string
-	status    string
-	lastEvent ingestVisEventDTO
+	itemCode   string
+	traceId    string
+	stage      string
+	status     string
+	lastEvent  ingestVisEventDTO
+	hadFailure bool // 链路中是否出现过 failure（用于最终状态判定）
 
 	lastSeenAt time.Time
 	expiresAt  time.Time
@@ -348,8 +349,17 @@ func (s *ingestVisService) pollOnce(ctx context.Context) {
 			s.runs[runKey] = rs
 		}
 
-		rs.stage = stage
-		rs.status = status
+		if e.Outcome == "failure" {
+			rs.hadFailure = true
+		}
+
+		if rs.hadFailure {
+			rs.stage = "trash"
+			rs.status = "failure"
+		} else {
+			rs.stage = stage
+			rs.status = status
+		}
 		rs.lastEvent = e
 		rs.lastSeenAt = ts
 		rs.expiresAt = now.Add(s.cfg.CacheTTL)
@@ -658,6 +668,8 @@ func ingestStageForEvent(e ingestVisEventDTO) string {
 		return "out"
 	}
 	switch {
+	case e.Action == "mq.preprocess_message.ack":
+		return "minio"
 	case strings.HasPrefix(e.Action, "mq."):
 		return "mq"
 	case strings.HasPrefix(e.Action, "minio."):
