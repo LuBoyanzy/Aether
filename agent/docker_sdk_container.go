@@ -136,7 +136,7 @@ func (dm *dockerSDKManager) OperateContainer(containerID, operation, signal stri
 		return errors.New("container id is required")
 	}
 	op := strings.ToLower(strings.TrimSpace(operation))
-	ctx, cancel := dm.newTimeoutContext()
+	ctx, cancel := dm.newOperateTimeoutContext()
 	defer cancel()
 
 	switch op {

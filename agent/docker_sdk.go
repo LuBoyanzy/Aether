@@ -14,9 +14,10 @@ import (
 
 // dockerSDKManager 管理 Docker SDK 客户端。
 type dockerSDKManager struct {
-	client  *client.Client
-	host    string
-	timeout time.Duration
+	client         *client.Client
+	host           string
+	timeout        time.Duration
+	operateTimeout time.Duration
 }
 
 // getDockerSDK 返回可用的 Docker SDK 管理器或初始化错误。
@@ -62,10 +63,24 @@ func newDockerSDKManager() (*dockerSDKManager, error) {
 		timeout = parsed
 	}
 
+	operateTimeout := timeout
+	if operateTimeout <= 0 || operateTimeout < 30*time.Second {
+		operateTimeout = 30 * time.Second
+	}
+	if t, set := GetEnv("DOCKER_OPERATE_TIMEOUT"); set {
+		parsed, parseErr := time.ParseDuration(t)
+		if parseErr != nil {
+			_ = cli.Close()
+			return nil, fmt.Errorf("invalid DOCKER_OPERATE_TIMEOUT: %w", parseErr)
+		}
+		operateTimeout = parsed
+	}
+
 	manager := &dockerSDKManager{
-		client:  cli,
-		host:    dockerHost,
-		timeout: timeout,
+		client:         cli,
+		host:           dockerHost,
+		timeout:        timeout,
+		operateTimeout: operateTimeout,
 	}
 	return manager, nil
 }
@@ -79,6 +94,17 @@ func (dm *dockerSDKManager) newTimeoutContext() (context.Context, context.Cancel
 		return context.WithTimeout(context.Background(), time.Millisecond*time.Duration(dockerTimeoutMs))
 	}
 	return context.WithTimeout(context.Background(), dm.timeout)
+}
+
+// newOperateTimeoutContext 创建用于“启停等容器操作”的带超时上下文。
+func (dm *dockerSDKManager) newOperateTimeoutContext() (context.Context, context.CancelFunc) {
+	if dm == nil {
+		return context.WithTimeout(context.Background(), 0)
+	}
+	if dm.operateTimeout <= 0 {
+		return dm.newTimeoutContext()
+	}
+	return context.WithTimeout(context.Background(), dm.operateTimeout)
 }
 
 // ensureAvailable 校验 Docker SDK 是否可用。
