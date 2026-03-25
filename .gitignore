@@ -27,6 +27,7 @@ agent/smartmontools/**
 !agent/smartmontools/.gitkeep
 dockerfile_agent_dev
 local-dev.sh
+local-dev.env
 local-dev.*.log
 local-dev.pids
 
