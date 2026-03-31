@@ -453,10 +453,12 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiTestsGroup.POST("/run-all", h.runAllApiTests)
 	apiTestsGroup.GET("/runs", h.listApiTestRuns)
 
-	// ingest monitor (product_info-based)
+	// ingest monitor (formal ingest + XXL batch runs)
 	ingestGroup := apiAuth.Group("/ingest-monitor")
 	ingestGroup.GET("/summary", h.getIngestMonitorSummary)
 	ingestGroup.GET("/detail", h.getIngestMonitorDetail)
+	ingestGroup.GET("/batches", h.getIngestMonitorBatches)
+	ingestGroup.GET("/batch-detail", h.getIngestMonitorBatchDetail)
 	return nil
 }
 

@@ -18,17 +18,21 @@ import (
 )
 
 const (
-	ingestMonitorDefaultPort        = 5432
-	ingestMonitorDefaultSSLMode     = "disable"
-	ingestMonitorRecentLimit        = 20
-	ingestMonitorFailureLimit       = 20
-	ingestMonitorQueryTimeout       = 10 * time.Second
-	ingestMonitorApplicationName    = "aether_ingest_monitor"
-	ingestMonitorFormalRecordType   = "formal_ingest"
-	ingestMonitorStatusSuccess      = "success"
-	ingestMonitorStatusFailure      = "failure"
-	ingestMonitorStatusPending      = "pending"
-	ingestMonitorStatusUnknown      = "unknown"
+	ingestMonitorDefaultPort      = 5432
+	ingestMonitorDefaultSSLMode   = "disable"
+	ingestMonitorRecentLimit      = 20
+	ingestMonitorFailureLimit     = 20
+	ingestMonitorQueryTimeout     = 10 * time.Second
+	ingestMonitorApplicationName  = "aether_ingest_monitor"
+	ingestMonitorFormalRecordType = "formal_ingest"
+	ingestMonitorStatusSuccess    = "success"
+	ingestMonitorStatusFailure    = "failure"
+	ingestMonitorStatusPending    = "pending"
+	ingestMonitorStatusUnknown    = "unknown"
+	ingestMonitorFormalFilter     = `
+WHERE COALESCE(is_deleted, false) = false
+	AND COALESCE(is_temporary, false) = false
+`
 	ingestMonitorSummaryStatusQuery = `
 SELECT
 	COUNT(*) FILTER (WHERE status = 'success') AS success,
@@ -45,12 +49,11 @@ FROM (
 				AND COALESCE(converted_file_path, '') <> ''
 				AND COALESCE(pc_address, '') <> ''
 				AND COALESCE(glb_address, '') <> '' THEN 'success'
-			WHEN is_complete = 2 THEN 'pending'
-			ELSE 'unknown'
+		WHEN is_complete = 2 THEN 'pending'
+		ELSE 'unknown'
 		END AS status
 	FROM product_info
-	WHERE COALESCE(is_deleted, false) = false
-		AND is_temporary = false
+` + ingestMonitorFormalFilter + `
 ) records
 `
 )
@@ -358,10 +361,8 @@ SELECT
 		WHEN is_complete = 2 THEN 'pending'
 		ELSE 'unknown'
 	END AS status
-FROM product_info
-WHERE COALESCE(is_deleted, false) = false
-	AND is_temporary = false
-`
+	FROM product_info
+` + ingestMonitorFormalFilter
 
 	args := []any{}
 	if statusFilter != "" {
@@ -426,8 +427,7 @@ SELECT
 		ELSE 'unknown'
 	END AS status
 FROM product_info
-WHERE COALESCE(is_deleted, false) = false
-	AND is_temporary = false
+`+ingestMonitorFormalFilter+`
 	AND item_code = $1
 ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 LIMIT 1

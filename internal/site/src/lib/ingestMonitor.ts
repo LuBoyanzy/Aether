@@ -47,6 +47,69 @@ export type IngestMonitorDetailResponse = {
 	item: IngestMonitorRecord
 }
 
+export type IngestMonitorBatch = {
+	batchRunId: string
+	sourceType: string
+	xxlJobId: string
+	xxlLogId: string
+	scanPaths: string[]
+	fileType?: number
+	batchSize: number
+	force: boolean
+	status: "pending" | "running" | "completed" | "failed" | string
+	errorMessage: string
+	scanStartedAt: string
+	scanFinishedAt: string
+	xxlScanElapsedSeconds?: number
+	finalIngestElapsedSeconds?: number
+	totalDirsScanned: number
+	totalFilesScanned: number
+	totalFilesFiltered: number
+	totalFilesProcessed: number
+	totalBatches: number
+	totalTracked: number
+	successCount: number
+	failureCount: number
+	pendingCount: number
+}
+
+export type IngestMonitorBatchItem = {
+	itemCode: string
+	cadNumber: string
+	fileName: string
+	processStatus: string
+	ingestStatus: "success" | "failure" | "pending" | "unknown"
+	productName: string
+	isComplete?: number
+	errorMsg: string
+	sourceFilePath: string
+	convertedFilePath: string
+	pcAddress: string
+	glbAddress: string
+	hasSourceFilePath: boolean
+	hasConvertedFile: boolean
+	hasPcAddress: boolean
+	hasGlbAddress: boolean
+	pathReadyCount: number
+	pathReadyTotal: number
+	processStartTime: string
+	processEndTime: string
+	productUpdateTime: string
+	updateTime: string
+	createTime: string
+}
+
+export type IngestMonitorBatchListResponse = {
+	scope: IngestMonitorScope
+	batches: IngestMonitorBatch[]
+}
+
+export type IngestMonitorBatchDetailResponse = {
+	scope: IngestMonitorScope
+	batch: IngestMonitorBatch
+	items: IngestMonitorBatchItem[]
+}
+
 export const fetchIngestMonitorSummary = () =>
 	pb.send<IngestMonitorSummaryResponse>("/api/aether/ingest-monitor/summary", { method: "GET" })
 
@@ -54,4 +117,13 @@ export const fetchIngestMonitorDetail = (itemCode: string) =>
 	pb.send<IngestMonitorDetailResponse>("/api/aether/ingest-monitor/detail", {
 		method: "GET",
 		query: { itemCode },
+	})
+
+export const fetchIngestMonitorBatches = () =>
+	pb.send<IngestMonitorBatchListResponse>("/api/aether/ingest-monitor/batches", { method: "GET" })
+
+export const fetchIngestMonitorBatchDetail = (batchRunId: string) =>
+	pb.send<IngestMonitorBatchDetailResponse>("/api/aether/ingest-monitor/batch-detail", {
+		method: "GET",
+		query: { batchRunId },
 	})
