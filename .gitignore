@@ -30,6 +30,7 @@ local-dev.sh
 local-dev.env
 local-dev.*.log
 local-dev.pids
+.hq-license/
 
 .trae/
 .vscode/

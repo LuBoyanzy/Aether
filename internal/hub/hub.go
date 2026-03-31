@@ -376,6 +376,13 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiNoAuth.GET("/agent-connect", h.handleAgentConnect)
 	// get or create universal tokens
 	apiAuth.GET("/universal-token", h.getUniversalToken)
+	// offline license activation / signing
+	apiAuth.GET("/activation/collector", h.downloadOfflineLicenseCollector)
+	apiAuth.POST("/activation/requests/preview", h.previewOfflineLicenseActivation)
+	apiAuth.POST("/activation/requests/import", h.importOfflineLicenseActivation)
+	apiAuth.GET("/licenses/overview", h.getOfflineLicenseOverview)
+	apiAuth.POST("/licenses/issue", h.issueOfflineLicense)
+	apiAuth.GET("/licenses/export", h.exportOfflineLicense)
 	// update / delete user alerts
 	apiAuth.POST("/user-alerts", alerts.UpsertUserAlerts)
 	apiAuth.DELETE("/user-alerts", alerts.DeleteUserAlerts)

@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro"
 import { Trans, useLingui } from "@lingui/react/macro"
 import { useStore } from "@nanostores/react"
 import { getPagePath, redirectPage } from "@nanostores/router"
-import { AlertOctagonIcon, BellIcon, FileSlidersIcon, FingerprintIcon, SettingsIcon } from "lucide-react"
+import { AlertOctagonIcon, BellIcon, FileSlidersIcon, FingerprintIcon, KeyIcon, SettingsIcon } from "lucide-react"
 import { lazy, useEffect } from "react"
 import { $router } from "@/components/router.tsx"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx"
@@ -18,12 +18,14 @@ const generalSettingsImport = () => import("./general.tsx")
 const notificationsSettingsImport = () => import("./notifications.tsx")
 const configYamlSettingsImport = () => import("./config-yaml.tsx")
 const fingerprintsSettingsImport = () => import("./tokens-fingerprints.tsx")
+const offlineLicenseSettingsImport = () => import("./offline-license.tsx")
 const alertsHistoryDataTableSettingsImport = () => import("./alerts-history-data-table.tsx")
 
 const GeneralSettings = lazy(generalSettingsImport)
 const NotificationsSettings = lazy(notificationsSettingsImport)
 const ConfigYamlSettings = lazy(configYamlSettingsImport)
 const FingerprintsSettings = lazy(fingerprintsSettingsImport)
+const OfflineLicenseSettings = lazy(offlineLicenseSettingsImport)
 const AlertsHistoryDataTableSettings = lazy(alertsHistoryDataTableSettingsImport)
 
 type SaveSettingsOptions = {
@@ -92,6 +94,13 @@ export default function SettingsLayout() {
 			preload: fingerprintsSettingsImport,
 		},
 		{
+			title: t`Offline License`,
+			href: getPagePath($router, "settings", { name: "offline-license" }),
+			icon: KeyIcon,
+			noReadOnly: true,
+			preload: offlineLicenseSettingsImport,
+		},
+		{
 			title: t`Alert History`,
 			href: getPagePath($router, "settings", { name: "alert-history" }),
 			icon: AlertOctagonIcon,
@@ -155,6 +164,8 @@ function SettingsContent({ name }: { name: string }) {
 			return <ConfigYamlSettings />
 		case "tokens":
 			return <FingerprintsSettings />
+		case "offline-license":
+			return <OfflineLicenseSettings />
 		case "alert-history":
 			return <AlertsHistoryDataTableSettings />
 	}

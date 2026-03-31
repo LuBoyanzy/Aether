@@ -163,7 +163,15 @@ export const SystemDialog = ({ setOpen, system }: { setOpen: (open: boolean) => 
 							>
 								universal token
 							</Link>
-							.
+							. For protected 3D deliveries, download the{" "}
+							<Link
+								onClick={() => setOpen(false)}
+								href={getPagePath($router, "settings", { name: "offline-license" })}
+								className="link"
+							>
+								offline license collector
+							</Link>
+							{" "}for the customer host.
 						</Trans>
 					</DialogDescription>
 				</TabsContent>
@@ -179,7 +187,15 @@ export const SystemDialog = ({ setOpen, system }: { setOpen: (open: boolean) => 
 							>
 								universal token
 							</Link>
-							.
+							. For protected 3D deliveries, download the{" "}
+							<Link
+								onClick={() => setOpen(false)}
+								href={getPagePath($router, "settings", { name: "offline-license" })}
+								className="link"
+							>
+								offline license collector
+							</Link>
+							{" "}for the customer host.
 						</Trans>
 					</DialogDescription>
 				</TabsContent>

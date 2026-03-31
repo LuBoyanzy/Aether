@@ -23,6 +23,77 @@ export interface FingerprintRecord extends RecordModel {
 	}
 }
 
+export interface OfflineLicenseActivationRecord extends RecordModel {
+	request_id: string
+	system?: string
+	customer: string
+	tenant: string
+	project_name: string
+	site_name: string
+	remarks: string
+	fingerprint: string
+	hostname: string
+	factors_json: Record<string, string>
+	device_public_key_pem: string
+	activation_payload: Record<string, unknown>
+	status: "imported" | "active" | "disabled" | "issued" | "revoked"
+	last_issued_at?: string
+	current_license_id?: string
+	current_export_name?: string
+	current_not_before?: string
+	current_not_after?: string
+	current_models_json?: OfflineLicenseModelItem[]
+	current_license_payload?: Record<string, unknown>
+	current_license_signature?: string
+	created: string
+	updated: string
+}
+
+export interface OfflineLicenseSigningState {
+	ready: boolean
+	errors: string[]
+	model_names: string[]
+}
+
+export interface OfflineLicenseActivationPreview {
+	request_id: string
+	hostname: string
+	fingerprint: string
+	factors: Record<string, string>
+	device_public_key_pem: string
+	existing_activation?: OfflineLicenseActivationRecord
+}
+
+export interface OfflineLicenseModelItem {
+	name: string
+	file: string
+	sha256: string
+	wrapped_key: string
+	enabled: boolean
+	key_algorithm: string
+	cipher: string
+}
+
+export interface OfflineLicenseIssueResponse {
+	licenseId: string
+	requestId: string
+	fileName: string
+	modelCount: number
+	models: OfflineLicenseModelItem[]
+}
+
+export interface OfflineLicenseExportResponse {
+	licenseId: string
+	fileName: string
+	content: string
+}
+
+export interface OfflineLicenseOverviewResponse {
+	ready: boolean
+	signing: OfflineLicenseSigningState
+	activations: OfflineLicenseActivationRecord[]
+}
+
 export interface SystemRecord extends RecordModel {
 	name: string
 	host: string

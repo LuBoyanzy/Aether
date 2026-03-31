@@ -7,7 +7,7 @@ SKIP_WEB ?= false
 # Set executable extension based on target OS
 EXE_EXT := $(if $(filter windows,$(OS)),.exe,)
 
-.PHONY: tidy build-agent build-hub build-hub-dev build clean lint dev-server dev-agent dev-hub dev generate-locales
+.PHONY: tidy build-agent build-hub build-hub-dev build clean lint dev-server dev-ui dev-agent dev-hub dev generate-locales
 .DEFAULT_GOAL := build
 
 clean:
@@ -66,28 +66,47 @@ generate-locales:
 	fi
 
 dev-server: generate-locales
-	cd ./internal/site
-	@if command -v bun >/dev/null 2>&1; then \
+	@{ set -a; [ -f "./local-dev.env" ] && . "./local-dev.env"; set +a; } && \
+	if command -v bun >/dev/null 2>&1; then \
 		cd ./internal/site && bun run dev --host 0.0.0.0; \
 	else \
 		cd ./internal/site && npm run dev --host 0.0.0.0; \
 	fi
 
+dev-ui: dev-server
+
 dev-hub: export ENV=dev
 dev-hub:
-	mkdir -p ./internal/site/dist && touch ./internal/site/dist/index.html
-	@if command -v entr >/dev/null 2>&1; then \
+	@{ set -a; [ -f "./local-dev.env" ] && . "./local-dev.env"; set +a; \
+	export AETHER_HUB_INGEST_MONITOR_PG_HOST="$${AETHER_HUB_INGEST_MONITOR_PG_HOST:-localhost}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_PORT="$${AETHER_HUB_INGEST_MONITOR_PG_PORT:-5432}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_USER="$${AETHER_HUB_INGEST_MONITOR_PG_USER:-app_user}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_PASSWORD="$${AETHER_HUB_INGEST_MONITOR_PG_PASSWORD:-app_pass}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_DATABASE="$${AETHER_HUB_INGEST_MONITOR_PG_DATABASE:-i3d_multitenant}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_TENANT="$${AETHER_HUB_INGEST_MONITOR_PG_TENANT:-guochuang}"; \
+	export AETHER_HUB_INGEST_MONITOR_PG_SSLMODE="$${AETHER_HUB_INGEST_MONITOR_PG_SSLMODE:-disable}"; \
+	export AETHER_HUB_DATA_CLEANUP_KEY="$${AETHER_HUB_DATA_CLEANUP_KEY:-0123456789abcdef0123456789abcdef}"; \
+	export AETHER_HUB_LICENSE_PRIVATE_KEY_FILE="$${AETHER_HUB_LICENSE_PRIVATE_KEY_FILE:-$(CURDIR)/.hq-license/license_signing_ed25519_private.pem}"; \
+	export AETHER_HUB_LICENSE_MODEL_MANIFEST="$${AETHER_HUB_LICENSE_MODEL_MANIFEST:-$(CURDIR)/.hq-license/model_security_manifest.json}"; \
+	export APP_URL="$${APP_URL:-http://192.168.140.2:19090}"; \
+	mkdir -p ./internal/site/dist && touch ./internal/site/dist/index.html; \
+	if command -v entr >/dev/null 2>&1; then \
 		find ./internal -type f -name '*.go' | entr -r -s "cd ./internal/cmd/hub && go run -tags development . serve --http 0.0.0.0:19090"; \
 	else \
 		cd ./internal/cmd/hub && go run -tags development . serve --http 0.0.0.0:19090; \
-	fi
+	fi; }
 
 dev-agent:
-	@if command -v entr >/dev/null 2>&1; then \
+	@{ set -a; [ -f "./local-dev.env" ] && . "./local-dev.env"; set +a; \
+	export AETHER_AGENT_LOG_LEVEL="$${AETHER_AGENT_LOG_LEVEL:-debug}"; \
+	export KEY="$${KEY:-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIp08AUAbaI8tyZkH4eOYEEDQdfrJR3h6aICr3EI8R+v}"; \
+	export TOKEN="$${TOKEN:-5d95-71a98ecf34-320b-bacd1f51f}"; \
+	export HUB_URL="$${HUB_URL:-http://192.168.140.2:19090}"; \
+	if command -v entr >/dev/null 2>&1; then \
 		find ./internal/cmd/agent/*.go ./agent/*.go | entr -r go run ./internal/cmd/agent; \
 	else \
 		go run ./internal/cmd/agent; \
-	fi
+	fi; }
 	
 build-dotnet:
 	@if command -v dotnet >/dev/null 2>&1; then \
