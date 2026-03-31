@@ -99,8 +99,6 @@ msgstr "Action"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -246,7 +244,6 @@ msgstr "All cases executed"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "All collections"
 msgstr "All collections"
 
@@ -304,6 +301,14 @@ msgstr "Attachable"
 msgid "Audit Logs"
 msgstr "Audit Logs"
 
+#: src/components/routes/api-tests.tsx
+msgid "Auto"
+msgstr "Auto"
+
+#: src/components/routes/api-tests.tsx
+msgid "Auto-run schedule"
+msgstr "Auto-run schedule"
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "Automatic copy requires a secure context."
@@ -316,6 +321,7 @@ msgstr "Available"
 msgid "Average"
 msgstr "Average"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Average CPU utilization of containers"
 msgstr "Average CPU utilization of containers"
@@ -362,6 +368,9 @@ msgid "Bandwidth"
 msgstr "Bandwidth"
 
 #: src/components/routes/api-tests.tsx
+msgid "BASE"
+msgstr "BASE"
+
 #: src/components/routes/api-tests.tsx
 msgid "Base URL"
 msgstr "Base URL"
@@ -487,6 +496,11 @@ msgid "Case saved"
 msgstr "Case saved"
 
 #: src/components/routes/api-tests.tsx
+msgid "cases"
+msgstr "cases"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Cases"
 msgstr "Cases"
@@ -599,6 +613,7 @@ msgid "Click to copy"
 msgstr "Click to copy"
 
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Close"
 msgstr "Close"
@@ -1078,7 +1093,6 @@ msgstr "Description"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Detail"
 msgstr "Detail"
 
@@ -1128,6 +1142,7 @@ msgstr "Docker"
 msgid "Docker config updated"
 msgstr "Docker config updated"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker CPU Usage"
@@ -1136,10 +1151,12 @@ msgstr "Docker CPU Usage"
 msgid "Docker engine summary for the selected system."
 msgstr "Docker engine summary for the selected system."
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
 msgstr "Docker Memory Usage"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Network I/O"
 msgstr "Docker Network I/O"
@@ -1301,6 +1318,10 @@ msgstr "Enter value"
 msgid "Enter your one-time password."
 msgstr "Enter your one-time password."
 
+#: src/components/routes/api-tests.tsx
+msgid "ENV"
+msgstr "ENV"
+
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 msgid "Environment"
@@ -1308,6 +1329,7 @@ msgstr "Environment"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
@@ -1320,6 +1342,8 @@ msgstr "Environment"
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
@@ -1394,6 +1418,7 @@ msgstr "Environment"
 #: src/components/login/auth-form.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1429,6 +1454,10 @@ msgid "Exited active"
 msgstr "Exited active"
 
 #: src/components/routes/api-tests.tsx
+msgid "EXPECT"
+msgstr "EXPECT"
+
+#: src/components/routes/api-tests.tsx
 msgid "Expected status"
 msgstr "Expected status"
 
@@ -1457,8 +1486,17 @@ msgstr "Export your current systems configuration."
 msgid "Fahrenheit (°F)"
 msgstr "Fahrenheit (°F)"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Fail"
+msgstr "Fail"
+
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "Failed"
@@ -1576,6 +1614,7 @@ msgid "Failed to load container logs"
 msgstr "Failed to load container logs"
 
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "Failed to load containers"
 msgstr "Failed to load containers"
 
@@ -1596,6 +1635,7 @@ msgstr "Failed to load Elasticsearch indices"
 msgid "Failed to load focus rules"
 msgstr "Failed to load focus rules"
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/images.tsx
 msgid "Failed to load images"
 msgstr "Failed to load images"
@@ -1666,7 +1706,7 @@ msgstr "Failed to load volumes"
 msgid "Failed to operate compose project"
 msgstr "Failed to operate compose project"
 
-#: src/components/docker/containers.tsx
+#: src/lib/errors.ts
 msgid "Failed to operate container"
 msgstr "Failed to operate container"
 
@@ -1803,6 +1843,7 @@ msgid "Filter volumes..."
 msgstr "Filter volumes..."
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -1828,13 +1869,14 @@ msgstr "Focus only"
 msgid "Focus rules"
 msgstr "Focus rules"
 
-#: src/components/docker/containers.tsx
-msgid "Focus usage"
-msgstr "Focus usage"
-
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Focus rules help"
 msgstr "Focus rules help"
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Focus usage"
+msgstr "Focus usage"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
@@ -2049,6 +2091,7 @@ msgid "Internal"
 msgstr "Internal"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Interval (minutes)"
 msgstr "Interval (minutes)"
 
@@ -2132,11 +2175,9 @@ msgid "Last run"
 msgstr "Last run"
 
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Last Run"
 msgstr "Last Run"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Last Status"
 msgstr "Last Status"
@@ -2226,6 +2267,7 @@ msgid "Loading"
 msgstr "Loading"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Loading schedule..."
 msgstr "Loading schedule..."
 
@@ -2306,6 +2348,7 @@ msgid "Manage and run API cases"
 msgstr "Manage and run API cases"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Manage and run API tests."
 msgstr "Manage and run API tests."
 
@@ -2372,11 +2415,11 @@ msgstr "Memory Peak"
 msgid "Memory Usage"
 msgstr "Memory Usage"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Memory usage of docker containers"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Method"
 msgstr "Method"
@@ -2462,8 +2505,6 @@ msgstr "MySQL port is invalid"
 #: src/components/docker/volumes.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -2505,6 +2546,7 @@ msgstr "Network name"
 msgid "Network name is required"
 msgstr "Network name is required"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
 msgstr "Network traffic of docker containers"
@@ -2528,6 +2570,10 @@ msgid "Networks"
 msgstr "Networks"
 
 #: src/components/routes/api-tests.tsx
+msgid "New"
+msgstr "New"
+
+#: src/components/routes/api-tests.tsx
 msgid "New case"
 msgstr "New case"
 
@@ -2540,8 +2586,8 @@ msgid "New collection"
 msgstr "New collection"
 
 #: src/components/routes/api-tests.tsx
-msgid "New Collection"
-msgstr "New Collection"
+#~ msgid "New Collection"
+#~ msgstr "New Collection"
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
@@ -2575,10 +2621,17 @@ msgstr "No compose projects found."
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "No containers found."
 msgstr "No containers found."
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "No detailed description..."
+msgstr "No detailed description..."
+
 #: src/components/docker/containers.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "No details available."
 msgstr "No details available."
@@ -2587,6 +2640,7 @@ msgstr "No details available."
 msgid "No file selected"
 msgstr "No file selected"
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 msgid "No focus rules configured for this system."
 msgstr "No focus rules configured for this system."
@@ -2736,6 +2790,7 @@ msgid "Only administrators can edit these settings."
 msgstr "Only administrators can edit these settings."
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Only scheduled cases will run"
 msgstr "Only scheduled cases will run"
 
@@ -2751,6 +2806,10 @@ msgstr "Open menu"
 msgid "Operating System"
 msgstr "Operating System"
 
+#: src/lib/errors.ts
+msgid "Operation completed, but refresh failed"
+msgstr "Operation completed, but refresh failed"
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
 msgstr "Operation failed"
@@ -2762,6 +2821,10 @@ msgstr "Operation failed"
 #: src/components/docker/service-configs.tsx
 msgid "Operation success"
 msgstr "Operation success"
+
+#: src/lib/errors.ts
+msgid "Operation timed out"
+msgstr "Operation timed out"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
@@ -2847,6 +2910,11 @@ msgstr "Pages / Settings"
 #: src/components/routes/api-tests.tsx
 msgid "Params"
 msgstr "Params"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Pass"
+msgstr "Pass"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -3198,6 +3266,10 @@ msgstr "Resolved"
 msgid "Resource"
 msgstr "Resource"
 
+#: src/components/routes/api-tests.tsx
+msgid "Response snippet"
+msgstr "Response snippet"
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Restart"
@@ -3262,6 +3334,7 @@ msgid "Rules are exact matches. Use the values shown in the container list or de
 msgstr "Rules are exact matches. Use the values shown in the container list or details."
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Run"
 msgstr "Run"
 
@@ -3276,6 +3349,10 @@ msgstr "Run Collection"
 #: src/components/routes/api-tests.tsx
 msgid "Run Now"
 msgstr "Run Now"
+
+#: src/components/routes/api-tests.tsx
+msgid "Run result"
+msgstr "Run result"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
@@ -3330,6 +3407,7 @@ msgstr "Save system"
 msgid "Saved"
 msgstr "Saved"
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3643,6 +3721,10 @@ msgstr "State"
 msgid "Status"
 msgstr "Status"
 
+#: src/components/routes/api-tests.tsx
+msgid "STATUS"
+msgstr "STATUS"
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Stop"
@@ -3680,6 +3762,10 @@ msgstr "Subnet"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr "Success"
 
@@ -3711,6 +3797,10 @@ msgstr "System"
 msgid "System load averages over time"
 msgstr "System load averages over time"
 
+#: src/lib/errors.ts
+msgid "System not found"
+msgstr "System not found"
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Systemd Services"
 msgstr "Systemd Services"
@@ -3728,7 +3818,6 @@ msgid "Table"
 msgstr "Table"
 
 #: src/components/docker/images.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Tags"
@@ -3835,6 +3924,7 @@ msgstr "Throughput of root filesystem"
 
 #: src/components/docker/networks.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr "Time"
 
@@ -3915,6 +4005,10 @@ msgstr "Tokens and fingerprints are used to authenticate WebSocket connections t
 #: src/components/ui/chart.tsx
 msgid "Total"
 msgstr "Total"
+
+#: src/components/routes/api-tests.tsx
+msgid "Total cases"
+msgstr "Total cases"
 
 #: src/components/routes/system/network-sheet.tsx
 msgid "Total data received for each interface"
@@ -4025,6 +4119,9 @@ msgstr "Universal token"
 
 #. Context: Battery state
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "Unknown"
@@ -4070,7 +4167,6 @@ msgstr "Update service name or endpoint URL."
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -4260,6 +4356,10 @@ msgstr "YAML Configuration"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Yes"
 msgstr "Yes"
+
+#: src/lib/errors.ts
+msgid "You don't have permission to perform this operation"
+msgstr "You don't have permission to perform this operation"
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx

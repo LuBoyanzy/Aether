@@ -104,8 +104,6 @@ msgstr "操作"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -251,57 +249,8 @@ msgstr "已执行全部用例"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "All collections"
 msgstr "全部合集"
-
-#: src/components/routes/api-tests.tsx
-msgid "Auto"
-msgstr "自动"
-
-#: src/components/routes/api-tests.tsx
-msgid "Auto-run schedule"
-msgstr "自动定时运行"
-
-#: src/components/routes/api-tests.tsx
-msgid "BASE"
-msgstr "基础"
-
-#: src/components/routes/api-tests.tsx
-msgid "cases"
-msgstr "用例"
-
-#: src/components/routes/api-tests.tsx
-msgid "ENV"
-msgstr "环境"
-
-#: src/components/routes/api-tests.tsx
-msgid "EXPECT"
-msgstr "期望"
-
-#: src/components/routes/api-tests.tsx
-msgid "Fail"
-msgstr "失败"
-
-#: src/components/routes/api-tests.tsx
-msgid "New"
-msgstr "新建"
-
-#: src/components/routes/api-tests.tsx
-msgid "No detailed description..."
-msgstr "暂无详细描述..."
-
-#: src/components/routes/api-tests.tsx
-msgid "Pass"
-msgstr "成功"
-
-#: src/components/routes/api-tests.tsx
-msgid "STATUS"
-msgstr "状态"
-
-#: src/components/routes/api-tests.tsx
-msgid "Total cases"
-msgstr "用例总数"
 
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
@@ -357,6 +306,14 @@ msgstr "可附加"
 msgid "Audit Logs"
 msgstr "审查日志"
 
+#: src/components/routes/api-tests.tsx
+msgid "Auto"
+msgstr "自动"
+
+#: src/components/routes/api-tests.tsx
+msgid "Auto-run schedule"
+msgstr "自动定时运行"
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "自动复制所需的安全上下文。"
@@ -369,6 +326,7 @@ msgstr "可用"
 msgid "Average"
 msgstr "平均"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Average CPU utilization of containers"
 msgstr "容器的平均 CPU 使用率"
@@ -415,6 +373,9 @@ msgid "Bandwidth"
 msgstr "带宽"
 
 #: src/components/routes/api-tests.tsx
+msgid "BASE"
+msgstr "基础"
+
 #: src/components/routes/api-tests.tsx
 msgid "Base URL"
 msgstr "基础 URL"
@@ -540,6 +501,11 @@ msgid "Case saved"
 msgstr "用例已保存"
 
 #: src/components/routes/api-tests.tsx
+msgid "cases"
+msgstr "用例"
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Cases"
 msgstr "用例"
@@ -652,6 +618,7 @@ msgid "Click to copy"
 msgstr "点击复制"
 
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Close"
 msgstr "关闭"
@@ -1127,7 +1094,6 @@ msgstr "描述"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Detail"
 msgstr "详情"
 
@@ -1177,6 +1143,7 @@ msgstr "Docker"
 msgid "Docker config updated"
 msgstr "Docker 配置已更新"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker CPU 使用"
@@ -1185,10 +1152,12 @@ msgstr "Docker CPU 使用"
 msgid "Docker engine summary for the selected system."
 msgstr "选中系统的 Docker 引擎概要。"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
 msgstr "Docker 内存使用"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Network I/O"
 msgstr "Docker 网络 I/O"
@@ -1350,6 +1319,10 @@ msgstr "输入值"
 msgid "Enter your one-time password."
 msgstr "输入您的一次性密码。"
 
+#: src/components/routes/api-tests.tsx
+msgid "ENV"
+msgstr "环境"
+
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 msgid "Environment"
@@ -1357,6 +1330,7 @@ msgstr "环境变量"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
@@ -1369,6 +1343,8 @@ msgstr "环境变量"
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
@@ -1443,6 +1419,7 @@ msgstr "环境变量"
 #: src/components/login/auth-form.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1478,6 +1455,10 @@ msgid "Exited active"
 msgstr "退出活动状态"
 
 #: src/components/routes/api-tests.tsx
+msgid "EXPECT"
+msgstr "期望"
+
+#: src/components/routes/api-tests.tsx
 msgid "Expected status"
 msgstr "期望状态码"
 
@@ -1506,8 +1487,17 @@ msgstr "导出您当前的系统配置。"
 msgid "Fahrenheit (°F)"
 msgstr "华氏度 (°F)"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Fail"
+msgstr "失败"
+
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "失败"
@@ -1625,6 +1615,7 @@ msgid "Failed to load container logs"
 msgstr "加载容器日志失败"
 
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "Failed to load containers"
 msgstr "加载容器失败"
 
@@ -1645,6 +1636,7 @@ msgstr "加载 Elasticsearch 索引失败"
 msgid "Failed to load focus rules"
 msgstr "加载关注规则失败"
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/images.tsx
 msgid "Failed to load images"
 msgstr "加载镜像失败"
@@ -1715,7 +1707,7 @@ msgstr "加载存储卷失败"
 msgid "Failed to operate compose project"
 msgstr "操作编排项目失败"
 
-#: src/components/docker/containers.tsx
+#: src/lib/errors.ts
 msgid "Failed to operate container"
 msgstr "操作容器失败"
 
@@ -1852,6 +1844,7 @@ msgid "Filter volumes..."
 msgstr "筛选存储卷..."
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -1877,13 +1870,14 @@ msgstr "关注视图"
 msgid "Focus rules"
 msgstr "关注规则"
 
-#: src/components/docker/containers.tsx
-msgid "Focus usage"
-msgstr "关注占用"
-
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Focus rules help"
 msgstr "关注规则使用帮助"
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Focus usage"
+msgstr "关注占用"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "For <0>{min}</0> {min, plural, one {minute} other {minutes}}"
@@ -2094,6 +2088,7 @@ msgid "Internal"
 msgstr "内部"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Interval (minutes)"
 msgstr "间隔（分钟）"
 
@@ -2177,11 +2172,9 @@ msgid "Last run"
 msgstr "上次运行"
 
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Last Run"
 msgstr "上次运行"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Last Status"
 msgstr "上次状态"
@@ -2271,6 +2264,7 @@ msgid "Loading"
 msgstr "加载中"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Loading schedule..."
 msgstr "正在加载计划..."
 
@@ -2347,6 +2341,7 @@ msgid "Manage and run API cases"
 msgstr "管理并运行接口用例"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Manage and run API tests."
 msgstr "管理并运行接口测试。"
 
@@ -2413,11 +2408,11 @@ msgstr "内存峰值"
 msgid "Memory Usage"
 msgstr "内存使用率"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Docker 容器的内存使用率"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Method"
 msgstr "方法"
@@ -2503,8 +2498,6 @@ msgstr "MySQL 端口无效"
 #: src/components/docker/volumes.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -2546,6 +2539,7 @@ msgstr "网络名称"
 msgid "Network name is required"
 msgstr "网络名称为必填"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
 msgstr "Docker 容器的网络流量"
@@ -2569,6 +2563,10 @@ msgid "Networks"
 msgstr "网络"
 
 #: src/components/routes/api-tests.tsx
+msgid "New"
+msgstr "新建"
+
+#: src/components/routes/api-tests.tsx
 msgid "New case"
 msgstr "新建用例"
 
@@ -2581,8 +2579,8 @@ msgid "New collection"
 msgstr "新建合集"
 
 #: src/components/routes/api-tests.tsx
-msgid "New Collection"
-msgstr "新建合集"
+#~ msgid "New Collection"
+#~ msgstr "新建合集"
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
@@ -2616,10 +2614,17 @@ msgstr "未找到编排项目。"
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "No containers found."
 msgstr "未找到容器。"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "No detailed description..."
+msgstr "暂无详细描述..."
+
 #: src/components/docker/containers.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "No details available."
 msgstr "暂无详情。"
@@ -2628,6 +2633,7 @@ msgstr "暂无详情。"
 msgid "No file selected"
 msgstr "未选择文件"
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 msgid "No focus rules configured for this system."
 msgstr "该系统未配置关注规则。"
@@ -2777,6 +2783,7 @@ msgid "Only administrators can edit these settings."
 msgstr "仅管理员可编辑这些设置。"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Only scheduled cases will run"
 msgstr "仅运行已启用定时的用例"
 
@@ -2792,6 +2799,10 @@ msgstr "打开菜单"
 msgid "Operating System"
 msgstr "操作系统"
 
+#: src/lib/errors.ts
+msgid "Operation completed, but refresh failed"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
 msgstr "操作失败"
@@ -2803,6 +2814,10 @@ msgstr "操作失败"
 #: src/components/docker/service-configs.tsx
 msgid "Operation success"
 msgstr "操作成功"
+
+#: src/lib/errors.ts
+msgid "Operation timed out"
+msgstr ""
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
@@ -2888,6 +2903,11 @@ msgstr "页面 / 设置"
 #: src/components/routes/api-tests.tsx
 msgid "Params"
 msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Pass"
+msgstr "成功"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -3239,6 +3259,10 @@ msgstr "已解决"
 msgid "Resource"
 msgstr "资源"
 
+#: src/components/routes/api-tests.tsx
+msgid "Response snippet"
+msgstr "响应摘要"
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Restart"
@@ -3303,12 +3327,9 @@ msgid "Rules are exact matches. Use the values shown in the container list or de
 msgstr "规则为精确匹配，请使用容器列表或详情中显示的值。"
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Run"
 msgstr "运行"
-
-#: src/components/routes/api-tests.tsx
-msgid "Run result"
-msgstr "运行详情"
 
 #: src/components/routes/api-tests.tsx
 msgid "Run All"
@@ -3323,8 +3344,8 @@ msgid "Run Now"
 msgstr "立即运行"
 
 #: src/components/routes/api-tests.tsx
-msgid "Response snippet"
-msgstr "响应摘要"
+msgid "Run result"
+msgstr "运行详情"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/overview.tsx
@@ -3379,6 +3400,7 @@ msgstr "保存系统"
 msgid "Saved"
 msgstr "已保存"
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3692,6 +3714,10 @@ msgstr "状态"
 msgid "Status"
 msgstr "状态"
 
+#: src/components/routes/api-tests.tsx
+msgid "STATUS"
+msgstr "状态"
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Stop"
@@ -3729,6 +3755,10 @@ msgstr "子网"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr "成功"
 
@@ -3760,6 +3790,10 @@ msgstr "系统"
 msgid "System load averages over time"
 msgstr "系统负载平均值随时间变化"
 
+#: src/lib/errors.ts
+msgid "System not found"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Systemd Services"
 msgstr "Systemd 服务"
@@ -3777,7 +3811,6 @@ msgid "Table"
 msgstr "表格"
 
 #: src/components/docker/images.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Tags"
@@ -3884,6 +3917,7 @@ msgstr "根文件系统的吞吐量"
 
 #: src/components/docker/networks.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr "时间"
 
@@ -3964,6 +3998,10 @@ msgstr "令牌与指纹用于验证到中心的 WebSocket 连接。"
 #: src/components/ui/chart.tsx
 msgid "Total"
 msgstr "总计"
+
+#: src/components/routes/api-tests.tsx
+msgid "Total cases"
+msgstr "用例总数"
 
 #: src/components/routes/system/network-sheet.tsx
 msgid "Total data received for each interface"
@@ -4074,6 +4112,9 @@ msgstr "通用令牌"
 
 #. Context: Battery state
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "未知"
@@ -4119,7 +4160,6 @@ msgstr "更新服务名称或接口 URL。"
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -4309,6 +4349,10 @@ msgstr "YAML 配置"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Yes"
 msgstr "是"
+
+#: src/lib/errors.ts
+msgid "You don't have permission to perform this operation"
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx

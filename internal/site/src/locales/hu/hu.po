@@ -104,8 +104,6 @@ msgstr ""
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -255,7 +253,6 @@ msgstr ""
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "All collections"
 msgstr ""
 
@@ -313,6 +310,14 @@ msgstr ""
 msgid "Audit Logs"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Auto"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Auto-run schedule"
+msgstr ""
+
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
 msgstr "Az automatikus másolás biztonságos környezetet igényel."
@@ -325,6 +330,7 @@ msgstr ""
 msgid "Average"
 msgstr "Átlag"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Average CPU utilization of containers"
 msgstr "Konténerek átlagos CPU kihasználtsága"
@@ -371,6 +377,9 @@ msgid "Bandwidth"
 msgstr "Sávszélesség"
 
 #: src/components/routes/api-tests.tsx
+msgid "BASE"
+msgstr ""
+
 #: src/components/routes/api-tests.tsx
 msgid "Base URL"
 msgstr ""
@@ -496,6 +505,11 @@ msgid "Case saved"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+msgid "cases"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Cases"
 msgstr ""
@@ -608,6 +622,7 @@ msgid "Click to copy"
 msgstr "Kattints a másoláshoz"
 
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Close"
 msgstr ""
@@ -1087,7 +1102,6 @@ msgstr "Leírás"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Detail"
 msgstr "Részlet"
 
@@ -1137,6 +1151,7 @@ msgstr ""
 msgid "Docker config updated"
 msgstr ""
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker CPU Usage"
 msgstr "Docker CPU használat"
@@ -1145,10 +1160,12 @@ msgstr "Docker CPU használat"
 msgid "Docker engine summary for the selected system."
 msgstr ""
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Memory Usage"
 msgstr "Docker memória használat"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Docker Network I/O"
 msgstr "Docker hálózat I/O"
@@ -1306,6 +1323,10 @@ msgstr ""
 msgid "Enter your one-time password."
 msgstr "Adja meg az egyszeri jelszavát."
 
+#: src/components/routes/api-tests.tsx
+msgid "ENV"
+msgstr ""
+
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
 msgid "Environment"
@@ -1313,6 +1334,7 @@ msgstr ""
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
@@ -1325,6 +1347,8 @@ msgstr ""
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
 #: src/components/docker/config.tsx
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
@@ -1399,6 +1423,7 @@ msgstr ""
 #: src/components/login/auth-form.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1434,6 +1459,10 @@ msgid "Exited active"
 msgstr "Aktívként kilépett"
 
 #: src/components/routes/api-tests.tsx
+msgid "EXPECT"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
 msgid "Expected status"
 msgstr ""
 
@@ -1462,8 +1491,17 @@ msgstr "Exportálja a jelenlegi rendszerkonfigurációt."
 msgid "Fahrenheit (°F)"
 msgstr "Fahrenheit (°F)"
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Fail"
+msgstr ""
+
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "Sikertelen"
@@ -1581,6 +1619,7 @@ msgid "Failed to load container logs"
 msgstr ""
 
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "Failed to load containers"
 msgstr ""
 
@@ -1601,6 +1640,7 @@ msgstr ""
 msgid "Failed to load focus rules"
 msgstr ""
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/images.tsx
 msgid "Failed to load images"
 msgstr ""
@@ -1671,7 +1711,7 @@ msgstr ""
 msgid "Failed to operate compose project"
 msgstr ""
 
-#: src/components/docker/containers.tsx
+#: src/lib/errors.ts
 msgid "Failed to operate container"
 msgstr ""
 
@@ -1808,6 +1848,7 @@ msgid "Filter volumes..."
 msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/docker/containers.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/system.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -1835,6 +1876,11 @@ msgstr ""
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Focus rules help"
+msgstr ""
+
+#: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
+msgid "Focus usage"
 msgstr ""
 
 #: src/components/alerts/alerts-sheet.tsx
@@ -2050,6 +2096,7 @@ msgid "Internal"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Interval (minutes)"
 msgstr ""
 
@@ -2130,11 +2177,9 @@ msgid "Last run"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Last Run"
 msgstr ""
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Last Status"
 msgstr ""
@@ -2224,6 +2269,7 @@ msgid "Loading"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Loading schedule..."
 msgstr ""
 
@@ -2304,6 +2350,7 @@ msgid "Manage and run API cases"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Manage and run API tests."
 msgstr ""
 
@@ -2370,11 +2417,11 @@ msgstr "Memória csúcs"
 msgid "Memory Usage"
 msgstr "Memóriahasználat"
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Memory usage of docker containers"
 msgstr "Docker konténerek memória használata"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Method"
 msgstr ""
@@ -2460,8 +2507,6 @@ msgstr ""
 #: src/components/docker/volumes.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -2503,6 +2548,7 @@ msgstr ""
 msgid "Network name is required"
 msgstr ""
 
+#: src/components/docker/containers.tsx
 #: src/components/routes/system.tsx
 msgid "Network traffic of docker containers"
 msgstr "Docker konténerek hálózati forgalma"
@@ -2526,6 +2572,10 @@ msgid "Networks"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+msgid "New"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
 msgid "New case"
 msgstr ""
 
@@ -2538,8 +2588,8 @@ msgid "New collection"
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
-msgid "New Collection"
-msgstr ""
+#~ msgid "New Collection"
+#~ msgstr ""
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
@@ -2573,10 +2623,17 @@ msgstr ""
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
+#: src/components/docker/containers.tsx
 msgid "No containers found."
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "No detailed description..."
+msgstr ""
+
 #: src/components/docker/containers.tsx
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "No details available."
 msgstr ""
@@ -2585,6 +2642,7 @@ msgstr ""
 msgid "No file selected"
 msgstr ""
 
+#: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
 msgid "No focus rules configured for this system."
 msgstr ""
@@ -2734,6 +2792,7 @@ msgid "Only administrators can edit these settings."
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Only scheduled cases will run"
 msgstr ""
 
@@ -2749,6 +2808,10 @@ msgstr "Menü megnyitása"
 msgid "Operating System"
 msgstr ""
 
+#: src/lib/errors.ts
+msgid "Operation completed, but refresh failed"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 msgid "Operation failed"
 msgstr ""
@@ -2759,6 +2822,10 @@ msgstr ""
 #: src/components/docker/images.tsx
 #: src/components/docker/service-configs.tsx
 msgid "Operation success"
+msgstr ""
+
+#: src/lib/errors.ts
+msgid "Operation timed out"
 msgstr ""
 
 #: src/components/docker/compose-templates.tsx
@@ -2844,6 +2911,11 @@ msgstr "Oldalak / Beállítások"
 
 #: src/components/routes/api-tests.tsx
 msgid "Params"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+msgid "Pass"
 msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
@@ -3196,6 +3268,10 @@ msgstr "Megoldva"
 msgid "Resource"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
+msgid "Response snippet"
+msgstr ""
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Restart"
@@ -3260,6 +3336,7 @@ msgid "Rules are exact matches. Use the values shown in the container list or de
 msgstr ""
 
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Run"
 msgstr ""
 
@@ -3273,6 +3350,10 @@ msgstr ""
 
 #: src/components/routes/api-tests.tsx
 msgid "Run Now"
+msgstr ""
+
+#: src/components/routes/api-tests.tsx
+msgid "Run result"
 msgstr ""
 
 #: src/components/docker/data-cleanup.tsx
@@ -3328,6 +3409,7 @@ msgstr "Rendszer mentése"
 msgid "Saved"
 msgstr ""
 
+#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3638,6 +3720,10 @@ msgstr "Állapot"
 msgid "Status"
 msgstr "Állapot"
 
+#: src/components/routes/api-tests.tsx
+msgid "STATUS"
+msgstr ""
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Stop"
@@ -3675,6 +3761,10 @@ msgstr ""
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr ""
 
@@ -3706,6 +3796,10 @@ msgstr "Rendszer"
 msgid "System load averages over time"
 msgstr "Rendszer terhelési átlaga"
 
+#: src/lib/errors.ts
+msgid "System not found"
+msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Systemd Services"
 msgstr "Systemd szolgáltatások"
@@ -3723,7 +3817,6 @@ msgid "Table"
 msgstr "Tábla"
 
 #: src/components/docker/images.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "Tags"
@@ -3830,6 +3923,7 @@ msgstr "A gyökér fájlrendszer átviteli teljesítménye"
 
 #: src/components/docker/networks.tsx
 #: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr ""
 
@@ -3910,6 +4004,10 @@ msgstr "A tokeneket és fingeravtrykkokat a hubhoz való WebSocket kapcsolatok h
 #: src/components/ui/chart.tsx
 msgid "Total"
 msgstr "Összesen"
+
+#: src/components/routes/api-tests.tsx
+msgid "Total cases"
+msgstr ""
 
 #: src/components/routes/system/network-sheet.tsx
 msgid "Total data received for each interface"
@@ -4020,6 +4118,9 @@ msgstr "Univerzális token"
 
 #. Context: Battery state
 #: src/components/audit/audit-logs-table.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
+#: src/components/routes/api-tests.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "Ismeretlen"
@@ -4065,7 +4166,6 @@ msgstr ""
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -4255,6 +4355,10 @@ msgstr "YAML konfiguráció"
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Yes"
 msgstr "Igen"
+
+#: src/lib/errors.ts
+msgid "You don't have permission to perform this operation"
+msgstr ""
 
 #: src/components/containers-table/containers-table.tsx
 #: src/components/docker/compose-templates.tsx
