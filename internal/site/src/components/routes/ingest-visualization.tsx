@@ -14,7 +14,13 @@ import {
 	BarChart3Icon,
 	FileCodeIcon,
 	LayersIcon,
-	RouteIcon
+	RouteIcon,
+	FileIcon,
+	FileBoxIcon,
+	BoxIcon,
+	CalendarIcon,
+	SparklesIcon,
+	PackageIcon
 } from "lucide-react"
 import { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { ActiveAlerts } from "@/components/active-alerts"
@@ -741,168 +747,477 @@ export default memo(() => {
 			</Card>
 
 			<Dialog open={batchDetailOpen} onOpenChange={setBatchDetailOpen}>
-				<DialogContent className="max-w-6xl max-h-[85vh] overflow-auto">
-					<DialogHeader>
-						<DialogTitle>扫描批次详情</DialogTitle>
-						<DialogDescription>查看某次 XXL 大任务的扫描统计、入库耗时和批次内记录状态。</DialogDescription>
-					</DialogHeader>
-
-					{batchDetailLoading ? (
-						<div className="flex items-center justify-center py-10 text-muted-foreground">
-							<LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
-							正在加载批次详情...
+				<DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0 sm:rounded-xl">
+					<div className="flex flex-col h-full max-h-[90vh]">
+						<div className="border-b border-border/60 px-6 py-4">
+							<DialogHeader className="gap-2">
+								<div className="flex items-center gap-2">
+									<LayersIcon className="h-5 w-5 text-primary" />
+									<DialogTitle>扫描批次详情</DialogTitle>
+								</div>
+								<DialogDescription>查看某次 XXL 大任务的扫描统计、入库耗时和批次内记录状态。</DialogDescription>
+							</DialogHeader>
 						</div>
-					) : batchDetailError ? (
-						<div className="rounded-md border border-red-500/40 bg-red-500/5 p-4 text-sm">{batchDetailError}</div>
-					) : batchDetail ? (
-						<div className="grid gap-4">
-							<div className="flex flex-wrap items-center gap-2">
-								<Badge variant="outline">租户：{formatTenantLabel(batchDetail.scope.tenant)}</Badge>
-								<Badge variant={batchStatusBadgeVariant(batchDetail.batch.status)}>{batchStatusLabel(batchDetail.batch.status)}</Badge>
-								<Badge variant="outline">batchRunId={batchDetail.batch.batchRunId}</Badge>
-							</div>
+						
+						<div className="flex-1 overflow-y-auto px-6 py-4">
+							{batchDetailLoading ? (
+								<div className="flex items-center justify-center py-12 text-muted-foreground">
+									<LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
+									正在加载批次详情...
+								</div>
+							) : batchDetailError ? (
+								<div className="rounded-lg border border-rose-500/40 bg-rose-500/5 p-4 text-sm">
+									<div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+										<AlertTriangleIcon className="h-4 w-4" />
+										<span>{batchDetailError}</span>
+									</div>
+								</div>
+							) : batchDetail ? (
+								<div className="grid gap-4">
+									<div className="flex flex-wrap items-center gap-2">
+										{batchDetail.scope.tenant && (
+											<Badge className="bg-primary/10 text-primary border-primary/20">
+												{batchDetail.scope.tenant === "guochuang" ? "国创" : batchDetail.scope.tenant}
+											</Badge>
+										)}
+										<Badge variant={batchStatusBadgeVariant(batchDetail.batch.status)}>
+											{batchStatusLabel(batchDetail.batch.status)}
+										</Badge>
+										<Badge variant="outline" className="font-mono text-[10px]">
+											{truncateText(batchDetail.batch.batchRunId, 20)}
+										</Badge>
+									</div>
 
-							<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-								<Card className="border-border/60">
-									<CardHeader className="space-y-1">
-										<CardDescription>扫描投递耗时</CardDescription>
-										<CardTitle>{formatElapsedSeconds(batchDetail.batch.xxlScanElapsedSeconds)}</CardTitle>
-									</CardHeader>
-								</Card>
-								<Card className="border-border/60">
-									<CardHeader className="space-y-1">
-										<CardDescription>最终入库完成耗时</CardDescription>
-										<CardTitle>{formatBatchFinalElapsed(batchDetail.batch)}</CardTitle>
-									</CardHeader>
-								</Card>
-								<Card className="border-border/60">
-									<CardHeader className="space-y-1">
-										<CardDescription>成功 / 失败 / 处理中</CardDescription>
-										<CardTitle>
-											{batchDetail.batch.successCount} / {batchDetail.batch.failureCount} / {batchDetail.batch.pendingCount}
-										</CardTitle>
-									</CardHeader>
-								</Card>
-								<Card className="border-border/60">
-									<CardHeader className="space-y-1">
-										<CardDescription>扫描目录 / 文件 / 批次</CardDescription>
-										<CardTitle>
-											{batchDetail.batch.totalDirsScanned} / {batchDetail.batch.totalFilesProcessed} / {batchDetail.batch.totalBatches}
-										</CardTitle>
-									</CardHeader>
-								</Card>
-							</div>
+									<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+										<Card className="border-sky-500/20 bg-gradient-to-br from-sky-500/10 via-transparent to-transparent">
+											<CardHeader className="space-y-2 pb-3">
+												<div className="flex items-center justify-between">
+													<CardDescription className="text-xs">扫描投递耗时</CardDescription>
+													<TimerIcon className="h-3.5 w-3.5 text-sky-500/60" />
+												</div>
+												<CardTitle className="text-lg">{formatElapsedSeconds(batchDetail.batch.xxlScanElapsedSeconds)}</CardTitle>
+											</CardHeader>
+										</Card>
+										<Card className="border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
+											<CardHeader className="space-y-2 pb-3">
+												<div className="flex items-center justify-between">
+													<CardDescription className="text-xs">最终入库完成耗时</CardDescription>
+													<ClockIcon className="h-3.5 w-3.5 text-violet-500/60" />
+												</div>
+												<CardTitle className="text-lg">{formatBatchFinalElapsed(batchDetail.batch)}</CardTitle>
+											</CardHeader>
+										</Card>
+										<Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent">
+											<CardHeader className="space-y-2 pb-3">
+												<div className="flex items-center justify-between">
+													<CardDescription className="text-xs">结果统计</CardDescription>
+													<BarChart3Icon className="h-3.5 w-3.5 text-emerald-500/60" />
+												</div>
+												<div className="flex items-center gap-2">
+													<span className="inline-flex h-6 items-center justify-center rounded bg-emerald-500/10 px-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+														{batchDetail.batch.successCount}
+													</span>
+													<span className="text-muted-foreground">/</span>
+													<span className="inline-flex h-6 items-center justify-center rounded bg-rose-500/10 px-2 text-sm font-medium text-rose-600 dark:text-rose-400">
+														{batchDetail.batch.failureCount}
+													</span>
+													<span className="text-muted-foreground">/</span>
+													<span className="inline-flex h-6 items-center justify-center rounded bg-amber-500/10 px-2 text-sm font-medium text-amber-600 dark:text-amber-400">
+														{batchDetail.batch.pendingCount}
+													</span>
+												</div>
+											</CardHeader>
+										</Card>
+										<Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent">
+											<CardHeader className="space-y-2 pb-3">
+												<div className="flex items-center justify-between">
+													<CardDescription className="text-xs">扫描覆盖</CardDescription>
+													<FolderIcon className="h-3.5 w-3.5 text-amber-500/60" />
+												</div>
+												<div className="flex items-center gap-1.5 text-sm">
+													<span className="font-medium">{batchDetail.batch.totalDirsScanned}</span>
+													<span className="text-muted-foreground text-xs">目录</span>
+													<span className="text-muted-foreground">/</span>
+													<span className="font-medium">{batchDetail.batch.totalFilesProcessed}</span>
+													<span className="text-muted-foreground text-xs">文件</span>
+												</div>
+											</CardHeader>
+										</Card>
+									</div>
 
-							<div className="grid gap-3 md:grid-cols-2">
-								<DetailField label="XXL 任务" value={`jobId=${batchDetail.batch.xxlJobId || "-"} / logId=${batchDetail.batch.xxlLogId || "-"}`} />
-								<DetailField label="扫描开始 / 结束" value={`${formatDisplayDate(batchDetail.batch.scanStartedAt)}\n${formatDisplayDate(batchDetail.batch.scanFinishedAt)}`} />
-								<DetailField label="扫描路径" value={batchDetail.batch.scanPaths.join("\n")} />
-								<DetailField label="批次配置" value={`fileType=${batchDetail.batch.fileType ?? "-"}\nbatchSize=${batchDetail.batch.batchSize}\nforce=${batchDetail.batch.force ? "是" : "否"}`} />
-							</div>
+									<Card className="border-border/60">
+										<CardHeader className="pb-3">
+											<CardTitle className="text-sm">批次信息</CardTitle>
+										</CardHeader>
+										<CardContent className="grid gap-3 md:grid-cols-2">
+											<div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+												<div className="text-[11px] text-muted-foreground mb-1">XXL 任务</div>
+												<div className="flex gap-4 text-sm">
+													<div>jobId: <span className="font-mono">{batchDetail.batch.xxlJobId || "-"}</span></div>
+													<div>logId: <span className="font-mono">{batchDetail.batch.xxlLogId || "-"}</span></div>
+												</div>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+												<div className="text-[11px] text-muted-foreground mb-1">时间</div>
+												<div className="flex gap-4 text-sm">
+													<div>开始: <span className="text-muted-foreground">{formatDisplayDate(batchDetail.batch.scanStartedAt)}</span></div>
+													<div>结束: <span className="text-muted-foreground">{formatDisplayDate(batchDetail.batch.scanFinishedAt)}</span></div>
+												</div>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+												<div className="text-[11px] text-muted-foreground mb-1">扫描路径</div>
+												<div className="text-sm">
+													{batchDetail.batch.scanPaths.map((path, idx) => (
+														<div key={idx} className="font-mono text-xs truncate" title={path}>{path}</div>
+													))}
+												</div>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+												<div className="text-[11px] text-muted-foreground mb-1">批次配置</div>
+												<div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+													<div>fileType: <span className="font-mono">{batchDetail.batch.fileType ?? "-"}</span></div>
+													<div>batchSize: <span className="font-mono">{batchDetail.batch.batchSize}</span></div>
+													<div>force: <span className="font-mono">{batchDetail.batch.force ? "是" : "否"}</span></div>
+												</div>
+											</div>
+										</CardContent>
+									</Card>
 
-							{batchDetail.batch.errorMessage ? <DetailField label="批次错误信息" value={batchDetail.batch.errorMessage} /> : null}
-
-							<Card className="border-border/60">
-								<CardHeader>
-									<CardTitle>批次内记录</CardTitle>
-									<CardDescription>按异常优先，其次处理中，再到已完成记录排序。</CardDescription>
-								</CardHeader>
-								<CardContent>
-									{batchDetail.items.length ? (
-										<Table>
-											<TableHeader>
-												<TableRow>
-													<TableHead>itemCode</TableHead>
-													<TableHead>cad_number</TableHead>
-													<TableHead>文件名</TableHead>
-													<TableHead>入库状态</TableHead>
-													<TableHead>扫描状态</TableHead>
-													<TableHead>关键路径</TableHead>
-													<TableHead>更新时间</TableHead>
-													<TableHead className="w-[88px]">详情</TableHead>
-												</TableRow>
-											</TableHeader>
-											<TableBody>
-												{batchDetail.items.map((item) => (
-													<TableRow key={`${batchDetail.batch.batchRunId}-${item.itemCode}`}>
-														<TableCell className="font-mono text-xs">{item.itemCode}</TableCell>
-														<TableCell className="font-mono text-xs">{truncateText(item.cadNumber, 30)}</TableCell>
-														<TableCell>{truncateText(item.fileName, 36)}</TableCell>
-														<TableCell>
-															<Badge variant={statusBadgeVariant(item.ingestStatus)}>{statusLabel(item.ingestStatus)}</Badge>
-														</TableCell>
-														<TableCell>
-															<Badge variant={processStatusBadgeVariant(item.processStatus)}>{processStatusLabel(item.processStatus)}</Badge>
-														</TableCell>
-														<TableCell>
-															<Badge variant={item.pathReadyCount === item.pathReadyTotal ? "success" : "outline"}>
-																{item.pathReadyCount}/{item.pathReadyTotal}
-															</Badge>
-														</TableCell>
-														<TableCell>{formatDisplayDate(item.updateTime || item.createTime)}</TableCell>
-														<TableCell>
-															<Button variant="ghost" size="icon" onClick={() => openDetail(item.itemCode)}>
-																<EyeIcon className="h-4 w-4" />
-															</Button>
-														</TableCell>
-													</TableRow>
-												))}
-											</TableBody>
-										</Table>
-									) : (
-										<div className="py-8 text-sm text-muted-foreground">当前批次还没有追踪到记录。</div>
+									{batchDetail.batch.errorMessage && (
+										<div className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-4">
+											<div className="flex items-start gap-2">
+												<AlertTriangleIcon className="h-4 w-4 text-rose-500 mt-0.5" />
+												<div>
+													<div className="text-sm font-medium text-rose-600 dark:text-rose-400 mb-1">批次错误信息</div>
+													<div className="text-sm text-rose-700 dark:text-rose-300 whitespace-pre-wrap">{batchDetail.batch.errorMessage}</div>
+												</div>
+											</div>
+										</div>
 									)}
-								</CardContent>
-							</Card>
+
+									<Card className="border-border/60">
+										<CardHeader className="gap-3 pb-3">
+											<div className="flex items-center justify-between">
+												<div className="flex items-center gap-2">
+													<DatabaseIcon className="h-4 w-4 text-muted-foreground" />
+													<CardTitle className="text-base">批次内记录</CardTitle>
+												</div>
+												{batchDetail.items.length ? (
+													<Badge variant="outline" className="bg-background/80">{batchDetail.items.length} 条</Badge>
+												) : null}
+											</div>
+											<CardDescription>按异常优先，其次处理中，再到已完成记录排序。</CardDescription>
+										</CardHeader>
+										<CardContent>
+											{batchDetail.items.length ? (
+												<div className="rounded-lg border border-border/60 overflow-hidden">
+													<Table>
+														<TableHeader className="bg-muted/50">
+															<TableRow className="hover:bg-transparent">
+																<TableHead className="w-[140px]">
+																	<div className="flex items-center gap-1.5">
+																		<FileCodeIcon className="h-3.5 w-3.5" />
+																		记录对象
+																	</div>
+																</TableHead>
+																<TableHead className="w-[90px]">入库状态</TableHead>
+																<TableHead className="w-[90px]">扫描状态</TableHead>
+																<TableHead className="w-[90px] text-center">
+																	<div className="flex items-center justify-center gap-1.5">
+																		<RouteIcon className="h-3.5 w-3.5" />
+																		路径
+																	</div>
+																</TableHead>
+																<TableHead className="w-[110px] text-right">时间</TableHead>
+																<TableHead className="w-[60px] text-center">详情</TableHead>
+															</TableRow>
+														</TableHeader>
+														<TableBody>
+															{batchDetail.items.map((item) => (
+																<TableRow key={`${batchDetail.batch.batchRunId}-${item.itemCode}`} className="hover:bg-muted/30 transition-colors">
+																	<TableCell>
+																		<div className="flex flex-col gap-0.5">
+																			<span className="font-mono text-[10px] text-muted-foreground truncate" title={item.itemCode}>{item.itemCode}</span>
+																			<span className="text-xs truncate" title={item.fileName}>{truncateText(item.fileName, 18)}</span>
+																			{item.cadNumber && (
+																				<span className="font-mono text-[9px] text-muted-foreground truncate">CAD:{truncateText(item.cadNumber, 12)}</span>
+																			)}
+																		</div>
+																	</TableCell>
+																	<TableCell>
+																		<Badge variant={statusBadgeVariant(item.ingestStatus)} className="text-[10px]">
+																			{statusLabel(item.ingestStatus)}
+																		</Badge>
+																	</TableCell>
+																	<TableCell>
+																		<Badge variant={processStatusBadgeVariant(item.processStatus)} className="text-[10px]">
+																			{processStatusLabel(item.processStatus)}
+																		</Badge>
+																	</TableCell>
+																	<TableCell className="text-center">
+																		<div className={cn(
+																			"inline-flex h-6 items-center justify-center rounded px-2 text-xs font-medium",
+																			item.pathReadyCount === item.pathReadyTotal 
+																				? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
+																				: "bg-muted text-muted-foreground"
+																		)}>
+																			{item.pathReadyCount}/{item.pathReadyTotal}
+																		</div>
+																	</TableCell>
+																	<TableCell className="text-right">
+																		<span className="text-xs text-muted-foreground">{formatDisplayDate(item.updateTime || item.createTime)}</span>
+																	</TableCell>
+																	<TableCell className="text-center">
+																		<Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openDetail(item.itemCode)}>
+																			<EyeIcon className="h-3.5 w-3.5" />
+																		</Button>
+																	</TableCell>
+																</TableRow>
+														))}
+													</TableBody>
+												</Table>
+											</div>
+										) : (
+											<div className="rounded-xl border border-dashed border-border/60 bg-muted/20 px-6 py-10 text-center">
+												<div className="text-sm font-medium">暂无批次内记录</div>
+												<div className="mt-2 text-xs text-muted-foreground">当前批次还没有追踪到记录</div>
+											</div>
+										)}
+									</CardContent>
+								</Card>
+								</div>
+							) : (
+								<div className="rounded-xl border border-dashed border-border/60 bg-muted/20 px-6 py-10 text-center">
+									<div className="text-sm font-medium">暂无批次详情</div>
+									<div className="mt-2 text-xs text-muted-foreground">无法加载批次详情信息</div>
+								</div>
+							)}
 						</div>
-					) : (
-						<div className="py-8 text-sm text-muted-foreground">暂无批次详情。</div>
-					)}
+					</div>
 				</DialogContent>
 			</Dialog>
 
 			<Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-				<DialogContent className="max-w-4xl">
-					<DialogHeader>
-						<DialogTitle>入库记录详情</DialogTitle>
-						<DialogDescription>展示单条正式入库记录的状态、关键路径和错误信息。</DialogDescription>
-					</DialogHeader>
-
-					{detailLoading ? (
-						<div className="flex items-center justify-center py-10 text-muted-foreground">
-							<LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
-							正在加载详情...
+				<DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 sm:rounded-2xl border-border/60">
+					<div className="flex flex-col h-full max-h-[90vh]">
+						{/* 头部 - 渐变背景 */}
+						<div className="bg-gradient-to-br from-primary/5 via-muted/30 to-background border-b border-border/60 px-6 py-5">
+							<DialogHeader className="gap-2">
+								<div className="flex items-center gap-3">
+									<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+										<FileCodeIcon className="h-5 w-5" />
+									</div>
+									<div>
+										<DialogTitle className="text-xl">入库记录详情</DialogTitle>
+										<DialogDescription className="text-xs mt-0.5">记录状态、关键路径和错误信息</DialogDescription>
+									</div>
+								</div>
+							</DialogHeader>
 						</div>
-					) : detailError ? (
-						<div className="rounded-md border border-red-500/40 bg-red-500/5 p-4 text-sm">{detailError}</div>
-					) : detail ? (
-						<div className="grid gap-4">
-							<div className="flex flex-wrap items-center gap-2">
-								<Badge variant="outline">租户：{formatTenantLabel(detail.scope.tenant)}</Badge>
-								<Badge variant={statusBadgeVariant(detail.item.status)}>{statusLabel(detail.item.status)}</Badge>
-								<Badge variant={detail.item.pathReadyCount === detail.item.pathReadyTotal ? "success" : "outline"}>
-									关键路径 {detail.item.pathReadyCount}/{detail.item.pathReadyTotal}
-								</Badge>
-							</div>
+						
+						<div className="flex-1 overflow-y-auto px-6 py-5">
+							{detailLoading ? (
+								<div className="flex items-center justify-center py-16 text-muted-foreground">
+									<LoaderCircleIcon className="mr-2 h-5 w-5 animate-spin" />
+									<span className="text-sm">正在加载详情...</span>
+								</div>
+							) : detailError ? (
+								<div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-5">
+									<div className="flex items-center gap-3">
+										<div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/10">
+											<AlertTriangleIcon className="h-5 w-5 text-rose-500" />
+										</div>
+										<div>
+											<div className="text-sm font-medium text-rose-600 dark:text-rose-400">加载失败</div>
+											<div className="text-sm text-rose-700/70 dark:text-rose-300/70 mt-0.5">{detailError}</div>
+										</div>
+									</div>
+								</div>
+							) : detail ? (
+								<div className="grid gap-5">
+									{/* 状态区域 - 使用卡片样式 */}
+									<div className="flex flex-wrap items-center gap-2">
+										{detail.scope.tenant && (
+											<div className="inline-flex items-center gap-1.5 rounded-lg bg-primary/5 border border-primary/10 px-3 py-1.5">
+												<span className="text-xs font-medium text-primary">{detail.scope.tenant === "guochuang" ? "国创" : detail.scope.tenant}</span>
+											</div>
+										)}
+										<div className={cn(
+											"inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5",
+											detail.item.status === 'success' && "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300",
+											detail.item.status === 'failure' && "bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-300",
+											detail.item.status === 'pending' && "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-300",
+											detail.item.status === 'unknown' && "bg-slate-500/10 border-slate-500/20 text-slate-700 dark:text-slate-300"
+										)}>
+											{detail.item.status === 'success' && <CheckCircleIcon className="h-3.5 w-3.5" />}
+											{detail.item.status === 'failure' && <XCircleIcon className="h-3.5 w-3.5" />}
+											{detail.item.status === 'pending' && <ClockIcon className="h-3.5 w-3.5" />}
+											{detail.item.status === 'unknown' && <HelpCircleIcon className="h-3.5 w-3.5" />}
+											<span className="text-xs font-medium">{statusLabel(detail.item.status)}</span>
+										</div>
+										<div className={cn(
+											"inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium",
+											detail.item.pathReadyCount === detail.item.pathReadyTotal 
+												? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/20" 
+												: "bg-muted/50 text-muted-foreground border-border"
+										)}>
+											<RouteIcon className="h-3.5 w-3.5" />
+											<span>{detail.item.pathReadyCount}/{detail.item.pathReadyTotal}</span>
+										</div>
+									</div>
 
-							<div className="grid gap-3 md:grid-cols-2">
-								<DetailField label="itemCode" value={detail.item.itemCode} />
-								<DetailField label="产品名称" value={detail.item.productName} />
-								<DetailField label="is_complete" value={detail.item.isComplete !== undefined ? String(detail.item.isComplete) : "-"} />
-								<DetailField label="推理类型" value={formatInferenceTypes(detail.item)} />
-								<DetailField label="更新时间" value={formatDisplayDate(detail.item.updateTime)} />
-								<DetailField label="创建时间" value={formatDisplayDate(detail.item.createTime)} />
-								<DetailField label="source_file_path" value={detail.item.sourceFilePath} />
-								<DetailField label="converted_file_path" value={detail.item.convertedFilePath} />
-								<DetailField label="pc_address" value={detail.item.pcAddress} />
-								<DetailField label="glb_address" value={detail.item.glbAddress} />
-							</div>
+									{/* 核心信息 - 大卡片突出显示 */}
+									<div className="rounded-2xl bg-gradient-to-br from-muted/60 via-muted/40 to-background border border-border/60 p-5">
+										<div className="grid gap-4 md:grid-cols-2">
+											<div>
+												<div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
+													<FileCodeIcon className="h-3 w-3" />
+													itemCode
+												</div>
+												<div className="font-mono text-sm bg-background/60 rounded-lg px-3 py-2 border border-border/40 truncate">
+													{detail.item.itemCode}
+												</div>
+											</div>
+											<div>
+												<div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
+													<DatabaseIcon className="h-3 w-3" />
+													产品名称
+												</div>
+												<div className="text-sm bg-background/60 rounded-lg px-3 py-2 border border-border/40 truncate">
+													{detail.item.productName || "-"}
+												</div>
+											</div>
+										</div>
+										
+										<div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-border/40">
+											<div className="flex items-center gap-3">
+												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 text-primary">
+													<ClockIcon className="h-4 w-4" />
+												</div>
+												<div>
+													<div className="text-[10px] text-muted-foreground">更新时间</div>
+													<div className="text-xs font-medium">{formatDisplayDate(detail.item.updateTime)}</div>
+												</div>
+											</div>
+											<div className="flex items-center gap-3">
+												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 text-primary">
+													<CalendarIcon className="h-4 w-4" />
+												</div>
+												<div>
+													<div className="text-[10px] text-muted-foreground">创建时间</div>
+													<div className="text-xs font-medium">{formatDisplayDate(detail.item.createTime)}</div>
+												</div>
+											</div>
+										</div>
+									</div>
 
-							<DetailField label="错误信息" value={detail.item.errorMsg} />
+									{/* 推理类型 */}
+									{detail.item.inferenceTypes?.length > 0 && (
+										<div className="flex items-center gap-3">
+											<span className="text-xs text-muted-foreground">推理类型:</span>
+											<div className="flex flex-wrap gap-2">
+												{detail.item.inferenceTypes.map((type, idx) => (
+													<div 
+														key={idx}
+														className="inline-flex items-center gap-1.5 rounded-lg bg-violet-500/10 text-violet-700 dark:text-violet-300 border border-violet-500/20 px-2.5 py-1"
+													>
+														<SparklesIcon className="h-3 w-3" />
+														<span className="text-xs font-medium">
+															{type === 1 ? "3D" : type === 2 ? "局部" : type === 3 ? "2D视图" : type === 4 ? "2D剖面" : type}
+														</span>
+													</div>
+												))}
+											</div>
+										</div>
+									)}
+
+									{/* 关键路径 - 使用步骤条样式 */}
+									<div className="rounded-2xl border border-border/60 bg-muted/20 p-5">
+										<div className="flex items-center justify-between mb-4">
+											<div className="flex items-center gap-2">
+												<RouteIcon className="h-4 w-4 text-muted-foreground" />
+												<span className="text-sm font-medium">关键路径准备度</span>
+											</div>
+											<div className="flex items-center gap-1.5 text-xs">
+												<span className={cn(
+													"font-bold",
+													detail.item.pathReadyCount === detail.item.pathReadyTotal ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+												)}>{detail.item.pathReadyCount}</span>
+												<span className="text-muted-foreground">/</span>
+												<span className="text-muted-foreground">{detail.item.pathReadyTotal}</span>
+											</div>
+										</div>
+										
+										<div className="grid grid-cols-4 gap-3">
+											{[
+												{ key: 'hasSourceFilePath', label: '源文件', path: detail.item.sourceFilePath, icon: FileIcon },
+												{ key: 'hasConvertedFile', label: 'STEP', path: detail.item.convertedFilePath, icon: FileBoxIcon },
+												{ key: 'hasPcAddress', label: 'PC', path: detail.item.pcAddress, icon: BoxIcon },
+												{ key: 'hasGlbAddress', label: 'GLB', path: detail.item.glbAddress, icon: PackageIcon },
+											].map((item, index) => {
+												const isReady = detail.item[item.key as keyof typeof detail.item] as boolean;
+												const Icon = item.icon;
+												return (
+													<div key={item.key} className="relative">
+														<div className={cn(
+															"flex flex-col items-center text-center p-3 rounded-xl border transition-all",
+															isReady 
+																? "bg-emerald-50/80 border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/30" 
+																: "bg-background/50 border-border/60 opacity-70"
+														)}>
+															<div className={cn(
+																"flex h-10 w-10 items-center justify-center rounded-xl mb-2 transition-colors",
+																isReady 
+																	? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" 
+																	: "bg-muted text-muted-foreground"
+															)}>
+																<Icon className="h-5 w-5" />
+															</div>
+															<span className={cn(
+																"text-xs font-medium",
+																isReady ? "text-emerald-700 dark:text-emerald-300" : "text-muted-foreground"
+															)}>{item.label}</span>
+															{isReady && item.path && (
+																<div className="mt-1.5 text-[9px] text-emerald-600/70 dark:text-emerald-400/70 truncate max-w-full px-1" title={item.path}>
+																	{truncateText(item.path, 15)}
+																</div>
+															)}
+														</div>
+														{index < 3 && (
+															<div className="absolute top-1/2 -right-1.5 w-3 h-px bg-border hidden md:block" />
+														)}
+													</div>
+												);
+											})}
+										</div>
+									</div>
+
+									{/* 错误信息 */}
+									{detail.item.errorMsg && (
+										<div className="rounded-xl border border-rose-200 dark:border-rose-500/30 bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-500/5 p-4">
+											<div className="flex items-start gap-3">
+												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500 text-white flex-shrink-0">
+													<AlertTriangleIcon className="h-4 w-4" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<div className="text-sm font-semibold text-rose-700 dark:text-rose-300 mb-1">错误信息</div>
+													<div className="text-sm text-rose-600/90 dark:text-rose-200/80 whitespace-pre-wrap break-all leading-relaxed">{detail.item.errorMsg}</div>
+												</div>
+											</div>
+										</div>
+									)}
+								</div>
+							) : (
+								<div className="flex flex-col items-center justify-center py-16 text-center">
+									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
+										<HelpCircleIcon className="h-6 w-6 text-muted-foreground" />
+									</div>
+									<div className="text-sm font-medium text-muted-foreground">暂无详情</div>
+									<div className="text-xs text-muted-foreground/70 mt-1">无法加载记录详情信息</div>
+								</div>
+							)}
 						</div>
-					) : (
-						<div className="py-8 text-sm text-muted-foreground">暂无详情。</div>
-					)}
+					</div>
 				</DialogContent>
 			</Dialog>
 
