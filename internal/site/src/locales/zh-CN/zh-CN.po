@@ -92,7 +92,6 @@ msgid "Access Key"
 msgstr "访问密钥"
 
 #: src/components/audit/audit-logs-table.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Action"
 msgstr "操作"
 
@@ -105,6 +104,7 @@ msgstr "操作"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -114,35 +114,47 @@ msgstr "操作"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Activation"
-msgstr ""
+msgstr "激活"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation content"
-msgstr "激活内容"
+#~ msgid "Activation content"
+#~ msgstr "激活内容"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Activation content is required"
 msgstr "缺少激活内容"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation details"
+#~ msgid "Activation details"
+#~ msgstr "激活详情"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Activation Details"
 msgstr "激活详情"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation file"
-msgstr "激活文件"
+#~ msgid "Activation file"
+#~ msgstr "激活文件"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Activation imported"
 #~ msgstr "激活请求已导入"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation payload"
-msgstr ""
+#~ msgid "Activation payload"
+#~ msgstr ""
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation registry"
-msgstr "激活设备台账"
+msgid "Activation Payload"
+msgstr "激活负载"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Activation registry"
+#~ msgstr "激活设备台账"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Activation Registry"
+msgstr "激活注册表"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Activation request"
@@ -158,6 +170,7 @@ msgstr ""
 
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Active"
 msgstr "活跃"
@@ -468,6 +481,10 @@ msgstr "二进制"
 msgid "Bits (Kbps, Mbps, Gbps)"
 msgstr "比特 (Kbps, Mbps, Gbps)"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Board Serial"
+msgstr "主板序列号"
+
 #: src/components/routes/api-tests.tsx
 msgid "Body"
 msgstr "请求体"
@@ -659,6 +676,7 @@ msgid "Cleanup will delete data immediately. Please confirm the targets and proc
 msgstr "清理会立即删除数据，请确认目标后继续。"
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "Clear"
@@ -717,6 +735,10 @@ msgid "Collections"
 msgstr "合集"
 
 #: src/components/routes/settings/offline-license.tsx
+msgid "Collections Not Initialized"
+msgstr "集合未初始化"
+
+#: src/components/routes/settings/offline-license.tsx
 msgid "Collector downloaded"
 msgstr "采集脚本已下载"
 
@@ -724,6 +746,10 @@ msgstr "采集脚本已下载"
 #: src/components/login/forgot-pass-form.tsx
 msgid "Command line instructions"
 msgstr "命令行说明"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Company name"
+msgstr "公司名称"
 
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
@@ -797,6 +823,10 @@ msgstr "配置路径"
 #: src/components/docker/service-configs.tsx
 msgid "Config saved. Restart the service to apply changes."
 msgstr "配置已保存，请重启服务生效。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Configuration Required"
+msgstr "需要配置"
 
 #: src/components/docker/networks.tsx
 msgid "Configure a new Docker network."
@@ -1046,12 +1076,16 @@ msgid "Cumulative Upload"
 msgstr "累计上传"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Current license"
-msgstr "当前授权"
+#~ msgid "Current license"
+#~ msgstr "当前授权"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Current license payload"
-msgstr "当前授权载荷"
+msgid "Current License"
+msgstr "当前许可证"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Current license payload"
+#~ msgstr "当前授权载荷"
 
 #. Context: Battery state
 #: src/components/routes/system.tsx
@@ -1065,9 +1099,16 @@ msgstr "当前步骤"
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Customer"
 msgstr "客户"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Customer *"
+msgstr "客户 *"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Customer Information"
+msgstr "客户信息"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
@@ -1199,13 +1240,18 @@ msgid "Detail"
 msgstr "详情"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Details"
-msgstr ""
+#~ msgid "Details"
+#~ msgstr ""
 
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
 msgstr "设备"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Device Information"
+msgstr "设备信息"
+
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Disabled"
 msgstr "已禁用"
@@ -1294,8 +1340,12 @@ msgid "Download"
 msgstr "下载"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Download collector"
-msgstr "下载采集脚本"
+#~ msgid "Download collector"
+#~ msgstr "下载采集脚本"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Download Collector"
+msgstr "下载收集器"
 
 #: src/components/docker/networks.tsx
 #: src/components/docker/volumes.tsx
@@ -1315,8 +1365,8 @@ msgstr "持续时间"
 #~ msgstr "每一行代表一台客户设备的激活记录。可通过行操作签发授权并查看历史。"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
-msgstr "每一行代表一台客户设备的激活记录。可通过行操作签发或导出当前授权，并查看设备详情。"
+#~ msgid "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
+#~ msgstr "每一行代表一台客户设备的激活记录。可通过行操作签发或导出当前授权，并查看设备详情。"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1435,6 +1485,10 @@ msgstr "输入值"
 #: src/components/login/otp-forms.tsx
 msgid "Enter your one-time password."
 msgstr "输入您的一次性密码。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Enterprise License Management"
+msgstr "企业许可证管理"
 
 #: src/components/routes/api-tests.tsx
 msgid "ENV"
@@ -1590,13 +1644,16 @@ msgstr "过期时间"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Export"
 msgstr "导出"
 
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Export configuration"
 msgstr "导出配置"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Export License"
+msgstr "导出许可证"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Export rules"
@@ -1856,7 +1913,7 @@ msgstr "操作容器失败"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Failed to parse activation"
-msgstr ""
+msgstr "解析激活失败"
 
 #: src/components/docker/images.tsx
 msgid "Failed to process image"
@@ -1884,7 +1941,7 @@ msgstr "执行合集失败"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Failed to save activation"
-msgstr ""
+msgstr "保存激活失败"
 
 #: src/components/routes/api-tests.tsx
 msgid "Failed to save case"
@@ -2110,8 +2167,16 @@ msgid "General"
 msgstr "常规"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Generate license"
-msgstr "生成授权"
+msgid "Generate a new signed license for the selected device activation."
+msgstr "为所选设备激活生成新的签名许可证。"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Generate license"
+#~ msgstr "生成授权"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Generate License"
+msgstr "生成许可证"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Global"
@@ -2236,9 +2301,13 @@ msgstr "导入"
 #~ msgstr "导入激活请求"
 
 #: src/components/routes/settings/offline-license.tsx
+msgid "Import Activation Request"
+msgstr "导入激活请求"
+
 #: src/components/routes/settings/offline-license.tsx
-msgid "Import activation.req"
-msgstr "导入 activation.req"
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Import activation.req"
+#~ msgstr "导入 activation.req"
 
 #: src/components/routes/api-tests.tsx
 msgid "Import API tests"
@@ -2249,9 +2318,17 @@ msgstr "导入接口管理数据"
 msgid "Import completed"
 msgstr "导入完成"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Import Request"
+msgstr "导入请求"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Import rules"
 msgstr "导入规则"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Import your first activation request to get started with offline license management."
+msgstr "导入您的第一个激活请求以开始离线许可证管理。"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Imported {importedCount} rules, skipped {skippedCount}."
@@ -2306,8 +2383,8 @@ msgid "Issue"
 msgstr "签发"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issue a new offline license and replace the current license snapshot for the selected activation record."
-msgstr "为选中的激活记录签发新的离线授权，并替换当前授权快照。"
+#~ msgid "Issue a new offline license and replace the current license snapshot for the selected activation record."
+#~ msgstr "为选中的激活记录签发新的离线授权，并替换当前授权快照。"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Issue a new offline license for the selected activation record."
@@ -2318,12 +2395,21 @@ msgstr "为选中的激活记录签发新的离线授权，并替换当前授权
 #~ msgstr "签发授权"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issue license.dat"
-msgstr "签发 license.dat"
+msgid "Issue License"
+msgstr "签发许可证"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issued at"
-msgstr ""
+#~ msgid "Issue license.dat"
+#~ msgstr "签发 license.dat"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Issued"
+msgstr "已签发"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Issued at"
+#~ msgstr ""
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Issued licenses"
@@ -2339,8 +2425,12 @@ msgid "JSON body is invalid"
 msgstr "JSON 内容无效"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Keep all manifest models selected to issue the full license scope."
-msgstr "保持所有清单模型为选中状态，即可签发完整授权范围。"
+#~ msgid "Keep all manifest models selected to issue the full license scope."
+#~ msgstr "保持所有清单模型为选中状态，即可签发完整授权范围。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Keep all models selected to issue the full license scope."
+msgstr "保持所有模型选中以签发完整的许可证范围。"
 
 #. Linux kernel
 #: src/components/routes/system.tsx
@@ -2387,8 +2477,13 @@ msgstr "上次错误"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Last issued"
-msgstr ""
+#~ msgid "Last issued"
+#~ msgstr ""
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Last Issued"
+msgstr "最后签发"
 
 #: src/components/routes/api-tests.tsx
 msgid "Last run"
@@ -2435,8 +2530,17 @@ msgid "License issued"
 msgstr "授权已签发"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Licensed models"
-msgstr ""
+msgid "License Payload"
+msgstr "许可证负载"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Licensed models"
+#~ msgstr ""
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Licensed Models"
+msgstr "授权模型"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Lifecycle"
@@ -2565,8 +2669,16 @@ msgstr "分"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Machine factors"
+#~ msgid "Machine factors"
+#~ msgstr "机器因子"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Machine Factors"
 msgstr "机器因子"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Machine ID"
+msgstr "机器 ID"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -2589,6 +2701,10 @@ msgstr "管理并运行接口用例"
 msgid "Manage and run API tests."
 msgstr "管理并运行接口测试。"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Manage customer device activations and license snapshots"
+msgstr "管理客户设备激活和许可证快照"
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "管理显示和通知偏好。"
@@ -2608,6 +2724,10 @@ msgstr "管理所选系统的 Docker 存储卷。"
 #: src/components/docker/images.tsx
 msgid "Manage local images and registries."
 msgstr "管理本地镜像与仓库。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Manage offline license activations for air-gapped environments. Download the collector, register devices, and issue signed license files."
+msgstr "管理气隙环境的离线许可证激活。下载收集器、注册设备并签发签名许可证文件。"
 
 #: src/components/docker/registries.tsx
 msgid "Manage registry credentials for image pull and push."
@@ -2853,8 +2973,12 @@ msgid "No"
 msgstr "否"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "No activation records yet."
-msgstr "暂时还没有激活记录。"
+msgid "No activation records"
+msgstr "暂无激活记录"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "No activation records yet."
+#~ msgstr "暂时还没有激活记录。"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "No activation requests imported yet."
@@ -3026,21 +3150,25 @@ msgid "None"
 msgstr "无"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not after"
-msgstr "失效时间"
+#~ msgid "Not after"
+#~ msgstr "失效时间"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not before"
-msgstr "生效时间"
+#~ msgid "Not before"
+#~ msgstr "生效时间"
 
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Not checked"
 msgstr "未检测"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not ready"
-msgstr ""
+#~ msgid "Not ready"
+#~ msgstr ""
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Not Ready"
+msgstr "未就绪"
 
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -3163,6 +3291,10 @@ msgstr "选项 (JSON)"
 msgid "Or continue with"
 msgstr "或使用以下方式登录"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Or Paste Content"
+msgstr "或粘贴内容"
+
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Other"
 msgstr "其他"
@@ -3211,16 +3343,24 @@ msgid "Params"
 msgstr ""
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parse activation"
-msgstr "解析激活请求"
+msgid "Parse & Continue"
+msgstr "解析并继续"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parse the activation request first, then fill in customer information before saving it as a device record."
-msgstr "先解析 activation 请求，再补充客户信息后保存为设备记录。"
+#~ msgid "Parse activation"
+#~ msgstr "解析激活请求"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parsed activation"
-msgstr ""
+msgid "Parse the activation request file and register the device for offline licensing."
+msgstr "解析激活请求文件并注册设备以进行离线许可。"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Parse the activation request first, then fill in customer information before saving it as a device record."
+#~ msgstr "先解析 activation 请求，再补充客户信息后保存为设备记录。"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Parsed activation"
+#~ msgstr ""
 
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3414,13 +3554,22 @@ msgid "Process started"
 msgstr "进程启动"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Project / Site"
-msgstr ""
+msgid "Product UUID"
+msgstr "产品 UUID"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Project"
+msgstr "项目"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Project name"
-msgstr "项目名称"
+msgid "Project / Site"
+msgstr "项目 / 站点"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Project name"
+#~ msgstr "项目名称"
 
 #: src/components/docker/compose.tsx
 msgid "Provide a full docker-compose.yml content for deployment."
@@ -3470,11 +3619,15 @@ msgstr "只读用户无法修改关注规则。"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Ready"
-msgstr ""
+msgstr "就绪"
 
 #: src/components/routes/system.tsx
 msgid "Received"
 msgstr "接收"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "records"
+msgstr "记录"
 
 #: src/components/docker/focus-alert-settings-sheet.tsx
 msgid "Recovery seconds must be greater than 0"
@@ -3511,7 +3664,6 @@ msgstr "Redis 端口无效"
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "刷新"
@@ -3552,7 +3704,7 @@ msgstr "关系"
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 msgid "Remarks"
-msgstr ""
+msgstr "备注"
 
 #: src/components/docker/compose.tsx
 msgid "Remove project files"
@@ -3570,7 +3722,6 @@ msgstr "仓库源"
 msgid "Request a one-time password"
 msgstr "请求一次性密码"
 
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 msgid "Request ID"
@@ -3648,12 +3799,20 @@ msgstr "查看并更新所选服务的配置内容。"
 #~ msgstr "查看设备信息，并导出该激活记录对应的授权历史。"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Review device information and manage the current license snapshot for this activation."
-msgstr "查看设备信息，并管理该激活记录的当前授权快照。"
+#~ msgid "Review device information and manage the current license snapshot for this activation."
+#~ msgstr "查看设备信息，并管理该激活记录的当前授权快照。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Review device information and manage the current license."
+msgstr "查看设备信息并管理当前许可证。"
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Review Docker audit records and data cleanup runs."
 msgstr "查看 Docker 审计记录与数据清理执行结果。"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Revoked"
+msgstr "已撤销"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -3742,8 +3901,12 @@ msgid "Save"
 msgstr "保存"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Save activation"
-msgstr "保存激活记录"
+#~ msgid "Save activation"
+#~ msgstr "保存激活记录"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Save Activation"
+msgstr "保存激活"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
@@ -3990,13 +4153,21 @@ msgid "Sign in"
 msgstr "登录"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Signing readiness"
-msgstr "签发就绪状态"
+#~ msgid "Signing readiness"
+#~ msgstr "签发就绪状态"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Signing Readiness"
+msgstr "签名就绪状态"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Site"
+msgstr "站点"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Site name"
-msgstr "部署地点"
+#~ msgid "Site name"
+#~ msgstr "部署地点"
 
 #: src/components/docker/images.tsx
 msgid "Size"
@@ -4147,6 +4318,10 @@ msgstr "子网"
 #: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr "成功"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Supported formats: .req, .json, .dat"
+msgstr "支持的格式：.req、.json、.dat"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -4574,7 +4749,6 @@ msgstr "更新服务名称或接口 URL。"
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -4588,6 +4762,10 @@ msgstr "每 10 分钟更新一次。"
 #: src/components/routes/system/network-sheet.tsx
 msgid "Upload"
 msgstr "上传"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Upload Activation File"
+msgstr "上传激活文件"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/docker/containers.tsx
@@ -4632,8 +4810,8 @@ msgstr "使用已保存的密钥"
 #~ msgstr "在总部 Hub 下载采集脚本、导入激活请求、签发带签名的 license.dat，并导出回客户主机。"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
-msgstr "在总部 Hub 下载采集脚本、登记设备激活记录、签发带签名的 license.dat，并导出回客户主机。"
+#~ msgid "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
+#~ msgstr "在总部 Hub 下载采集脚本、登记设备激活记录、签发带签名的 license.dat，并导出回客户主机。"
 
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
@@ -4661,6 +4839,14 @@ msgstr "用户名"
 #: src/components/navbar.tsx
 msgid "Users"
 msgstr "用户"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Valid From"
+msgstr "有效期从"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Valid Until"
+msgstr "有效期至"
 
 #: src/components/alerts-history-columns.tsx
 #: src/components/docker/focus-rules-dialog.tsx

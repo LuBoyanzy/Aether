@@ -87,7 +87,6 @@ msgid "Access Key"
 msgstr "Access Key"
 
 #: src/components/audit/audit-logs-table.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Action"
 msgstr "Action"
 
@@ -100,6 +99,7 @@ msgstr "Action"
 #: src/components/docker/networks.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -112,32 +112,44 @@ msgid "Activation"
 msgstr "Activation"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation content"
-msgstr "Activation content"
+#~ msgid "Activation content"
+#~ msgstr "Activation content"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Activation content is required"
 msgstr "Activation content is required"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation details"
-msgstr "Activation details"
+#~ msgid "Activation details"
+#~ msgstr "Activation details"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation file"
-msgstr "Activation file"
+msgid "Activation Details"
+msgstr "Activation Details"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Activation file"
+#~ msgstr "Activation file"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Activation imported"
 #~ msgstr "Activation imported"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation payload"
-msgstr "Activation payload"
+#~ msgid "Activation payload"
+#~ msgstr "Activation payload"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Activation registry"
-msgstr "Activation registry"
+msgid "Activation Payload"
+msgstr "Activation Payload"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Activation registry"
+#~ msgstr "Activation registry"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Activation Registry"
+msgstr "Activation Registry"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Activation request"
@@ -153,6 +165,7 @@ msgstr "Activation saved"
 
 #: src/components/alerts-history-columns.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Active"
 msgstr "Active"
@@ -463,6 +476,10 @@ msgstr "Binary"
 msgid "Bits (Kbps, Mbps, Gbps)"
 msgstr "Bits (Kbps, Mbps, Gbps)"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Board Serial"
+msgstr "Board Serial"
+
 #: src/components/routes/api-tests.tsx
 msgid "Body"
 msgstr "Body"
@@ -654,6 +671,7 @@ msgid "Cleanup will delete data immediately. Please confirm the targets and proc
 msgstr "Cleanup will delete data immediately. Please confirm the targets and proceed."
 
 #: src/components/containers-table/containers-table.tsx
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systems-table/systems-table.tsx
 msgid "Clear"
@@ -712,6 +730,10 @@ msgid "Collections"
 msgstr "Collections"
 
 #: src/components/routes/settings/offline-license.tsx
+msgid "Collections Not Initialized"
+msgstr "Collections Not Initialized"
+
+#: src/components/routes/settings/offline-license.tsx
 msgid "Collector downloaded"
 msgstr "Collector downloaded"
 
@@ -719,6 +741,10 @@ msgstr "Collector downloaded"
 #: src/components/login/forgot-pass-form.tsx
 msgid "Command line instructions"
 msgstr "Command line instructions"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Company name"
+msgstr "Company name"
 
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
@@ -792,6 +818,10 @@ msgstr "Config Path"
 #: src/components/docker/service-configs.tsx
 msgid "Config saved. Restart the service to apply changes."
 msgstr "Config saved. Restart the service to apply changes."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Configuration Required"
+msgstr "Configuration Required"
 
 #: src/components/docker/networks.tsx
 msgid "Configure a new Docker network."
@@ -1041,12 +1071,16 @@ msgid "Cumulative Upload"
 msgstr "Cumulative Upload"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Current license"
-msgstr "Current license"
+#~ msgid "Current license"
+#~ msgstr "Current license"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Current license payload"
-msgstr "Current license payload"
+msgid "Current License"
+msgstr "Current License"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Current license payload"
+#~ msgstr "Current license payload"
 
 #. Context: Battery state
 #: src/components/routes/system.tsx
@@ -1060,9 +1094,16 @@ msgstr "Current step"
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Customer"
 msgstr "Customer"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Customer *"
+msgstr "Customer *"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Customer Information"
+msgstr "Customer Information"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
@@ -1198,13 +1239,18 @@ msgid "Detail"
 msgstr "Detail"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Details"
-msgstr "Details"
+#~ msgid "Details"
+#~ msgstr "Details"
 
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
 msgstr "Device"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Device Information"
+msgstr "Device Information"
+
+#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Disabled"
 msgstr "Disabled"
@@ -1293,8 +1339,12 @@ msgid "Download"
 msgstr "Download"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Download collector"
-msgstr "Download collector"
+#~ msgid "Download collector"
+#~ msgstr "Download collector"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Download Collector"
+msgstr "Download Collector"
 
 #: src/components/docker/networks.tsx
 #: src/components/docker/volumes.tsx
@@ -1314,8 +1364,8 @@ msgstr "Duration"
 #~ msgstr "Each row represents a customer device activation. Use row actions to issue licenses and review history."
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
-msgstr "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
+#~ msgid "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
+#~ msgstr "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1434,6 +1484,10 @@ msgstr "Enter value"
 #: src/components/login/otp-forms.tsx
 msgid "Enter your one-time password."
 msgstr "Enter your one-time password."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Enterprise License Management"
+msgstr "Enterprise License Management"
 
 #: src/components/routes/api-tests.tsx
 msgid "ENV"
@@ -1589,13 +1643,16 @@ msgstr "Expires"
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 msgid "Export"
 msgstr "Export"
 
 #: src/components/routes/settings/config-yaml.tsx
 msgid "Export configuration"
 msgstr "Export configuration"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Export License"
+msgstr "Export License"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Export rules"
@@ -2109,8 +2166,16 @@ msgid "General"
 msgstr "General"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Generate license"
-msgstr "Generate license"
+msgid "Generate a new signed license for the selected device activation."
+msgstr "Generate a new signed license for the selected device activation."
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Generate license"
+#~ msgstr "Generate license"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Generate License"
+msgstr "Generate License"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Global"
@@ -2239,9 +2304,13 @@ msgstr "Import"
 #~ msgstr "Import activation"
 
 #: src/components/routes/settings/offline-license.tsx
+msgid "Import Activation Request"
+msgstr "Import Activation Request"
+
 #: src/components/routes/settings/offline-license.tsx
-msgid "Import activation.req"
-msgstr "Import activation.req"
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Import activation.req"
+#~ msgstr "Import activation.req"
 
 #: src/components/routes/api-tests.tsx
 msgid "Import API tests"
@@ -2252,9 +2321,17 @@ msgstr "Import API tests"
 msgid "Import completed"
 msgstr "Import completed"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Import Request"
+msgstr "Import Request"
+
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Import rules"
 msgstr "Import rules"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Import your first activation request to get started with offline license management."
+msgstr "Import your first activation request to get started with offline license management."
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Imported {importedCount} rules, skipped {skippedCount}."
@@ -2309,8 +2386,8 @@ msgid "Issue"
 msgstr "Issue"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issue a new offline license and replace the current license snapshot for the selected activation record."
-msgstr "Issue a new offline license and replace the current license snapshot for the selected activation record."
+#~ msgid "Issue a new offline license and replace the current license snapshot for the selected activation record."
+#~ msgstr "Issue a new offline license and replace the current license snapshot for the selected activation record."
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Issue a new offline license for the selected activation record."
@@ -2321,12 +2398,21 @@ msgstr "Issue a new offline license and replace the current license snapshot for
 #~ msgstr "Issue license"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issue license.dat"
-msgstr "Issue license.dat"
+msgid "Issue License"
+msgstr "Issue License"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Issued at"
-msgstr "Issued at"
+#~ msgid "Issue license.dat"
+#~ msgstr "Issue license.dat"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Issued"
+msgstr "Issued"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Issued at"
+#~ msgstr "Issued at"
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Issued licenses"
@@ -2342,8 +2428,12 @@ msgid "JSON body is invalid"
 msgstr "JSON body is invalid"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Keep all manifest models selected to issue the full license scope."
-msgstr "Keep all manifest models selected to issue the full license scope."
+#~ msgid "Keep all manifest models selected to issue the full license scope."
+#~ msgstr "Keep all manifest models selected to issue the full license scope."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Keep all models selected to issue the full license scope."
+msgstr "Keep all models selected to issue the full license scope."
 
 #. Linux kernel
 #: src/components/routes/system.tsx
@@ -2390,8 +2480,13 @@ msgstr "Last error"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Last issued"
-msgstr "Last issued"
+#~ msgid "Last issued"
+#~ msgstr "Last issued"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Last Issued"
+msgstr "Last Issued"
 
 #: src/components/routes/api-tests.tsx
 msgid "Last run"
@@ -2438,8 +2533,17 @@ msgid "License issued"
 msgstr "License issued"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Licensed models"
-msgstr "Licensed models"
+msgid "License Payload"
+msgstr "License Payload"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Licensed models"
+#~ msgstr "Licensed models"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
+msgid "Licensed Models"
+msgstr "Licensed Models"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Lifecycle"
@@ -2572,8 +2676,16 @@ msgstr "m"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Machine factors"
-msgstr "Machine factors"
+#~ msgid "Machine factors"
+#~ msgstr "Machine factors"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Machine Factors"
+msgstr "Machine Factors"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Machine ID"
+msgstr "Machine ID"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Main PID"
@@ -2596,6 +2708,10 @@ msgstr "Manage and run API cases"
 msgid "Manage and run API tests."
 msgstr "Manage and run API tests."
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Manage customer device activations and license snapshots"
+msgstr "Manage customer device activations and license snapshots"
+
 #: src/components/routes/settings/layout.tsx
 msgid "Manage display and notification preferences."
 msgstr "Manage display and notification preferences."
@@ -2615,6 +2731,10 @@ msgstr "Manage Docker volumes for persistent storage."
 #: src/components/docker/images.tsx
 msgid "Manage local images and registries."
 msgstr "Manage local images and registries."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Manage offline license activations for air-gapped environments. Download the collector, register devices, and issue signed license files."
+msgstr "Manage offline license activations for air-gapped environments. Download the collector, register devices, and issue signed license files."
 
 #: src/components/docker/registries.tsx
 msgid "Manage registry credentials for image pull and push."
@@ -2860,8 +2980,12 @@ msgid "No"
 msgstr "No"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "No activation records yet."
-msgstr "No activation records yet."
+msgid "No activation records"
+msgstr "No activation records"
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "No activation records yet."
+#~ msgstr "No activation records yet."
 
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "No activation requests imported yet."
@@ -3033,21 +3157,25 @@ msgid "None"
 msgstr "None"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not after"
-msgstr "Not after"
+#~ msgid "Not after"
+#~ msgstr "Not after"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not before"
-msgstr "Not before"
+#~ msgid "Not before"
+#~ msgstr "Not before"
 
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Not checked"
 msgstr "Not checked"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Not ready"
-msgstr "Not ready"
+#~ msgid "Not ready"
+#~ msgstr "Not ready"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Not Ready"
+msgstr "Not Ready"
 
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -3170,6 +3298,10 @@ msgstr "Options (JSON)"
 msgid "Or continue with"
 msgstr "Or continue with"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "Or Paste Content"
+msgstr "Or Paste Content"
+
 #: src/components/routes/system/cpu-sheet.tsx
 msgid "Other"
 msgstr "Other"
@@ -3218,16 +3350,24 @@ msgid "Params"
 msgstr "Params"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parse activation"
-msgstr "Parse activation"
+msgid "Parse & Continue"
+msgstr "Parse & Continue"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parse the activation request first, then fill in customer information before saving it as a device record."
-msgstr "Parse the activation request first, then fill in customer information before saving it as a device record."
+#~ msgid "Parse activation"
+#~ msgstr "Parse activation"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Parsed activation"
-msgstr "Parsed activation"
+msgid "Parse the activation request file and register the device for offline licensing."
+msgstr "Parse the activation request file and register the device for offline licensing."
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Parse the activation request first, then fill in customer information before saving it as a device record."
+#~ msgstr "Parse the activation request first, then fill in customer information before saving it as a device record."
+
+#: src/components/routes/settings/offline-license.tsx
+#~ msgid "Parsed activation"
+#~ msgstr "Parsed activation"
 
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3421,13 +3561,22 @@ msgid "Process started"
 msgstr "Process started"
 
 #: src/components/routes/settings/offline-license.tsx
+msgid "Product UUID"
+msgstr "Product UUID"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Project"
+msgstr "Project"
+
+#: src/components/routes/settings/offline-license.tsx
+#: src/components/routes/settings/offline-license.tsx
 msgid "Project / Site"
 msgstr "Project / Site"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Project name"
-msgstr "Project name"
+#~ msgid "Project name"
+#~ msgstr "Project name"
 
 #: src/components/docker/compose.tsx
 msgid "Provide a full docker-compose.yml content for deployment."
@@ -3483,6 +3632,10 @@ msgstr "Ready"
 msgid "Received"
 msgstr "Received"
 
+#: src/components/routes/settings/offline-license.tsx
+msgid "records"
+msgstr "records"
+
 #: src/components/docker/focus-alert-settings-sheet.tsx
 msgid "Recovery seconds must be greater than 0"
 msgstr "Recovery seconds must be greater than 0"
@@ -3518,7 +3671,6 @@ msgstr "Redis port is invalid"
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/routes/api-tests.tsx
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "Refresh"
@@ -3577,7 +3729,6 @@ msgstr "Repository Sources"
 msgid "Request a one-time password"
 msgstr "Request a one-time password"
 
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 msgid "Request ID"
@@ -3655,12 +3806,20 @@ msgstr "Review and update config content for the selected service."
 #~ msgstr "Review device information and export the license history for this activation."
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Review device information and manage the current license snapshot for this activation."
-msgstr "Review device information and manage the current license snapshot for this activation."
+#~ msgid "Review device information and manage the current license snapshot for this activation."
+#~ msgstr "Review device information and manage the current license snapshot for this activation."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Review device information and manage the current license."
+msgstr "Review device information and manage the current license."
 
 #: src/components/audit/audit-logs-table.tsx
 msgid "Review Docker audit records and data cleanup runs."
 msgstr "Review Docker audit records and data cleanup runs."
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Revoked"
+msgstr "Revoked"
 
 #: src/components/systems-table/systems-table-columns.tsx
 msgctxt "Root disk label"
@@ -3749,8 +3908,12 @@ msgid "Save"
 msgstr "Save"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Save activation"
-msgstr "Save activation"
+#~ msgid "Save activation"
+#~ msgstr "Save activation"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Save Activation"
+msgstr "Save Activation"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "Save address using enter key or comma. Leave blank to disable email notifications."
@@ -3997,13 +4160,21 @@ msgid "Sign in"
 msgstr "Sign in"
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Signing readiness"
-msgstr "Signing readiness"
+#~ msgid "Signing readiness"
+#~ msgstr "Signing readiness"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Signing Readiness"
+msgstr "Signing Readiness"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Site"
+msgstr "Site"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
-msgid "Site name"
-msgstr "Site name"
+#~ msgid "Site name"
+#~ msgstr "Site name"
 
 #: src/components/docker/images.tsx
 msgid "Size"
@@ -4154,6 +4325,10 @@ msgstr "Subnet"
 #: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr "Success"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Supported formats: .req, .json, .dat"
+msgstr "Supported formats: .req, .json, .dat"
 
 #: src/components/routes/system.tsx
 msgid "Swap space used by the system"
@@ -4581,7 +4756,6 @@ msgstr "Update service name or endpoint URL."
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/smart-table.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
 msgid "Updated"
@@ -4595,6 +4769,10 @@ msgstr "Updated every 10 minutes."
 #: src/components/routes/system/network-sheet.tsx
 msgid "Upload"
 msgstr "Upload"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Upload Activation File"
+msgstr "Upload Activation File"
 
 #: src/components/containers-table/containers-table-columns.tsx
 #: src/components/docker/containers.tsx
@@ -4639,8 +4817,8 @@ msgstr "Use stored secret"
 #~ msgstr "Use the headquarters hub to download the collector, import activation requests, issue a signed license.dat, and export it back to the customer host."
 
 #: src/components/routes/settings/offline-license.tsx
-msgid "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
-msgstr "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
+#~ msgid "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
+#~ msgstr "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
 
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
@@ -4668,6 +4846,14 @@ msgstr "Username"
 #: src/components/navbar.tsx
 msgid "Users"
 msgstr "Users"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Valid From"
+msgstr "Valid From"
+
+#: src/components/routes/settings/offline-license.tsx
+msgid "Valid Until"
+msgstr "Valid Until"
 
 #: src/components/alerts-history-columns.tsx
 #: src/components/docker/focus-rules-dialog.tsx
