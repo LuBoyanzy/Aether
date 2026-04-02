@@ -392,6 +392,14 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	apiAuth.POST("/repo-sources/refresh", h.refreshRepoSources)
 	// get systemd service details
 	apiAuth.GET("/systemd/info", h.getSystemdInfo)
+	// local agent control for the hub host
+	localAgentGroup := apiAuth.Group("/local-agent")
+	localAgentGroup.GET("/status", h.getLocalAgentStatus)
+	localAgentGroup.POST("/setup", h.setupLocalAgent)
+	localAgentGroup.POST("/start", h.startLocalAgent)
+	localAgentGroup.POST("/stop", h.stopLocalAgent)
+	localAgentGroup.POST("/restart", h.restartLocalAgent)
+	localAgentGroup.GET("/logs", h.getLocalAgentLogs)
 	// /containers routes
 	if enabled, _ := GetEnv("CONTAINER_DETAILS"); enabled != "false" {
 		// get container logs

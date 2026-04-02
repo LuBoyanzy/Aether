@@ -88,6 +88,7 @@ dev-hub:
 	export AETHER_HUB_DATA_CLEANUP_KEY="$${AETHER_HUB_DATA_CLEANUP_KEY:-0123456789abcdef0123456789abcdef}"; \
 	export AETHER_HUB_LICENSE_PRIVATE_KEY_FILE="$${AETHER_HUB_LICENSE_PRIVATE_KEY_FILE:-$(CURDIR)/.hq-license/license_signing_ed25519_private.pem}"; \
 	export AETHER_HUB_LICENSE_MODEL_MANIFEST="$${AETHER_HUB_LICENSE_MODEL_MANIFEST:-$(CURDIR)/.hq-license/model_security_manifest.json}"; \
+	export AETHER_HUB_LOCAL_AGENT_BIN="$${AETHER_HUB_LOCAL_AGENT_BIN:-$(CURDIR)/build/aether-agent_$(OS)_$(ARCH)$(EXE_EXT)}"; \
 	export APP_URL="$${APP_URL:-http://192.168.140.2:19090}"; \
 	mkdir -p ./internal/site/dist && touch ./internal/site/dist/index.html; \
 	if command -v entr >/dev/null 2>&1; then \

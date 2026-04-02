@@ -13,6 +13,7 @@ internal/cmd/hub/hub
 internal/cmd/agent/agent
 node_modules
 build
+run
 *timestamp*
 .swc
 internal/site/src/locales/**/*.ts

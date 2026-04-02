@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro"
 import PocketBase from "pocketbase"
 import { basePath } from "@/components/router"
 import { toast } from "@/components/ui/use-toast"
-import type { ChartTimes, NotificationSettings, UserSettings } from "@/types"
+import type { ChartTimes, LocalAgentLogs, LocalAgentStatus, NotificationSettings, UserSettings } from "@/types"
 import { $alerts, $allSystemsById, $allSystemsByName, $userSettings } from "./stores"
 import { chartTimeData } from "./utils"
 
@@ -72,4 +72,31 @@ export async function getNotificationSettings(): Promise<NotificationSettings> {
 
 export async function updateNotificationSettings(settings: NotificationSettings): Promise<NotificationSettings> {
 	return pb.send<NotificationSettings>("/api/aether/notification-settings", { method: "PUT", body: settings })
+}
+
+export async function getLocalAgentStatus(): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent/status", { method: "GET" })
+}
+
+export async function setupLocalAgent(name: string): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent/setup", {
+		method: "POST",
+		body: { name, autoStart: true },
+	})
+}
+
+export async function startLocalAgent(): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent/start", { method: "POST" })
+}
+
+export async function stopLocalAgent(): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent/stop", { method: "POST" })
+}
+
+export async function restartLocalAgent(): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent/restart", { method: "POST" })
+}
+
+export async function getLocalAgentLogs(): Promise<LocalAgentLogs> {
+	return pb.send<LocalAgentLogs>("/api/aether/local-agent/logs", { method: "GET" })
 }

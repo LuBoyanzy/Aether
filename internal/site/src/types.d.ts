@@ -104,6 +104,31 @@ export interface SystemRecord extends RecordModel {
 	updated: string
 }
 
+export interface LocalAgentStatus {
+	enabled: boolean
+	available: boolean
+	configured: boolean
+	running: boolean
+	pid?: number
+	systemId?: string
+	systemName?: string
+	systemStatus?: string
+	host?: string
+	port?: string
+	hubUrl?: string
+	binaryPath: string
+	envPath: string
+	logPath: string
+	dataDir: string
+	error?: string
+}
+
+export interface LocalAgentLogs {
+	logs: string
+	logPath: string
+	truncated: boolean
+}
+
 export interface SystemInfo {
 	/** hostname */
 	h: string

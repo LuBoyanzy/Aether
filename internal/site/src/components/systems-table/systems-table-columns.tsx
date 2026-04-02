@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/correctness/useHookAtTopLevel: Hooks live inside memoized column definitions */
 import { t } from "@lingui/core/macro"
-import { Trans, useLingui } from "@lingui/react/macro"
+import { Trans } from "@lingui/react/macro"
 import { useStore } from "@nanostores/react"
 import { getPagePath } from "@nanostores/router"
 import type { CellContext, ColumnDef, HeaderContext } from "@tanstack/react-table"
@@ -16,14 +16,23 @@ import {
 	PauseCircleIcon,
 	PenBoxIcon,
 	PlayCircleIcon,
+	RotateCcwIcon,
 	ServerIcon,
 	TerminalSquareIcon,
 	Trash2Icon,
 	WifiIcon,
 } from "lucide-react"
-import { memo, useMemo, useRef, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
-import { isReadOnlyUser, pb } from "@/lib/api"
+import {
+	getLocalAgentLogs,
+	getLocalAgentStatus,
+	isReadOnlyUser,
+	pb,
+	restartLocalAgent,
+	startLocalAgent,
+	stopLocalAgent,
+} from "@/lib/api"
 import { BatteryState, ConnectionType, connectionTypeLabels, MeterState, SystemStatus } from "@/lib/enums"
 import { $longestSystemNameLen, $userSettings } from "@/lib/stores"
 import {
@@ -36,7 +45,7 @@ import {
 	parseSemVer,
 } from "@/lib/utils"
 import { batteryStateTranslations } from "@/lib/i18n"
-import type { SystemRecord } from "@/types"
+import type { LocalAgentStatus, SystemRecord } from "@/types"
 import { SystemDialog } from "../add-system"
 import AlertButton from "../alerts/alert-button"
 import { $router, Link } from "../router"
@@ -51,7 +60,7 @@ import {
 	AlertDialogTitle,
 } from "../ui/alert-dialog"
 import { Button, buttonVariants } from "../ui/button"
-import { Dialog } from "../ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -59,6 +68,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
+import { Textarea } from "../ui/textarea"
+import { toast } from "../ui/use-toast"
 import {
 	BatteryMediumIcon,
 	EthernetIcon,
@@ -564,101 +575,213 @@ export function IndicatorDot({ system, className }: { system: SystemRecord; clas
 export const ActionsButton = memo(({ system }: { system: SystemRecord }) => {
 	const [deleteOpen, setDeleteOpen] = useState(false)
 	const [editOpen, setEditOpen] = useState(false)
+	const [logsOpen, setLogsOpen] = useState(false)
+	const [menuOpen, setMenuOpen] = useState(false)
+	const [localStatus, setLocalStatus] = useState<LocalAgentStatus | null>(null)
+	const [localLogs, setLocalLogs] = useState("")
+	const [logsTruncated, setLogsTruncated] = useState(false)
+	const [localAction, setLocalAction] = useState<string | null>(null)
 	const editOpened = useRef(false)
-	const { t } = useLingui()
 	const { id, status, host, name } = system
+	const readOnly = isReadOnlyUser()
+	const isLocalSystem = localStatus?.systemId === id
 
-	return useMemo(() => {
-		return (
-			<>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" size={"icon"}>
-							<span className="sr-only">
-								<Trans>Open menu</Trans>
-							</span>
-							<MoreHorizontalIcon className="w-5" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						{!isReadOnlyUser() && (
+	useEffect(() => {
+		if (!menuOpen) {
+			return
+		}
+		let cancelled = false
+		void (async () => {
+			try {
+				const nextStatus = await getLocalAgentStatus()
+				if (!cancelled) {
+					setLocalStatus(nextStatus)
+				}
+			} catch (error) {
+				console.error("failed to load local agent status", error)
+			}
+		})()
+		return () => {
+			cancelled = true
+		}
+	}, [menuOpen])
+
+	async function runLocalAction(action: string, runner: () => Promise<LocalAgentStatus>, successMessage: string) {
+		try {
+			setLocalAction(action)
+			const nextStatus = await runner()
+			setLocalStatus(nextStatus)
+			toast({ title: successMessage })
+		} catch (error) {
+			toast({
+				title: "操作失败",
+				description: getLocalActionErrorMessage(error, "本机操作失败"),
+				variant: "destructive",
+			})
+		} finally {
+			setLocalAction(null)
+		}
+	}
+
+	async function openLocalLogs() {
+		try {
+			setLocalAction("logs")
+			const response = await getLocalAgentLogs()
+			setLocalLogs(response.logs)
+			setLogsTruncated(response.truncated)
+			setLogsOpen(true)
+		} catch (error) {
+			toast({
+				title: "操作失败",
+				description: getLocalActionErrorMessage(error, "获取本机日志失败"),
+				variant: "destructive",
+			})
+		} finally {
+			setLocalAction(null)
+		}
+	}
+
+	return (
+		<>
+			<DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+				<DropdownMenuTrigger asChild>
+					<Button variant="ghost" size={"icon"}>
+						<span className="sr-only">
+							<Trans>Open menu</Trans>
+						</span>
+						<MoreHorizontalIcon className="w-5" />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					{isLocalSystem ? (
+						<>
 							<DropdownMenuItem
-								onSelect={() => {
-									editOpened.current = true
-									setEditOpen(true)
+								className={cn(readOnly && "hidden")}
+								onClick={() => void runLocalAction("start", startLocalAgent, "本机 Agent 已启动")}
+								disabled={localAction !== null || !localStatus?.configured || !!localStatus?.running}
+							>
+								<PlayCircleIcon className="me-2.5 size-4" />
+								启动 Agent
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								className={cn(readOnly && "hidden")}
+								onClick={() => void runLocalAction("stop", stopLocalAgent, "本机 Agent 已停止")}
+								disabled={localAction !== null || !localStatus?.running}
+							>
+								<PauseCircleIcon className="me-2.5 size-4" />
+								停止 Agent
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								className={cn(readOnly && "hidden")}
+								onClick={() => void runLocalAction("restart", restartLocalAgent, "本机 Agent 已重启")}
+								disabled={localAction !== null || !localStatus?.configured}
+							>
+								<RotateCcwIcon className="me-2.5 size-4" />
+								重启 Agent
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => void openLocalLogs()} disabled={localAction !== null}>
+								<TerminalSquareIcon className="me-2.5 size-4" />
+								查看日志
+							</DropdownMenuItem>
+						</>
+					) : (
+						<>
+							{!readOnly && (
+								<DropdownMenuItem
+									onSelect={() => {
+										editOpened.current = true
+										setEditOpen(true)
+									}}
+								>
+									<PenBoxIcon className="me-2.5 size-4" />
+									<Trans>Edit</Trans>
+								</DropdownMenuItem>
+							)}
+							<DropdownMenuItem
+								className={cn(readOnly && "hidden")}
+								onClick={() => {
+									pb.collection("systems").update(id, {
+										status: status === SystemStatus.Paused ? SystemStatus.Pending : SystemStatus.Paused,
+									})
 								}}
 							>
-								<PenBoxIcon className="me-2.5 size-4" />
-								<Trans>Edit</Trans>
+								{status === SystemStatus.Paused ? (
+									<>
+										<PlayCircleIcon className="me-2.5 size-4" />
+										<Trans>Resume</Trans>
+									</>
+								) : (
+									<>
+										<PauseCircleIcon className="me-2.5 size-4" />
+										<Trans>Pause</Trans>
+									</>
+								)}
 							</DropdownMenuItem>
-						)}
-						<DropdownMenuItem
-							className={cn(isReadOnlyUser() && "hidden")}
-							onClick={() => {
-								pb.collection("systems").update(id, {
-									status: status === SystemStatus.Paused ? SystemStatus.Pending : SystemStatus.Paused,
-								})
-							}}
+							<DropdownMenuSeparator />
+							<DropdownMenuItem onClick={() => copyToClipboard(name)}>
+								<CopyIcon className="me-2.5 size-4" />
+								<Trans>Copy name</Trans>
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => copyToClipboard(host)}>
+								<CopyIcon className="me-2.5 size-4" />
+								<Trans>Copy host</Trans>
+							</DropdownMenuItem>
+						</>
+					)}
+					<DropdownMenuSeparator className={cn(readOnly && "hidden")} />
+					<DropdownMenuItem className={cn(readOnly && "hidden")} onSelect={() => setDeleteOpen(true)}>
+						<Trash2Icon className="me-2.5 size-4" />
+						<Trans>Delete</Trans>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			<Dialog open={editOpen} onOpenChange={setEditOpen}>
+				{editOpened.current && <SystemDialog system={system} setOpen={setEditOpen} />}
+			</Dialog>
+			<Dialog open={logsOpen} onOpenChange={setLogsOpen}>
+				<DialogContent className="max-w-3xl">
+					<DialogHeader>
+						<DialogTitle>本机 Agent 日志</DialogTitle>
+						<DialogDescription>
+							{logsTruncated ? "当前仅显示最近一段日志。" : "这里显示当前本机 Agent 的最近日志。"}
+						</DialogDescription>
+					</DialogHeader>
+					<Textarea readOnly value={localLogs} placeholder="暂无日志" className="min-h-80 font-mono text-xs leading-5" />
+				</DialogContent>
+			</Dialog>
+			<AlertDialog open={deleteOpen} onOpenChange={(open) => setDeleteOpen(open)}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							<Trans>Are you sure you want to delete {name}?</Trans>
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							<Trans>
+								This action cannot be undone. This will permanently delete all current records for {name} from the
+								database.
+							</Trans>
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>
+							<Trans>Cancel</Trans>
+						</AlertDialogCancel>
+						<AlertDialogAction
+							className={cn(buttonVariants({ variant: "destructive" }))}
+							onClick={() => pb.collection("systems").delete(id)}
 						>
-							{status === SystemStatus.Paused ? (
-								<>
-									<PlayCircleIcon className="me-2.5 size-4" />
-									<Trans>Resume</Trans>
-								</>
-							) : (
-								<>
-									<PauseCircleIcon className="me-2.5 size-4" />
-									<Trans>Pause</Trans>
-								</>
-							)}
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => copyToClipboard(name)}>
-							<CopyIcon className="me-2.5 size-4" />
-							<Trans>Copy name</Trans>
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => copyToClipboard(host)}>
-							<CopyIcon className="me-2.5 size-4" />
-							<Trans>Copy host</Trans>
-						</DropdownMenuItem>
-						<DropdownMenuSeparator className={cn(isReadOnlyUser() && "hidden")} />
-						<DropdownMenuItem className={cn(isReadOnlyUser() && "hidden")} onSelect={() => setDeleteOpen(true)}>
-							<Trash2Icon className="me-2.5 size-4" />
-							<Trans>Delete</Trans>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-				{/* edit dialog */}
-				<Dialog open={editOpen} onOpenChange={setEditOpen}>
-					{editOpened.current && <SystemDialog system={system} setOpen={setEditOpen} />}
-				</Dialog>
-				{/* deletion dialog */}
-				<AlertDialog open={deleteOpen} onOpenChange={(open) => setDeleteOpen(open)}>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>
-								<Trans>Are you sure you want to delete {name}?</Trans>
-							</AlertDialogTitle>
-							<AlertDialogDescription>
-								<Trans>
-									This action cannot be undone. This will permanently delete all current records for {name} from the
-									database.
-								</Trans>
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>
-								<Trans>Cancel</Trans>
-							</AlertDialogCancel>
-							<AlertDialogAction
-								className={cn(buttonVariants({ variant: "destructive" }))}
-								onClick={() => pb.collection("systems").delete(id)}
-							>
-								<Trans>Continue</Trans>
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</>
-		)
-	}, [id, status, host, name, system, t, deleteOpen, editOpen])
+							<Trans>Continue</Trans>
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</>
+	)
 })
+
+function getLocalActionErrorMessage(error: unknown, fallback: string) {
+	if (error && typeof error === "object" && "message" in error && typeof error.message === "string" && error.message) {
+		return error.message
+	}
+	return fallback
+}
