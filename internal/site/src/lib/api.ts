@@ -97,6 +97,10 @@ export async function restartLocalAgent(): Promise<LocalAgentStatus> {
 	return pb.send<LocalAgentStatus>("/api/aether/local-agent/restart", { method: "POST" })
 }
 
+export async function removeLocalAgent(): Promise<LocalAgentStatus> {
+	return pb.send<LocalAgentStatus>("/api/aether/local-agent", { method: "DELETE" })
+}
+
 export async function getLocalAgentLogs(): Promise<LocalAgentLogs> {
 	return pb.send<LocalAgentLogs>("/api/aether/local-agent/logs", { method: "GET" })
 }

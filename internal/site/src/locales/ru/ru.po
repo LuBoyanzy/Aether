@@ -187,15 +187,14 @@ msgstr "Активное состояние"
 msgid "Add"
 msgstr ""
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Add {foo}"
 msgstr "Добавить {foo}"
 
 #: src/components/add-system.tsx
-msgid "Add <0>System</0>"
-msgstr "Добавить <0>Систему</0>"
+#~ msgid "Add <0>System</0>"
+#~ msgstr "Добавить <0>Систему</0>"
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1388,7 +1387,6 @@ msgstr "Длительность"
 msgid "Edit"
 msgstr "Редактировать"
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "Редактировать {foo}"
@@ -4337,7 +4335,6 @@ msgstr "Используемое системой пространство по�
 msgid "Swap Usage"
 msgstr "Использование подкачки"
 
-#: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx

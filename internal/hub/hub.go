@@ -399,6 +399,7 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	localAgentGroup.POST("/start", h.startLocalAgent)
 	localAgentGroup.POST("/stop", h.stopLocalAgent)
 	localAgentGroup.POST("/restart", h.restartLocalAgent)
+	localAgentGroup.DELETE("", h.deleteLocalAgent)
 	localAgentGroup.GET("/logs", h.getLocalAgentLogs)
 	// /containers routes
 	if enabled, _ := GetEnv("CONTAINER_DETAILS"); enabled != "false" {

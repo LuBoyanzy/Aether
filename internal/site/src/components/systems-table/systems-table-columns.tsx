@@ -29,6 +29,7 @@ import {
 	getLocalAgentStatus,
 	isReadOnlyUser,
 	pb,
+	removeLocalAgent,
 	restartLocalAgent,
 	startLocalAgent,
 	stopLocalAgent,
@@ -641,6 +642,28 @@ export const ActionsButton = memo(({ system }: { system: SystemRecord }) => {
 		}
 	}
 
+	async function handleDelete() {
+		try {
+			if (isLocalSystem) {
+				setLocalAction("delete")
+				const nextStatus = await removeLocalAgent()
+				setLocalStatus(nextStatus)
+				toast({ title: "本机已删除" })
+			} else {
+				await pb.collection("systems").delete(id)
+			}
+			setDeleteOpen(false)
+		} catch (error) {
+			toast({
+				title: "操作失败",
+				description: getLocalActionErrorMessage(error, isLocalSystem ? "删除本机失败" : "删除系统失败"),
+				variant: "destructive",
+			})
+		} finally {
+			setLocalAction((current) => (current === "delete" ? null : current))
+		}
+	}
+
 	return (
 		<>
 			<DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
@@ -768,7 +791,7 @@ export const ActionsButton = memo(({ system }: { system: SystemRecord }) => {
 						</AlertDialogCancel>
 						<AlertDialogAction
 							className={cn(buttonVariants({ variant: "destructive" }))}
-							onClick={() => pb.collection("systems").delete(id)}
+							onClick={() => void handleDelete()}
 						>
 							<Trans>Continue</Trans>
 						</AlertDialogAction>

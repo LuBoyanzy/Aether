@@ -148,6 +148,17 @@ func (h *Hub) getLocalAgentLogs(e *core.RequestEvent) error {
 	return e.JSON(http.StatusOK, resp)
 }
 
+func (h *Hub) deleteLocalAgent(e *core.RequestEvent) error {
+	if err := requireLocalAgentWriteAccess(e); err != nil {
+		return err
+	}
+	resp, err := newLocalAgentController(h).remove(e.Request)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	return e.JSON(http.StatusOK, resp)
+}
+
 func requireLocalAgentWriteAccess(e *core.RequestEvent) error {
 	if e.Auth == nil || e.Auth.GetString("role") == "readonly" {
 		return e.ForbiddenError("requires write access", nil)
@@ -250,6 +261,37 @@ func (c *localAgentController) restart(req *http.Request) (*localAgentStatusResp
 		return nil, err
 	}
 	if err := c.startProcess(paths); err != nil {
+		return nil, err
+	}
+	return c.status(req)
+}
+
+func (c *localAgentController) remove(req *http.Request) (*localAgentStatusResponse, error) {
+	paths, err := c.resolvePaths()
+	if err != nil {
+		return nil, err
+	}
+	if err := c.stopProcess(paths); err != nil {
+		return nil, err
+	}
+
+	record, err := c.getSystemRecord()
+	if err != nil {
+		return nil, err
+	}
+	if record == nil {
+		record, err = c.findLocalSystemByIdentity(localAgentDefaultName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if record != nil {
+		if err := c.hub.Delete(record); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := c.cleanup(paths); err != nil {
 		return nil, err
 	}
 	return c.status(req)
@@ -591,6 +633,23 @@ func (c *localAgentController) stopProcess(paths localAgentPaths) error {
 		time.Sleep(localAgentStopPollDelay)
 	}
 	return fmt.Errorf("本机 agent 停止超时")
+}
+
+func (c *localAgentController) cleanup(paths localAgentPaths) error {
+	for _, filePath := range []string{paths.envPath, paths.logPath, paths.pidPath, paths.statePath} {
+		if strings.TrimSpace(filePath) == "" {
+			continue
+		}
+		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+	if strings.TrimSpace(paths.dataDir) != "" {
+		if err := os.RemoveAll(paths.dataDir); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *localAgentController) readRunningPid(pidPath string) (int, bool, error) {

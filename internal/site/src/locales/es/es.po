@@ -187,15 +187,14 @@ msgstr "Estado activo"
 msgid "Add"
 msgstr ""
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Add {foo}"
 msgstr "Agregar {foo}"
 
 #: src/components/add-system.tsx
-msgid "Add <0>System</0>"
-msgstr "Agregar <0>sistema</0>"
+#~ msgid "Add <0>System</0>"
+#~ msgstr "Agregar <0>sistema</0>"
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1388,7 +1387,6 @@ msgstr "Duración"
 msgid "Edit"
 msgstr "Editar"
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "Editar {foo}"
@@ -4337,7 +4335,6 @@ msgstr "Espacio de swap utilizado por el sistema"
 msgid "Swap Usage"
 msgstr "Uso de swap"
 
-#: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx

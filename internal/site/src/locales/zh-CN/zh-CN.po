@@ -187,15 +187,14 @@ msgstr "活动状态"
 msgid "Add"
 msgstr "添加"
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Add {foo}"
 msgstr "添加 {foo}"
 
 #: src/components/add-system.tsx
-msgid "Add <0>System</0>"
-msgstr "<0>添加客户端</0>"
+#~ msgid "Add <0>System</0>"
+#~ msgstr "<0>添加客户端</0>"
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1380,7 +1379,6 @@ msgstr "持续时间"
 msgid "Edit"
 msgstr "编辑"
 
-#: src/components/add-system.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "编辑 {foo}"
@@ -4331,7 +4329,6 @@ msgstr "系统使用的 SWAP 空间"
 msgid "Swap Usage"
 msgstr "SWAP 使用率"
 
-#: src/components/add-system.tsx
 #: src/components/alerts-history-columns.tsx
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/audit/audit-logs-table.tsx

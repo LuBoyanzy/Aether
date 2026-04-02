@@ -143,3 +143,63 @@ func TestEnsureSystemRecordRejectsReservedNameConflict(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "已被其他客户端占用")
 }
+
+func TestRemoveLocalAgentCleansUpWhenAgentAlreadyStopped(t *testing.T) {
+	hub, testApp, err := createLocalAgentTestHub(t)
+	require.NoError(t, err)
+	defer testApp.Cleanup()
+
+	userRecord, err := createLocalAgentTestUser(testApp)
+	require.NoError(t, err)
+
+	tempDir := t.TempDir()
+	binaryPath := filepath.Join(tempDir, "aether-agent")
+	envPath := filepath.Join(tempDir, "env")
+	logPath := filepath.Join(tempDir, "aether-agent.log")
+	pidPath := filepath.Join(tempDir, "aether-agent.pid")
+	dataDir := filepath.Join(tempDir, "data")
+	statePath := filepath.Join(tempDir, "local-agent-state.json")
+
+	require.NoError(t, os.WriteFile(binaryPath, []byte("#!/bin/sh\n"), 0755))
+	require.NoError(t, os.WriteFile(envPath, []byte("TOKEN=test\n"), 0644))
+	require.NoError(t, os.WriteFile(logPath, []byte("log\n"), 0644))
+	require.NoError(t, os.MkdirAll(dataDir, 0755))
+	require.NoError(t, os.WriteFile(filepath.Join(dataDir, "fingerprint"), []byte("abc"), 0644))
+
+	t.Setenv("LOCAL_AGENT_BIN", binaryPath)
+	t.Setenv("LOCAL_AGENT_STATE_FILE", statePath)
+	t.Setenv("LOCAL_AGENT_LOG_FILE", logPath)
+	t.Setenv("LOCAL_AGENT_PID_FILE", pidPath)
+	t.Setenv("LOCAL_AGENT_DATA_DIR", dataDir)
+
+	systemRecord, err := createLocalAgentTestRecord(testApp, "systems", map[string]any{
+		"name":   localAgentDefaultName,
+		"host":   localAgentDefaultHost,
+		"port":   localAgentDefaultPort,
+		"status": "pending",
+		"users":  []string{userRecord.Id},
+	})
+	require.NoError(t, err)
+
+	controller := &localAgentController{hub: hub}
+	require.NoError(t, controller.saveState(localAgentState{SystemID: systemRecord.Id}))
+
+	resp, err := controller.remove(httptest.NewRequest("DELETE", "http://hub.example.com/api/aether/local-agent", nil))
+	require.NoError(t, err)
+
+	assert.False(t, resp.Configured)
+	assert.False(t, resp.Running)
+	assert.Empty(t, resp.SystemID)
+
+	_, err = testApp.FindRecordById("systems", systemRecord.Id)
+	require.Error(t, err)
+
+	_, err = os.Stat(envPath)
+	assert.True(t, os.IsNotExist(err))
+	_, err = os.Stat(logPath)
+	assert.True(t, os.IsNotExist(err))
+	_, err = os.Stat(statePath)
+	assert.True(t, os.IsNotExist(err))
+	_, err = os.Stat(dataDir)
+	assert.True(t, os.IsNotExist(err))
+}
