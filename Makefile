@@ -1,6 +1,9 @@
 # Default OS/ARCH values
 OS ?= $(shell go env GOOS)
 ARCH ?= $(shell go env GOARCH)
+# Default to static Go binaries so Linux artifacts stay compatible with older glibc baselines.
+CGO_ENABLED ?= 0
+GO_BUILD_ENV := CGO_ENABLED=$(CGO_ENABLED) GOGC=75 GOOS=$(OS) GOARCH=$(ARCH)
 # Skip building the web UI if true
 SKIP_WEB ?= false
 
@@ -48,14 +51,14 @@ build-dotnet-conditional:
 
 # Update build-agent to include conditional .NET build
 build-agent: tidy build-dotnet-conditional
-	GOOS=$(OS) GOARCH=$(ARCH) go build -o ./build/aether-agent_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/agent
+	$(GO_BUILD_ENV) go build -o ./build/aether-agent_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/agent
 
 build-hub: tidy $(if $(filter false,$(SKIP_WEB)),build-web-ui)
-	GOOS=$(OS) GOARCH=$(ARCH) go build -o ./build/aether_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
+	$(GO_BUILD_ENV) go build -o ./build/aether_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
 
 build-hub-dev: tidy
 	mkdir -p ./internal/site/dist && touch ./internal/site/dist/index.html
-	GOOS=$(OS) GOARCH=$(ARCH) go build -tags development -o ./build/aether-dev_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
+	$(GO_BUILD_ENV) go build -tags development -o ./build/aether-dev_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
 
 build: build-agent build-hub
 
