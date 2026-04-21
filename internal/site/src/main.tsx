@@ -24,6 +24,7 @@ const AuditLogs = lazy(() => import("@/components/routes/audit-logs.tsx"))
 const ApiTests = lazy(() => import("@/components/routes/api-tests.tsx"))
 const IngestVisualization = lazy(() => import("@/components/routes/ingest-visualization.tsx"))
 const Smart = lazy(() => import("@/components/routes/smart.tsx"))
+const ItemCodes = lazy(() => import("@/components/routes/item-codes.tsx"))
 const SystemDetail = lazy(() => import("@/components/routes/system.tsx"))
 const CopyToClipboardDialog = lazy(() => import("@/components/copy-to-clipboard.tsx"))
 
@@ -74,6 +75,8 @@ const App = memo(() => {
 		return <IngestVisualization />
 	} else if (page.route === "smart") {
 		return <Smart />
+	} else if (page.route === "item_codes") {
+		return <ItemCodes />
 	} else if (page.route === "settings") {
 		return <Settings />
 	}

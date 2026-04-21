@@ -581,6 +581,29 @@ export interface DockerAuditItem {
 	created: string
 }
 
+export interface ItemCodeRecord extends RecordModel {
+	id: string
+	code: string
+	name: string
+	category: string
+	status: "active" | "inactive" | "obsolete"
+	description: string
+	created: string
+	updated: string
+}
+
+export interface ItemCodeAuditItem {
+	id: string
+	user: string
+	action: string
+	target_ids: string
+	filter: string
+	status: string
+	detail: string
+	ip_address: string
+	created: string
+}
+
 export interface QuietHoursRecord extends RecordModel {
 	id: string
 	user: string

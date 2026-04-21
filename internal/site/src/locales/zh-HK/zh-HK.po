@@ -18,11 +18,28 @@ msgstr ""
 "X-Crowdin-File: /main/internal/site/src/locales/en/en.po\n"
 "X-Crowdin-File-ID: 32\n"
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "{0} items deleted"
+#~ msgstr ""
+
 #. placeholder {0}: table.getFilteredSelectedRowModel().rows.length
 #. placeholder {1}: table.getFilteredRowModel().rows.length
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "{0} of {1} row(s) selected."
 msgstr "已選擇 {1} 個項目中的 {0} 個"
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "{0} records"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "{0} records deleted"
+#~ msgstr ""
+
+#. placeholder {0}: filteredItems.length
+#: src/components/item-codes/item-code-table.tsx
+msgid "{0} 条记录"
+msgstr ""
 
 #: src/components/routes/system/info-bar.tsx
 msgid "{cores, plural, one {# core} other {# cores}}"
@@ -298,6 +315,10 @@ msgstr "警報"
 msgid "Alerts do not repeat every minute."
 msgstr ""
 
+#: src/components/item-codes/audit-logs-dialog.tsx
+#~ msgid "All Actions"
+#~ msgstr ""
+
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "All cases"
@@ -320,6 +341,10 @@ msgstr "所有容器"
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "All generated license.dat artifacts are kept here for export and audit."
 #~ msgstr "所有已產生的 license.dat 產物都會保存在這裡，供匯出與稽核。"
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "All Status"
+#~ msgstr ""
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/audit/audit-logs-table.tsx
@@ -352,9 +377,17 @@ msgstr "套用篩選"
 msgid "Architecture"
 msgstr "架構"
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Are you sure you want to delete {0} items?"
+#~ msgstr ""
+
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Are you sure you want to delete {name}?"
 msgstr "您確定要刪除 {name} 嗎？"
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Are you sure you want to delete this item?"
+#~ msgstr ""
 
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Are you sure?"
@@ -450,6 +483,15 @@ msgstr ""
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
 msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Batch Delete"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Batch delete failed"
+#~ msgstr ""
 
 #: src/components/routes/system.tsx
 #: src/lib/alerts.ts
@@ -707,6 +749,16 @@ msgstr "點擊以複製"
 msgid "Close"
 msgstr ""
 
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Code"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Code and Name are required"
+#~ msgstr ""
+
 #: src/components/routes/api-tests.tsx
 msgid "Collection"
 msgstr ""
@@ -862,6 +914,10 @@ msgstr ""
 #: src/components/docker/data-cleanup.tsx
 msgid "Confirm cleanup"
 msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Confirm Delete"
+#~ msgstr ""
 
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
@@ -1189,6 +1245,11 @@ msgstr "刪除"
 msgid "Delete Compose Project"
 msgstr "刪除編排項目"
 
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Delete failed"
+#~ msgstr ""
+
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Delete fingerprint"
 msgstr "刪除指紋"
@@ -1228,6 +1289,16 @@ msgstr ""
 #: src/components/docker/volumes.tsx
 msgid "Delete Volume"
 msgstr "刪除存儲卷"
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Deleted"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Deleting..."
+#~ msgstr ""
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
@@ -1367,6 +1438,10 @@ msgstr "驅動"
 msgid "Duration"
 msgstr "持續時間"
 
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "e.g. category = 'obsolete' && status = 'inactive'"
+#~ msgstr ""
+
 #: src/components/routes/settings/offline-license.tsx
 #~ msgid "Each row represents a customer device activation. Use row actions to issue licenses and review history."
 #~ msgstr "每一列代表一台客戶設備的啟用記錄。可透過列操作簽發授權並查看歷史。"
@@ -1398,6 +1473,10 @@ msgstr ""
 #: src/components/routes/api-tests.tsx
 msgid "Edit collection"
 msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Edit Item Code"
+#~ msgstr ""
 
 #: src/components/docker/registries.tsx
 msgid "Edit Registry"
@@ -1475,6 +1554,14 @@ msgstr "引擎詳情"
 msgid "English"
 msgstr ""
 
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Enter category"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Enter description"
+#~ msgstr ""
+
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
 msgstr "輸入電子郵件地址以重置密碼"
@@ -1482,6 +1569,14 @@ msgstr "輸入電子郵件地址以重置密碼"
 #: src/components/routes/settings/notifications.tsx
 msgid "Enter email address..."
 msgstr "輸入電子郵件地址..."
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Enter item code"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Enter name"
+#~ msgstr ""
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1843,6 +1938,10 @@ msgstr ""
 msgid "Failed to load images"
 msgstr "載入鏡像失敗"
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Failed to load item codes"
+#~ msgstr ""
+
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to load MinIO buckets"
@@ -1945,6 +2044,10 @@ msgstr ""
 msgid "Failed to run collection"
 msgstr ""
 
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Failed to save"
+#~ msgstr ""
+
 #: src/components/routes/settings/offline-license.tsx
 msgid "Failed to save activation"
 msgstr ""
@@ -2033,13 +2136,25 @@ msgstr "請先填寫客戶資訊再簽發授權。"
 msgid "Fill in the customer before saving this activation."
 msgstr "請先填寫客戶資訊再保存啟用記錄。"
 
+#: src/components/item-codes/audit-logs-dialog.tsx
+#~ msgid "Filter"
+#~ msgstr ""
+
 #: src/components/docker/containers.tsx
 msgid "Filter containers..."
 msgstr "篩選容器..."
 
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Filter Expression"
+#~ msgstr ""
+
 #: src/components/docker/images.tsx
 msgid "Filter images..."
 msgstr "篩選鏡像..."
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Filter is required"
+#~ msgstr ""
 
 #: src/components/docker/networks.tsx
 msgid "Filter networks..."
@@ -2429,6 +2544,60 @@ msgstr ""
 msgid "Issuing is enabled only after the headquarters signing key and model manifest are loaded."
 msgstr "只有在總部簽章私鑰與模型清單載入完成後，才允許簽發授權。"
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Item Code"
+#~ msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#~ msgid "Item Code Audit Logs"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Item Code created successfully"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Item Code deleted"
+#~ msgstr ""
+
+#: src/components/routes/item-codes.tsx
+#~ msgid "Item Code Management"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Item Code updated successfully"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Item Code 创建成功"
+#~ msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "Item Code 审计日志"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "Item Code 已删除"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "Item Code 更新成功"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+#: src/components/routes/item-codes.tsx
+msgid "Item Code 管理"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/navbar.tsx
+#: src/components/navbar.tsx
+#: src/components/routes/item-codes.tsx
+#~ msgid "Item Codes"
+#~ msgstr ""
+
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 msgid "JSON body is invalid"
@@ -2735,6 +2904,10 @@ msgstr "管理所選系統的 Docker 網絡。"
 msgid "Manage Docker volumes for persistent storage."
 msgstr "管理 Docker 存儲卷以持久化儲存。"
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Manage item codes and track changes."
+#~ msgstr ""
+
 #: src/components/docker/images.tsx
 msgid "Manage local images and registries."
 msgstr "管理本地鏡像與倉庫。"
@@ -2759,6 +2932,10 @@ msgstr ""
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Manual setup instructions"
 msgstr "手動設定說明"
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Matched {0} records"
+#~ msgstr ""
 
 #. Chart select field. Please try to keep this short.
 #: src/components/routes/system.tsx
@@ -2972,6 +3149,10 @@ msgstr ""
 #~ msgid "New Collection"
 #~ msgstr ""
 
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "New Item Code"
+#~ msgstr ""
+
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
 msgstr "下一頁"
@@ -3068,6 +3249,10 @@ msgstr "未找到鏡像。"
 msgid "No indices loaded."
 msgstr ""
 
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "No item codes found."
+#~ msgstr ""
+
 #: src/components/routes/settings/offline-license.tsx
 msgid "No license has been issued for this activation yet."
 msgstr "此啟用記錄尚未簽發授權。"
@@ -3107,6 +3292,10 @@ msgstr ""
 #: src/components/docker/data-cleanup.tsx
 msgid "No patterns configured."
 msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "No records matched."
+#~ msgstr ""
 
 #: src/components/docker/registries.tsx
 msgid "No registries found."
@@ -3563,6 +3752,18 @@ msgstr "首選語言"
 msgid "Prev"
 msgstr "上一頁"
 
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Preview"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Preview failed"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+#~ msgid "Previewing..."
+#~ msgstr ""
+
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Process started"
 msgstr "進程啟動"
@@ -3612,6 +3813,12 @@ msgstr "推送"
 #: src/components/docker/images.tsx
 msgid "Push Image"
 msgstr "推送鏡像"
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#: src/components/routes/item-codes.tsx
+#~ msgid "Query Delete"
+#~ msgstr ""
 
 #: src/components/routes/api-tests.tsx
 #~ msgid "Query params"
@@ -3944,6 +4151,10 @@ msgstr "儲存系統"
 msgid "Saved"
 msgstr ""
 
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "Saving..."
+#~ msgstr ""
+
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
 #: src/components/routes/api-tests.tsx
@@ -3986,6 +4197,10 @@ msgstr ""
 #: src/components/navbar.tsx
 msgid "Search"
 msgstr "搜索"
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "Search code or name..."
+#~ msgstr ""
 
 #: src/components/command-palette.tsx
 msgid "Search for systems or settings..."
@@ -4173,6 +4388,10 @@ msgstr "登錄"
 #: src/components/routes/settings/offline-license.tsx
 msgid "Signing Readiness"
 msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#~ msgid "Single Delete"
+#~ msgstr ""
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Site"
@@ -4389,6 +4608,10 @@ msgstr "表格"
 #: src/components/routes/api-tests.tsx
 msgid "Tags"
 msgstr "標籤"
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#~ msgid "Target IDs"
+#~ msgstr ""
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Tasks"
@@ -5018,6 +5241,313 @@ msgstr ""
 msgid "Your user settings have been updated."
 msgstr "您的用戶設置已更新。"
 
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "上一页"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "下一页"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "例如：category = 'obsolete' && status = 'inactive'"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "保存"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "保存中..."
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "保存失败"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "全部操作"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "全部状态"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "分类"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "创建时间"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "删除中..."
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "删除失败"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "刷新"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "加载失败"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "加载审计日志失败"
+msgstr ""
+
+#. placeholder {0}: previewItems.length
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "匹配到 {0} 条记录"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "单条删除"
+msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "取消"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "名称"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "失败"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "审计日志"
+msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+msgid "密码"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "已创建"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "已删除"
+msgstr ""
+
+#. placeholder {0}: res.deleted
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "已删除 {0} 条记录"
+msgstr ""
+
+#. placeholder {0}: res.deleted
+#: src/components/item-codes/item-code-table.tsx
+msgid "已删除 {0} 项"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "已更新"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "成功"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "批量删除"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "批量删除失败"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "描述"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "搜索编码或名称..."
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "操作"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+#~ msgid "新建"
+#~ msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "新建 Item Code"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "无匹配记录。"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "暂无 Item Code。"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "暂无审计日志。"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "更新于"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "未知"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "查询删除"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "每页行数"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "状态"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "目标 ID"
+msgstr ""
+
+#. placeholder {0}: selectedIds.size
+#: src/components/item-codes/item-code-table.tsx
+msgid "确定要删除 {0} 项吗？"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "确定要删除此项吗？"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "确认删除"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "第 {page} 页"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "筛选条件"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "筛选条件为必填项"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "筛选表达式"
+msgstr ""
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "管理 Item Code 并追踪变更。"
+msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+msgid "管理员验证"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "编码"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "编码和名称为必填项"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "编辑 Item Code"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "详情"
+msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+msgid "请输入管理员账号和密码以继续操作。"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "输入分类"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "输入名称"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "输入描述"
+msgstr ""
+
+#: src/components/item-codes/item-code-form.tsx
+msgid "输入编码"
+msgstr ""
+
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+msgid "邮箱"
+msgstr ""
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-form.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "错误"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "预览"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "预览中..."
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "预览失败"
+msgstr ""
+
+#: src/components/item-codes/admin-verify-dialog.tsx
+msgid "验证"
+msgstr ""

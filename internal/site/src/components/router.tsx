@@ -7,6 +7,7 @@ const routes = {
 	api_tests: "/api-tests",
 	ingest_visualization: "/ingest-visualization",
 	smart: "/smart",
+	item_codes: "/item-codes",
 	system: `/system/:id`,
 	settings: `/settings/:name?`,
 	forgot_password: `/forgot-password`,

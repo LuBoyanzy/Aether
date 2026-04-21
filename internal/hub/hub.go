@@ -475,6 +475,15 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	ingestGroup.GET("/detail", h.getIngestMonitorDetail)
 	ingestGroup.GET("/batches", h.getIngestMonitorBatches)
 	ingestGroup.GET("/batch-detail", h.getIngestMonitorBatchDetail)
+
+	// item-codes routes
+	itemCodesGroup := apiAuth.Group("/item-codes")
+	itemCodesGroup.DELETE("", h.deleteItemCodeWithAudit)
+	itemCodesGroup.POST("/batch-delete", h.batchDeleteItemCodes)
+	itemCodesGroup.POST("/query-delete/preview", h.previewQueryDeleteItemCodes)
+	itemCodesGroup.POST("/query-delete", h.queryDeleteItemCodes)
+	itemCodesGroup.GET("/audit-logs", h.listItemCodeAuditLogs)
+
 	return nil
 }
 

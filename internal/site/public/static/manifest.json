@@ -2,9 +2,9 @@
 	"name": "Aether",
 	"icons": [
 		{
-			"src": "icon.png",
+			"src": "icon.svg",
 			"sizes": "512x512",
-			"type": "image/png"
+			"type": "image/svg+xml"
 		}
 	],
   "start_url": "../",

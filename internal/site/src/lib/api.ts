@@ -9,7 +9,17 @@ import { chartTimeData } from "./utils"
 /** PocketBase JS Client */
 export const pb = new PocketBase(basePath)
 
-export const isAdmin = () => pb.authStore.record?.role === "admin"
+export const isAdmin = () => {
+	const record = pb.authStore.record
+	if (record?.role === "admin") return true
+	// PocketBase superuser (system admin) has no collectionName
+	const model = pb.authStore.model as any
+	return model && !model.collectionName
+}
+export const isSuperUser = () => {
+	const model = pb.authStore.model as any
+	return model && !model.collectionName
+}
 export const isReadOnlyUser = () => pb.authStore.record?.role === "readonly"
 
 export const verifyAuth = () => {

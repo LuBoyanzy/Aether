@@ -3,6 +3,7 @@
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
+	BarcodeIcon,
 	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
@@ -149,6 +150,23 @@ export default function Navbar() {
 					</TooltipTrigger>
 					<TooltipContent>
 						<p>S.M.A.R.T.</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "item_codes")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label={t`Item Code 管理`}
+							onMouseEnter={runOnce(() => import("@/components/routes/item-codes"))}
+						>
+							<BarcodeIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>
+							<Trans>Item Code 管理</Trans>
+						</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>

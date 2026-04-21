@@ -24,7 +24,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 func requireWritable(e *core.RequestEvent) error {
-	if e.Auth == nil || e.Auth.GetString("role") == "readonly" {
+	if e.Auth == nil {
+		return e.JSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
+	}
+	// PocketBase superuser has all permissions
+	if e.Auth.IsSuperuser() {
+		return nil
+	}
+	if e.Auth.GetString("role") == "readonly" {
 		return e.JSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
 	}
 	return nil
