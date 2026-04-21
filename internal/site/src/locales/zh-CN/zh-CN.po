@@ -4469,6 +4469,18 @@ msgstr "排序"
 msgid "Source"
 msgstr "来源"
 
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "SQL 为必填项"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "SQL 查询删除"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "SQL 语句"
+msgstr ""
+
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Start"
@@ -5283,7 +5295,11 @@ msgid "下载状态"
 msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "例如：category = 'obsolete' && status = 'inactive'"
+#~ msgid "例如：category = 'obsolete' && status = 'inactive'"
+#~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "例如：DELETE FROM product_info WHERE category_name = 'obsolete' AND is_deleted = false"
 msgstr ""
 
 #: src/components/item-codes/item-code-form.tsx
@@ -5410,6 +5426,10 @@ msgstr ""
 msgid "失败"
 msgstr ""
 
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "实际执行的预览语句："
+msgstr ""
+
 #: src/components/item-codes/item-code-table.tsx
 msgid "审计日志"
 msgstr ""
@@ -5456,6 +5476,10 @@ msgstr ""
 #: src/components/item-codes/audit-logs-dialog.tsx
 #: src/components/item-codes/item-code-detail.tsx
 msgid "成功"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "我已确认上述记录即将被删除"
 msgstr ""
 
 #: src/components/item-codes/audit-logs-dialog.tsx
@@ -5547,7 +5571,6 @@ msgstr ""
 
 #: src/components/item-codes/audit-logs-dialog.tsx
 #: src/components/item-codes/item-code-table.tsx
-#: src/components/item-codes/query-delete-dialog.tsx
 msgid "查询删除"
 msgstr ""
 
@@ -5610,12 +5633,12 @@ msgid "筛选条件"
 msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "筛选条件为必填项"
-msgstr ""
+#~ msgid "筛选条件为必填项"
+#~ msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "筛选表达式"
-msgstr ""
+#~ msgid "筛选表达式"
+#~ msgstr ""
 
 #: src/components/item-codes/item-code-detail.tsx
 msgid "管径"
@@ -5664,6 +5687,10 @@ msgstr ""
 msgid "转换后路径"
 msgstr ""
 
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "输入 SQL DELETE 语句以批量删除匹配的 Item Code。"
+msgstr ""
+
 #: src/components/item-codes/item-code-form.tsx
 msgid "输入分类"
 msgstr ""
@@ -5677,8 +5704,8 @@ msgid "输入描述"
 msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "输入筛选表达式以批量删除匹配的 Item Code。"
-msgstr ""
+#~ msgid "输入筛选表达式以批量删除匹配的 Item Code。"
+#~ msgstr ""
 
 #: src/components/item-codes/item-code-form.tsx
 msgid "输入编码"
@@ -5687,6 +5714,14 @@ msgstr ""
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "运行预览"
+msgstr ""
+
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "运行预览中..."
+msgstr ""
 
 #: src/components/item-codes/item-code-detail.tsx
 msgid "进行中"
@@ -5723,12 +5758,12 @@ msgid "预估包装尺寸"
 msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "预览"
-msgstr ""
+#~ msgid "预览"
+#~ msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
-msgid "预览中..."
-msgstr ""
+#~ msgid "预览中..."
+#~ msgstr ""
 
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "预览失败"

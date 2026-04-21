@@ -2,6 +2,8 @@
 package hub
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -9,6 +11,8 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/types"
+
+	"aether/internal/hub/sqlguard"
 )
 
 const (
@@ -137,36 +141,61 @@ func (h *Hub) previewQueryDeleteItemCodes(e *core.RequestEvent) error {
 	if err := requireAdmin(e); err != nil {
 		return err
 	}
+	if h.ingestMonitor == nil {
+		return e.JSON(http.StatusServiceUnavailable, map[string]string{"error": "ingest-monitor not initialized"})
+	}
 
 	var payload struct {
-		Filter string `json:"filter"`
+		SQL string `json:"sql"`
 	}
 	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
 	}
-	if strings.TrimSpace(payload.Filter) == "" {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": "filter is required"})
-	}
 
-	records, err := h.FindRecordsByFilter(itemCodesCollection, payload.Filter, "", 100, 0, nil)
+	// L1 + L2 validation
+	whereClause, _, err := sqlguard.ValidateSQL(payload.SQL)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	items := make([]map[string]any, 0, len(records))
-	for _, record := range records {
-		items = append(items, map[string]any{
-			"id":       record.Id,
-			"code":     record.GetString("code"),
-			"name":     record.GetString("name"),
-			"category": record.GetString("category"),
-			"status":   record.GetString("status"),
-		})
+	previewSQL := sqlguard.BuildPreviewSelect(whereClause)
+
+	// L3: EXPLAIN validation
+	if err := sqlguard.ValidateViaExplain(e.Request.Context(), h.ingestMonitor.DB(), previewSQL); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	var items []map[string]any
+	err = h.ingestMonitor.withTenantTx(e.Request.Context(), func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
+		rows, err := tx.QueryContext(queryCtx, previewSQL)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var code, name, category, description, status string
+			var updated sql.NullTime
+			if err := rows.Scan(&code, &name, &category, &description, &updated, &status); err != nil {
+				return err
+			}
+			items = append(items, map[string]any{
+				"code":     code,
+				"name":     name,
+				"category": category,
+				"status":   status,
+			})
+		}
+		return rows.Err()
+	})
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"count": len(items),
-		"items": items,
+		"count":       len(items),
+		"items":       items,
+		"executedSQL": previewSQL,
 	})
 }
 
@@ -174,49 +203,72 @@ func (h *Hub) queryDeleteItemCodes(e *core.RequestEvent) error {
 	if err := requireAdmin(e); err != nil {
 		return err
 	}
+	if h.ingestMonitor == nil {
+		return e.JSON(http.StatusServiceUnavailable, map[string]string{"error": "ingest-monitor not initialized"})
+	}
 
 	var payload struct {
-		Filter string `json:"filter"`
+		SQL      string `json:"sql"`
+		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(e.Request.Body).Decode(&payload); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
 	}
-	if strings.TrimSpace(payload.Filter) == "" {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": "filter is required"})
+
+	// Admin password re-verification (same as single/batch delete)
+	password := strings.TrimSpace(payload.Password)
+	if password == "" {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "password is required"})
+	}
+	if !e.Auth.ValidatePassword(password) {
+		return e.JSON(http.StatusForbidden, map[string]string{"error": "invalid password"})
 	}
 
-	records, err := h.FindRecordsByFilter(itemCodesCollection, payload.Filter, "", 1000, 0, nil)
+	// L1 + L2 validation
+	whereClause, _, err := sqlguard.ValidateSQL(payload.SQL)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	deleted := 0
-	var targetIDs []string
+	execSQL := sqlguard.BuildDelete(whereClause)
 
-	for _, record := range records {
-		code := record.GetString("code")
-		if err := h.App.Delete(record); err != nil {
-			continue
-		}
-		if h.ingestMonitor != nil && code != "" {
-			if dbErr := h.ingestMonitor.MarkItemCodeDeletedInDB(e.Request.Context(), code); dbErr != nil {
-				h.Logger().Error("mark item code deleted in db failed", "logger", "hub", "code", code, "err", dbErr)
-			}
-		}
-		deleted++
-		targetIDs = append(targetIDs, record.Id)
+	// L3: EXPLAIN validation
+	if err := sqlguard.ValidateViaExplain(e.Request.Context(), h.ingestMonitor.DB(), execSQL); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
+	var deletedCodes []string
+	err = h.ingestMonitor.withTenantTxWrite(e.Request.Context(), func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
+		rows, err := tx.QueryContext(queryCtx, execSQL)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var code string
+			if err := rows.Scan(&code); err != nil {
+				return err
+			}
+			deletedCodes = append(deletedCodes, code)
+		}
+		return rows.Err()
+	})
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	deleted := len(deletedCodes)
 	status := itemCodeAuditStatusSuccess
-	if deleted < len(records) {
+	if deleted == 0 {
 		status = itemCodeAuditStatusFailed
 	}
 
 	if auditErr := h.recordItemCodeAudit(itemCodeAuditEntry{
 		UserID:    e.Auth.Id,
 		Action:    "query_delete",
-		TargetIDs: strings.Join(targetIDs, ","),
-		Filter:    payload.Filter,
+		TargetIDs: strings.Join(deletedCodes, ","),
+		Filter:    payload.SQL,
 		Status:    status,
 		Detail:    "",
 		IPAddress: e.RealIP(),

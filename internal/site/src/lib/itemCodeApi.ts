@@ -21,16 +21,16 @@ export const batchDeleteItemCodes = (ids: string[]) =>
 		body: { ids },
 	})
 
-export const previewQueryDeleteItemCodes = (filter: string) =>
-	pb.send<{ count: number; items: { id: string; code: string; name: string; category: string; status: string }[] }>(
+export const previewQueryDeleteItemCodes = (sql: string) =>
+	pb.send<{ count: number; items: { code: string; name: string; category: string; status: string }[]; executedSQL: string }>(
 		"/api/aether/item-codes/query-delete/preview",
-		{ method: "POST", body: { filter } }
+		{ method: "POST", body: { sql } }
 	)
 
-export const queryDeleteItemCodes = (filter: string) =>
+export const queryDeleteItemCodes = (sql: string, password: string) =>
 	pb.send<{ deleted: number }>("/api/aether/item-codes/query-delete", {
 		method: "POST",
-		body: { filter },
+		body: { sql, password },
 	})
 
 export const listItemCodeAuditLogs = (params?: {

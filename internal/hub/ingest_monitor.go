@@ -245,6 +245,13 @@ func (s *ingestMonitorService) getDB(ctx context.Context) (*sql.DB, ingestMonito
 	return s.db, cfg, nil
 }
 
+// DB returns the underlying *sql.DB connection.
+func (s *ingestMonitorService) DB() *sql.DB {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.db
+}
+
 func (s *ingestMonitorService) withTenantTx(ctx context.Context, fn func(*sql.Tx, ingestMonitorConfig, context.Context) error) error {
 	return s.withTenantTxOptions(ctx, true, fn)
 }
