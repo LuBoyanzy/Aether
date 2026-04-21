@@ -15,10 +15,23 @@ import { Trans } from "@lingui/react/macro"
 import { pb } from "@/lib/api"
 import { LoaderCircleIcon } from "lucide-react"
 
+const ADMIN_VERIFY_KEY = "aether_admin_verify_ts"
+const ADMIN_VERIFY_WINDOW_MS = 5 * 60 * 1000 // 5 minutes
+
+export function checkAdminVerifyWindow(): boolean {
+	const ts = localStorage.getItem(ADMIN_VERIFY_KEY)
+	if (!ts) return false
+	return Date.now() - parseInt(ts, 10) < ADMIN_VERIFY_WINDOW_MS
+}
+
+export function setAdminVerifyWindow(): void {
+	localStorage.setItem(ADMIN_VERIFY_KEY, String(Date.now()))
+}
+
 interface AdminVerifyDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
-	onVerified: () => void
+	onVerified: (password: string) => void
 }
 
 export default function AdminVerifyDialog({ open, onOpenChange, onVerified }: AdminVerifyDialogProps) {
@@ -38,7 +51,8 @@ export default function AdminVerifyDialog({ open, onOpenChange, onVerified }: Ad
 				body: { identity: email.trim(), password },
 			})) as { record?: { role?: string } }
 			if (res?.record?.role === "admin") {
-				onVerified()
+				setAdminVerifyWindow()
+				onVerified(password)
 				onOpenChange(false)
 				setEmail("")
 				setPassword("")

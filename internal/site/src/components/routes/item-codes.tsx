@@ -9,11 +9,11 @@ import ItemCodeTable from "@/components/item-codes/item-code-table"
 import QueryDeleteDialog from "@/components/item-codes/query-delete-dialog"
 import { FooterRepoLink } from "@/components/footer-repo-link"
 import { BRAND_NAME } from "@/lib/utils"
-import type { ItemCodeRecord } from "@/types"
+import type { ItemCodeDBRecord } from "@/types"
 
 export default memo(function ItemCodesPage() {
 	const [formOpen, setFormOpen] = useState(false)
-	const [editRecord, setEditRecord] = useState<ItemCodeRecord | undefined>()
+	const [editRecord, setEditRecord] = useState<ItemCodeDBRecord | undefined>()
 	const [queryDeleteOpen, setQueryDeleteOpen] = useState(false)
 	const [auditLogsOpen, setAuditLogsOpen] = useState(false)
 	const [refreshKey, setRefreshKey] = useState(0)
@@ -22,7 +22,7 @@ export default memo(function ItemCodesPage() {
 		document.title = `${t`Item Code 管理`} - ${BRAND_NAME}`
 	}, [])
 
-	const handleEdit = useCallback((record: ItemCodeRecord) => {
+	const handleEdit = useCallback((record: ItemCodeDBRecord) => {
 		setEditRecord(record)
 		setFormOpen(true)
 	}, [])

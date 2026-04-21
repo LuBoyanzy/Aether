@@ -31,10 +31,9 @@ msgstr "{0} of {1} row(s) selected."
 #~ msgid "{0} records deleted"
 #~ msgstr "{0} records deleted"
 
-#. placeholder {0}: filteredItems.length
 #: src/components/item-codes/item-code-table.tsx
-msgid "{0} 条记录"
-msgstr "{0} 条记录"
+#~ msgid "{0} 条记录"
+#~ msgstr "{0} 条记录"
 
 #: src/components/routes/system/info-bar.tsx
 msgid "{cores, plural, one {# core} other {# cores}}"
@@ -55,6 +54,10 @@ msgstr "{count, plural, one {{countString} minute} few {{countString} minutes} m
 #: src/components/routes/system/info-bar.tsx
 msgid "{threads, plural, one {# thread} other {# threads}}"
 msgstr "{threads, plural, one {# thread} other {# threads}}"
+
+#: src/components/item-codes/item-code-table.tsx
+msgid "{total} 条记录"
+msgstr "{total} 条记录"
 
 #: src/lib/utils.ts
 msgid "<1 minute"
@@ -90,9 +93,17 @@ msgstr "15 min"
 msgid "24 hours"
 msgstr "24 hours"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "2D 图纸"
+msgstr "2D 图纸"
+
 #: src/lib/utils.ts
 msgid "30 days"
 msgstr "30 days"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "3D 模型"
+msgstr "3D 模型"
 
 #. Load average
 #: src/components/charts/load-average-chart.tsx
@@ -541,6 +552,10 @@ msgstr "Bytes (KB/s, MB/s, GB/s)"
 #: src/components/charts/mem-chart.tsx
 msgid "Cache / Buffers"
 msgstr "Cache / Buffers"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "CAD 编号"
+msgstr "CAD 编号"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Can reload"
@@ -2290,6 +2305,10 @@ msgstr "Generate a new signed license for the selected device activation."
 msgid "Generate License"
 msgstr "Generate License"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "GLB 地址"
+msgstr "GLB 地址"
+
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Global"
 msgstr "Global"
@@ -3708,6 +3727,10 @@ msgstr "Please select a system to continue."
 msgid "Please sign in to your account"
 msgstr "Please sign in to your account"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "PLM 信息"
+msgstr "PLM 信息"
+
 #: src/components/add-system.tsx
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -3724,6 +3747,10 @@ msgstr "Port is required"
 #: src/components/docker/containers.tsx
 msgid "Ports"
 msgstr "Ports"
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "PostgreSQL 同步失败: {0}"
+#~ msgstr "PostgreSQL 同步失败: {0}"
 
 #. Power On Time
 #: src/components/routes/system/smart-table.tsx
@@ -5168,9 +5195,17 @@ msgstr "Workdir"
 msgid "Write"
 msgstr "Write"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "X 长度"
+msgstr "X 长度"
+
 #: src/components/docker/service-configs.tsx
 msgid "X-Config-Token"
 msgstr "X-Config-Token"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "Y 长度"
+msgstr "Y 长度"
 
 #: src/components/routes/settings/layout.tsx
 msgid "YAML Config"
@@ -5232,15 +5267,27 @@ msgstr "Your notification settings have been updated."
 msgid "Your user settings have been updated."
 msgstr "Your user settings have been updated."
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "Z 长度"
+msgstr "Z 长度"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "上一页"
 msgstr "上一页"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "上传状态"
+msgstr "上传状态"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "下一页"
 msgstr "下一页"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "下载状态"
+msgstr "下载状态"
 
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "例如：category = 'obsolete' && status = 'inactive'"
@@ -5258,6 +5305,16 @@ msgstr "保存中..."
 msgid "保存失败"
 msgstr "保存失败"
 
+#: src/components/item-codes/item-code-form.tsx
+msgid "修改 Item Code 的基本信息。"
+msgstr "修改 Item Code 的基本信息。"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "停用"
+msgstr "停用"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "全部操作"
 msgstr "全部操作"
@@ -5266,6 +5323,7 @@ msgstr "全部操作"
 msgid "全部状态"
 msgstr "全部状态"
 
+#: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
@@ -5273,6 +5331,7 @@ msgid "分类"
 msgstr "分类"
 
 #: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-detail.tsx
 msgid "创建时间"
 msgstr "创建时间"
 
@@ -5298,6 +5357,15 @@ msgstr "加载失败"
 msgid "加载审计日志失败"
 msgstr "加载审计日志失败"
 
+#: src/components/item-codes/item-code-table.tsx
+msgid "加载详情中..."
+msgstr "加载详情中..."
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "加载详情失败"
+msgstr "加载详情失败"
+
 #. placeholder {0}: previewItems.length
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "匹配到 {0} 条记录"
@@ -5313,19 +5381,50 @@ msgstr "单条删除"
 msgid "取消"
 msgstr "取消"
 
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "只有管理员可以删除"
+msgstr "只有管理员可以删除"
+
+#: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "名称"
 msgstr "名称"
 
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "启用"
+msgstr "启用"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "图纸 URL"
+msgstr "图纸 URL"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "基础信息"
+msgstr "基础信息"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "处理状态"
+msgstr "处理状态"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-detail.tsx
 msgid "失败"
 msgstr "失败"
 
 #: src/components/item-codes/item-code-table.tsx
 msgid "审计日志"
 msgstr "审计日志"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "宽"
+msgstr "宽"
 
 #: src/components/item-codes/admin-verify-dialog.tsx
 msgid "密码"
@@ -5355,7 +5454,14 @@ msgstr "已删除 {0} 项"
 msgid "已更新"
 msgstr "已更新"
 
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "废弃"
+msgstr "废弃"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-detail.tsx
 msgid "成功"
 msgstr "成功"
 
@@ -5368,6 +5474,7 @@ msgstr "批量删除"
 msgid "批量删除失败"
 msgstr "批量删除失败"
 
+#: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "描述"
@@ -5382,6 +5489,14 @@ msgstr "搜索编码或名称..."
 msgid "操作"
 msgstr "操作"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "文件信息"
+msgstr "文件信息"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "文件路径"
+msgstr "文件路径"
+
 #: src/components/item-codes/item-code-table.tsx
 #~ msgid "新建"
 #~ msgstr "新建"
@@ -5390,9 +5505,19 @@ msgstr "操作"
 #~ msgid "新建 Item Code"
 #~ msgstr "新建 Item Code"
 
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "无"
+msgstr "无"
+
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "无匹配记录。"
 msgstr "无匹配记录。"
+
+#: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
+msgid "无权限"
+msgstr "无权限"
 
 #: src/components/item-codes/item-code-table.tsx
 msgid "暂无 Item Code。"
@@ -5406,9 +5531,26 @@ msgstr "暂无审计日志。"
 msgid "更新于"
 msgstr "更新于"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "更新时间"
+msgstr "更新时间"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "有"
+msgstr "有"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "未知"
 msgstr "未知"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "材料类型"
+msgstr "材料类型"
+
+#: src/components/item-codes/audit-logs-dialog.tsx
+msgid "查看所有 Item Code 操作的历史记录。"
+msgstr "查看所有 Item Code 操作的历史记录。"
 
 #: src/components/item-codes/audit-logs-dialog.tsx
 #: src/components/item-codes/item-code-table.tsx
@@ -5416,22 +5558,43 @@ msgstr "未知"
 msgid "查询删除"
 msgstr "查询删除"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "模型 MD5"
+msgstr "模型 MD5"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "每页行数"
 msgstr "每页行数"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "源文件路径"
+msgstr "源文件路径"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "物料尺寸"
+msgstr "物料尺寸"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "物理属性"
+msgstr "物理属性"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
+#: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "状态"
 msgstr "状态"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "生命周期"
+msgstr "生命周期"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "目标 ID"
 msgstr "目标 ID"
 
-#. placeholder {0}: selectedIds.size
+#. placeholder {0}: selectedCodes.size
 #: src/components/item-codes/item-code-table.tsx
 msgid "确定要删除 {0} 项吗？"
 msgstr "确定要删除 {0} 项吗？"
@@ -5461,6 +5624,10 @@ msgstr "筛选条件为必填项"
 msgid "筛选表达式"
 msgstr "筛选表达式"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "管径"
+msgstr "管径"
+
 #: src/components/item-codes/item-code-table.tsx
 msgid "管理 Item Code 并追踪变更。"
 msgstr "管理 Item Code 并追踪变更。"
@@ -5469,6 +5636,7 @@ msgstr "管理 Item Code 并追踪变更。"
 msgid "管理员验证"
 msgstr "管理员验证"
 
+#: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
@@ -5483,6 +5651,10 @@ msgstr "编码和名称为必填项"
 msgid "编辑 Item Code"
 msgstr "编辑 Item Code"
 
+#: src/components/item-codes/item-code-detail.tsx
+msgid "设计状态"
+msgstr "设计状态"
+
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "详情"
 msgstr "详情"
@@ -5490,6 +5662,14 @@ msgstr "详情"
 #: src/components/item-codes/admin-verify-dialog.tsx
 msgid "请输入管理员账号和密码以继续操作。"
 msgstr "请输入管理员账号和密码以继续操作。"
+
+#: src/components/item-codes/item-code-form.tsx
+#~ msgid "警告"
+#~ msgstr "警告"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "转换后路径"
+msgstr "转换后路径"
 
 #: src/components/item-codes/item-code-form.tsx
 msgid "输入分类"
@@ -5503,6 +5683,10 @@ msgstr "输入名称"
 msgid "输入描述"
 msgstr "输入描述"
 
+#: src/components/item-codes/query-delete-dialog.tsx
+msgid "输入筛选表达式以批量删除匹配的 Item Code。"
+msgstr "输入筛选表达式以批量删除匹配的 Item Code。"
+
 #: src/components/item-codes/item-code-form.tsx
 msgid "输入编码"
 msgstr "输入编码"
@@ -5510,6 +5694,10 @@ msgstr "输入编码"
 #: src/components/containers-table/containers-table-columns.tsx
 #~ msgid "运行时间"
 #~ msgstr "运行时间"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "进行中"
+msgstr "进行中"
 
 #: src/components/item-codes/admin-verify-dialog.tsx
 msgid "邮箱"
@@ -5521,11 +5709,25 @@ msgstr "邮箱"
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
+#: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "错误"
 msgstr "错误"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "长"
+msgstr "长"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "零件号"
+msgstr "零件号"
+
+#: src/components/item-codes/item-code-detail.tsx
+msgid "预估包装尺寸"
+msgstr "预估包装尺寸"
 
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "预览"
@@ -5542,3 +5744,8 @@ msgstr "预览失败"
 #: src/components/item-codes/admin-verify-dialog.tsx
 msgid "验证"
 msgstr "验证"
+
+#: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-detail.tsx
+msgid "高"
+msgstr "高"

@@ -1,5 +1,5 @@
 import { pb } from "@/lib/api"
-import type { ItemCodeAuditItem, ItemCodeRecord } from "@/types"
+import type { ItemCodeAuditItem, ItemCodeDBDetail, ItemCodeDBRecord, ItemCodeRecord } from "@/types"
 
 export const listItemCodes = (params?: { page?: number; perPage?: number; filter?: string; sort?: string }) =>
 	pb.collection("item_codes").getList<ItemCodeRecord>(params?.page ?? 1, params?.perPage ?? 50, {
@@ -43,4 +43,47 @@ export const listItemCodeAuditLogs = (params?: {
 }) =>
 	pb.send<{ items: ItemCodeAuditItem[] }>("/api/aether/item-codes/audit-logs", {
 		query: params ?? {},
+	})
+
+// --- PostgreSQL DB APIs ---
+
+export const deleteItemCodeByCode = async (code: string, password: string) => {
+	return pb.send<{ status: string }>("/api/aether/item-codes/db-delete", {
+		method: "DELETE",
+		query: { code, password },
+	})
+}
+
+export const batchDeleteItemCodesByCode = async (codes: string[], password: string) => {
+	return pb.send<{ deleted: number; failed: number }>("/api/aether/item-codes/db-batch-delete", {
+		method: "POST",
+		body: { codes, password },
+	})
+}
+
+export const listItemCodesFromDB = (params?: {
+	page?: number
+	perPage?: number
+	search?: string
+	category?: string
+	status?: string
+}) =>
+	pb.send<{ items: ItemCodeDBRecord[]; total: number }>("/api/aether/item-codes/db-list", {
+		query: params ?? {},
+	})
+
+export const getItemCodeDetailFromDB = (code: string) =>
+	pb.send<ItemCodeDBDetail>("/api/aether/item-codes/db-detail", {
+		query: { code },
+	})
+
+export const updateItemCodeInDB = (payload: {
+	code: string
+	name: string
+	category: string
+	description: string
+}) =>
+	pb.send<{ status: string }>("/api/aether/item-codes/db-update", {
+		method: "POST",
+		body: payload,
 	})

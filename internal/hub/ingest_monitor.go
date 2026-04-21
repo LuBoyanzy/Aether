@@ -246,6 +246,14 @@ func (s *ingestMonitorService) getDB(ctx context.Context) (*sql.DB, ingestMonito
 }
 
 func (s *ingestMonitorService) withTenantTx(ctx context.Context, fn func(*sql.Tx, ingestMonitorConfig, context.Context) error) error {
+	return s.withTenantTxOptions(ctx, true, fn)
+}
+
+func (s *ingestMonitorService) withTenantTxWrite(ctx context.Context, fn func(*sql.Tx, ingestMonitorConfig, context.Context) error) error {
+	return s.withTenantTxOptions(ctx, false, fn)
+}
+
+func (s *ingestMonitorService) withTenantTxOptions(ctx context.Context, readOnly bool, fn func(*sql.Tx, ingestMonitorConfig, context.Context) error) error {
 	db, cfg, err := s.getDB(ctx)
 	if err != nil {
 		return err
@@ -254,7 +262,7 @@ func (s *ingestMonitorService) withTenantTx(ctx context.Context, fn func(*sql.Tx
 	queryCtx, cancel := context.WithTimeout(ctx, ingestMonitorQueryTimeout)
 	defer cancel()
 
-	tx, err := db.BeginTx(queryCtx, &sql.TxOptions{ReadOnly: true})
+	tx, err := db.BeginTx(queryCtx, &sql.TxOptions{ReadOnly: readOnly})
 	if err != nil {
 		return err
 	}

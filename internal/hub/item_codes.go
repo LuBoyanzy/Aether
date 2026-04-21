@@ -30,6 +30,7 @@ func (h *Hub) deleteItemCodeWithAudit(e *core.RequestEvent) error {
 	if err != nil {
 		return e.JSON(http.StatusNotFound, map[string]string{"error": "item code not found"})
 	}
+	code := record.GetString("code")
 
 	if err := h.App.Delete(record); err != nil {
 		if auditErr := h.recordItemCodeAudit(itemCodeAuditEntry{
@@ -43,6 +44,13 @@ func (h *Hub) deleteItemCodeWithAudit(e *core.RequestEvent) error {
 			return e.JSON(http.StatusInternalServerError, map[string]string{"error": auditErr.Error()})
 		}
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// sync to PostgreSQL
+	if h.ingestMonitor != nil && code != "" {
+		if dbErr := h.ingestMonitor.MarkItemCodeDeletedInDB(e.Request.Context(), code); dbErr != nil {
+			h.Logger().Error("mark item code deleted in db failed", "logger", "hub", "code", code, "err", dbErr)
+		}
 	}
 
 	if auditErr := h.recordItemCodeAudit(itemCodeAuditEntry{
@@ -88,10 +96,16 @@ func (h *Hub) batchDeleteItemCodes(e *core.RequestEvent) error {
 			failedIDs = append(failedIDs, id)
 			continue
 		}
+		code := record.GetString("code")
 		if err := h.App.Delete(record); err != nil {
 			failed++
 			failedIDs = append(failedIDs, id)
 			continue
+		}
+		if h.ingestMonitor != nil && code != "" {
+			if dbErr := h.ingestMonitor.MarkItemCodeDeletedInDB(e.Request.Context(), code); dbErr != nil {
+				h.Logger().Error("mark item code deleted in db failed", "logger", "hub", "code", code, "err", dbErr)
+			}
 		}
 		deleted++
 	}
@@ -180,8 +194,14 @@ func (h *Hub) queryDeleteItemCodes(e *core.RequestEvent) error {
 	var targetIDs []string
 
 	for _, record := range records {
+		code := record.GetString("code")
 		if err := h.App.Delete(record); err != nil {
 			continue
+		}
+		if h.ingestMonitor != nil && code != "" {
+			if dbErr := h.ingestMonitor.MarkItemCodeDeletedInDB(e.Request.Context(), code); dbErr != nil {
+				h.Logger().Error("mark item code deleted in db failed", "logger", "hub", "code", code, "err", dbErr)
+			}
 		}
 		deleted++
 		targetIDs = append(targetIDs, record.Id)
@@ -226,8 +246,19 @@ func (h *Hub) listItemCodeAuditLogs(e *core.RequestEvent) error {
 	params := map[string]any{}
 
 	if action != "" {
-		filters = append(filters, "action = {:action}")
-		params["action"] = action
+		switch action {
+		case "single_delete":
+			filters = append(filters, "(action = {:action} || action = {:action_db})")
+			params["action"] = action
+			params["action_db"] = "single_delete_db"
+		case "batch_delete":
+			filters = append(filters, "(action = {:action} || action = {:action_db})")
+			params["action"] = action
+			params["action_db"] = "batch_delete_db"
+		default:
+			filters = append(filters, "action = {:action}")
+			params["action"] = action
+		}
 	}
 	if userID != "" {
 		filters = append(filters, "user = {:user}")

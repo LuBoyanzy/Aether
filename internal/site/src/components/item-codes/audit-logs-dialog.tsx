@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro"
 import { memo, useCallback, useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 // import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -70,6 +70,9 @@ export default memo(function AuditLogsDialog({ open, onOpenChange }: AuditLogsDi
 					<DialogTitle>
 						<Trans>Item Code 审计日志</Trans>
 					</DialogTitle>
+					<DialogDescription>
+						<Trans>查看所有 Item Code 操作的历史记录。</Trans>
+					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-wrap items-center gap-2 mb-4">
 					<Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1) }}>

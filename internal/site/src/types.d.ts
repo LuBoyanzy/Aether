@@ -592,6 +592,45 @@ export interface ItemCodeRecord extends RecordModel {
 	updated: string
 }
 
+export interface ItemCodeDBRecord {
+	code: string
+	name: string
+	category: string
+	status: "active" | "inactive" | "obsolete"
+	description: string
+	updated: string
+}
+
+export interface ItemCodeDBDetail extends ItemCodeDBRecord {
+	has3dModel: boolean
+	has2dImage: boolean
+	filePath: string
+	glbAddress: string
+	sourceFilePath: string
+	convertedFilePath: string
+	materialType: string
+	xLength: number
+	yLength: number
+	zLength: number
+	partNumber: string
+	modelMd5: string
+	createTime: string
+	cadNumber?: string
+	drawingUrl?: string
+	designState?: string
+	lifeCycle?: string
+	pipeDiameter?: string
+	packLength?: string
+	packWidth?: string
+	packHeight?: string
+	itemLength?: string
+	itemWidth?: string
+	itemHeight?: string
+	downloadStatus?: string
+	uploadStatus?: string
+	processStatus?: string
+}
+
 export interface ItemCodeAuditItem {
 	id: string
 	user: string

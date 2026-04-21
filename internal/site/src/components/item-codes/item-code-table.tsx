@@ -1,7 +1,7 @@
-// Item Code table with batch selection and actions.
+// Item Code table with batch selection, actions, and expandable detail rows.
 import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
-import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import React, { memo, useCallback, useEffect, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,104 +11,130 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
 import { isAdmin, isReadOnlyUser } from "@/lib/api"
-import { batchDeleteItemCodes, deleteItemCode, listItemCodes } from "@/lib/itemCodeApi"
+import { batchDeleteItemCodesByCode, deleteItemCodeByCode, getItemCodeDetailFromDB, listItemCodesFromDB } from "@/lib/itemCodeApi"
 import { formatShortDate } from "@/lib/utils"
-import type { ItemCodeRecord } from "@/types"
-import AdminVerifyDialog from "@/components/item-codes/admin-verify-dialog"
-import { ClipboardListIcon, EditIcon, LoaderCircleIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
+import type { ItemCodeDBDetail, ItemCodeDBRecord } from "@/types"
+import AdminVerifyDialog, { checkAdminVerifyWindow } from "@/components/item-codes/admin-verify-dialog"
+import ItemCodeDetail from "@/components/item-codes/item-code-detail"
+import { ChevronDownIcon, ChevronRightIcon, ClipboardListIcon, EditIcon, LoaderCircleIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
 
 interface ItemCodeTableProps {
-	onEdit?: (record: ItemCodeRecord) => void
+	onEdit?: (record: ItemCodeDBRecord) => void
 	onQueryDelete?: () => void
 	onAuditLogs?: () => void
 }
 
 export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs }: ItemCodeTableProps) {
-	const [items, setItems] = useState<ItemCodeRecord[]>([])
+	const [items, setItems] = useState<ItemCodeDBRecord[]>([])
+	const [total, setTotal] = useState(0)
 	const [loading, setLoading] = useState(false)
 	const [page, setPage] = useState(1)
 	const [perPage] = useState(50)
-	const [filter, setFilter] = useState("")
+	const [search, setSearch] = useState("")
 	const [statusFilter, setStatusFilter] = useState("all")
-	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+	const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set())
 	const [deleting, setDeleting] = useState(false)
 	const [adminVerifyOpen, setAdminVerifyOpen] = useState(false)
-	const [pendingAction, setPendingAction] = useState<"queryDelete" | "auditLogs" | null>(null)
+	const [pendingAction, setPendingAction] = useState<"singleDelete" | "batchDelete" | "queryDelete" | "auditLogs" | null>(null)
+	const [pendingDeleteCode, setPendingDeleteCode] = useState<string | null>(null)
+	const [expandedCode, setExpandedCode] = useState<string | null>(null)
+	const [detailMap, setDetailMap] = useState<Record<string, ItemCodeDBDetail>>({})
+	const [detailLoading, setDetailLoading] = useState<Set<string>>(new Set())
+	const latestRequestRef = useRef<number>(0)
 
 	const loadItems = useCallback(async () => {
+		const requestId = Date.now()
+		latestRequestRef.current = requestId
 		setLoading(true)
 		try {
-			const filters: string[] = []
-			if (filter.trim()) {
-				filters.push(`(code ~ "${filter.trim()}" || name ~ "${filter.trim()}")`)
-			}
-			if (statusFilter !== "all") {
-				filters.push(`status = "${statusFilter}"`)
-			}
-			const res = await listItemCodes({
+			const res = await listItemCodesFromDB({
 				page,
 				perPage,
-				filter: filters.join(" && "),
+				search: search.trim(),
+				status: statusFilter,
 			})
+			// 忽略过期请求的结果
+			if (latestRequestRef.current !== requestId) return
 			setItems(res.items)
-			setSelectedIds(new Set())
+			setTotal(res.total)
+			setSelectedCodes(new Set())
 		} catch (err: any) {
+			// 忽略过期请求的错误
+			if (latestRequestRef.current !== requestId) return
 			toast({ variant: "destructive", title: t`错误`, description: t`加载失败` })
 		} finally {
-			setLoading(false)
+			// 只有最新请求才关闭 loading
+			if (latestRequestRef.current === requestId) {
+				setLoading(false)
+			}
 		}
-	}, [page, perPage, filter, statusFilter])
+	}, [page, perPage, search, statusFilter])
 
 	useEffect(() => {
-		void loadItems()
+		const timer = setTimeout(() => {
+			void loadItems()
+		}, 300)
+		return () => clearTimeout(timer)
 	}, [loadItems])
 
-	const filteredItems = useMemo(() => {
-		const term = filter.trim().toLowerCase()
-		if (!term && statusFilter === "all") return items
-		return items
-	}, [items, filter, statusFilter])
-
 	const toggleSelectAll = useCallback(() => {
-		if (selectedIds.size === filteredItems.length && filteredItems.length > 0) {
-			setSelectedIds(new Set())
+		if (selectedCodes.size === items.length && items.length > 0) {
+			setSelectedCodes(new Set())
 		} else {
-			setSelectedIds(new Set(filteredItems.map((i) => i.id)))
+			setSelectedCodes(new Set(items.map((i) => i.code)))
 		}
-	}, [selectedIds.size, filteredItems])
+	}, [selectedCodes.size, items])
 
-	const toggleSelect = useCallback((id: string) => {
-		setSelectedIds((prev) => {
+	const toggleSelect = useCallback((code: string) => {
+		setSelectedCodes((prev) => {
 			const next = new Set(prev)
-			if (next.has(id)) {
-				next.delete(id)
+			if (next.has(code)) {
+				next.delete(code)
 			} else {
-				next.add(id)
+				next.add(code)
 			}
 			return next
 		})
 	}, [])
 
-	const handleDelete = useCallback(
-		async (id: string) => {
-			if (!confirm(t`确定要删除此项吗？`)) return
+	const toggleExpand = useCallback(async (code: string) => {
+		if (expandedCode === code) {
+			setExpandedCode(null)
+			return
+		}
+		setExpandedCode(code)
+		if (!detailMap[code] && !detailLoading.has(code)) {
+			setDetailLoading((prev) => new Set(prev).add(code))
 			try {
-				await deleteItemCode(id)
-				toast({ title: t`已删除`, description: t`Item Code 已删除` })
-				void loadItems()
+				const detail = await getItemCodeDetailFromDB(code)
+				setDetailMap((prev) => ({ ...prev, [code]: detail }))
 			} catch (err: any) {
-				toast({ variant: "destructive", title: t`错误`, description: err?.message || t`删除失败` })
+				toast({ variant: "destructive", title: t`错误`, description: t`加载详情失败` })
+			} finally {
+				setDetailLoading((prev) => {
+					const next = new Set(prev)
+					next.delete(code)
+					return next
+				})
 			}
-		},
-		[loadItems]
-	)
+		}
+	}, [expandedCode, detailMap, detailLoading])
 
-	const handleBatchDelete = useCallback(async () => {
-		if (selectedIds.size === 0) return
-		if (!confirm(t`确定要删除 ${selectedIds.size} 项吗？`)) return
+	const doDelete = useCallback(async (code: string, password: string) => {
+		try {
+			await deleteItemCodeByCode(code, password)
+			toast({ title: t`已删除`, description: t`Item Code 已删除` })
+			void loadItems()
+		} catch (err: any) {
+			toast({ variant: "destructive", title: t`错误`, description: err?.message || t`删除失败` })
+		}
+	}, [loadItems])
+
+	const doBatchDelete = useCallback(async (password: string) => {
+		if (selectedCodes.size === 0) return
 		setDeleting(true)
 		try {
-			const res = await batchDeleteItemCodes(Array.from(selectedIds))
+			const res = await batchDeleteItemCodesByCode(Array.from(selectedCodes), password)
 			toast({ title: t`已删除`, description: t`已删除 ${res.deleted} 项` })
 			void loadItems()
 		} catch (err: any) {
@@ -116,20 +142,47 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 		} finally {
 			setDeleting(false)
 		}
-	}, [selectedIds, loadItems])
+	}, [selectedCodes, loadItems])
+
+	const handleDelete = useCallback(
+		async (code: string) => {
+			if (!isAdmin()) {
+				toast({ variant: "destructive", title: t`无权限`, description: t`只有管理员可以删除` })
+				return
+			}
+			if (!confirm(t`确定要删除此项吗？`)) return
+			setPendingDeleteCode(code)
+			setPendingAction("singleDelete")
+			setAdminVerifyOpen(true)
+		},
+		[]
+	)
+
+	const handleBatchDelete = useCallback(async () => {
+		if (selectedCodes.size === 0) return
+		if (!isAdmin()) {
+			toast({ variant: "destructive", title: t`无权限`, description: t`只有管理员可以删除` })
+			return
+		}
+		if (!confirm(t`确定要删除 ${selectedCodes.size} 项吗？`)) return
+		setPendingAction("batchDelete")
+		setAdminVerifyOpen(true)
+	}, [selectedCodes])
 
 	const renderStatusBadge = (status: string) => {
 		if (status === "active") {
-			return <Badge className="bg-emerald-500/15 text-emerald-600 hover:bg-emerald-500/25">启用</Badge>
+			return <Badge className="bg-emerald-500/15 text-emerald-600 hover:bg-emerald-500/25">{t`启用`}</Badge>
 		}
 		if (status === "inactive") {
-			return <Badge variant="secondary">停用</Badge>
+			return <Badge variant="secondary">{t`停用`}</Badge>
 		}
 		if (status === "obsolete") {
-			return <Badge variant="destructive">废弃</Badge>
+			return <Badge variant="destructive">{t`废弃`}</Badge>
 		}
 		return <Badge variant="outline">{status}</Badge>
 	}
+
+	const colCount = isAdmin() ? 8 : 7
 
 	return (
 		<Card className="p-6 @container w-full">
@@ -144,11 +197,11 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 						</CardDescription>
 					</div>
 					<div className="flex flex-wrap items-center gap-2">
-						{isAdmin() && selectedIds.size > 0 && (
+						{isAdmin() && selectedCodes.size > 0 && (
 							<Button variant="destructive" size="sm" onClick={() => void handleBatchDelete()} disabled={deleting}>
 								<Trash2Icon className="me-2 h-4 w-4" />
 								<Trans>批量删除</Trans>
-								<span className="ms-1">({selectedIds.size})</span>
+								<span className="ms-1">({selectedCodes.size})</span>
 							</Button>
 						)}
 						{onQueryDelete && (
@@ -193,8 +246,8 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 					<Input
 						className="w-56"
 						placeholder={t`搜索编码或名称...`}
-						value={filter}
-						onChange={(e) => { setFilter(e.target.value); setPage(1) }}
+						value={search}
+						onChange={(e) => { setSearch(e.target.value); setPage(1) }}
 					/>
 					<Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1) }}>
 						<SelectTrigger className="h-9 w-36">
@@ -202,9 +255,9 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="all">{t`全部状态`}</SelectItem>
-							<SelectItem value="active">启用</SelectItem>
-							<SelectItem value="inactive">停用</SelectItem>
-							<SelectItem value="obsolete">废弃</SelectItem>
+							<SelectItem value="active">{t`启用`}</SelectItem>
+							<SelectItem value="inactive">{t`停用`}</SelectItem>
+							<SelectItem value="obsolete">{t`废弃`}</SelectItem>
 						</SelectContent>
 					</Select>
 				</div>
@@ -215,8 +268,8 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 								{isAdmin() && (
 									<TableHead className="w-[40px]">
 										<Checkbox
-											checked={filteredItems.length > 0 && selectedIds.size === filteredItems.length}
-											data-state={selectedIds.size > 0 && selectedIds.size < filteredItems.length ? 'indeterminate' : undefined}
+											checked={items.length > 0 && selectedCodes.size === items.length}
+											data-state={selectedCodes.size > 0 && selectedCodes.size < items.length ? 'indeterminate' : undefined}
 											onCheckedChange={toggleSelectAll}
 										/>
 									</TableHead>
@@ -245,63 +298,101 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{filteredItems.length === 0 ? (
+							{items.length === 0 ? (
 								<TableRow>
 									<TableCell
-										colSpan={isAdmin() ? 8 : 7}
+										colSpan={colCount}
 										className="py-10 text-center text-sm text-muted-foreground"
 									>
 										<Trans>暂无 Item Code。</Trans>
 									</TableCell>
 								</TableRow>
 							) : (
-								filteredItems.map((item) => (
-									<TableRow key={item.id}>
-										{isAdmin() && (
-											<TableCell>
-												<Checkbox
-													checked={selectedIds.has(item.id)}
-													onCheckedChange={() => toggleSelect(item.id)}
-												/>
+								items.map((item) => (
+									<React.Fragment key={item.code}>
+										<TableRow
+											className={expandedCode === item.code ? "bg-muted/30" : undefined}
+										>
+											{isAdmin() && (
+												<TableCell>
+													<Checkbox
+														checked={selectedCodes.has(item.code)}
+														onCheckedChange={() => toggleSelect(item.code)}
+													/>
+												</TableCell>
+											)}
+											<TableCell className="font-mono text-xs">
+												<Button
+													variant="ghost"
+													size="sm"
+													className="h-auto px-1 py-0 font-mono"
+													onClick={() => toggleExpand(item.code)}
+												>
+													{expandedCode === item.code ? (
+														<ChevronDownIcon className="h-3 w-3 mr-1" />
+													) : (
+														<ChevronRightIcon className="h-3 w-3 mr-1" />
+													)}
+													{item.code}
+												</Button>
 											</TableCell>
+											<TableCell>{item.name}</TableCell>
+											<TableCell>{item.category || "-"}</TableCell>
+											<TableCell>{renderStatusBadge(item.status)}</TableCell>
+											<TableCell>
+												<div className="max-w-[200px] truncate text-muted-foreground" title={item.description || "-"}>
+													{item.description || "-"}
+												</div>
+											</TableCell>
+											<TableCell className="tabular-nums text-xs">
+												{formatShortDate(item.updated)}
+											</TableCell>
+											<TableCell className="text-right">
+												<div className="flex items-center justify-end gap-1">
+													{!isReadOnlyUser() && (
+														<Button
+															variant="ghost"
+															size="icon"
+															className="h-8 w-8"
+															onClick={() => onEdit?.(item)}
+														>
+															<EditIcon className="h-4 w-4" />
+														</Button>
+													)}
+													{!isReadOnlyUser() && (
+														<Button
+															variant="ghost"
+															size="icon"
+															className="h-8 w-8 text-destructive"
+															onClick={() => handleDelete(item.code)}
+														>
+															<Trash2Icon className="h-4 w-4" />
+														</Button>
+													)}
+												</div>
+											</TableCell>
+										</TableRow>
+										{expandedCode === item.code && (
+											<TableRow key={`${item.code}-detail`}>
+												<TableCell colSpan={colCount} className="p-0">
+													{detailMap[item.code] ? (
+														<ItemCodeDetail detail={detailMap[item.code]} />
+													) : (
+														<div className="p-8 text-center text-sm text-muted-foreground">
+															{detailLoading.has(item.code) ? (
+																<div className="flex items-center justify-center gap-2">
+																	<LoaderCircleIcon className="h-4 w-4 animate-spin" />
+																	<Trans>加载详情中...</Trans>
+																</div>
+															) : (
+																<Trans>加载详情失败</Trans>
+															)}
+														</div>
+													)}
+												</TableCell>
+											</TableRow>
 										)}
-										<TableCell className="font-mono text-xs">{item.code}</TableCell>
-										<TableCell>{item.name}</TableCell>
-										<TableCell>{item.category || "-"}</TableCell>
-										<TableCell>{renderStatusBadge(item.status)}</TableCell>
-										<TableCell>
-											<div className="max-w-[200px] truncate text-muted-foreground" title={item.description || "-"}>
-												{item.description || "-"}
-											</div>
-										</TableCell>
-										<TableCell className="tabular-nums text-xs">
-											{formatShortDate(item.updated)}
-										</TableCell>
-										<TableCell className="text-right">
-											<div className="flex items-center justify-end gap-1">
-												{!isReadOnlyUser() && (
-													<Button
-														variant="ghost"
-														size="icon"
-														className="h-8 w-8"
-														onClick={() => onEdit?.(item)}
-													>
-														<EditIcon className="h-4 w-4" />
-													</Button>
-												)}
-												{!isReadOnlyUser() && (
-													<Button
-														variant="ghost"
-														size="icon"
-														className="h-8 w-8 text-destructive"
-														onClick={() => handleDelete(item.id)}
-													>
-														<Trash2Icon className="h-4 w-4" />
-													</Button>
-												)}
-											</div>
-										</TableCell>
-									</TableRow>
+									</React.Fragment>
 								))
 							)}
 						</TableBody>
@@ -309,7 +400,7 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 				</div>
 				<div className="flex items-center justify-between pt-1">
 					<div className="text-xs text-muted-foreground">
-						<Trans>{filteredItems.length} 条记录</Trans>
+						<Trans>{total} 条记录</Trans>
 					</div>
 					<div className="flex items-center gap-2">
 						<Button
@@ -327,7 +418,7 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 							variant="outline"
 							size="sm"
 							onClick={() => setPage((prev) => prev + 1)}
-							disabled={filteredItems.length < perPage || loading}
+							disabled={page * perPage >= total || loading}
 						>
 							<Trans>下一页</Trans>
 						</Button>
@@ -337,14 +428,19 @@ export default memo(function ItemCodeTable({ onEdit, onQueryDelete, onAuditLogs 
 			<AdminVerifyDialog
 				open={adminVerifyOpen}
 				onOpenChange={setAdminVerifyOpen}
-				onVerified={() => {
-					if (pendingAction === "queryDelete" && onQueryDelete) {
-						onQueryDelete()
-					} else if (pendingAction === "auditLogs" && onAuditLogs) {
-						onAuditLogs()
-					}
-					setPendingAction(null)
-				}}
+					onVerified={(password) => {
+						if (pendingAction === "singleDelete" && pendingDeleteCode) {
+							void doDelete(pendingDeleteCode, password)
+						} else if (pendingAction === "batchDelete") {
+							void doBatchDelete(password)
+						} else if (pendingAction === "queryDelete" && onQueryDelete) {
+							onQueryDelete()
+						} else if (pendingAction === "auditLogs" && onAuditLogs) {
+							onAuditLogs()
+						}
+						setPendingAction(null)
+						setPendingDeleteCode(null)
+					}}
 			/>
 		</Card>
 	)

@@ -3,19 +3,19 @@ import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { memo, useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { updateItemCode } from "@/lib/itemCodeApi"
-import type { ItemCodeRecord } from "@/types"
+import { updateItemCodeInDB } from "@/lib/itemCodeApi"
+import type { ItemCodeDBRecord } from "@/types"
 
 interface ItemCodeFormProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
-	record?: ItemCodeRecord
+	record?: ItemCodeDBRecord
 	onSuccess?: () => void
 }
 
@@ -54,7 +54,7 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 		}
 		setSubmitting(true)
 		try {
-			const data: Partial<ItemCodeRecord> = {
+			const data = {
 				code: code.trim(),
 				name: name.trim(),
 				category: category.trim(),
@@ -62,7 +62,12 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 				description: description.trim(),
 			}
 			if (isEdit && record) {
-				await updateItemCode(record.id, data)
+				await updateItemCodeInDB({
+					code: record.code,
+					name: data.name,
+					category: data.category,
+					description: data.description,
+				})
 				toast({ title: t`已更新`, description: t`Item Code 更新成功` })
 			}
 			onOpenChange(false)
@@ -79,6 +84,9 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle><Trans>编辑 Item Code</Trans></DialogTitle>
+					<DialogDescription>
+						<Trans>修改 Item Code 的基本信息。</Trans>
+					</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 py-2">
 					<div className="grid gap-2">

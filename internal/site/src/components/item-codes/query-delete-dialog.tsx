@@ -3,7 +3,7 @@ import { t } from "@lingui/core/macro"
 import { Trans } from "@lingui/react/macro"
 import { memo, useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -71,6 +71,9 @@ export default memo(function QueryDeleteDialog({ open, onOpenChange, onSuccess }
 					<DialogTitle>
 						<Trans>查询删除</Trans>
 					</DialogTitle>
+					<DialogDescription>
+						<Trans>输入筛选表达式以批量删除匹配的 Item Code。</Trans>
+					</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 py-2">
 					<div className="grid gap-2">

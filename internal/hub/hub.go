@@ -483,6 +483,11 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	itemCodesGroup.POST("/query-delete/preview", h.previewQueryDeleteItemCodes)
 	itemCodesGroup.POST("/query-delete", h.queryDeleteItemCodes)
 	itemCodesGroup.GET("/audit-logs", h.listItemCodeAuditLogs)
+	itemCodesGroup.GET("/db-list", h.getItemCodeDBList)
+	itemCodesGroup.GET("/db-detail", h.getItemCodeDBDetail)
+	itemCodesGroup.POST("/db-update", h.updateItemCodeInDB)
+	itemCodesGroup.DELETE("/db-delete", h.deleteItemCodeByCodeFromDB)
+	itemCodesGroup.POST("/db-batch-delete", h.batchDeleteItemCodesByCodeFromDB)
 
 	return nil
 }

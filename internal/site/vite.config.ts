@@ -6,7 +6,20 @@ import { lingui } from "@lingui/vite-plugin"
 
 export default defineConfig({
 	base: "./",
-	server: { host: "0.0.0.0", port: 19091 },
+	server: {
+		host: "0.0.0.0",
+		port: 19091,
+		proxy: {
+			"/api": {
+				target: "http://localhost:19090",
+				changeOrigin: true,
+			},
+		},
+		watch: {
+			usePolling: true,
+			interval: 1000,
+		},
+	},
 	plugins: [
 		react({
 			babel: {
