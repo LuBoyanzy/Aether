@@ -23,12 +23,22 @@ const (
 	ingestMonitorRecentLimit      = 20
 	ingestMonitorFailureLimit     = 20
 	ingestMonitorQueryTimeout     = 10 * time.Second
+	ingestMonitorStalledDuration  = 30 * time.Minute
 	ingestMonitorApplicationName  = "aether_ingest_monitor"
 	ingestMonitorFormalRecordType = "formal_ingest"
+	ingestMonitorBatchRecordType  = "batch_tracking"
 	ingestMonitorStatusSuccess    = "success"
 	ingestMonitorStatusFailure    = "failure"
 	ingestMonitorStatusPending    = "pending"
 	ingestMonitorStatusUnknown    = "unknown"
+	ingestMonitorStageQueued      = "queued"
+	ingestMonitorStageProcessing  = "local_processing"
+	ingestMonitorStageCompleted   = "local_completed"
+	ingestMonitorStageLocalFailed = "local_failed"
+	ingestMonitorStageFormalWait  = "formal_pending"
+	ingestMonitorStageFormalOK    = "formal_success"
+	ingestMonitorStageFormalFail  = "formal_failure"
+	ingestMonitorStageUnknown     = "unknown"
 	ingestMonitorFormalFilter     = `
 WHERE COALESCE(is_deleted, false) = false
 	AND COALESCE(is_temporary, false) = false
@@ -98,25 +108,39 @@ type ingestMonitorSummaryCountsDTO struct {
 }
 
 type ingestMonitorRecordDTO struct {
-	ItemCode          string `json:"itemCode"`
-	ProductName       string `json:"productName"`
-	Status            string `json:"status"`
-	IsComplete        *int   `json:"isComplete,omitempty"`
-	IsTemporary       bool   `json:"isTemporary"`
-	ErrorMsg          string `json:"errorMsg"`
-	SourceFilePath    string `json:"sourceFilePath"`
-	ConvertedFilePath string `json:"convertedFilePath"`
-	PcAddress         string `json:"pcAddress"`
-	GlbAddress        string `json:"glbAddress"`
-	HasSourceFilePath bool   `json:"hasSourceFilePath"`
-	HasConvertedFile  bool   `json:"hasConvertedFile"`
-	HasPcAddress      bool   `json:"hasPcAddress"`
-	HasGlbAddress     bool   `json:"hasGlbAddress"`
-	PathReadyCount    int    `json:"pathReadyCount"`
-	PathReadyTotal    int    `json:"pathReadyTotal"`
-	InferenceTypes    []int  `json:"inferenceTypes"`
-	UpdateTime        string `json:"updateTime"`
-	CreateTime        string `json:"createTime"`
+	ItemCode          string   `json:"itemCode"`
+	ProductName       string   `json:"productName"`
+	Status            string   `json:"status"`
+	IsComplete        *int     `json:"isComplete,omitempty"`
+	IsTemporary       bool     `json:"isTemporary"`
+	HasFormalRecord   bool     `json:"hasFormalRecord"`
+	RecordSource      string   `json:"recordSource"`
+	CadNumber         string   `json:"cadNumber"`
+	FileName          string   `json:"fileName"`
+	ProcessStatus     string   `json:"processStatus"`
+	BatchRunID        string   `json:"batchRunId"`
+	ErrorMsg          string   `json:"errorMsg"`
+	SourceFilePath    string   `json:"sourceFilePath"`
+	ConvertedFilePath string   `json:"convertedFilePath"`
+	PcAddress         string   `json:"pcAddress"`
+	GlbAddress        string   `json:"glbAddress"`
+	HasSourceFilePath bool     `json:"hasSourceFilePath"`
+	HasConvertedFile  bool     `json:"hasConvertedFile"`
+	HasPcAddress      bool     `json:"hasPcAddress"`
+	HasGlbAddress     bool     `json:"hasGlbAddress"`
+	PathReadyCount    int      `json:"pathReadyCount"`
+	PathReadyTotal    int      `json:"pathReadyTotal"`
+	InferenceTypes    []int    `json:"inferenceTypes"`
+	StageStatus       string   `json:"stageStatus"`
+	DiagnosticMessage string   `json:"diagnosticMessage"`
+	MissingPaths      []string `json:"missingPaths"`
+	ProcessStartTime  string   `json:"processStartTime"`
+	ProcessEndTime    string   `json:"processEndTime"`
+	ProductUpdateTime string   `json:"productUpdateTime"`
+	IsStalled         bool     `json:"isStalled"`
+	StalledMinutes    *int     `json:"stalledMinutes,omitempty"`
+	UpdateTime        string   `json:"updateTime"`
+	CreateTime        string   `json:"createTime"`
 }
 
 type ingestMonitorSummaryResponse struct {
@@ -332,14 +356,13 @@ func (s *ingestMonitorService) GetDetail(ctx context.Context, itemCode string) (
 	response := &ingestMonitorDetailResponse{}
 
 	err := s.withTenantTx(ctx, func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
-		response.Scope = ingestMonitorScopeDTO{
-			Tenant:     cfg.Tenant,
-			RecordType: ingestMonitorFormalRecordType,
-		}
-
 		record, err := getIngestMonitorRecordByItemCode(tx, queryCtx, itemCode)
 		if err != nil {
 			return err
+		}
+		response.Scope = ingestMonitorScopeDTO{
+			Tenant:     cfg.Tenant,
+			RecordType: record.RecordSource,
 		}
 		response.Item = record
 		return nil
@@ -448,7 +471,15 @@ ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 LIMIT 1
 `, itemCode)
 
-	return scanIngestMonitorRecord(row)
+	record, err := scanIngestMonitorRecord(row)
+	if err == nil {
+		return record, nil
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		return ingestMonitorRecordDTO{}, err
+	}
+
+	return getTrackedIngestMonitorRecordByItemCode(tx, ctx, itemCode)
 }
 
 func scanIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO, error) {
@@ -491,15 +522,13 @@ func scanIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO, error)
 		ProductName:       productName,
 		Status:            normalizeIngestMonitorStatus(status),
 		IsTemporary:       isTemporary.Valid && isTemporary.Bool,
+		HasFormalRecord:   true,
+		RecordSource:      ingestMonitorFormalRecordType,
 		ErrorMsg:          errorMsg,
 		SourceFilePath:    sourceFilePath,
 		ConvertedFilePath: convertedFilePath,
 		PcAddress:         pcAddress,
 		GlbAddress:        glbAddress,
-		HasSourceFilePath: sourceFilePath != "",
-		HasConvertedFile:  convertedFilePath != "",
-		HasPcAddress:      pcAddress != "",
-		HasGlbAddress:     glbAddress != "",
 		PathReadyTotal:    4,
 		InferenceTypes:    parseInferenceTypes(inferenceTypesRaw),
 		UpdateTime:        formatNullableTime(updateTime),
@@ -511,19 +540,143 @@ func scanIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO, error)
 		record.IsComplete = &value
 	}
 
-	if record.HasSourceFilePath {
-		record.PathReadyCount++
-	}
-	if record.HasConvertedFile {
-		record.PathReadyCount++
-	}
-	if record.HasPcAddress {
-		record.PathReadyCount++
-	}
-	if record.HasGlbAddress {
-		record.PathReadyCount++
+	populateIngestMonitorDiagnostics(&record)
+
+	return record, nil
+}
+
+func getTrackedIngestMonitorRecordByItemCode(tx *sql.Tx, ctx context.Context, itemCode string) (ingestMonitorRecordDTO, error) {
+	row := tx.QueryRowContext(ctx, `
+SELECT
+	c.item_code,
+	COALESCE(p.product_name, '') AS product_name,
+	p.is_complete,
+	COALESCE(p.is_temporary, false) AS is_temporary,
+	CASE WHEN p.create_time IS NOT NULL THEN true ELSE false END AS has_formal_record,
+	COALESCE(c.cad_number, '') AS cad_number,
+	COALESCE(c.file_name, '') AS file_name,
+	COALESCE(c.process_status, '') AS process_status,
+	COALESCE(c.batch_run_id, '') AS batch_run_id,
+	COALESCE(NULLIF(p.error_msg, ''), NULLIF(c.error_message, ''), '') AS error_msg,
+	COALESCE(p.source_file_path, '') AS source_file_path,
+	COALESCE(p.converted_file_path, '') AS converted_file_path,
+	COALESCE(p.pc_address, '') AS pc_address,
+	COALESCE(p.glb_address, '') AS glb_address,
+	COALESCE(p.inference_types, '') AS inference_types,
+	c.process_start_time,
+	c.process_end_time,
+	p.update_time AS product_update_time,
+	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
+	COALESCE(p.create_time, c.create_time) AS create_time
+FROM cad_file_process_status c
+LEFT JOIN LATERAL (
+	SELECT
+		item_code,
+		product_name,
+		is_complete,
+		is_temporary,
+		error_msg,
+		source_file_path,
+		converted_file_path,
+		pc_address,
+		glb_address,
+		inference_types,
+		update_time,
+		create_time
+	FROM product_info
+	WHERE item_code = c.item_code
+		AND COALESCE(is_deleted, false) = false
+	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
+	LIMIT 1
+) p ON true
+WHERE c.item_code = $1
+	AND COALESCE(c.is_deleted, 0) = 0
+ORDER BY COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
+	c.create_time DESC NULLS LAST
+LIMIT 1
+`, itemCode)
+
+	return scanTrackedIngestMonitorRecord(row)
+}
+
+func scanTrackedIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO, error) {
+	var (
+		itemCode          string
+		productName       string
+		isComplete        sql.NullInt64
+		isTemporary       bool
+		hasFormalRecord   bool
+		cadNumber         string
+		fileName          string
+		processStatus     string
+		batchRunID        string
+		errorMsg          string
+		sourceFilePath    string
+		convertedFilePath string
+		pcAddress         string
+		glbAddress        string
+		inferenceTypesRaw string
+		processStartTime  sql.NullTime
+		processEndTime    sql.NullTime
+		productUpdateTime sql.NullTime
+		updateTime        sql.NullTime
+		createTime        sql.NullTime
+	)
+
+	if err := scanner.Scan(
+		&itemCode,
+		&productName,
+		&isComplete,
+		&isTemporary,
+		&hasFormalRecord,
+		&cadNumber,
+		&fileName,
+		&processStatus,
+		&batchRunID,
+		&errorMsg,
+		&sourceFilePath,
+		&convertedFilePath,
+		&pcAddress,
+		&glbAddress,
+		&inferenceTypesRaw,
+		&processStartTime,
+		&processEndTime,
+		&productUpdateTime,
+		&updateTime,
+		&createTime,
+	); err != nil {
+		return ingestMonitorRecordDTO{}, err
 	}
 
+	record := ingestMonitorRecordDTO{
+		ItemCode:          itemCode,
+		ProductName:       productName,
+		IsTemporary:       isTemporary,
+		HasFormalRecord:   hasFormalRecord,
+		RecordSource:      ingestMonitorBatchRecordType,
+		CadNumber:         cadNumber,
+		FileName:          fileName,
+		ProcessStatus:     strings.TrimSpace(processStatus),
+		BatchRunID:        batchRunID,
+		ErrorMsg:          errorMsg,
+		SourceFilePath:    sourceFilePath,
+		ConvertedFilePath: convertedFilePath,
+		PcAddress:         pcAddress,
+		GlbAddress:        glbAddress,
+		PathReadyTotal:    4,
+		InferenceTypes:    parseInferenceTypes(inferenceTypesRaw),
+		ProcessStartTime:  formatNullableTime(processStartTime),
+		ProcessEndTime:    formatNullableTime(processEndTime),
+		ProductUpdateTime: formatNullableTime(productUpdateTime),
+		UpdateTime:        formatNullableTime(updateTime),
+		CreateTime:        formatNullableTime(createTime),
+	}
+	if isComplete.Valid {
+		value := int(isComplete.Int64)
+		record.IsComplete = &value
+	}
+	record.Status = deriveTrackedIngestStatus(record.IsComplete, record.HasFormalRecord, record.ProcessStatus, record.ErrorMsg, record.SourceFilePath, record.ConvertedFilePath, record.PcAddress, record.GlbAddress)
+	populateIngestMonitorDiagnostics(&record)
 	return record, nil
 }
 
@@ -571,6 +724,173 @@ func formatNullableTime(value sql.NullTime) string {
 	return value.Time.UTC().Format(time.RFC3339)
 }
 
+func deriveTrackedIngestStatus(
+	isComplete *int,
+	hasFormalRecord bool,
+	processStatus string,
+	errorMsg string,
+	sourceFilePath string,
+	convertedFilePath string,
+	pcAddress string,
+	glbAddress string,
+) string {
+	if hasFormalRecord {
+		if isComplete != nil && *isComplete == -1 || strings.TrimSpace(errorMsg) != "" {
+			return ingestMonitorStatusFailure
+		}
+		if isComplete != nil && *isComplete == 1 &&
+			sourceFilePath != "" &&
+			convertedFilePath != "" &&
+			pcAddress != "" &&
+			glbAddress != "" {
+			return ingestMonitorStatusSuccess
+		}
+		if isComplete != nil && *isComplete == 2 {
+			return ingestMonitorStatusPending
+		}
+	}
+
+	switch strings.TrimSpace(processStatus) {
+	case "failed", "error":
+		return ingestMonitorStatusFailure
+	case "pending", "processing", "completed", "success":
+		return ingestMonitorStatusPending
+	default:
+		return ingestMonitorStatusUnknown
+	}
+}
+
+func populateIngestMonitorDiagnostics(record *ingestMonitorRecordDTO) {
+	if record == nil {
+		return
+	}
+
+	record.HasSourceFilePath = record.SourceFilePath != ""
+	record.HasConvertedFile = record.ConvertedFilePath != ""
+	record.HasPcAddress = record.PcAddress != ""
+	record.HasGlbAddress = record.GlbAddress != ""
+
+	missingPaths := make([]string, 0, 4)
+	if !record.HasSourceFilePath {
+		missingPaths = append(missingPaths, "源文件")
+	} else {
+		record.PathReadyCount++
+	}
+	if !record.HasConvertedFile {
+		missingPaths = append(missingPaths, "转换文件")
+	} else {
+		record.PathReadyCount++
+	}
+	if !record.HasPcAddress {
+		missingPaths = append(missingPaths, "点云")
+	} else {
+		record.PathReadyCount++
+	}
+	if !record.HasGlbAddress {
+		missingPaths = append(missingPaths, "GLB")
+	} else {
+		record.PathReadyCount++
+	}
+	record.MissingPaths = missingPaths
+	record.StageStatus = deriveIngestMonitorStage(record.Status, record.ProcessStatus, record.HasFormalRecord)
+	record.DiagnosticMessage = buildIngestDiagnosticMessage(record)
+	record.IsStalled, record.StalledMinutes = computeIngestStalled(record)
+}
+
+func deriveIngestMonitorStage(status string, processStatus string, hasFormalRecord bool) string {
+	switch status {
+	case ingestMonitorStatusSuccess:
+		return ingestMonitorStageFormalOK
+	case ingestMonitorStatusFailure:
+		switch strings.TrimSpace(processStatus) {
+		case "failed", "error":
+			if !hasFormalRecord {
+				return ingestMonitorStageLocalFailed
+			}
+		}
+		return ingestMonitorStageFormalFail
+	}
+
+	switch strings.TrimSpace(processStatus) {
+	case "failed", "error":
+		return ingestMonitorStageLocalFailed
+	case "completed", "success":
+		return ingestMonitorStageCompleted
+	case "processing":
+		return ingestMonitorStageProcessing
+	case "pending":
+		return ingestMonitorStageQueued
+	}
+
+	if hasFormalRecord && status == ingestMonitorStatusPending {
+		return ingestMonitorStageFormalWait
+	}
+	return ingestMonitorStageUnknown
+}
+
+func buildIngestDiagnosticMessage(record *ingestMonitorRecordDTO) string {
+	if record == nil {
+		return ""
+	}
+	if strings.TrimSpace(record.ErrorMsg) != "" {
+		return strings.TrimSpace(record.ErrorMsg)
+	}
+
+	switch record.StageStatus {
+	case ingestMonitorStageFormalOK:
+		return "正式入库完成，关键产物路径齐全"
+	case ingestMonitorStageFormalFail:
+		return "正式入库失败，请检查下游推理或入库链路"
+	case ingestMonitorStageLocalFailed:
+		return "本地处理失败，尚未形成可用的正式入库记录"
+	case ingestMonitorStageCompleted:
+		if record.HasFormalRecord {
+			if len(record.MissingPaths) > 0 {
+				return fmt.Sprintf("本地处理已完成，正式记录已创建，等待补齐：%s", strings.Join(record.MissingPaths, "、"))
+			}
+			return "本地处理已完成，等待正式入库状态收敛"
+		}
+		return "本地处理已完成，等待正式入库记录创建"
+	case ingestMonitorStageProcessing:
+		return "本地处理进行中"
+	case ingestMonitorStageQueued:
+		return "已登记到批次，等待 Celery 开始处理"
+	case ingestMonitorStageFormalWait:
+		if len(record.MissingPaths) > 0 {
+			return fmt.Sprintf("正式记录处理中，缺少：%s", strings.Join(record.MissingPaths, "、"))
+		}
+		return "正式记录处理中，等待向量入库完成"
+	default:
+		if len(record.MissingPaths) > 0 {
+			return fmt.Sprintf("状态待确认，缺少：%s", strings.Join(record.MissingPaths, "、"))
+		}
+		return "状态待确认"
+	}
+}
+
+func computeIngestStalled(record *ingestMonitorRecordDTO) (bool, *int) {
+	if record == nil || record.UpdateTime == "" {
+		return false, nil
+	}
+	switch record.StageStatus {
+	case ingestMonitorStageFormalOK, ingestMonitorStageFormalFail, ingestMonitorStageLocalFailed:
+		return false, nil
+	}
+
+	lastUpdate, err := time.Parse(time.RFC3339, record.UpdateTime)
+	if err != nil {
+		return false, nil
+	}
+
+	elapsed := time.Since(lastUpdate)
+	if elapsed < ingestMonitorStalledDuration {
+		return false, nil
+	}
+
+	minutes := int(elapsed.Round(time.Minute) / time.Minute)
+	return true, &minutes
+}
+
 func (h *Hub) getIngestMonitorSummary(e *core.RequestEvent) error {
 	if h.ingestMonitor == nil {
 		return e.JSON(http.StatusServiceUnavailable, map[string]string{"error": "ingest-monitor 未初始化"})
@@ -608,7 +928,7 @@ func (h *Hub) handleIngestMonitorError(e *core.RequestEvent, logMessage string, 
 	case errors.As(err, &cfgErr):
 		return e.JSON(http.StatusServiceUnavailable, map[string]string{"error": cfgErr.Error()})
 	case errors.Is(err, sql.ErrNoRows):
-		return e.JSON(http.StatusNotFound, map[string]string{"error": "未找到对应的正式入库记录"})
+		return e.JSON(http.StatusNotFound, map[string]string{"error": "未找到对应的入库记录"})
 	default:
 		h.Logger().Error(logMessage, "logger", "hub", "err", err)
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": "查询入库状态失败"})

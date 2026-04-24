@@ -13,19 +13,31 @@ import (
 )
 
 const (
-	ingestMonitorBatchRecordType = "ingest_batch"
-	ingestMonitorBatchListLimit  = 20
-	ingestMonitorBatchStatusCase = `
+	ingestMonitorBatchListLimit        = 20
+	ingestMonitorBatchFormalStatusCase = `
 CASE
+	WHEN p.create_time IS NULL THEN 'unknown'
 	WHEN p.is_complete = -1
-		OR COALESCE(p.error_msg, '') <> ''
-		OR COALESCE(c.process_status, '') IN ('failed', 'error') THEN 'failure'
+		OR COALESCE(p.error_msg, '') <> '' THEN 'failure'
 	WHEN p.is_complete = 1
 		AND COALESCE(p.source_file_path, '') <> ''
 		AND COALESCE(p.converted_file_path, '') <> ''
 		AND COALESCE(p.pc_address, '') <> ''
 		AND COALESCE(p.glb_address, '') <> '' THEN 'success'
-	ELSE 'pending'
+	WHEN p.is_complete = 2 OR p.create_time IS NOT NULL THEN 'pending'
+	ELSE 'unknown'
+END
+`
+	ingestMonitorBatchStageCase = `
+CASE
+	WHEN (%s) = 'success' THEN 'formal_success'
+	WHEN (%s) = 'failure' THEN 'formal_failure'
+	WHEN (%s) = 'pending' THEN 'formal_pending'
+	WHEN COALESCE(c.process_status, '') IN ('failed', 'error') THEN 'local_failed'
+	WHEN COALESCE(c.process_status, '') IN ('completed', 'success') THEN 'local_completed'
+	WHEN COALESCE(c.process_status, '') = 'processing' THEN 'local_processing'
+	WHEN COALESCE(c.process_status, '') = 'pending' THEN 'queued'
+	ELSE 'unknown'
 END
 `
 	ingestMonitorBatchTerminalTimeCase = `
@@ -61,38 +73,54 @@ type ingestMonitorBatchDTO struct {
 	TotalDirsScanned         int      `json:"totalDirsScanned"`
 	TotalFilesScanned        int      `json:"totalFilesScanned"`
 	TotalFilesFiltered       int      `json:"totalFilesFiltered"`
+	TotalFilesLargeFiltered  int      `json:"totalFilesLargeFiltered"`
+	TotalFilesRegistered     int      `json:"totalFilesRegistered"`
+	TotalFilesRegisterFailed int      `json:"totalFilesRegisterFailed"`
+	TotalFilesEnqueued       int      `json:"totalFilesEnqueued"`
+	TotalFilesEnqueueFailed  int      `json:"totalFilesEnqueueFailed"`
 	TotalFilesProcessed      int      `json:"totalFilesProcessed"`
 	TotalBatches             int      `json:"totalBatches"`
 	TotalTracked             int      `json:"totalTracked"`
 	SuccessCount             int      `json:"successCount"`
 	FailureCount             int      `json:"failureCount"`
 	PendingCount             int      `json:"pendingCount"`
+	FormalPendingCount       int      `json:"formalPendingCount"`
+	LocalProcessingCount     int      `json:"localProcessingCount"`
+	LocalCompletedCount      int      `json:"localCompletedCount"`
+	LocalFailedCount         int      `json:"localFailedCount"`
+	QueuedCount              int      `json:"queuedCount"`
 }
 
 type ingestMonitorBatchItemDTO struct {
-	ItemCode          string `json:"itemCode"`
-	CadNumber         string `json:"cadNumber"`
-	FileName          string `json:"fileName"`
-	ProcessStatus     string `json:"processStatus"`
-	IngestStatus      string `json:"ingestStatus"`
-	ProductName       string `json:"productName"`
-	IsComplete        *int   `json:"isComplete,omitempty"`
-	ErrorMsg          string `json:"errorMsg"`
-	SourceFilePath    string `json:"sourceFilePath"`
-	ConvertedFilePath string `json:"convertedFilePath"`
-	PcAddress         string `json:"pcAddress"`
-	GlbAddress        string `json:"glbAddress"`
-	HasSourceFilePath bool   `json:"hasSourceFilePath"`
-	HasConvertedFile  bool   `json:"hasConvertedFile"`
-	HasPcAddress      bool   `json:"hasPcAddress"`
-	HasGlbAddress     bool   `json:"hasGlbAddress"`
-	PathReadyCount    int    `json:"pathReadyCount"`
-	PathReadyTotal    int    `json:"pathReadyTotal"`
-	ProcessStartTime  string `json:"processStartTime"`
-	ProcessEndTime    string `json:"processEndTime"`
-	ProductUpdateTime string `json:"productUpdateTime"`
-	UpdateTime        string `json:"updateTime"`
-	CreateTime        string `json:"createTime"`
+	ItemCode          string   `json:"itemCode"`
+	CadNumber         string   `json:"cadNumber"`
+	FileName          string   `json:"fileName"`
+	ProcessStatus     string   `json:"processStatus"`
+	IngestStatus      string   `json:"ingestStatus"`
+	ProductName       string   `json:"productName"`
+	IsComplete        *int     `json:"isComplete,omitempty"`
+	ErrorMsg          string   `json:"errorMsg"`
+	SourceFilePath    string   `json:"sourceFilePath"`
+	ConvertedFilePath string   `json:"convertedFilePath"`
+	PcAddress         string   `json:"pcAddress"`
+	GlbAddress        string   `json:"glbAddress"`
+	HasSourceFilePath bool     `json:"hasSourceFilePath"`
+	HasConvertedFile  bool     `json:"hasConvertedFile"`
+	HasPcAddress      bool     `json:"hasPcAddress"`
+	HasGlbAddress     bool     `json:"hasGlbAddress"`
+	PathReadyCount    int      `json:"pathReadyCount"`
+	PathReadyTotal    int      `json:"pathReadyTotal"`
+	StageStatus       string   `json:"stageStatus"`
+	DiagnosticMessage string   `json:"diagnosticMessage"`
+	MissingPaths      []string `json:"missingPaths"`
+	HasFormalRecord   bool     `json:"hasFormalRecord"`
+	IsStalled         bool     `json:"isStalled"`
+	StalledMinutes    *int     `json:"stalledMinutes,omitempty"`
+	ProcessStartTime  string   `json:"processStartTime"`
+	ProcessEndTime    string   `json:"processEndTime"`
+	ProductUpdateTime string   `json:"productUpdateTime"`
+	UpdateTime        string   `json:"updateTime"`
+	CreateTime        string   `json:"createTime"`
 }
 
 type ingestMonitorBatchListResponse struct {
@@ -104,6 +132,15 @@ type ingestMonitorBatchDetailResponse struct {
 	Scope ingestMonitorScopeDTO       `json:"scope"`
 	Batch ingestMonitorBatchDTO       `json:"batch"`
 	Items []ingestMonitorBatchItemDTO `json:"items"`
+}
+
+func ingestMonitorBatchStageExpr() string {
+	return fmt.Sprintf(
+		ingestMonitorBatchStageCase,
+		ingestMonitorBatchFormalStatusCase,
+		ingestMonitorBatchFormalStatusCase,
+		ingestMonitorBatchFormalStatusCase,
+	)
 }
 
 func (s *ingestMonitorService) GetBatchList(ctx context.Context) (*ingestMonitorBatchListResponse, error) {
@@ -178,6 +215,11 @@ WITH recent_batches AS (
 		total_dirs_scanned,
 		total_files_scanned,
 		total_files_filtered,
+		total_files_large_filtered,
+		total_files_registered,
+		total_files_register_failed,
+		total_files_enqueued,
+		total_files_enqueue_failed,
 		total_files_processed,
 		total_batches,
 		create_time
@@ -203,12 +245,22 @@ SELECT
 	b.total_dirs_scanned,
 	b.total_files_scanned,
 	b.total_files_filtered,
+	b.total_files_large_filtered,
+	b.total_files_registered,
+	b.total_files_register_failed,
+	b.total_files_enqueued,
+	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches,
 	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'pending') AS pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_success') AS success_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_failure', 'local_failed')) AS failure_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_pending', 'local_processing', 'local_completed', 'queued', 'unknown')) AS pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_pending') AS formal_pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_processing') AS local_processing_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_completed') AS local_completed_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_failed') AS local_failed_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'queued') AS queued_count,
 	EXTRACT(EPOCH FROM (MAX((%s)) - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM recent_batches b
 LEFT JOIN cad_file_process_status c
@@ -248,11 +300,16 @@ GROUP BY
 	b.total_dirs_scanned,
 	b.total_files_scanned,
 	b.total_files_filtered,
+	b.total_files_large_filtered,
+	b.total_files_registered,
+	b.total_files_register_failed,
+	b.total_files_enqueued,
+	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches,
 	b.create_time
 ORDER BY b.scan_started_at DESC NULLS LAST, b.create_time DESC NULLS LAST, b.batch_run_id DESC
-`, ingestMonitorBatchStatusCase, ingestMonitorBatchStatusCase, ingestMonitorBatchStatusCase, ingestMonitorBatchTerminalTimeCase)
+`, ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchTerminalTimeCase)
 
 	rows, err := tx.QueryContext(ctx, query, limit)
 	if err != nil {
@@ -294,12 +351,22 @@ SELECT
 	b.total_dirs_scanned,
 	b.total_files_scanned,
 	b.total_files_filtered,
+	b.total_files_large_filtered,
+	b.total_files_registered,
+	b.total_files_register_failed,
+	b.total_files_enqueued,
+	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches,
 	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'pending') AS pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_success') AS success_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_failure', 'local_failed')) AS failure_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_pending', 'local_processing', 'local_completed', 'queued', 'unknown')) AS pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_pending') AS formal_pending_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_processing') AS local_processing_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_completed') AS local_completed_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_failed') AS local_failed_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'queued') AS queued_count,
 	EXTRACT(EPOCH FROM (MAX((%s)) - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM ingest_batch_run b
 LEFT JOIN cad_file_process_status c
@@ -341,9 +408,14 @@ GROUP BY
 	b.total_dirs_scanned,
 	b.total_files_scanned,
 	b.total_files_filtered,
+	b.total_files_large_filtered,
+	b.total_files_registered,
+	b.total_files_register_failed,
+	b.total_files_enqueued,
+	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches
-`, ingestMonitorBatchStatusCase, ingestMonitorBatchStatusCase, ingestMonitorBatchStatusCase, ingestMonitorBatchTerminalTimeCase)
+`, ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchTerminalTimeCase)
 
 	row := tx.QueryRowContext(ctx, query, batchRunID)
 	return scanIngestMonitorBatch(row)
@@ -358,6 +430,7 @@ SELECT
 	COALESCE(c.process_status, '') AS process_status,
 	COALESCE(p.product_name, '') AS product_name,
 	p.is_complete,
+	CASE WHEN p.create_time IS NOT NULL THEN true ELSE false END AS has_formal_record,
 	COALESCE(NULLIF(p.error_msg, ''), NULLIF(c.error_message, ''), '') AS error_msg,
 	COALESCE(p.source_file_path, '') AS source_file_path,
 	COALESCE(p.converted_file_path, '') AS converted_file_path,
@@ -367,8 +440,7 @@ SELECT
 	c.process_end_time,
 	p.update_time AS product_update_time,
 	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
-	c.create_time,
-	%s AS ingest_status
+	c.create_time
 FROM cad_file_process_status c
 LEFT JOIN LATERAL (
 	SELECT
@@ -391,13 +463,18 @@ WHERE c.batch_run_id = $1
 	AND COALESCE(c.is_deleted, 0) = 0
 ORDER BY
 	CASE (%s)
-		WHEN 'failure' THEN 0
-		WHEN 'pending' THEN 1
-		ELSE 2
+		WHEN 'formal_failure' THEN 0
+		WHEN 'local_failed' THEN 1
+		WHEN 'formal_pending' THEN 2
+		WHEN 'local_processing' THEN 3
+		WHEN 'local_completed' THEN 4
+		WHEN 'queued' THEN 5
+		WHEN 'formal_success' THEN 6
+		ELSE 7
 	END,
 	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
 	c.item_code DESC
-`, ingestMonitorBatchStatusCase, ingestMonitorBatchStatusCase)
+`, ingestMonitorBatchStageExpr())
 
 	rows, err := tx.QueryContext(ctx, query, batchRunID)
 	if err != nil {
@@ -438,12 +515,22 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		totalDirsScanned         int
 		totalFilesScanned        int
 		totalFilesFiltered       int
+		totalFilesLargeFiltered  int
+		totalFilesRegistered     int
+		totalFilesRegisterFailed int
+		totalFilesEnqueued       int
+		totalFilesEnqueueFailed  int
 		totalFilesProcessed      int
 		totalBatches             int
 		totalTracked             int
 		successCount             int
 		failureCount             int
 		pendingCount             int
+		formalPendingCount       int
+		localProcessingCount     int
+		localCompletedCount      int
+		localFailedCount         int
+		queuedCount              int
 		finalIngestElapsedSecond sql.NullFloat64
 	)
 
@@ -464,12 +551,22 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		&totalDirsScanned,
 		&totalFilesScanned,
 		&totalFilesFiltered,
+		&totalFilesLargeFiltered,
+		&totalFilesRegistered,
+		&totalFilesRegisterFailed,
+		&totalFilesEnqueued,
+		&totalFilesEnqueueFailed,
 		&totalFilesProcessed,
 		&totalBatches,
 		&totalTracked,
 		&successCount,
 		&failureCount,
 		&pendingCount,
+		&formalPendingCount,
+		&localProcessingCount,
+		&localCompletedCount,
+		&localFailedCount,
+		&queuedCount,
 		&finalIngestElapsedSecond,
 	); err != nil {
 		return ingestMonitorBatchDTO{}, err
@@ -492,12 +589,22 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		TotalDirsScanned:         totalDirsScanned,
 		TotalFilesScanned:        totalFilesScanned,
 		TotalFilesFiltered:       totalFilesFiltered,
+		TotalFilesLargeFiltered:  totalFilesLargeFiltered,
+		TotalFilesRegistered:     totalFilesRegistered,
+		TotalFilesRegisterFailed: totalFilesRegisterFailed,
+		TotalFilesEnqueued:       totalFilesEnqueued,
+		TotalFilesEnqueueFailed:  totalFilesEnqueueFailed,
 		TotalFilesProcessed:      totalFilesProcessed,
 		TotalBatches:             totalBatches,
 		TotalTracked:             totalTracked,
 		SuccessCount:             successCount,
 		FailureCount:             failureCount,
 		PendingCount:             pendingCount,
+		FormalPendingCount:       formalPendingCount,
+		LocalProcessingCount:     localProcessingCount,
+		LocalCompletedCount:      localCompletedCount,
+		LocalFailedCount:         localFailedCount,
+		QueuedCount:              queuedCount,
 	}
 
 	if fileType.Valid {
@@ -516,6 +623,7 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		processStatus     string
 		productName       string
 		isComplete        sql.NullInt64
+		hasFormalRecord   bool
 		errorMsg          string
 		sourceFilePath    string
 		convertedFilePath string
@@ -526,7 +634,6 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		productUpdateTime sql.NullTime
 		updateTime        sql.NullTime
 		createTime        sql.NullTime
-		ingestStatus      string
 	)
 
 	if err := scanner.Scan(
@@ -536,6 +643,7 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		&processStatus,
 		&productName,
 		&isComplete,
+		&hasFormalRecord,
 		&errorMsg,
 		&sourceFilePath,
 		&convertedFilePath,
@@ -546,27 +654,23 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		&productUpdateTime,
 		&updateTime,
 		&createTime,
-		&ingestStatus,
 	); err != nil {
 		return ingestMonitorBatchItemDTO{}, err
 	}
 
-	record := ingestMonitorBatchItemDTO{
+	trackedRecord := ingestMonitorRecordDTO{
 		ItemCode:          itemCode,
+		ProductName:       productName,
+		HasFormalRecord:   hasFormalRecord,
+		RecordSource:      ingestMonitorBatchRecordType,
 		CadNumber:         cadNumber,
 		FileName:          fileName,
-		ProcessStatus:     processStatus,
-		IngestStatus:      normalizeIngestMonitorStatus(ingestStatus),
-		ProductName:       productName,
+		ProcessStatus:     strings.TrimSpace(processStatus),
 		ErrorMsg:          errorMsg,
 		SourceFilePath:    sourceFilePath,
 		ConvertedFilePath: convertedFilePath,
 		PcAddress:         pcAddress,
 		GlbAddress:        glbAddress,
-		HasSourceFilePath: sourceFilePath != "",
-		HasConvertedFile:  convertedFilePath != "",
-		HasPcAddress:      pcAddress != "",
-		HasGlbAddress:     glbAddress != "",
 		PathReadyTotal:    4,
 		ProcessStartTime:  formatNullableTime(processStartTime),
 		ProcessEndTime:    formatNullableTime(processEndTime),
@@ -574,23 +678,54 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		UpdateTime:        formatNullableTime(updateTime),
 		CreateTime:        formatNullableTime(createTime),
 	}
-
 	if isComplete.Valid {
 		value := int(isComplete.Int64)
-		record.IsComplete = &value
+		trackedRecord.IsComplete = &value
 	}
-	if record.HasSourceFilePath {
-		record.PathReadyCount++
+	trackedRecord.Status = deriveTrackedIngestStatus(
+		trackedRecord.IsComplete,
+		trackedRecord.HasFormalRecord,
+		trackedRecord.ProcessStatus,
+		trackedRecord.ErrorMsg,
+		trackedRecord.SourceFilePath,
+		trackedRecord.ConvertedFilePath,
+		trackedRecord.PcAddress,
+		trackedRecord.GlbAddress,
+	)
+	populateIngestMonitorDiagnostics(&trackedRecord)
+
+	record := ingestMonitorBatchItemDTO{
+		ItemCode:          itemCode,
+		CadNumber:         cadNumber,
+		FileName:          fileName,
+		ProcessStatus:     processStatus,
+		IngestStatus:      trackedRecord.Status,
+		ProductName:       productName,
+		ErrorMsg:          errorMsg,
+		SourceFilePath:    sourceFilePath,
+		ConvertedFilePath: convertedFilePath,
+		PcAddress:         pcAddress,
+		GlbAddress:        glbAddress,
+		HasSourceFilePath: trackedRecord.HasSourceFilePath,
+		HasConvertedFile:  trackedRecord.HasConvertedFile,
+		HasPcAddress:      trackedRecord.HasPcAddress,
+		HasGlbAddress:     trackedRecord.HasGlbAddress,
+		PathReadyCount:    trackedRecord.PathReadyCount,
+		PathReadyTotal:    trackedRecord.PathReadyTotal,
+		StageStatus:       trackedRecord.StageStatus,
+		DiagnosticMessage: trackedRecord.DiagnosticMessage,
+		MissingPaths:      trackedRecord.MissingPaths,
+		HasFormalRecord:   trackedRecord.HasFormalRecord,
+		IsStalled:         trackedRecord.IsStalled,
+		StalledMinutes:    trackedRecord.StalledMinutes,
+		ProcessStartTime:  trackedRecord.ProcessStartTime,
+		ProcessEndTime:    trackedRecord.ProcessEndTime,
+		ProductUpdateTime: trackedRecord.ProductUpdateTime,
+		UpdateTime:        trackedRecord.UpdateTime,
+		CreateTime:        trackedRecord.CreateTime,
 	}
-	if record.HasConvertedFile {
-		record.PathReadyCount++
-	}
-	if record.HasPcAddress {
-		record.PathReadyCount++
-	}
-	if record.HasGlbAddress {
-		record.PathReadyCount++
-	}
+
+	record.IsComplete = trackedRecord.IsComplete
 
 	return record, nil
 }

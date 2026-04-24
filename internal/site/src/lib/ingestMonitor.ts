@@ -19,6 +19,12 @@ export type IngestMonitorRecord = {
 	status: "success" | "failure" | "pending" | "unknown"
 	isComplete?: number
 	isTemporary: boolean
+	hasFormalRecord: boolean
+	recordSource: string
+	cadNumber: string
+	fileName: string
+	processStatus: string
+	batchRunId: string
 	errorMsg: string
 	sourceFilePath: string
 	convertedFilePath: string
@@ -31,6 +37,14 @@ export type IngestMonitorRecord = {
 	pathReadyCount: number
 	pathReadyTotal: number
 	inferenceTypes: number[]
+	stageStatus: string
+	diagnosticMessage: string
+	missingPaths: string[]
+	processStartTime: string
+	processEndTime: string
+	productUpdateTime: string
+	isStalled: boolean
+	stalledMinutes?: number
 	updateTime: string
 	createTime: string
 }
@@ -65,12 +79,22 @@ export type IngestMonitorBatch = {
 	totalDirsScanned: number
 	totalFilesScanned: number
 	totalFilesFiltered: number
+	totalFilesLargeFiltered: number
+	totalFilesRegistered: number
+	totalFilesRegisterFailed: number
+	totalFilesEnqueued: number
+	totalFilesEnqueueFailed: number
 	totalFilesProcessed: number
 	totalBatches: number
 	totalTracked: number
 	successCount: number
 	failureCount: number
 	pendingCount: number
+	formalPendingCount: number
+	localProcessingCount: number
+	localCompletedCount: number
+	localFailedCount: number
+	queuedCount: number
 }
 
 export type IngestMonitorBatchItem = {
@@ -92,6 +116,12 @@ export type IngestMonitorBatchItem = {
 	hasGlbAddress: boolean
 	pathReadyCount: number
 	pathReadyTotal: number
+	stageStatus: string
+	diagnosticMessage: string
+	missingPaths: string[]
+	hasFormalRecord: boolean
+	isStalled: boolean
+	stalledMinutes?: number
 	processStartTime: string
 	processEndTime: string
 	productUpdateTime: string
