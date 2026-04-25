@@ -225,6 +225,7 @@ WITH recent_batches AS (
 		create_time
 	FROM ingest_batch_run
 	WHERE COALESCE(is_deleted, false) = false
+		AND tenant_id = current_setting('app.current_tenant', true)
 	ORDER BY scan_started_at DESC NULLS LAST, create_time DESC NULLS LAST, batch_run_id DESC
 	LIMIT $1
 )
@@ -265,6 +266,7 @@ SELECT
 FROM recent_batches b
 LEFT JOIN cad_file_process_status c
 	ON c.batch_run_id = b.batch_run_id
+	AND c.tenant_id = current_setting('app.current_tenant', true)
 	AND COALESCE(c.is_deleted, 0) = 0
 LEFT JOIN LATERAL (
 	SELECT
@@ -279,6 +281,7 @@ LEFT JOIN LATERAL (
 		create_time
 	FROM product_info
 	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+		AND tenant_id = current_setting('app.current_tenant', true)
 		AND COALESCE(is_deleted, false) = false
 	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 	LIMIT 1
@@ -371,6 +374,7 @@ SELECT
 FROM ingest_batch_run b
 LEFT JOIN cad_file_process_status c
 	ON c.batch_run_id = b.batch_run_id
+	AND c.tenant_id = current_setting('app.current_tenant', true)
 	AND COALESCE(c.is_deleted, 0) = 0
 LEFT JOIN LATERAL (
 	SELECT
@@ -385,11 +389,13 @@ LEFT JOIN LATERAL (
 		create_time
 	FROM product_info
 	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+		AND tenant_id = current_setting('app.current_tenant', true)
 		AND COALESCE(is_deleted, false) = false
 	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 	LIMIT 1
 ) p ON true
 WHERE COALESCE(b.is_deleted, false) = false
+	AND b.tenant_id = current_setting('app.current_tenant', true)
 	AND b.batch_run_id = $1
 GROUP BY
 	b.batch_run_id,
@@ -455,11 +461,13 @@ LEFT JOIN LATERAL (
 		create_time
 	FROM product_info
 	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+		AND tenant_id = current_setting('app.current_tenant', true)
 		AND COALESCE(is_deleted, false) = false
 	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 	LIMIT 1
 ) p ON true
 WHERE c.batch_run_id = $1
+	AND c.tenant_id = current_setting('app.current_tenant', true)
 	AND COALESCE(c.is_deleted, 0) = 0
 ORDER BY
 	CASE (%s)
