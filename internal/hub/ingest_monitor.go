@@ -584,7 +584,7 @@ LEFT JOIN LATERAL (
 		update_time,
 		create_time
 	FROM product_info
-	WHERE item_code = c.item_code
+	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
 		AND COALESCE(is_deleted, false) = false
 	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
 	LIMIT 1
