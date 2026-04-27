@@ -4,6 +4,8 @@ import {
 	RefreshCwIcon, 
 	DatabaseIcon, 
 	CheckCircleIcon, 
+	ChevronLeftIcon,
+	ChevronRightIcon,
 	XCircleIcon, 
 	ClockIcon, 
 	HelpCircleIcon,
@@ -22,7 +24,7 @@ import {
 	SparklesIcon,
 	PackageIcon
 } from "lucide-react"
-import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ActiveAlerts } from "@/components/active-alerts"
 import { FooterRepoLink } from "@/components/footer-repo-link"
 import { Badge } from "@/components/ui/badge"
@@ -46,6 +48,7 @@ import {
 import { BRAND_NAME, formatShortDate, cn } from "@/lib/utils"
 
 const refreshIntervalMs = 15000
+const batchDetailPageSize = 200
 
 function statusBadgeVariant(status: IngestMonitorRecord["status"] | IngestMonitorBatchItem["ingestStatus"]) {
 	switch (status) {
@@ -53,7 +56,7 @@ function statusBadgeVariant(status: IngestMonitorRecord["status"] | IngestMonito
 			return "success"
 		case "failure":
 			return "danger"
-		case "pending":
+		case "processing":
 			return "secondary"
 		default:
 			return "outline"
@@ -63,13 +66,13 @@ function statusBadgeVariant(status: IngestMonitorRecord["status"] | IngestMonito
 function statusLabel(status: IngestMonitorRecord["status"] | IngestMonitorBatchItem["ingestStatus"]) {
 	switch (status) {
 		case "success":
-			return "正常"
+			return "成功"
 		case "failure":
-			return "异常"
-		case "pending":
+			return "失败"
+		case "processing":
 			return "处理中"
 		default:
-			return "待确认"
+			return status || "-"
 	}
 }
 
@@ -96,78 +99,6 @@ function batchStatusLabel(status: IngestMonitorBatch["status"]) {
 			return "扫描中"
 		default:
 			return "待执行"
-	}
-}
-
-function processStatusBadgeVariant(status: string) {
-	switch (status) {
-		case "completed":
-		case "success":
-			return "success"
-		case "failed":
-		case "error":
-			return "danger"
-		case "processing":
-			return "secondary"
-		default:
-			return "outline"
-	}
-}
-
-function processStatusLabel(status: string) {
-	switch (status) {
-		case "completed":
-			return "本地处理完成"
-		case "success":
-			return "处理成功"
-		case "failed":
-			return "处理失败"
-		case "error":
-			return "处理异常"
-		case "processing":
-			return "处理中"
-		case "pending":
-			return "待处理"
-		default:
-			return status || "-"
-	}
-}
-
-function stageBadgeVariant(stage: string) {
-	switch (stage) {
-		case "formal_success":
-			return "success"
-		case "formal_failure":
-		case "local_failed":
-			return "danger"
-		case "formal_pending":
-		case "local_processing":
-		case "local_completed":
-		case "queued":
-			return "secondary"
-		default:
-			return "outline"
-	}
-}
-
-function stageLabel(stage: string) {
-	switch (stage) {
-		case "formal_success":
-			return "正式入库完成"
-		case "formal_failure":
-			return "正式入库失败"
-		case "formal_pending":
-			return "等待正式收敛"
-		case "local_processing":
-			return "本地处理中"
-		case "local_completed":
-			return "本地处理完成"
-		case "local_failed":
-			return "本地处理失败"
-		case "queued":
-			return "排队待处理"
-		default:
-			return "状态待确认"
 	}
 }
 
@@ -234,11 +165,11 @@ function formatBatchFinalElapsed(batch: IngestMonitorBatch) {
 	if (batch.finalIngestElapsedSeconds !== undefined) {
 		return formatElapsedSeconds(batch.finalIngestElapsedSeconds)
 	}
-	if (batch.failureCount > 0 && batch.pendingCount === 0 && batch.successCount === 0) {
-		return "失败未完成"
-	}
-	if (batch.pendingCount > 0 || batch.status === "running" || batch.status === "pending") {
+	if (batch.processingCount > 0 || batch.status === "running" || batch.status === "pending") {
 		return "进行中"
+	}
+	if (batch.totalTracked > 0 && batch.successCount+batch.failureCount === batch.totalTracked) {
+		return "终态时间缺失"
 	}
 	return "-"
 }
@@ -289,12 +220,18 @@ export default memo(() => {
 	const [batchDetailLoading, setBatchDetailLoading] = useState(false)
 	const [batchDetailError, setBatchDetailError] = useState("")
 	const [batchDetail, setBatchDetail] = useState<IngestMonitorBatchDetailResponse | null>(null)
+	const [selectedBatchRunId, setSelectedBatchRunId] = useState("")
+	const dashboardRequestInFlight = useRef(false)
 
 	useEffect(() => {
 		document.title = `${BRAND_NAME} - 入库服务可视化`
 	}, [])
 
 	const loadDashboard = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
+		if (dashboardRequestInFlight.current) {
+			return
+		}
+		dashboardRequestInFlight.current = true
 		if (silent) {
 			setRefreshing(true)
 		} else {
@@ -312,6 +249,7 @@ export default memo(() => {
 		} catch (err) {
 			setError(err instanceof Error ? err.message : String(err))
 		} finally {
+			dashboardRequestInFlight.current = false
 			if (silent) {
 				setRefreshing(false)
 			} else {
@@ -342,13 +280,16 @@ export default memo(() => {
 		}
 	}, [])
 
-	const openBatchDetail = useCallback(async (batchRunId: string) => {
+	const openBatchDetail = useCallback(async (batchRunId: string, page = 1) => {
+		setSelectedBatchRunId(batchRunId)
 		setBatchDetailOpen(true)
 		setBatchDetailLoading(true)
 		setBatchDetailError("")
-		setBatchDetail(null)
+		if (page === 1) {
+			setBatchDetail(null)
+		}
 		try {
-			setBatchDetail(await fetchIngestMonitorBatchDetail(batchRunId))
+			setBatchDetail(await fetchIngestMonitorBatchDetail(batchRunId, page, batchDetailPageSize))
 		} catch (err) {
 			setBatchDetailError(err instanceof Error ? err.message : String(err))
 		} finally {
@@ -369,7 +310,7 @@ export default memo(() => {
 			},
 			{ 
 				key: "success", 
-				title: "正常", 
+				title: "成功", 
 				value: summary?.success ?? 0, 
 				description: "完成且关键产物路径齐全",
 				icon: CheckCircleIcon,
@@ -377,27 +318,19 @@ export default memo(() => {
 			},
 			{ 
 				key: "failure", 
-				title: "异常", 
+				title: "失败", 
 				value: summary?.failure ?? 0, 
 				description: "失败或存在错误信息",
 				icon: XCircleIcon,
 				color: "rose"
 			},
 			{ 
-				key: "pending", 
+				key: "processing", 
 				title: "处理中", 
-				value: summary?.pending ?? 0, 
+				value: summary?.processing ?? 0, 
 				description: "仍处于处理中状态",
 				icon: ClockIcon,
 				color: "amber"
-			},
-			{ 
-				key: "unknown", 
-				title: "待确认", 
-				value: summary?.unknown ?? 0, 
-				description: "状态未落在明确口径内",
-				icon: HelpCircleIcon,
-				color: "sky"
 			},
 		]
 	}, [summaryData])
@@ -439,7 +372,7 @@ export default memo(() => {
 				</CardHeader>
 			</Card>
 
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{cards.map((card) => {
 					const Icon = card.icon
 					const colorClasses: Record<string, string> = {
@@ -452,16 +385,18 @@ export default memo(() => {
 					return (
 						<Card 
 							key={card.key} 
-							className={`border-border/60 bg-gradient-to-br ${colorClasses[card.color]} shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-default`}
+							className={`h-full border-border/60 bg-gradient-to-br ${colorClasses[card.color]} shadow-sm`}
 						>
-							<CardHeader className="space-y-3">
+							<CardHeader className="flex h-full flex-col gap-4 space-y-0 pb-3">
 								<div className="flex items-center justify-between">
 									<CardDescription className="text-xs font-medium tracking-wide uppercase">{card.title}</CardDescription>
-									<Icon className="h-4 w-4 text-muted-foreground/60" />
+									<Icon className="h-4 w-4 shrink-0 text-muted-foreground/60" />
 								</div>
-								<CardTitle className="text-3xl">{card.value}</CardTitle>
+								<CardTitle className="text-3xl leading-none">{card.value}</CardTitle>
+								<CardContent className="mt-auto px-0 pt-0 text-xs leading-5 text-muted-foreground">
+									{card.description}
+								</CardContent>
 							</CardHeader>
-							<CardContent className="pt-0 text-xs text-muted-foreground leading-relaxed">{card.description}</CardContent>
 						</Card>
 					)
 				})}
@@ -562,30 +497,18 @@ export default memo(() => {
 											<TableCell className="text-right text-xs">{formatElapsedSeconds(batch.xxlScanElapsedSeconds)}</TableCell>
 											<TableCell className="text-right text-xs">{formatBatchFinalElapsed(batch)}</TableCell>
 											<TableCell>
-												<div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+												<div className="grid gap-y-1 text-[10px]">
 													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">正式成功</span>
+														<span className="text-muted-foreground">成功</span>
 														<span className="font-medium text-emerald-600 dark:text-emerald-400">{batch.successCount}</span>
 													</div>
 													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">正式待收敛</span>
-														<span className="font-medium text-amber-600 dark:text-amber-400">{batch.formalPendingCount}</span>
+														<span className="text-muted-foreground">处理中</span>
+														<span className="font-medium text-amber-600 dark:text-amber-400">{batch.processingCount}</span>
 													</div>
 													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">本地处理中</span>
-														<span className="font-medium text-sky-600 dark:text-sky-400">{batch.localProcessingCount}</span>
-													</div>
-													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">本地完成</span>
-														<span className="font-medium">{batch.localCompletedCount}</span>
-													</div>
-													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">本地失败</span>
-														<span className="font-medium text-rose-600 dark:text-rose-400">{batch.localFailedCount}</span>
-													</div>
-													<div className="flex items-center justify-between gap-2">
-														<span className="text-muted-foreground">排队</span>
-														<span className="font-medium">{batch.queuedCount}</span>
+														<span className="text-muted-foreground">失败</span>
+														<span className="font-medium text-rose-600 dark:text-rose-400">{batch.failureCount}</span>
 													</div>
 												</div>
 											</TableCell>
@@ -884,27 +807,25 @@ export default memo(() => {
 										<Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent">
 											<CardHeader className="space-y-2 pb-3">
 												<div className="flex items-center justify-between">
-													<CardDescription className="text-xs">本地处理阶段</CardDescription>
+													<CardDescription className="text-xs">入库结果</CardDescription>
 													<BarChart3Icon className="h-3.5 w-3.5 text-emerald-500/60" />
 												</div>
 												<div className="space-y-1 text-xs">
-													<div>排队待处理 {batchDetail.batch.queuedCount}</div>
-													<div>本地处理中 {batchDetail.batch.localProcessingCount}</div>
-													<div>本地处理完成 {batchDetail.batch.localCompletedCount}</div>
-													<div>本地处理失败 {batchDetail.batch.localFailedCount}</div>
+													<div>成功 {batchDetail.batch.successCount}</div>
+													<div>处理中 {batchDetail.batch.processingCount}</div>
+													<div>失败 {batchDetail.batch.failureCount}</div>
 												</div>
 											</CardHeader>
 										</Card>
 										<Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent">
 											<CardHeader className="space-y-2 pb-3">
 												<div className="flex items-center justify-between">
-													<CardDescription className="text-xs">正式入库阶段</CardDescription>
+													<CardDescription className="text-xs">耗时与规模</CardDescription>
 													<ClockIcon className="h-3.5 w-3.5 text-amber-500/60" />
 												</div>
 												<div className="space-y-1 text-xs">
-													<div>正式成功 {batchDetail.batch.successCount}</div>
-													<div>正式失败 {batchDetail.batch.failureCount}</div>
-													<div>正式待收敛 {batchDetail.batch.formalPendingCount}</div>
+													<div>追踪记录 {batchDetail.batch.totalTracked}</div>
+													<div>批次数 {batchDetail.batch.totalBatches}</div>
 													<div>最终耗时 {formatBatchFinalElapsed(batchDetail.batch)}</div>
 												</div>
 											</CardHeader>
@@ -969,15 +890,45 @@ export default memo(() => {
 													<DatabaseIcon className="h-4 w-4 text-muted-foreground" />
 													<CardTitle className="text-base">批次内记录</CardTitle>
 												</div>
-												{batchDetail.items.length ? (
-													<Badge variant="outline" className="bg-background/80">{batchDetail.items.length} 条</Badge>
+												{batchDetail.totalItems ? (
+													<Badge variant="outline" className="bg-background/80">
+														展示 {batchDetail.items.length} / {batchDetail.totalItems} 条
+													</Badge>
 												) : null}
 											</div>
-											<CardDescription>优先展示失败和阻塞记录；阶段、正式状态、本地状态和诊断信息分开展示。</CardDescription>
+											<CardDescription>默认每页加载 {batchDetail.pageSize} 条，优先展示失败和处理中记录。</CardDescription>
 										</CardHeader>
 										<CardContent>
 											{batchDetail.items.length ? (
-												<div className="rounded-lg border border-border/60 overflow-hidden">
+												<div className="grid gap-3">
+													<div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs">
+														<div className="text-muted-foreground">
+															第 {batchDetail.page} / {Math.max(1, Math.ceil(batchDetail.totalItems / batchDetail.pageSize))} 页
+														</div>
+														<div className="flex items-center gap-2">
+															<Button
+																variant="outline"
+																size="sm"
+																className="h-8 gap-1.5"
+																disabled={batchDetailLoading || batchDetail.page <= 1}
+																onClick={() => openBatchDetail(selectedBatchRunId, batchDetail.page - 1)}
+															>
+																<ChevronLeftIcon className="h-3.5 w-3.5" />
+																上一页
+															</Button>
+															<Button
+																variant="outline"
+																size="sm"
+																className="h-8 gap-1.5"
+																disabled={batchDetailLoading || batchDetail.page * batchDetail.pageSize >= batchDetail.totalItems}
+																onClick={() => openBatchDetail(selectedBatchRunId, batchDetail.page + 1)}
+															>
+																下一页
+																<ChevronRightIcon className="h-3.5 w-3.5" />
+															</Button>
+														</div>
+													</div>
+													<div className="rounded-lg border border-border/60 overflow-hidden">
 													<Table>
 														<TableHeader className="bg-muted/50">
 															<TableRow className="hover:bg-transparent">
@@ -987,10 +938,7 @@ export default memo(() => {
 																		记录对象
 																	</div>
 																</TableHead>
-																<TableHead className="w-[110px]">阶段</TableHead>
 																<TableHead className="w-[90px]">入库状态</TableHead>
-																<TableHead className="w-[90px]">本地状态</TableHead>
-																<TableHead>诊断</TableHead>
 																<TableHead className="w-[90px] text-center">
 																	<div className="flex items-center justify-center gap-1.5">
 																		<RouteIcon className="h-3.5 w-3.5" />
@@ -1014,38 +962,9 @@ export default memo(() => {
 																		</div>
 																	</TableCell>
 																	<TableCell>
-																		<div className="flex flex-col gap-1">
-																			<Badge variant={stageBadgeVariant(item.stageStatus)} className="w-fit text-[10px]">
-																				{stageLabel(item.stageStatus)}
-																			</Badge>
-																			{item.isStalled ? (
-																				<span className="text-[9px] text-rose-600 dark:text-rose-400">
-																					异常等待 {formatStalledMinutes(item.stalledMinutes)}
-																				</span>
-																			) : null}
-																		</div>
-																	</TableCell>
-																	<TableCell>
 																		<Badge variant={statusBadgeVariant(item.ingestStatus)} className="text-[10px]">
 																			{statusLabel(item.ingestStatus)}
 																		</Badge>
-																	</TableCell>
-																	<TableCell>
-																		<Badge variant={processStatusBadgeVariant(item.processStatus)} className="text-[10px]">
-																			{processStatusLabel(item.processStatus)}
-																		</Badge>
-																	</TableCell>
-																	<TableCell>
-																		<div className="max-w-[320px]">
-																			<p className="text-xs leading-relaxed" title={item.diagnosticMessage}>
-																				{truncateText(item.diagnosticMessage || "-", 72)}
-																			</p>
-																			{item.missingPaths.length ? (
-																				<p className="mt-1 text-[10px] text-muted-foreground">
-																					缺失: {formatMissingPaths(item.missingPaths)}
-																				</p>
-																			) : null}
-																		</div>
 																	</TableCell>
 																	<TableCell className="text-center">
 																		<div className={cn(
@@ -1073,6 +992,7 @@ export default memo(() => {
 													</TableBody>
 												</Table>
 											</div>
+												</div>
 										) : (
 											<div className="rounded-xl border border-dashed border-border/60 bg-muted/20 px-6 py-10 text-center">
 												<div className="text-sm font-medium">暂无批次内记录</div>
@@ -1142,13 +1062,11 @@ export default memo(() => {
 											"inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5",
 											detail.item.status === 'success' && "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300",
 											detail.item.status === 'failure' && "bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-300",
-											detail.item.status === 'pending' && "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-300",
-											detail.item.status === 'unknown' && "bg-slate-500/10 border-slate-500/20 text-slate-700 dark:text-slate-300"
+											detail.item.status === 'processing' && "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-300"
 										)}>
 											{detail.item.status === 'success' && <CheckCircleIcon className="h-3.5 w-3.5" />}
 											{detail.item.status === 'failure' && <XCircleIcon className="h-3.5 w-3.5" />}
-											{detail.item.status === 'pending' && <ClockIcon className="h-3.5 w-3.5" />}
-											{detail.item.status === 'unknown' && <HelpCircleIcon className="h-3.5 w-3.5" />}
+											{detail.item.status === 'processing' && <ClockIcon className="h-3.5 w-3.5" />}
 											<span className="text-xs font-medium">{statusLabel(detail.item.status)}</span>
 										</div>
 										<div className={cn(
@@ -1160,9 +1078,6 @@ export default memo(() => {
 											<RouteIcon className="h-3.5 w-3.5" />
 											<span>{detail.item.pathReadyCount}/{detail.item.pathReadyTotal}</span>
 										</div>
-										<Badge variant={stageBadgeVariant(detail.item.stageStatus)}>
-											{stageLabel(detail.item.stageStatus)}
-										</Badge>
 										<Badge variant="outline">{recordSourceLabel(detail.item.recordSource)}</Badge>
 										{detail.item.isStalled ? (
 											<Badge variant="danger">异常等待 {formatStalledMinutes(detail.item.stalledMinutes)}</Badge>
@@ -1188,24 +1103,6 @@ export default memo(() => {
 												</div>
 												<div className="text-sm bg-background/60 rounded-lg px-3 py-2 border border-border/40 truncate">
 													{detail.item.productName || "-"}
-												</div>
-											</div>
-											<div>
-												<div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
-													<WorkflowIcon className="h-3 w-3" />
-													诊断
-												</div>
-												<div className="text-sm bg-background/60 rounded-lg px-3 py-2 border border-border/40">
-													{detail.item.diagnosticMessage || "-"}
-												</div>
-											</div>
-											<div>
-												<div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
-													<FileBoxIcon className="h-3 w-3" />
-													本地状态
-												</div>
-												<div className="text-sm bg-background/60 rounded-lg px-3 py-2 border border-border/40">
-													{processStatusLabel(detail.item.processStatus)}
 												</div>
 											</div>
 										</div>

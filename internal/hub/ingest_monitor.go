@@ -29,8 +29,7 @@ const (
 	ingestMonitorBatchRecordType  = "batch_tracking"
 	ingestMonitorStatusSuccess    = "success"
 	ingestMonitorStatusFailure    = "failure"
-	ingestMonitorStatusPending    = "pending"
-	ingestMonitorStatusUnknown    = "unknown"
+	ingestMonitorStatusProcessing = "processing"
 	ingestMonitorStageQueued      = "queued"
 	ingestMonitorStageProcessing  = "local_processing"
 	ingestMonitorStageCompleted   = "local_completed"
@@ -47,8 +46,7 @@ WHERE COALESCE(is_deleted, false) = false
 SELECT
 	COUNT(*) FILTER (WHERE status = 'success') AS success,
 	COUNT(*) FILTER (WHERE status = 'failure') AS failure,
-	COUNT(*) FILTER (WHERE status = 'pending') AS pending,
-	COUNT(*) FILTER (WHERE status = 'unknown') AS unknown,
+	COUNT(*) FILTER (WHERE status = 'processing') AS processing,
 	COUNT(*) AS total
 FROM (
 	SELECT
@@ -59,8 +57,8 @@ FROM (
 				AND COALESCE(converted_file_path, '') <> ''
 				AND COALESCE(pc_address, '') <> ''
 				AND COALESCE(glb_address, '') <> '' THEN 'success'
-		WHEN is_complete = 2 THEN 'pending'
-		ELSE 'unknown'
+			WHEN is_complete = 1 THEN 'failure'
+			ELSE 'processing'
 		END AS status
 	FROM product_info
 ` + ingestMonitorFormalFilter + `
@@ -100,11 +98,10 @@ type ingestMonitorScopeDTO struct {
 }
 
 type ingestMonitorSummaryCountsDTO struct {
-	Total   int `json:"total"`
-	Success int `json:"success"`
-	Failure int `json:"failure"`
-	Pending int `json:"pending"`
-	Unknown int `json:"unknown"`
+	Total      int `json:"total"`
+	Success    int `json:"success"`
+	Failure    int `json:"failure"`
+	Processing int `json:"processing"`
 }
 
 type ingestMonitorRecordDTO struct {
@@ -325,8 +322,7 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 		if err := row.Scan(
 			&response.Summary.Success,
 			&response.Summary.Failure,
-			&response.Summary.Pending,
-			&response.Summary.Unknown,
+			&response.Summary.Processing,
 			&response.Summary.Total,
 		); err != nil {
 			return err
@@ -396,8 +392,8 @@ SELECT
 			AND COALESCE(converted_file_path, '') <> ''
 			AND COALESCE(pc_address, '') <> ''
 			AND COALESCE(glb_address, '') <> '' THEN 'success'
-		WHEN is_complete = 2 THEN 'pending'
-		ELSE 'unknown'
+		WHEN is_complete = 1 THEN 'failure'
+		ELSE 'processing'
 	END AS status
 	FROM product_info
 ` + ingestMonitorFormalFilter
@@ -461,8 +457,8 @@ SELECT
 			AND COALESCE(converted_file_path, '') <> ''
 			AND COALESCE(pc_address, '') <> ''
 			AND COALESCE(glb_address, '') <> '' THEN 'success'
-		WHEN is_complete = 2 THEN 'pending'
-		ELSE 'unknown'
+		WHEN is_complete = 1 THEN 'failure'
+		ELSE 'processing'
 	END AS status
 FROM product_info
 `+ingestMonitorFormalFilter+`
@@ -520,7 +516,7 @@ func scanIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO, error)
 	record := ingestMonitorRecordDTO{
 		ItemCode:          itemCode,
 		ProductName:       productName,
-		Status:            normalizeIngestMonitorStatus(status),
+		Status:            strings.TrimSpace(status),
 		IsTemporary:       isTemporary.Valid && isTemporary.Bool,
 		HasFormalRecord:   true,
 		RecordSource:      ingestMonitorFormalRecordType,
@@ -680,15 +676,6 @@ func scanTrackedIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO,
 	return record, nil
 }
 
-func normalizeIngestMonitorStatus(status string) string {
-	switch status {
-	case ingestMonitorStatusSuccess, ingestMonitorStatusFailure, ingestMonitorStatusPending:
-		return status
-	default:
-		return ingestMonitorStatusUnknown
-	}
-}
-
 func parseInferenceTypes(raw string) []int {
 	trimmed := strings.TrimSpace(raw)
 	trimmed = strings.TrimPrefix(trimmed, "[")
@@ -735,28 +722,26 @@ func deriveTrackedIngestStatus(
 	glbAddress string,
 ) string {
 	if hasFormalRecord {
-		if isComplete != nil && *isComplete == -1 || strings.TrimSpace(errorMsg) != "" {
+		if (isComplete != nil && *isComplete == -1) || strings.TrimSpace(errorMsg) != "" {
 			return ingestMonitorStatusFailure
 		}
-		if isComplete != nil && *isComplete == 1 &&
-			sourceFilePath != "" &&
-			convertedFilePath != "" &&
-			pcAddress != "" &&
-			glbAddress != "" {
-			return ingestMonitorStatusSuccess
+		if isComplete != nil && *isComplete == 1 {
+			if sourceFilePath != "" &&
+				convertedFilePath != "" &&
+				pcAddress != "" &&
+				glbAddress != "" {
+				return ingestMonitorStatusSuccess
+			}
+			return ingestMonitorStatusFailure
 		}
-		if isComplete != nil && *isComplete == 2 {
-			return ingestMonitorStatusPending
-		}
+		return ingestMonitorStatusProcessing
 	}
 
 	switch strings.TrimSpace(processStatus) {
 	case "failed", "error":
 		return ingestMonitorStatusFailure
-	case "pending", "processing", "completed", "success":
-		return ingestMonitorStatusPending
 	default:
-		return ingestMonitorStatusUnknown
+		return ingestMonitorStatusProcessing
 	}
 }
 
@@ -811,19 +796,19 @@ func deriveIngestMonitorStage(status string, processStatus string, hasFormalReco
 		return ingestMonitorStageFormalFail
 	}
 
+	if hasFormalRecord && status == ingestMonitorStatusProcessing {
+		return ingestMonitorStageFormalWait
+	}
+
 	switch strings.TrimSpace(processStatus) {
 	case "failed", "error":
 		return ingestMonitorStageLocalFailed
 	case "completed", "success":
 		return ingestMonitorStageCompleted
-	case "processing":
+	case "processing", "preview_ready":
 		return ingestMonitorStageProcessing
 	case "pending":
 		return ingestMonitorStageQueued
-	}
-
-	if hasFormalRecord && status == ingestMonitorStatusPending {
-		return ingestMonitorStageFormalWait
 	}
 	return ingestMonitorStageUnknown
 }
@@ -862,9 +847,9 @@ func buildIngestDiagnosticMessage(record *ingestMonitorRecordDTO) string {
 		return "正式记录处理中，等待向量入库完成"
 	default:
 		if len(record.MissingPaths) > 0 {
-			return fmt.Sprintf("状态待确认，缺少：%s", strings.Join(record.MissingPaths, "、"))
+			return fmt.Sprintf("处理中，缺少：%s", strings.Join(record.MissingPaths, "、"))
 		}
-		return "状态待确认"
+		return "处理中"
 	}
 }
 

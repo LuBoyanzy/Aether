@@ -159,6 +159,25 @@ wait_healthy() {
   return 1
 }
 
+listener_pid() {
+  local port="$1"
+
+  if command -v ss >/dev/null 2>&1; then
+    ss -ltnp "( sport = :${port} )" 2>/dev/null \
+      | sed -n 's/.*pid=\([0-9]\+\).*/\1/p' \
+      | head -n 1
+    return 0
+  fi
+
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"${port}" -sTCP:LISTEN 2>/dev/null \
+      | awk 'NR == 2 { print $2 }'
+    return 0
+  fi
+
+  return 0
+}
+
 start_hub() {
   require_file "${HUB_BIN}" "Hub二进制"
   require_file "${LOCAL_AGENT_BIN}" "本机Agent二进制"
@@ -180,6 +199,26 @@ start_hub() {
   )
 
   if wait_healthy; then
+    sleep 0.2
+    if ! is_running; then
+      local listener_pid_value
+      listener_pid_value="$(listener_pid "${LOCAL_HEALTH_PORT}")"
+      if [[ -n "${listener_pid_value}" ]]; then
+        echo "Hub启动失败：端口 ${LOCAL_HEALTH_PORT} 已被其他进程占用（pid=${listener_pid_value}），当前 PID_FILE 中的进程已退出。" >&2
+      else
+        echo "Hub启动失败：健康检查命中了其他服务，当前 PID_FILE 中的进程已退出。" >&2
+      fi
+      return 1
+    fi
+
+    local pid listener_pid_value
+    pid="$(tr -d '[:space:]' < "${PID_FILE}")"
+    listener_pid_value="$(listener_pid "${LOCAL_HEALTH_PORT}")"
+    if [[ -n "${listener_pid_value}" && "${listener_pid_value}" != "${pid}" ]]; then
+      echo "Hub启动失败：端口 ${LOCAL_HEALTH_PORT} 当前监听进程为 pid=${listener_pid_value}，不是本次启动的 pid=${pid}。" >&2
+      return 1
+    fi
+
     echo "Hub已启动"
     status_hub
     return 0

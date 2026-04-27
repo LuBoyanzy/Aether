@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -14,43 +15,37 @@ import (
 
 const (
 	ingestMonitorBatchListLimit        = 20
-	ingestMonitorBatchFormalStatusCase = `
+	ingestMonitorBatchPublicStatusCase = `
 CASE
-	WHEN p.create_time IS NULL THEN 'unknown'
-	WHEN p.is_complete = -1
-		OR COALESCE(p.error_msg, '') <> '' THEN 'failure'
-	WHEN p.is_complete = 1
+	WHEN p.create_time IS NOT NULL
+		AND (p.is_complete = -1
+		OR COALESCE(p.error_msg, '') <> '') THEN 'failure'
+	WHEN p.create_time IS NOT NULL
+		AND p.is_complete = 1
 		AND COALESCE(p.source_file_path, '') <> ''
 		AND COALESCE(p.converted_file_path, '') <> ''
 		AND COALESCE(p.pc_address, '') <> ''
 		AND COALESCE(p.glb_address, '') <> '' THEN 'success'
-	WHEN p.is_complete = 2 OR p.create_time IS NOT NULL THEN 'pending'
-	ELSE 'unknown'
+	WHEN p.create_time IS NOT NULL
+		AND p.is_complete = 1 THEN 'failure'
+	WHEN COALESCE(c.process_status, '') IN ('failed', 'error') THEN 'failure'
+	ELSE 'processing'
 END
 `
-	ingestMonitorBatchStageCase = `
+	ingestMonitorBatchOrderCase = `
 CASE
-	WHEN (%s) = 'success' THEN 'formal_success'
-	WHEN (%s) = 'failure' THEN 'formal_failure'
-	WHEN (%s) = 'pending' THEN 'formal_pending'
-	WHEN COALESCE(c.process_status, '') IN ('failed', 'error') THEN 'local_failed'
-	WHEN COALESCE(c.process_status, '') IN ('completed', 'success') THEN 'local_completed'
-	WHEN COALESCE(c.process_status, '') = 'processing' THEN 'local_processing'
-	WHEN COALESCE(c.process_status, '') = 'pending' THEN 'queued'
-	ELSE 'unknown'
+	WHEN (%s) = 'failure' THEN 0
+	WHEN (%s) = 'processing' THEN 1
+	WHEN (%s) = 'success' THEN 2
+	ELSE 3
 END
 `
-	ingestMonitorBatchTerminalTimeCase = `
+	ingestMonitorBatchProcessingOrderCase = `
 CASE
-	WHEN p.is_complete = -1
-		OR COALESCE(p.error_msg, '') <> '' THEN p.update_time
-	WHEN p.is_complete = 1
-		AND COALESCE(p.source_file_path, '') <> ''
-		AND COALESCE(p.converted_file_path, '') <> ''
-		AND COALESCE(p.pc_address, '') <> ''
-		AND COALESCE(p.glb_address, '') <> '' THEN p.update_time
-	WHEN COALESCE(c.process_status, '') IN ('failed', 'error') THEN c.process_end_time
-	ELSE NULL
+	WHEN COALESCE(c.process_status, '') IN ('processing', 'preview_ready') THEN 0
+	WHEN COALESCE(c.process_status, '') IN ('completed', 'success') THEN 1
+	WHEN COALESCE(c.process_status, '') = 'pending' THEN 2
+	ELSE 3
 END
 `
 )
@@ -83,12 +78,7 @@ type ingestMonitorBatchDTO struct {
 	TotalTracked             int      `json:"totalTracked"`
 	SuccessCount             int      `json:"successCount"`
 	FailureCount             int      `json:"failureCount"`
-	PendingCount             int      `json:"pendingCount"`
-	FormalPendingCount       int      `json:"formalPendingCount"`
-	LocalProcessingCount     int      `json:"localProcessingCount"`
-	LocalCompletedCount      int      `json:"localCompletedCount"`
-	LocalFailedCount         int      `json:"localFailedCount"`
-	QueuedCount              int      `json:"queuedCount"`
+	ProcessingCount          int      `json:"processingCount"`
 }
 
 type ingestMonitorBatchItemDTO struct {
@@ -129,18 +119,12 @@ type ingestMonitorBatchListResponse struct {
 }
 
 type ingestMonitorBatchDetailResponse struct {
-	Scope ingestMonitorScopeDTO       `json:"scope"`
-	Batch ingestMonitorBatchDTO       `json:"batch"`
-	Items []ingestMonitorBatchItemDTO `json:"items"`
-}
-
-func ingestMonitorBatchStageExpr() string {
-	return fmt.Sprintf(
-		ingestMonitorBatchStageCase,
-		ingestMonitorBatchFormalStatusCase,
-		ingestMonitorBatchFormalStatusCase,
-		ingestMonitorBatchFormalStatusCase,
-	)
+	Scope      ingestMonitorScopeDTO       `json:"scope"`
+	Batch      ingestMonitorBatchDTO       `json:"batch"`
+	Items      []ingestMonitorBatchItemDTO `json:"items"`
+	TotalItems int                         `json:"totalItems"`
+	Page       int                         `json:"page"`
+	PageSize   int                         `json:"pageSize"`
 }
 
 func (s *ingestMonitorService) GetBatchList(ctx context.Context) (*ingestMonitorBatchListResponse, error) {
@@ -166,7 +150,7 @@ func (s *ingestMonitorService) GetBatchList(ctx context.Context) (*ingestMonitor
 	return response, nil
 }
 
-func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID string) (*ingestMonitorBatchDetailResponse, error) {
+func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID string, page int, pageSize int) (*ingestMonitorBatchDetailResponse, error) {
 	response := &ingestMonitorBatchDetailResponse{}
 
 	err := s.withTenantTx(ctx, func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
@@ -180,8 +164,16 @@ func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID st
 			return err
 		}
 		response.Batch = batch
+		response.Page = page
+		response.PageSize = pageSize
 
-		items, err := listIngestMonitorBatchItems(tx, queryCtx, batchRunID)
+		totalItems, err := countIngestMonitorBatchItems(tx, queryCtx, batchRunID)
+		if err != nil {
+			return err
+		}
+		response.TotalItems = totalItems
+
+		items, err := listIngestMonitorBatchItems(tx, queryCtx, batchRunID, page, pageSize)
 		if err != nil {
 			return err
 		}
@@ -254,15 +246,10 @@ SELECT
 	b.total_files_processed,
 	b.total_batches,
 	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_failure', 'local_failed')) AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_pending', 'local_processing', 'local_completed', 'queued', 'unknown')) AS pending_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_pending') AS formal_pending_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_processing') AS local_processing_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_completed') AS local_completed_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_failed') AS local_failed_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'queued') AS queued_count,
-	EXTRACT(EPOCH FROM (MAX((%s)) - b.scan_started_at)) AS final_ingest_elapsed_seconds
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'processing') AS processing_count,
+	EXTRACT(EPOCH FROM (MAX(c.ingest_terminal_time) - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM recent_batches b
 LEFT JOIN cad_file_process_status c
 	ON c.batch_run_id = b.batch_run_id
@@ -312,7 +299,7 @@ GROUP BY
 	b.total_batches,
 	b.create_time
 ORDER BY b.scan_started_at DESC NULLS LAST, b.create_time DESC NULLS LAST, b.batch_run_id DESC
-`, ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchTerminalTimeCase)
+`, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase)
 
 	rows, err := tx.QueryContext(ctx, query, limit)
 	if err != nil {
@@ -362,15 +349,10 @@ SELECT
 	b.total_files_processed,
 	b.total_batches,
 	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_failure', 'local_failed')) AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) IN ('formal_pending', 'local_processing', 'local_completed', 'queued', 'unknown')) AS pending_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'formal_pending') AS formal_pending_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_processing') AS local_processing_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_completed') AS local_completed_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'local_failed') AS local_failed_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'queued') AS queued_count,
-	EXTRACT(EPOCH FROM (MAX((%s)) - b.scan_started_at)) AS final_ingest_elapsed_seconds
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
+	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'processing') AS processing_count,
+	EXTRACT(EPOCH FROM (MAX(c.ingest_terminal_time) - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM ingest_batch_run b
 LEFT JOIN cad_file_process_status c
 	ON c.batch_run_id = b.batch_run_id
@@ -421,13 +403,30 @@ GROUP BY
 	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches
-`, ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchStageExpr(), ingestMonitorBatchTerminalTimeCase)
+`, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase)
 
 	row := tx.QueryRowContext(ctx, query, batchRunID)
 	return scanIngestMonitorBatch(row)
 }
 
-func listIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string) ([]ingestMonitorBatchItemDTO, error) {
+func countIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string) (int, error) {
+	row := tx.QueryRowContext(ctx, `
+SELECT COUNT(*)
+FROM cad_file_process_status
+WHERE batch_run_id = $1
+	AND tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(is_deleted, 0) = 0
+`, batchRunID)
+
+	var total int
+	if err := row.Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func listIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string, page int, pageSize int) ([]ingestMonitorBatchItemDTO, error) {
+	offset := (page - 1) * pageSize
 	query := fmt.Sprintf(`
 SELECT
 	c.item_code,
@@ -445,7 +444,7 @@ SELECT
 	c.process_start_time,
 	c.process_end_time,
 	p.update_time AS product_update_time,
-	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
+	COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
 	c.create_time
 FROM cad_file_process_status c
 LEFT JOIN LATERAL (
@@ -470,21 +469,15 @@ WHERE c.batch_run_id = $1
 	AND c.tenant_id = current_setting('app.current_tenant', true)
 	AND COALESCE(c.is_deleted, 0) = 0
 ORDER BY
-	CASE (%s)
-		WHEN 'formal_failure' THEN 0
-		WHEN 'local_failed' THEN 1
-		WHEN 'formal_pending' THEN 2
-		WHEN 'local_processing' THEN 3
-		WHEN 'local_completed' THEN 4
-		WHEN 'queued' THEN 5
-		WHEN 'formal_success' THEN 6
-		ELSE 7
-	END,
-	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
+	%s,
+	%s,
+	COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
 	c.item_code DESC
-`, ingestMonitorBatchStageExpr())
+LIMIT $2
+OFFSET $3
+`, fmt.Sprintf(ingestMonitorBatchOrderCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase), ingestMonitorBatchProcessingOrderCase)
 
-	rows, err := tx.QueryContext(ctx, query, batchRunID)
+	rows, err := tx.QueryContext(ctx, query, batchRunID, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -533,12 +526,7 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		totalTracked             int
 		successCount             int
 		failureCount             int
-		pendingCount             int
-		formalPendingCount       int
-		localProcessingCount     int
-		localCompletedCount      int
-		localFailedCount         int
-		queuedCount              int
+		processingCount          int
 		finalIngestElapsedSecond sql.NullFloat64
 	)
 
@@ -569,12 +557,7 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		&totalTracked,
 		&successCount,
 		&failureCount,
-		&pendingCount,
-		&formalPendingCount,
-		&localProcessingCount,
-		&localCompletedCount,
-		&localFailedCount,
-		&queuedCount,
+		&processingCount,
 		&finalIngestElapsedSecond,
 	); err != nil {
 		return ingestMonitorBatchDTO{}, err
@@ -607,12 +590,7 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 		TotalTracked:             totalTracked,
 		SuccessCount:             successCount,
 		FailureCount:             failureCount,
-		PendingCount:             pendingCount,
-		FormalPendingCount:       formalPendingCount,
-		LocalProcessingCount:     localProcessingCount,
-		LocalCompletedCount:      localCompletedCount,
-		LocalFailedCount:         localFailedCount,
-		QueuedCount:              queuedCount,
+		ProcessingCount:          processingCount,
 	}
 
 	if fileType.Valid {
@@ -785,7 +763,25 @@ func (h *Hub) getIngestMonitorBatchDetail(e *core.RequestEvent) error {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": "batchRunId 参数不能为空"})
 	}
 
-	response, err := h.ingestMonitor.GetBatchDetail(e.Request.Context(), batchRunID)
+	page := 1
+	if rawPage := strings.TrimSpace(e.Request.URL.Query().Get("page")); rawPage != "" {
+		parsedPage, parseErr := strconv.Atoi(rawPage)
+		if parseErr != nil || parsedPage <= 0 {
+			return e.JSON(http.StatusBadRequest, map[string]string{"error": "page 参数必须为正整数"})
+		}
+		page = parsedPage
+	}
+
+	pageSize := 200
+	if rawPageSize := strings.TrimSpace(e.Request.URL.Query().Get("pageSize")); rawPageSize != "" {
+		parsedPageSize, parseErr := strconv.Atoi(rawPageSize)
+		if parseErr != nil || parsedPageSize <= 0 || parsedPageSize > 500 {
+			return e.JSON(http.StatusBadRequest, map[string]string{"error": "pageSize 参数必须为 1~500 的整数"})
+		}
+		pageSize = parsedPageSize
+	}
+
+	response, err := h.ingestMonitor.GetBatchDetail(e.Request.Context(), batchRunID, page, pageSize)
 	if err != nil {
 		return h.handleIngestMonitorBatchError(e, "get ingest monitor batch detail failed", err)
 	}
