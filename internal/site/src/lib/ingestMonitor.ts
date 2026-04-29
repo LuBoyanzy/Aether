@@ -133,8 +133,9 @@ export type IngestMonitorBatchDetailResponse = {
 	batch: IngestMonitorBatch
 	items: IngestMonitorBatchItem[]
 	totalItems: number
-	page: number
 	pageSize: number
+	nextCursor: string
+	hasMore: boolean
 }
 
 export const fetchIngestMonitorSummary = () =>
@@ -156,9 +157,9 @@ export const fetchIngestMonitorBatches = () =>
 		requestKey: null,
 	})
 
-export const fetchIngestMonitorBatchDetail = (batchRunId: string, page = 1, pageSize = 200) =>
+export const fetchIngestMonitorBatchDetail = (batchRunId: string, cursor = "") =>
 	pb.send<IngestMonitorBatchDetailResponse>("/api/aether/ingest-monitor/batch-detail", {
 		method: "GET",
-		query: { batchRunId, page, pageSize },
+		query: cursor ? { batchRunId, cursor } : { batchRunId },
 		requestKey: null,
 	})

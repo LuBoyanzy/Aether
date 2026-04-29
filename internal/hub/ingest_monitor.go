@@ -44,25 +44,12 @@ WHERE COALESCE(is_deleted, false) = false
 `
 	ingestMonitorSummaryStatusQuery = `
 SELECT
-	COUNT(*) FILTER (WHERE status = 'success') AS success,
-	COUNT(*) FILTER (WHERE status = 'failure') AS failure,
-	COUNT(*) FILTER (WHERE status = 'processing') AS processing,
+	COUNT(*) FILTER (WHERE monitor_status = 'success') AS success,
+	COUNT(*) FILTER (WHERE monitor_status = 'failure') AS failure,
+	COUNT(*) FILTER (WHERE monitor_status = 'processing') AS processing,
 	COUNT(*) AS total
-FROM (
-	SELECT
-		CASE
-			WHEN is_complete = -1 OR COALESCE(error_msg, '') <> '' THEN 'failure'
-			WHEN is_complete = 1
-				AND COALESCE(source_file_path, '') <> ''
-				AND COALESCE(converted_file_path, '') <> ''
-				AND COALESCE(pc_address, '') <> ''
-				AND COALESCE(glb_address, '') <> '' THEN 'success'
-			WHEN is_complete = 1 THEN 'failure'
-			ELSE 'processing'
-		END AS status
-	FROM product_info
+FROM product_info
 ` + ingestMonitorFormalFilter + `
-) records
 `
 )
 
@@ -385,16 +372,7 @@ SELECT
 	COALESCE(inference_types, '') AS inference_types,
 	update_time,
 	create_time,
-	CASE
-		WHEN is_complete = -1 OR COALESCE(error_msg, '') <> '' THEN 'failure'
-		WHEN is_complete = 1
-			AND COALESCE(source_file_path, '') <> ''
-			AND COALESCE(converted_file_path, '') <> ''
-			AND COALESCE(pc_address, '') <> ''
-			AND COALESCE(glb_address, '') <> '' THEN 'success'
-		WHEN is_complete = 1 THEN 'failure'
-		ELSE 'processing'
-	END AS status
+	monitor_status AS status
 	FROM product_info
 ` + ingestMonitorFormalFilter
 
@@ -450,16 +428,7 @@ SELECT
 	COALESCE(inference_types, '') AS inference_types,
 	update_time,
 	create_time,
-	CASE
-		WHEN is_complete = -1 OR COALESCE(error_msg, '') <> '' THEN 'failure'
-		WHEN is_complete = 1
-			AND COALESCE(source_file_path, '') <> ''
-			AND COALESCE(converted_file_path, '') <> ''
-			AND COALESCE(pc_address, '') <> ''
-			AND COALESCE(glb_address, '') <> '' THEN 'success'
-		WHEN is_complete = 1 THEN 'failure'
-		ELSE 'processing'
-	END AS status
+	monitor_status AS status
 FROM product_info
 `+ingestMonitorFormalFilter+`
 	AND item_code = $1
@@ -559,35 +528,24 @@ SELECT
 	COALESCE(p.pc_address, '') AS pc_address,
 	COALESCE(p.glb_address, '') AS glb_address,
 	COALESCE(p.inference_types, '') AS inference_types,
+	CASE
+		WHEN p.create_time IS NOT NULL THEN p.monitor_status
+		ELSE c.ingest_status
+	END AS status,
 	c.process_start_time,
 	c.process_end_time,
 	p.update_time AS product_update_time,
-	COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
+	COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
 	COALESCE(p.create_time, c.create_time) AS create_time
 FROM cad_file_process_status c
-LEFT JOIN LATERAL (
-	SELECT
-		item_code,
-		product_name,
-		is_complete,
-		is_temporary,
-		error_msg,
-		source_file_path,
-		converted_file_path,
-		pc_address,
-		glb_address,
-		inference_types,
-		update_time,
-		create_time
-	FROM product_info
-	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
-		AND COALESCE(is_deleted, false) = false
-	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
-	LIMIT 1
-) p ON true
+LEFT JOIN product_info p
+	ON p.item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+	AND p.tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(p.is_deleted, false) = false
 WHERE c.item_code = $1
+	AND c.tenant_id = current_setting('app.current_tenant', true)
 	AND COALESCE(c.is_deleted, 0) = 0
-ORDER BY COALESCE(p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
+ORDER BY COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
 	c.create_time DESC NULLS LAST
 LIMIT 1
 `, itemCode)
@@ -612,6 +570,7 @@ func scanTrackedIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO,
 		pcAddress         string
 		glbAddress        string
 		inferenceTypesRaw string
+		status            string
 		processStartTime  sql.NullTime
 		processEndTime    sql.NullTime
 		productUpdateTime sql.NullTime
@@ -635,6 +594,7 @@ func scanTrackedIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO,
 		&pcAddress,
 		&glbAddress,
 		&inferenceTypesRaw,
+		&status,
 		&processStartTime,
 		&processEndTime,
 		&productUpdateTime,
@@ -666,12 +626,12 @@ func scanTrackedIngestMonitorRecord(scanner sqlScanner) (ingestMonitorRecordDTO,
 		ProductUpdateTime: formatNullableTime(productUpdateTime),
 		UpdateTime:        formatNullableTime(updateTime),
 		CreateTime:        formatNullableTime(createTime),
+		Status:            strings.TrimSpace(status),
 	}
 	if isComplete.Valid {
 		value := int(isComplete.Int64)
 		record.IsComplete = &value
 	}
-	record.Status = deriveTrackedIngestStatus(record.IsComplete, record.HasFormalRecord, record.ProcessStatus, record.ErrorMsg, record.SourceFilePath, record.ConvertedFilePath, record.PcAddress, record.GlbAddress)
 	populateIngestMonitorDiagnostics(&record)
 	return record, nil
 }
@@ -709,40 +669,6 @@ func formatNullableTime(value sql.NullTime) string {
 		return ""
 	}
 	return value.Time.UTC().Format(time.RFC3339)
-}
-
-func deriveTrackedIngestStatus(
-	isComplete *int,
-	hasFormalRecord bool,
-	processStatus string,
-	errorMsg string,
-	sourceFilePath string,
-	convertedFilePath string,
-	pcAddress string,
-	glbAddress string,
-) string {
-	if hasFormalRecord {
-		if (isComplete != nil && *isComplete == -1) || strings.TrimSpace(errorMsg) != "" {
-			return ingestMonitorStatusFailure
-		}
-		if isComplete != nil && *isComplete == 1 {
-			if sourceFilePath != "" &&
-				convertedFilePath != "" &&
-				pcAddress != "" &&
-				glbAddress != "" {
-				return ingestMonitorStatusSuccess
-			}
-			return ingestMonitorStatusFailure
-		}
-		return ingestMonitorStatusProcessing
-	}
-
-	switch strings.TrimSpace(processStatus) {
-	case "failed", "error":
-		return ingestMonitorStatusFailure
-	default:
-		return ingestMonitorStatusProcessing
-	}
 }
 
 func populateIngestMonitorDiagnostics(record *ingestMonitorRecordDTO) {

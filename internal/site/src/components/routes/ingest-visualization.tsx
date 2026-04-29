@@ -48,7 +48,6 @@ import {
 import { BRAND_NAME, formatShortDate, cn } from "@/lib/utils"
 
 const refreshIntervalMs = 15000
-const batchDetailPageSize = 200
 
 function statusBadgeVariant(status: IngestMonitorRecord["status"] | IngestMonitorBatchItem["ingestStatus"]) {
 	switch (status) {
@@ -221,6 +220,9 @@ export default memo(() => {
 	const [batchDetailError, setBatchDetailError] = useState("")
 	const [batchDetail, setBatchDetail] = useState<IngestMonitorBatchDetailResponse | null>(null)
 	const [selectedBatchRunId, setSelectedBatchRunId] = useState("")
+	const [batchDetailCursorHistory, setBatchDetailCursorHistory] = useState<string[]>([])
+	const [batchDetailCurrentCursor, setBatchDetailCurrentCursor] = useState("")
+	const [batchDetailCurrentPage, setBatchDetailCurrentPage] = useState(1)
 	const dashboardRequestInFlight = useRef(false)
 
 	useEffect(() => {
@@ -280,22 +282,72 @@ export default memo(() => {
 		}
 	}, [])
 
-	const openBatchDetail = useCallback(async (batchRunId: string, page = 1) => {
+	const openBatchDetail = useCallback(async (
+		batchRunId: string,
+		{
+			cursor = "",
+			page = 1,
+			history = [],
+			reset = false,
+		}: {
+			cursor?: string
+			page?: number
+			history?: string[]
+			reset?: boolean
+		} = {},
+	) => {
 		setSelectedBatchRunId(batchRunId)
 		setBatchDetailOpen(true)
 		setBatchDetailLoading(true)
 		setBatchDetailError("")
-		if (page === 1) {
+		if (reset) {
 			setBatchDetail(null)
+			setBatchDetailCurrentCursor("")
+			setBatchDetailCurrentPage(1)
+			setBatchDetailCursorHistory([])
 		}
+		setBatchDetailCurrentCursor(cursor)
+		setBatchDetailCurrentPage(page)
+		setBatchDetailCursorHistory(history)
 		try {
-			setBatchDetail(await fetchIngestMonitorBatchDetail(batchRunId, page, batchDetailPageSize))
+			setBatchDetail(await fetchIngestMonitorBatchDetail(batchRunId, cursor))
 		} catch (err) {
 			setBatchDetailError(err instanceof Error ? err.message : String(err))
 		} finally {
 			setBatchDetailLoading(false)
 		}
 	}, [])
+
+	const goToPreviousBatchDetailPage = useCallback(() => {
+		if (!selectedBatchRunId || batchDetailCursorHistory.length === 0) {
+			return
+		}
+		const previousCursor = batchDetailCursorHistory[batchDetailCursorHistory.length - 1]
+		openBatchDetail(selectedBatchRunId, {
+			cursor: previousCursor,
+			page: Math.max(1, batchDetailCurrentPage - 1),
+			history: batchDetailCursorHistory.slice(0, -1),
+		})
+	}, [batchDetailCurrentPage, batchDetailCursorHistory, openBatchDetail, selectedBatchRunId])
+
+	const goToNextBatchDetailPage = useCallback(() => {
+		if (!selectedBatchRunId || !batchDetail?.hasMore || !batchDetail.nextCursor) {
+			return
+		}
+		openBatchDetail(selectedBatchRunId, {
+			cursor: batchDetail.nextCursor,
+			page: batchDetailCurrentPage + 1,
+			history: [...batchDetailCursorHistory, batchDetailCurrentCursor],
+		})
+	}, [
+		batchDetail?.hasMore,
+		batchDetail?.nextCursor,
+		batchDetailCurrentCursor,
+		batchDetailCurrentPage,
+		batchDetailCursorHistory,
+		openBatchDetail,
+		selectedBatchRunId,
+	])
 
 	const cards = useMemo(() => {
 		const summary = summaryData?.summary
@@ -514,7 +566,12 @@ export default memo(() => {
 											</TableCell>
 											<TableCell className="text-right text-xs text-muted-foreground">{formatDisplayDate(batch.scanStartedAt)}</TableCell>
 											<TableCell className="text-center">
-												<Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openBatchDetail(batch.batchRunId)}>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-7 w-7"
+													onClick={() => openBatchDetail(batch.batchRunId, { reset: true, history: [], page: 1 })}
+												>
 													<EyeIcon className="h-3.5 w-3.5" />
 												</Button>
 											</TableCell>
@@ -903,15 +960,15 @@ export default memo(() => {
 												<div className="grid gap-3">
 													<div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs">
 														<div className="text-muted-foreground">
-															第 {batchDetail.page} / {Math.max(1, Math.ceil(batchDetail.totalItems / batchDetail.pageSize))} 页
+															第 {batchDetailCurrentPage} / {Math.max(1, Math.ceil(batchDetail.totalItems / batchDetail.pageSize))} 页
 														</div>
 														<div className="flex items-center gap-2">
 															<Button
 																variant="outline"
 																size="sm"
 																className="h-8 gap-1.5"
-																disabled={batchDetailLoading || batchDetail.page <= 1}
-																onClick={() => openBatchDetail(selectedBatchRunId, batchDetail.page - 1)}
+																disabled={batchDetailLoading || batchDetailCursorHistory.length === 0}
+																onClick={goToPreviousBatchDetailPage}
 															>
 																<ChevronLeftIcon className="h-3.5 w-3.5" />
 																上一页
@@ -920,8 +977,8 @@ export default memo(() => {
 																variant="outline"
 																size="sm"
 																className="h-8 gap-1.5"
-																disabled={batchDetailLoading || batchDetail.page * batchDetail.pageSize >= batchDetail.totalItems}
-																onClick={() => openBatchDetail(selectedBatchRunId, batchDetail.page + 1)}
+																disabled={batchDetailLoading || !batchDetail.hasMore || !batchDetail.nextCursor}
+																onClick={goToNextBatchDetailPage}
 															>
 																下一页
 																<ChevronRightIcon className="h-3.5 w-3.5" />

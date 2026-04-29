@@ -3,52 +3,39 @@ package hub
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pocketbase/pocketbase/core"
 )
 
 const (
-	ingestMonitorBatchListLimit        = 20
-	ingestMonitorBatchPublicStatusCase = `
-CASE
-	WHEN p.create_time IS NOT NULL
-		AND (p.is_complete = -1
-		OR COALESCE(p.error_msg, '') <> '') THEN 'failure'
-	WHEN p.create_time IS NOT NULL
-		AND p.is_complete = 1
-		AND COALESCE(p.source_file_path, '') <> ''
-		AND COALESCE(p.converted_file_path, '') <> ''
-		AND COALESCE(p.pc_address, '') <> ''
-		AND COALESCE(p.glb_address, '') <> '' THEN 'success'
-	WHEN p.create_time IS NOT NULL
-		AND p.is_complete = 1 THEN 'failure'
-	WHEN COALESCE(c.process_status, '') IN ('failed', 'error') THEN 'failure'
-	ELSE 'processing'
-END
-`
-	ingestMonitorBatchOrderCase = `
-CASE
-	WHEN (%s) = 'failure' THEN 0
-	WHEN (%s) = 'processing' THEN 1
-	WHEN (%s) = 'success' THEN 2
+	ingestMonitorBatchListLimit       = 20
+	ingestMonitorBatchDetailPageSize  = 200
+	ingestMonitorBatchStatusOrderCase = `
+CASE c.ingest_status
+	WHEN 'failure' THEN 0
+	WHEN 'processing' THEN 1
+	WHEN 'success' THEN 2
 	ELSE 3
 END
 `
 	ingestMonitorBatchProcessingOrderCase = `
 CASE
-	WHEN COALESCE(c.process_status, '') IN ('processing', 'preview_ready') THEN 0
-	WHEN COALESCE(c.process_status, '') IN ('completed', 'success') THEN 1
-	WHEN COALESCE(c.process_status, '') = 'pending' THEN 2
+	WHEN c.process_status IN ('processing', 'preview_ready') THEN 0
+	WHEN c.process_status IN ('completed', 'success') THEN 1
+	WHEN c.process_status = 'pending' THEN 2
 	ELSE 3
 END
 `
 )
+
+var errInvalidIngestMonitorBatchCursor = errors.New("invalid ingest monitor batch cursor")
 
 type ingestMonitorBatchDTO struct {
 	BatchRunID               string   `json:"batchRunId"`
@@ -123,8 +110,24 @@ type ingestMonitorBatchDetailResponse struct {
 	Batch      ingestMonitorBatchDTO       `json:"batch"`
 	Items      []ingestMonitorBatchItemDTO `json:"items"`
 	TotalItems int                         `json:"totalItems"`
-	Page       int                         `json:"page"`
 	PageSize   int                         `json:"pageSize"`
+	NextCursor string                      `json:"nextCursor"`
+	HasMore    bool                        `json:"hasMore"`
+}
+
+type ingestMonitorBatchCursor struct {
+	StatusRank  int    `json:"s"`
+	ProcessRank int    `json:"p"`
+	SortTime    string `json:"t"`
+	ItemCode    string `json:"i"`
+}
+
+type ingestMonitorBatchItemRow struct {
+	Item          ingestMonitorBatchItemDTO
+	StatusRank    int
+	ProcessRank   int
+	SortTime      time.Time
+	SortTimeValid bool
 }
 
 func (s *ingestMonitorService) GetBatchList(ctx context.Context) (*ingestMonitorBatchListResponse, error) {
@@ -150,7 +153,7 @@ func (s *ingestMonitorService) GetBatchList(ctx context.Context) (*ingestMonitor
 	return response, nil
 }
 
-func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID string, page int, pageSize int) (*ingestMonitorBatchDetailResponse, error) {
+func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID string, cursor string) (*ingestMonitorBatchDetailResponse, error) {
 	response := &ingestMonitorBatchDetailResponse{}
 
 	err := s.withTenantTx(ctx, func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
@@ -164,20 +167,16 @@ func (s *ingestMonitorService) GetBatchDetail(ctx context.Context, batchRunID st
 			return err
 		}
 		response.Batch = batch
-		response.Page = page
-		response.PageSize = pageSize
+		response.PageSize = ingestMonitorBatchDetailPageSize
+		response.TotalItems = batch.TotalTracked
 
-		totalItems, err := countIngestMonitorBatchItems(tx, queryCtx, batchRunID)
-		if err != nil {
-			return err
-		}
-		response.TotalItems = totalItems
-
-		items, err := listIngestMonitorBatchItems(tx, queryCtx, batchRunID, page, pageSize)
+		items, nextCursor, hasMore, err := listIngestMonitorBatchItems(tx, queryCtx, batchRunID, cursor, ingestMonitorBatchDetailPageSize)
 		if err != nil {
 			return err
 		}
 		response.Items = items
+		response.NextCursor = nextCursor
+		response.HasMore = hasMore
 		return nil
 	})
 	if err != nil {
@@ -245,61 +244,26 @@ SELECT
 	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches,
-	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'processing') AS processing_count,
-	EXTRACT(EPOCH FROM (MAX(c.ingest_terminal_time) - b.scan_started_at)) AS final_ingest_elapsed_seconds
+	COALESCE(stats.total_tracked, 0) AS total_tracked,
+	COALESCE(stats.success_count, 0) AS success_count,
+	COALESCE(stats.failure_count, 0) AS failure_count,
+	COALESCE(stats.processing_count, 0) AS processing_count,
+	EXTRACT(EPOCH FROM (stats.max_ingest_terminal_time - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM recent_batches b
-LEFT JOIN cad_file_process_status c
-	ON c.batch_run_id = b.batch_run_id
-	AND c.tenant_id = current_setting('app.current_tenant', true)
-	AND COALESCE(c.is_deleted, 0) = 0
 LEFT JOIN LATERAL (
 	SELECT
-		product_name,
-		is_complete,
-		error_msg,
-		source_file_path,
-		converted_file_path,
-		pc_address,
-		glb_address,
-		update_time,
-		create_time
-	FROM product_info
-	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
-		AND tenant_id = current_setting('app.current_tenant', true)
-		AND COALESCE(is_deleted, false) = false
-	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
-	LIMIT 1
-) p ON true
-GROUP BY
-	b.batch_run_id,
-	b.source_type,
-	b.xxl_job_id,
-	b.xxl_log_id,
-	b.scan_paths_json,
-	b.file_type,
-	b.batch_size,
-	b.force,
-	b.status,
-	b.error_message,
-	b.scan_started_at,
-	b.scan_finished_at,
-	b.xxl_elapsed_seconds,
-	b.total_dirs_scanned,
-	b.total_files_scanned,
-	b.total_files_filtered,
-	b.total_files_large_filtered,
-	b.total_files_registered,
-	b.total_files_register_failed,
-	b.total_files_enqueued,
-	b.total_files_enqueue_failed,
-	b.total_files_processed,
-	b.total_batches,
-	b.create_time
+		COUNT(*) AS total_tracked,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'success') AS success_count,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'failure') AS failure_count,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'processing') AS processing_count,
+		MAX(c.ingest_terminal_time) AS max_ingest_terminal_time
+	FROM cad_file_process_status c
+	WHERE c.batch_run_id = b.batch_run_id
+		AND c.tenant_id = current_setting('app.current_tenant', true)
+		AND COALESCE(c.is_deleted, 0) = 0
+) stats ON true
 ORDER BY b.scan_started_at DESC NULLS LAST, b.create_time DESC NULLS LAST, b.batch_run_id DESC
-`, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase)
+`)
 
 	rows, err := tx.QueryContext(ctx, query, limit)
 	if err != nil {
@@ -348,154 +312,201 @@ SELECT
 	b.total_files_enqueue_failed,
 	b.total_files_processed,
 	b.total_batches,
-	COUNT(c.item_code) AS total_tracked,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'success') AS success_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'failure') AS failure_count,
-	COUNT(*) FILTER (WHERE c.item_code IS NOT NULL AND (%s) = 'processing') AS processing_count,
-	EXTRACT(EPOCH FROM (MAX(c.ingest_terminal_time) - b.scan_started_at)) AS final_ingest_elapsed_seconds
+	COALESCE(stats.total_tracked, 0) AS total_tracked,
+	COALESCE(stats.success_count, 0) AS success_count,
+	COALESCE(stats.failure_count, 0) AS failure_count,
+	COALESCE(stats.processing_count, 0) AS processing_count,
+	EXTRACT(EPOCH FROM (stats.max_ingest_terminal_time - b.scan_started_at)) AS final_ingest_elapsed_seconds
 FROM ingest_batch_run b
-LEFT JOIN cad_file_process_status c
-	ON c.batch_run_id = b.batch_run_id
-	AND c.tenant_id = current_setting('app.current_tenant', true)
-	AND COALESCE(c.is_deleted, 0) = 0
 LEFT JOIN LATERAL (
 	SELECT
-		product_name,
-		is_complete,
-		error_msg,
-		source_file_path,
-		converted_file_path,
-		pc_address,
-		glb_address,
-		update_time,
-		create_time
-	FROM product_info
-	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
-		AND tenant_id = current_setting('app.current_tenant', true)
-		AND COALESCE(is_deleted, false) = false
-	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
-	LIMIT 1
-) p ON true
+		COUNT(*) AS total_tracked,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'success') AS success_count,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'failure') AS failure_count,
+		COUNT(*) FILTER (WHERE c.ingest_status = 'processing') AS processing_count,
+		MAX(c.ingest_terminal_time) AS max_ingest_terminal_time
+	FROM cad_file_process_status c
+	WHERE c.batch_run_id = b.batch_run_id
+		AND c.tenant_id = current_setting('app.current_tenant', true)
+		AND COALESCE(c.is_deleted, 0) = 0
+) stats ON true
 WHERE COALESCE(b.is_deleted, false) = false
 	AND b.tenant_id = current_setting('app.current_tenant', true)
 	AND b.batch_run_id = $1
-GROUP BY
-	b.batch_run_id,
-	b.source_type,
-	b.xxl_job_id,
-	b.xxl_log_id,
-	b.scan_paths,
-	b.file_type,
-	b.batch_size,
-	b.force,
-	b.status,
-	b.error_message,
-	b.scan_started_at,
-	b.scan_finished_at,
-	b.xxl_elapsed_seconds,
-	b.total_dirs_scanned,
-	b.total_files_scanned,
-	b.total_files_filtered,
-	b.total_files_large_filtered,
-	b.total_files_registered,
-	b.total_files_register_failed,
-	b.total_files_enqueued,
-	b.total_files_enqueue_failed,
-	b.total_files_processed,
-	b.total_batches
-`, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase)
+`)
 
 	row := tx.QueryRowContext(ctx, query, batchRunID)
 	return scanIngestMonitorBatch(row)
 }
 
-func countIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string) (int, error) {
-	row := tx.QueryRowContext(ctx, `
-SELECT COUNT(*)
-FROM cad_file_process_status
-WHERE batch_run_id = $1
-	AND tenant_id = current_setting('app.current_tenant', true)
-	AND COALESCE(is_deleted, 0) = 0
-`, batchRunID)
-
-	var total int
-	if err := row.Scan(&total); err != nil {
-		return 0, err
+func listIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string, cursor string, pageSize int) ([]ingestMonitorBatchItemDTO, string, bool, error) {
+	decodedCursor, err := decodeIngestMonitorBatchCursor(cursor)
+	if err != nil {
+		return nil, "", false, err
 	}
-	return total, nil
-}
 
-func listIngestMonitorBatchItems(tx *sql.Tx, ctx context.Context, batchRunID string, page int, pageSize int) ([]ingestMonitorBatchItemDTO, error) {
-	offset := (page - 1) * pageSize
+	args := []any{batchRunID}
+	cursorFilter := ""
+	if decodedCursor != nil {
+		cursorSortTime, parseErr := time.Parse(time.RFC3339Nano, decodedCursor.SortTime)
+		if parseErr != nil {
+			return nil, "", false, errInvalidIngestMonitorBatchCursor
+		}
+
+		args = append(args, decodedCursor.StatusRank, decodedCursor.ProcessRank, cursorSortTime, decodedCursor.ItemCode)
+		cursorFilter = fmt.Sprintf(`
+	AND (
+		status_rank > $2
+		OR (status_rank = $2 AND process_rank > $3)
+		OR (status_rank = $2 AND process_rank = $3 AND sort_time < $4)
+		OR (status_rank = $2 AND process_rank = $3 AND sort_time = $4 AND item_code < $5)
+	)
+`)
+	}
+
+	args = append(args, pageSize+1)
+	limitPlaceholder := len(args)
 	query := fmt.Sprintf(`
+	WITH ordered_items AS (
+		SELECT
+			c.item_code,
+			COALESCE(c.product_item_code, '') AS product_item_code,
+			COALESCE(NULLIF(c.product_item_code, ''), c.item_code) AS lookup_item_code,
+			COALESCE(c.cad_number, '') AS cad_number,
+			COALESCE(c.file_name, '') AS file_name,
+			COALESCE(c.process_status, '') AS process_status,
+		c.ingest_status,
+		COALESCE(c.error_message, '') AS error_message,
+		c.process_start_time,
+		c.process_end_time,
+		c.ingest_terminal_time,
+		c.update_time,
+		c.create_time,
+		%s AS status_rank,
+		%s AS process_rank,
+		COALESCE(c.ingest_terminal_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS sort_time
+	FROM cad_file_process_status c
+	WHERE c.batch_run_id = $1
+		AND c.tenant_id = current_setting('app.current_tenant', true)
+		AND COALESCE(c.is_deleted, 0) = 0
+),
+	paged_items AS (
+		SELECT *
+		FROM ordered_items
+	WHERE 1 = 1
+	%s
+	ORDER BY
+		status_rank ASC,
+		process_rank ASC,
+		sort_time DESC NULLS LAST,
+		item_code DESC
+		LIMIT $%d
+	),
+	lookup_keys AS MATERIALIZED (
+		SELECT DISTINCT lookup_item_code
+		FROM paged_items
+	),
+	product_lookup AS MATERIALIZED (
+		SELECT
+			k.lookup_item_code,
+			p.product_name,
+			p.is_complete,
+			p.error_msg,
+			p.source_file_path,
+			p.converted_file_path,
+			p.pc_address,
+			p.glb_address,
+			p.update_time,
+			p.create_time
+		FROM lookup_keys k
+		LEFT JOIN LATERAL (
+			SELECT
+				product_name,
+				is_complete,
+				error_msg,
+				source_file_path,
+				converted_file_path,
+				pc_address,
+				glb_address,
+				update_time,
+				create_time
+			FROM product_info
+			WHERE item_code = k.lookup_item_code
+				AND tenant_id = current_setting('app.current_tenant', true)
+				AND COALESCE(is_deleted, false) = false
+			ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
+			LIMIT 1
+		) p ON true
+	)
 SELECT
-	c.item_code,
-	COALESCE(c.cad_number, '') AS cad_number,
-	COALESCE(c.file_name, '') AS file_name,
-	COALESCE(c.process_status, '') AS process_status,
+	i.item_code,
+	i.cad_number,
+	i.file_name,
+	i.process_status,
+	i.ingest_status,
 	COALESCE(p.product_name, '') AS product_name,
 	p.is_complete,
 	CASE WHEN p.create_time IS NOT NULL THEN true ELSE false END AS has_formal_record,
-	COALESCE(NULLIF(p.error_msg, ''), NULLIF(c.error_message, ''), '') AS error_msg,
+	COALESCE(NULLIF(p.error_msg, ''), NULLIF(i.error_message, ''), '') AS error_msg,
 	COALESCE(p.source_file_path, '') AS source_file_path,
 	COALESCE(p.converted_file_path, '') AS converted_file_path,
 	COALESCE(p.pc_address, '') AS pc_address,
 	COALESCE(p.glb_address, '') AS glb_address,
-	c.process_start_time,
-	c.process_end_time,
+	i.process_start_time,
+	i.process_end_time,
 	p.update_time AS product_update_time,
-	COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
-	c.create_time
-FROM cad_file_process_status c
-LEFT JOIN LATERAL (
-	SELECT
-		product_name,
-		is_complete,
-		error_msg,
-		source_file_path,
-		converted_file_path,
-		pc_address,
-		glb_address,
-		update_time,
-		create_time
-	FROM product_info
-	WHERE item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
-		AND tenant_id = current_setting('app.current_tenant', true)
-		AND COALESCE(is_deleted, false) = false
-	ORDER BY update_time DESC NULLS LAST, create_time DESC NULLS LAST
-	LIMIT 1
-) p ON true
-WHERE c.batch_run_id = $1
-	AND c.tenant_id = current_setting('app.current_tenant', true)
-	AND COALESCE(c.is_deleted, 0) = 0
+	COALESCE(i.ingest_terminal_time, p.update_time, i.process_end_time, i.process_start_time, i.update_time, i.create_time) AS update_time,
+	i.create_time,
+	i.status_rank,
+	i.process_rank,
+	i.sort_time
+FROM paged_items i
+LEFT JOIN product_lookup p
+	ON p.lookup_item_code = i.lookup_item_code
 ORDER BY
-	%s,
-	%s,
-	COALESCE(c.ingest_terminal_time, p.update_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
-	c.item_code DESC
-LIMIT $2
-OFFSET $3
-`, fmt.Sprintf(ingestMonitorBatchOrderCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase, ingestMonitorBatchPublicStatusCase), ingestMonitorBatchProcessingOrderCase)
+	i.status_rank ASC,
+	i.process_rank ASC,
+	i.sort_time DESC NULLS LAST,
+	i.item_code DESC
+`, ingestMonitorBatchStatusOrderCase, ingestMonitorBatchProcessingOrderCase, cursorFilter, limitPlaceholder)
 
-	rows, err := tx.QueryContext(ctx, query, batchRunID, pageSize, offset)
+	rows, err := tx.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, "", false, err
 	}
 	defer rows.Close()
 
-	items := make([]ingestMonitorBatchItemDTO, 0, 64)
+	itemRows := make([]ingestMonitorBatchItemRow, 0, pageSize+1)
 	for rows.Next() {
 		item, err := scanIngestMonitorBatchItem(rows)
 		if err != nil {
-			return nil, err
+			return nil, "", false, err
 		}
-		items = append(items, item)
+		itemRows = append(itemRows, item)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, "", false, err
 	}
 
-	return items, nil
+	hasMore := len(itemRows) > pageSize
+	if hasMore {
+		itemRows = itemRows[:pageSize]
+	}
+
+	nextCursor := ""
+	if hasMore && len(itemRows) > 0 {
+		nextCursor, err = encodeIngestMonitorBatchCursor(itemRows[len(itemRows)-1])
+		if err != nil {
+			return nil, "", false, err
+		}
+	}
+
+	items := make([]ingestMonitorBatchItemDTO, 0, len(itemRows))
+	for _, row := range itemRows {
+		items = append(items, row.Item)
+	}
+
+	return items, nextCursor, hasMore, nil
 }
 
 func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
@@ -601,12 +612,13 @@ func scanIngestMonitorBatch(scanner sqlScanner) (ingestMonitorBatchDTO, error) {
 	return record, nil
 }
 
-func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, error) {
+func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemRow, error) {
 	var (
 		itemCode          string
 		cadNumber         string
 		fileName          string
 		processStatus     string
+		ingestStatus      string
 		productName       string
 		isComplete        sql.NullInt64
 		hasFormalRecord   bool
@@ -620,6 +632,9 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		productUpdateTime sql.NullTime
 		updateTime        sql.NullTime
 		createTime        sql.NullTime
+		statusRank        int
+		processRank       int
+		sortTime          sql.NullTime
 	)
 
 	if err := scanner.Scan(
@@ -627,6 +642,7 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		&cadNumber,
 		&fileName,
 		&processStatus,
+		&ingestStatus,
 		&productName,
 		&isComplete,
 		&hasFormalRecord,
@@ -640,8 +656,11 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		&productUpdateTime,
 		&updateTime,
 		&createTime,
+		&statusRank,
+		&processRank,
+		&sortTime,
 	); err != nil {
-		return ingestMonitorBatchItemDTO{}, err
+		return ingestMonitorBatchItemRow{}, err
 	}
 
 	trackedRecord := ingestMonitorRecordDTO{
@@ -663,24 +682,24 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		ProductUpdateTime: formatNullableTime(productUpdateTime),
 		UpdateTime:        formatNullableTime(updateTime),
 		CreateTime:        formatNullableTime(createTime),
+		Status:            strings.TrimSpace(ingestStatus),
 	}
 	if isComplete.Valid {
 		value := int(isComplete.Int64)
 		trackedRecord.IsComplete = &value
 	}
-	trackedRecord.Status = deriveTrackedIngestStatus(
-		trackedRecord.IsComplete,
-		trackedRecord.HasFormalRecord,
-		trackedRecord.ProcessStatus,
-		trackedRecord.ErrorMsg,
-		trackedRecord.SourceFilePath,
-		trackedRecord.ConvertedFilePath,
-		trackedRecord.PcAddress,
-		trackedRecord.GlbAddress,
-	)
 	populateIngestMonitorDiagnostics(&trackedRecord)
 
-	record := ingestMonitorBatchItemDTO{
+	record := ingestMonitorBatchItemRow{
+		StatusRank:    statusRank,
+		ProcessRank:   processRank,
+		SortTimeValid: sortTime.Valid,
+	}
+	if sortTime.Valid {
+		record.SortTime = sortTime.Time
+	}
+
+	record.Item = ingestMonitorBatchItemDTO{
 		ItemCode:          itemCode,
 		CadNumber:         cadNumber,
 		FileName:          fileName,
@@ -711,9 +730,52 @@ func scanIngestMonitorBatchItem(scanner sqlScanner) (ingestMonitorBatchItemDTO, 
 		CreateTime:        trackedRecord.CreateTime,
 	}
 
-	record.IsComplete = trackedRecord.IsComplete
+	record.Item.IsComplete = trackedRecord.IsComplete
 
 	return record, nil
+}
+
+func decodeIngestMonitorBatchCursor(raw string) (*ingestMonitorBatchCursor, error) {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
+		return nil, nil
+	}
+
+	decoded, err := base64.RawURLEncoding.DecodeString(trimmed)
+	if err != nil {
+		return nil, errInvalidIngestMonitorBatchCursor
+	}
+
+	cursor := &ingestMonitorBatchCursor{}
+	if err := json.Unmarshal(decoded, cursor); err != nil {
+		return nil, errInvalidIngestMonitorBatchCursor
+	}
+	if cursor.ItemCode == "" || cursor.SortTime == "" {
+		return nil, errInvalidIngestMonitorBatchCursor
+	}
+	if _, err := time.Parse(time.RFC3339Nano, cursor.SortTime); err != nil {
+		return nil, errInvalidIngestMonitorBatchCursor
+	}
+
+	return cursor, nil
+}
+
+func encodeIngestMonitorBatchCursor(row ingestMonitorBatchItemRow) (string, error) {
+	if !row.SortTimeValid || row.Item.ItemCode == "" {
+		return "", errInvalidIngestMonitorBatchCursor
+	}
+
+	payload, err := json.Marshal(ingestMonitorBatchCursor{
+		StatusRank:  row.StatusRank,
+		ProcessRank: row.ProcessRank,
+		SortTime:    row.SortTime.UTC().Format(time.RFC3339Nano),
+		ItemCode:    row.Item.ItemCode,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return base64.RawURLEncoding.EncodeToString(payload), nil
 }
 
 func parseJSONStringArray(raw string) []string {
@@ -763,25 +825,9 @@ func (h *Hub) getIngestMonitorBatchDetail(e *core.RequestEvent) error {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": "batchRunId 参数不能为空"})
 	}
 
-	page := 1
-	if rawPage := strings.TrimSpace(e.Request.URL.Query().Get("page")); rawPage != "" {
-		parsedPage, parseErr := strconv.Atoi(rawPage)
-		if parseErr != nil || parsedPage <= 0 {
-			return e.JSON(http.StatusBadRequest, map[string]string{"error": "page 参数必须为正整数"})
-		}
-		page = parsedPage
-	}
+	cursor := strings.TrimSpace(e.Request.URL.Query().Get("cursor"))
 
-	pageSize := 200
-	if rawPageSize := strings.TrimSpace(e.Request.URL.Query().Get("pageSize")); rawPageSize != "" {
-		parsedPageSize, parseErr := strconv.Atoi(rawPageSize)
-		if parseErr != nil || parsedPageSize <= 0 || parsedPageSize > 500 {
-			return e.JSON(http.StatusBadRequest, map[string]string{"error": "pageSize 参数必须为 1~500 的整数"})
-		}
-		pageSize = parsedPageSize
-	}
-
-	response, err := h.ingestMonitor.GetBatchDetail(e.Request.Context(), batchRunID, page, pageSize)
+	response, err := h.ingestMonitor.GetBatchDetail(e.Request.Context(), batchRunID, cursor)
 	if err != nil {
 		return h.handleIngestMonitorBatchError(e, "get ingest monitor batch detail failed", err)
 	}
@@ -796,6 +842,8 @@ func (h *Hub) handleIngestMonitorBatchError(e *core.RequestEvent, logMessage str
 		return e.JSON(http.StatusServiceUnavailable, map[string]string{"error": cfgErr.Error()})
 	case errors.Is(err, sql.ErrNoRows):
 		return e.JSON(http.StatusNotFound, map[string]string{"error": "未找到对应的入库批次"})
+	case errors.Is(err, errInvalidIngestMonitorBatchCursor):
+		return e.JSON(http.StatusBadRequest, map[string]string{"error": "cursor 参数不合法"})
 	default:
 		h.Logger().Error(logMessage, "logger", "hub", "err", err)
 		return e.JSON(http.StatusInternalServerError, map[string]string{"error": "查询入库批次失败"})
