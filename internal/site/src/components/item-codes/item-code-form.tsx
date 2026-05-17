@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { updateItemCodeInDB } from "@/lib/itemCodeApi"
@@ -28,6 +27,12 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 	const [submitting, setSubmitting] = useState(false)
 
 	const isEdit = !!record
+
+	const statusLabel = useCallback((value: "active" | "inactive" | "obsolete") => {
+		if (value === "active") return t`启用`
+		if (value === "inactive") return t`停用`
+		return t`废弃`
+	}, [])
 
 	useEffect(() => {
 		if (open) {
@@ -58,7 +63,6 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 				code: code.trim(),
 				name: name.trim(),
 				category: category.trim(),
-				status,
 				description: description.trim(),
 			}
 			if (isEdit && record) {
@@ -77,7 +81,7 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 		} finally {
 			setSubmitting(false)
 		}
-	}, [code, name, category, status, description, isEdit, record, onOpenChange, onSuccess])
+	}, [code, name, category, description, isEdit, record, onOpenChange, onSuccess])
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -128,16 +132,7 @@ export default memo(function ItemCodeForm({ open, onOpenChange, record, onSucces
 							<Label htmlFor="item-status">
 								<Trans>状态</Trans>
 							</Label>
-							<Select value={status} onValueChange={(v) => setStatus(v as "active" | "inactive" | "obsolete")}>
-								<SelectTrigger id="item-status">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="active">启用</SelectItem>
-									<SelectItem value="inactive">停用</SelectItem>
-									<SelectItem value="obsolete">废弃</SelectItem>
-								</SelectContent>
-							</Select>
+							<Input id="item-status" value={statusLabel(status)} disabled />
 						</div>
 					</div>
 					<div className="grid gap-2">

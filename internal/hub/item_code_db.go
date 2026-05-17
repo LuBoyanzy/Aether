@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lib/pq"
 	"github.com/pocketbase/pocketbase/core"
 )
 
@@ -382,13 +383,99 @@ func (h *Hub) getItemCodeDBDetail(e *core.RequestEvent) error {
 
 func (s *ingestMonitorService) MarkItemCodeDeletedInDB(ctx context.Context, code string) error {
 	return s.withTenantTxWrite(ctx, func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
-		_, err := tx.ExecContext(queryCtx, `
-			DELETE FROM product_info
-			WHERE tenant_id = current_setting('app.current_tenant')
-			  AND item_code = $1
-		`, code)
+		_, err := deleteItemCodesInTx(tx, queryCtx, []string{code})
 		return err
 	})
+}
+
+func deleteItemCodesInTx(tx *sql.Tx, ctx context.Context, codes []string) ([]string, error) {
+	normalizedCodes := normalizeItemCodes(codes)
+	if len(normalizedCodes) == 0 {
+		return nil, nil
+	}
+
+	rows, err := tx.QueryContext(ctx, `
+WITH target_codes AS (
+	SELECT DISTINCT unnest($1::text[]) AS item_code
+),
+deleted_product_embeddings AS (
+	DELETE FROM product_embeddings p
+	USING target_codes t
+	WHERE p.tenant_id = current_setting('app.current_tenant', true)
+		AND p.item_code = t.item_code
+	RETURNING 1
+),
+deleted_item_feature_relation AS (
+	DELETE FROM item_feature_relation r
+	USING target_codes t
+	WHERE r.tenant_id = current_setting('app.current_tenant', true)
+		AND r.item_code = t.item_code
+	RETURNING 1
+),
+deleted_similar_records AS (
+	DELETE FROM similar_records r
+	USING target_codes t
+	WHERE r.tenant_id = current_setting('app.current_tenant', true)
+		AND (r.query_item_code = t.item_code OR r.result_item_code = t.item_code)
+	RETURNING 1
+),
+deleted_cad_file_plm AS (
+	DELETE FROM cad_file_plm p
+	USING target_codes t
+	WHERE p.tenant_id = current_setting('app.current_tenant', true)
+		AND p.item_code = t.item_code
+	RETURNING 1
+),
+deleted_cad_file_process_status AS (
+	DELETE FROM cad_file_process_status s
+	USING target_codes t
+	WHERE s.tenant_id = current_setting('app.current_tenant', true)
+		AND (s.item_code = t.item_code OR s.product_item_code = t.item_code)
+	RETURNING 1
+)
+DELETE FROM product_info p
+USING target_codes t
+WHERE p.tenant_id = current_setting('app.current_tenant', true)
+	AND p.item_code = t.item_code
+RETURNING p.item_code
+`, pq.Array(normalizedCodes))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	deletedCodes := make([]string, 0, len(normalizedCodes))
+	for rows.Next() {
+		var code string
+		if err := rows.Scan(&code); err != nil {
+			return nil, err
+		}
+		deletedCodes = append(deletedCodes, code)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return deletedCodes, nil
+}
+
+func normalizeItemCodes(codes []string) []string {
+	if len(codes) == 0 {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(codes))
+	normalized := make([]string, 0, len(codes))
+	for _, code := range codes {
+		code = strings.TrimSpace(code)
+		if code == "" {
+			continue
+		}
+		if _, ok := seen[code]; ok {
+			continue
+		}
+		seen[code] = struct{}{}
+		normalized = append(normalized, code)
+	}
+	return normalized
 }
 
 func (s *ingestMonitorService) UpdateItemCodeInDB(ctx context.Context, code string, name, category, description string) error {

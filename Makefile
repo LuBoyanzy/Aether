@@ -3,14 +3,20 @@ OS ?= $(shell go env GOOS)
 ARCH ?= $(shell go env GOARCH)
 # Default to static Go binaries so Linux artifacts stay compatible with older glibc baselines.
 CGO_ENABLED ?= 0
+# Linux release artifacts must not depend on the build host glibc. NVML's purego
+# loader pulls in libdl/libc even with CGO disabled, so Linux builds disable that
+# optional path and keep the nvidia-smi fallback.
+GO_TAGS ?= $(if $(filter linux,$(OS)),no_nvml,)
 GO_BUILD_ENV := CGO_ENABLED=$(CGO_ENABLED) GOGC=75 GOOS=$(OS) GOARCH=$(ARCH)
+GO_BUILD_TAGS := $(if $(strip $(GO_TAGS)),-tags "$(GO_TAGS)",)
 # Skip building the web UI if true
 SKIP_WEB ?= false
+AETHER_IMAGE ?= i3d/aether-monitor:1.0.0
 
 # Set executable extension based on target OS
 EXE_EXT := $(if $(filter windows,$(OS)),.exe,)
 
-.PHONY: tidy build-agent build-hub build-hub-dev build clean lint dev-server dev-ui dev-agent dev-hub dev generate-locales
+.PHONY: tidy build-agent build-hub build-hub-dev build clean lint dev-server dev-ui dev-agent dev-hub dev generate-locales verify-static-linux build-release-image
 .DEFAULT_GOAL := build
 
 clean:
@@ -51,16 +57,34 @@ build-dotnet-conditional:
 
 # Update build-agent to include conditional .NET build
 build-agent: tidy build-dotnet-conditional
-	$(GO_BUILD_ENV) go build -o ./build/aether-agent_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/agent
+	$(GO_BUILD_ENV) go build $(GO_BUILD_TAGS) -o ./build/aether-agent_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/agent
 
 build-hub: tidy $(if $(filter false,$(SKIP_WEB)),build-web-ui)
-	$(GO_BUILD_ENV) go build -o ./build/aether_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
+	$(GO_BUILD_ENV) go build $(GO_BUILD_TAGS) -o ./build/aether_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
 
 build-hub-dev: tidy
 	mkdir -p ./internal/site/dist && touch ./internal/site/dist/index.html
-	$(GO_BUILD_ENV) go build -tags development -o ./build/aether-dev_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
+	$(GO_BUILD_ENV) go build -tags "$(strip development $(GO_TAGS))" -o ./build/aether-dev_$(OS)_$(ARCH)$(EXE_EXT) -ldflags "-w -s" ./internal/cmd/hub
 
 build: build-agent build-hub
+
+verify-static-linux:
+	@set -eu; \
+	for bin in ./build/aether_linux_amd64 ./build/aether-agent_linux_amd64; do \
+		if [ ! -f "$$bin" ]; then \
+			echo "missing $$bin; run: make build-agent build-hub OS=linux ARCH=amd64 SKIP_WEB=true"; \
+			exit 1; \
+		fi; \
+		if readelf -d "$$bin" 2>/dev/null | grep -q '(NEEDED)'; then \
+			echo "$$bin is dynamically linked:"; \
+			readelf -d "$$bin" | grep '(NEEDED)'; \
+			exit 1; \
+		fi; \
+		file "$$bin"; \
+	done
+
+build-release-image: build-agent build-hub verify-static-linux
+	docker build -f Dockerfile.release -t $(AETHER_IMAGE) .
 
 generate-locales:
 	@if [ ! -f ./internal/site/src/locales/en/en.ts ]; then \

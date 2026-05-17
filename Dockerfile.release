@@ -1,0 +1,12 @@
+FROM scratch
+
+WORKDIR /tmp
+WORKDIR /data/aether
+
+COPY build/aether_linux_amd64 /opt/aether/aether
+COPY build/aether-agent_linux_amd64 /opt/aether/aether-agent
+
+EXPOSE 19090
+
+ENTRYPOINT ["/opt/aether/aether"]
+CMD ["serve", "--http", "0.0.0.0:19090"]

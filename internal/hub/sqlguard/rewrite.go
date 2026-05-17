@@ -18,9 +18,23 @@ func BuildPreviewSelect(whereClause string) string {
 			END AS status
 		FROM product_info
 		WHERE %s
-		  AND tenant_id = current_setting('app.current_tenant')
+		  AND tenant_id = current_setting('app.current_tenant', true)
 		  AND COALESCE(is_deleted, false) = false
 		LIMIT 100
+	`, whereClause)
+}
+
+// BuildDeleteCandidates selects the item_codes that a destructive operation
+// will touch. The caller can then clean related tables in a controlled
+// transaction instead of deleting product_info alone.
+func BuildDeleteCandidates(whereClause string) string {
+	return fmt.Sprintf(`
+		SELECT item_code
+		FROM product_info
+		WHERE %s
+		  AND tenant_id = current_setting('app.current_tenant', true)
+		  AND COALESCE(is_deleted, false) = false
+		LIMIT 1000
 	`, whereClause)
 }
 
@@ -32,12 +46,13 @@ func BuildDelete(whereClause string) string {
 		WITH to_delete AS (
 			SELECT item_code FROM product_info
 			WHERE %s
-			  AND tenant_id = current_setting('app.current_tenant')
+			  AND tenant_id = current_setting('app.current_tenant', true)
 			  AND COALESCE(is_deleted, false) = false
 			LIMIT 1000
 		)
 		DELETE FROM product_info
 		WHERE item_code IN (SELECT item_code FROM to_delete)
+		  AND tenant_id = current_setting('app.current_tenant', true)
 		RETURNING item_code
 	`, whereClause)
 }

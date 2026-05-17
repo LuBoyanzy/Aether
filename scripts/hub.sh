@@ -12,9 +12,10 @@ resolve_env_file() {
 
   local candidates=(
     "${ROOT_DIR}/.env"
+    "${ROOT_DIR}/local-dev.env"
+    "${ROOT_DIR}/../release/.env"
     "${ROOT_DIR}/../.env"
     "${ROOT_DIR}/../../.env"
-    "${ROOT_DIR}/local-dev.env"
   )
   local path
   for path in "${candidates[@]}"; do
@@ -42,7 +43,7 @@ export_ingest_monitor_defaults() {
   export AETHER_HUB_INGEST_MONITOR_PG_USER="${AETHER_HUB_INGEST_MONITOR_PG_USER:-${INGEST_MONITOR_PG_USER:-${POSTGRES_USER:-}}}"
   export AETHER_HUB_INGEST_MONITOR_PG_PASSWORD="${AETHER_HUB_INGEST_MONITOR_PG_PASSWORD:-${INGEST_MONITOR_PG_PASSWORD:-${POSTGRES_PASSWORD:-}}}"
   export AETHER_HUB_INGEST_MONITOR_PG_DATABASE="${AETHER_HUB_INGEST_MONITOR_PG_DATABASE:-${INGEST_MONITOR_PG_DATABASE:-${POSTGRES_DB:-}}}"
-  export AETHER_HUB_INGEST_MONITOR_PG_TENANT="${AETHER_HUB_INGEST_MONITOR_PG_TENANT:-${INGEST_MONITOR_PG_TENANT:-${INFERENGINEER_TENANT_ID:-}}}"
+  export AETHER_HUB_INGEST_MONITOR_PG_TENANT="${AETHER_HUB_INGEST_MONITOR_PG_TENANT:-${INGEST_MONITOR_PG_TENANT:-${MIGRATION_TENANT_ID:-${TENANT_ID:-${INFERENGINEER_TENANT_ID:-}}}}}"
   export AETHER_HUB_INGEST_MONITOR_PG_SSLMODE="${AETHER_HUB_INGEST_MONITOR_PG_SSLMODE:-${INGEST_MONITOR_PG_SSLMODE:-disable}}"
 }
 
@@ -124,10 +125,53 @@ is_running() {
     return 1
   fi
   if kill -0 "${pid}" >/dev/null 2>&1; then
+    if ! pid_matches_current_hub "${pid}"; then
+      rm -f "${PID_FILE}"
+      return 1
+    fi
     return 0
   fi
   rm -f "${PID_FILE}"
   return 1
+}
+
+canonical_path() {
+  local path="$1"
+  if command -v readlink >/dev/null 2>&1; then
+    readlink -f "${path}" 2>/dev/null && return 0
+  fi
+  printf '%s\n' "${path}"
+}
+
+pid_matches_current_hub() {
+  local pid="$1"
+
+  if [[ -e "/proc/${pid}/exe" ]]; then
+    local expected=""
+    local actual=""
+    expected="$(canonical_path "${HUB_BIN}")"
+    actual="$(canonical_path "/proc/${pid}/exe")"
+    if [[ -z "${actual}" || "${actual}" != "${expected}" ]]; then
+      return 1
+    fi
+  fi
+
+  if [[ -r "/proc/${pid}/cmdline" ]]; then
+    local cmd_args=""
+    cmd_args="$(tr '\0' '\n' < "/proc/${pid}/cmdline")"
+    if ! grep -Fxq "serve" <<< "${cmd_args}"; then
+      return 1
+    fi
+    if grep -Fxq "${HTTP_ADDR}" <<< "${cmd_args}"; then
+      return 0
+    fi
+    if grep -Fxq "--http=${HTTP_ADDR}" <<< "${cmd_args}"; then
+      return 0
+    fi
+    return 1
+  fi
+
+  return 0
 }
 
 wait_stopped() {
@@ -191,10 +235,17 @@ start_hub() {
 
   (
     cd "${ROOT_DIR}"
-    nohup env \
-      APP_URL="${APP_URL}" \
-      AETHER_HUB_LOCAL_AGENT_BIN="${LOCAL_AGENT_BIN}" \
-      "${HUB_BIN}" serve --http "${HTTP_ADDR}" >> "${LOG_FILE}" 2>&1 &
+    if command -v setsid >/dev/null 2>&1; then
+      nohup setsid env \
+        APP_URL="${APP_URL}" \
+        AETHER_HUB_LOCAL_AGENT_BIN="${LOCAL_AGENT_BIN}" \
+        "${HUB_BIN}" serve --http "${HTTP_ADDR}" </dev/null >> "${LOG_FILE}" 2>&1 &
+    else
+      nohup env \
+        APP_URL="${APP_URL}" \
+        AETHER_HUB_LOCAL_AGENT_BIN="${LOCAL_AGENT_BIN}" \
+        "${HUB_BIN}" serve --http "${HTTP_ADDR}" </dev/null >> "${LOG_FILE}" 2>&1 &
+    fi
     echo $! > "${PID_FILE}"
   )
 

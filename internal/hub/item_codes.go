@@ -160,13 +160,14 @@ func (h *Hub) previewQueryDeleteItemCodes(e *core.RequestEvent) error {
 
 	previewSQL := sqlguard.BuildPreviewSelect(whereClause)
 
-	// L3: EXPLAIN validation
-	if err := sqlguard.ValidateViaExplain(e.Request.Context(), h.ingestMonitor.DB(), previewSQL); err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-
 	var items []map[string]any
 	err = h.ingestMonitor.withTenantTx(e.Request.Context(), func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
+		// L3: EXPLAIN validation. Keep it in the tenant-scoped transaction so
+		// current_setting('app.current_tenant') and RLS behave like execution.
+		if err := sqlguard.ValidateViaExplainTx(queryCtx, tx, previewSQL); err != nil {
+			return err
+		}
+
 		rows, err := tx.QueryContext(queryCtx, previewSQL)
 		if err != nil {
 			return err
@@ -230,29 +231,39 @@ func (h *Hub) queryDeleteItemCodes(e *core.RequestEvent) error {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	execSQL := sqlguard.BuildDelete(whereClause)
-
-	// L3: EXPLAIN validation
-	if err := sqlguard.ValidateViaExplain(e.Request.Context(), h.ingestMonitor.DB(), execSQL); err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
+	candidateSQL := sqlguard.BuildDeleteCandidates(whereClause)
 
 	var deletedCodes []string
 	err = h.ingestMonitor.withTenantTxWrite(e.Request.Context(), func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
-		rows, err := tx.QueryContext(queryCtx, execSQL)
+		// L3: EXPLAIN validation. Run it after setting tenant context on this
+		// transaction to match the real candidate selection path.
+		if err := sqlguard.ValidateViaExplainTx(queryCtx, tx, candidateSQL); err != nil {
+			return err
+		}
+
+		rows, err := tx.QueryContext(queryCtx, candidateSQL)
 		if err != nil {
 			return err
 		}
-		defer rows.Close()
 
+		candidateCodes := make([]string, 0, 1000)
 		for rows.Next() {
 			var code string
 			if err := rows.Scan(&code); err != nil {
+				_ = rows.Close()
 				return err
 			}
-			deletedCodes = append(deletedCodes, code)
+			candidateCodes = append(candidateCodes, code)
 		}
-		return rows.Err()
+		if err := rows.Close(); err != nil {
+			return err
+		}
+		if err := rows.Err(); err != nil {
+			return err
+		}
+
+		deletedCodes, err = deleteItemCodesInTx(tx, queryCtx, candidateCodes)
+		return err
 	})
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})

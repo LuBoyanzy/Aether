@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -41,15 +42,6 @@ const (
 	ingestMonitorFormalFilter     = `
 WHERE COALESCE(is_deleted, false) = false
 	AND COALESCE(is_temporary, false) = false
-`
-	ingestMonitorSummaryStatusQuery = `
-SELECT
-	COUNT(*) FILTER (WHERE monitor_status = 'success') AS success,
-	COUNT(*) FILTER (WHERE monitor_status = 'failure') AS failure,
-	COUNT(*) FILTER (WHERE monitor_status = 'processing') AS processing,
-	COUNT(*) AS total
-FROM product_info
-` + ingestMonitorFormalFilter + `
 `
 )
 
@@ -305,27 +297,31 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 			RecordType: ingestMonitorFormalRecordType,
 		}
 
-		row := tx.QueryRowContext(queryCtx, ingestMonitorSummaryStatusQuery)
-		if err := row.Scan(
-			&response.Summary.Success,
-			&response.Summary.Failure,
-			&response.Summary.Processing,
-			&response.Summary.Total,
-		); err != nil {
-			return err
-		}
-
-		recent, err := listIngestMonitorRecords(tx, queryCtx, "", ingestMonitorRecentLimit)
+		summary, err := getIngestMonitorSummaryCounts(tx, queryCtx)
 		if err != nil {
 			return err
 		}
-		response.Recent = recent
+		response.Summary = summary
 
-		failures, err := listIngestMonitorRecords(tx, queryCtx, ingestMonitorStatusFailure, ingestMonitorFailureLimit)
+		formalRecent, err := listIngestMonitorRecords(tx, queryCtx, "", ingestMonitorRecentLimit)
 		if err != nil {
 			return err
 		}
-		response.Failures = failures
+		trackedRecent, err := listTrackedIngestMonitorRecords(tx, queryCtx, "", ingestMonitorRecentLimit)
+		if err != nil {
+			return err
+		}
+		response.Recent = mergeIngestMonitorRecords(ingestMonitorRecentLimit, formalRecent, trackedRecent)
+
+		formalFailures, err := listIngestMonitorRecords(tx, queryCtx, ingestMonitorStatusFailure, ingestMonitorFailureLimit)
+		if err != nil {
+			return err
+		}
+		trackedFailures, err := listTrackedIngestMonitorRecords(tx, queryCtx, ingestMonitorStatusFailure, ingestMonitorFailureLimit)
+		if err != nil {
+			return err
+		}
+		response.Failures = mergeIngestMonitorRecords(ingestMonitorFailureLimit, formalFailures, trackedFailures)
 		return nil
 	})
 	if err != nil {
@@ -333,6 +329,49 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 	}
 
 	return response, nil
+}
+
+func getIngestMonitorSummaryCounts(tx *sql.Tx, ctx context.Context) (ingestMonitorSummaryCountsDTO, error) {
+	row := tx.QueryRowContext(ctx, `
+WITH formal_records AS (
+	SELECT
+		item_code,
+		monitor_status AS status
+	FROM product_info
+`+ingestMonitorFormalFilter+`
+),
+tracking_records AS (
+	SELECT
+		c.item_code,
+		c.ingest_status AS status
+	FROM cad_file_process_status c
+	LEFT JOIN product_info p
+		ON p.item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+		AND p.tenant_id = current_setting('app.current_tenant', true)
+		AND COALESCE(p.is_deleted, false) = false
+		AND COALESCE(p.is_temporary, false) = false
+	WHERE c.tenant_id = current_setting('app.current_tenant', true)
+		AND COALESCE(c.is_deleted, 0) = 0
+		AND p.item_code IS NULL
+),
+records AS (
+	SELECT status FROM formal_records
+	UNION ALL
+	SELECT status FROM tracking_records
+)
+SELECT
+	COUNT(*) FILTER (WHERE status = 'success') AS success,
+	COUNT(*) FILTER (WHERE status = 'failure') AS failure,
+	COUNT(*) FILTER (WHERE status = 'processing') AS processing,
+	COUNT(*) AS total
+FROM records
+`)
+
+	var counts ingestMonitorSummaryCountsDTO
+	if err := row.Scan(&counts.Success, &counts.Failure, &counts.Processing, &counts.Total); err != nil {
+		return ingestMonitorSummaryCountsDTO{}, err
+	}
+	return counts, nil
 }
 
 func (s *ingestMonitorService) GetDetail(ctx context.Context, itemCode string) (*ingestMonitorDetailResponse, error) {
@@ -411,6 +450,130 @@ LIMIT $` + strconv.Itoa(len(args)+1)
 	}
 
 	return items, nil
+}
+
+func listTrackedIngestMonitorRecords(tx *sql.Tx, ctx context.Context, statusFilter string, limit int) ([]ingestMonitorRecordDTO, error) {
+	query := `
+SELECT
+	c.item_code,
+	'' AS product_name,
+	NULL::integer AS is_complete,
+	false AS is_temporary,
+	false AS has_formal_record,
+	COALESCE(c.cad_number, '') AS cad_number,
+	COALESCE(c.file_name, '') AS file_name,
+	COALESCE(c.process_status, '') AS process_status,
+	COALESCE(c.batch_run_id, '') AS batch_run_id,
+	COALESCE(c.error_message, '') AS error_msg,
+	'' AS source_file_path,
+	'' AS converted_file_path,
+	'' AS pc_address,
+	COALESCE(c.glb_address, '') AS glb_address,
+	'' AS inference_types,
+	c.ingest_status AS status,
+	c.process_start_time,
+	c.process_end_time,
+	NULL::timestamp with time zone AS product_update_time,
+	COALESCE(c.ingest_terminal_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) AS update_time,
+	c.create_time
+FROM cad_file_process_status c
+LEFT JOIN product_info p
+	ON p.item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+	AND p.tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(p.is_deleted, false) = false
+	AND COALESCE(p.is_temporary, false) = false
+WHERE c.tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(c.is_deleted, 0) = 0
+	AND p.item_code IS NULL
+`
+
+	args := []any{}
+	if statusFilter != "" {
+		args = append(args, statusFilter)
+		query += `
+	AND c.ingest_status = $1
+`
+	}
+
+	query += `
+ORDER BY COALESCE(c.ingest_terminal_time, c.process_end_time, c.process_start_time, c.update_time, c.create_time) DESC NULLS LAST,
+	c.create_time DESC NULLS LAST,
+	c.item_code DESC
+LIMIT $` + strconv.Itoa(len(args)+1)
+	args = append(args, limit)
+
+	rows, err := tx.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	items := make([]ingestMonitorRecordDTO, 0, limit)
+	for rows.Next() {
+		record, err := scanTrackedIngestMonitorRecord(rows)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, record)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func mergeIngestMonitorRecords(limit int, groups ...[]ingestMonitorRecordDTO) []ingestMonitorRecordDTO {
+	if limit <= 0 {
+		return nil
+	}
+
+	total := 0
+	for _, group := range groups {
+		total += len(group)
+	}
+	if total == 0 {
+		return nil
+	}
+
+	records := make([]ingestMonitorRecordDTO, 0, total)
+	for _, group := range groups {
+		records = append(records, group...)
+	}
+
+	sort.SliceStable(records, func(i, j int) bool {
+		leftUpdate, leftUpdateOK := parseIngestMonitorTime(records[i].UpdateTime)
+		rightUpdate, rightUpdateOK := parseIngestMonitorTime(records[j].UpdateTime)
+		if leftUpdateOK && rightUpdateOK && !leftUpdate.Equal(rightUpdate) {
+			return leftUpdate.After(rightUpdate)
+		}
+		if leftUpdateOK != rightUpdateOK {
+			return leftUpdateOK
+		}
+
+		leftCreate, leftCreateOK := parseIngestMonitorTime(records[i].CreateTime)
+		rightCreate, rightCreateOK := parseIngestMonitorTime(records[j].CreateTime)
+		if leftCreateOK && rightCreateOK && !leftCreate.Equal(rightCreate) {
+			return leftCreate.After(rightCreate)
+		}
+		if leftCreateOK != rightCreateOK {
+			return leftCreateOK
+		}
+
+		return records[i].ItemCode > records[j].ItemCode
+	})
+
+	if len(records) > limit {
+		records = records[:limit]
+	}
+	return records
+}
+
+func parseIngestMonitorTime(raw string) (time.Time, bool) {
+	value, err := time.Parse(time.RFC3339, strings.TrimSpace(raw))
+	if err != nil {
+		return time.Time{}, false
+	}
+	return value, true
 }
 
 func getIngestMonitorRecordByItemCode(tx *sql.Tx, ctx context.Context, itemCode string) (ingestMonitorRecordDTO, error) {

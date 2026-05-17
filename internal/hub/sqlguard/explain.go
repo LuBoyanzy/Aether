@@ -24,12 +24,22 @@ type explainNode struct {
 // and verifies that the query only touches the allowed table and contains
 // no forbidden operations (subqueries, functions, etc.).
 func ValidateViaExplain(ctx context.Context, db *sql.DB, query string) error {
+	if db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
 	if err != nil {
 		return fmt.Errorf("begin read-only tx failed: %w", err)
 	}
 	defer tx.Rollback()
 
+	return ValidateViaExplainTx(ctx, tx, query)
+}
+
+// ValidateViaExplainTx runs EXPLAIN in an existing transaction. Callers that
+// rely on PostgreSQL RLS/session settings should use this after setting the
+// tenant context on the same connection.
+func ValidateViaExplainTx(ctx context.Context, tx *sql.Tx, query string) error {
 	var jsonStr string
 	if err := tx.QueryRowContext(ctx, "EXPLAIN (FORMAT JSON) "+query).Scan(&jsonStr); err != nil {
 		return fmt.Errorf("invalid SQL: %w", err)

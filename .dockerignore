@@ -54,3 +54,8 @@ agent/lhm/bin
 helloagents/
 tests/
 test/
+
+# Release image static binaries
+!build/
+!build/aether_linux_amd64
+!build/aether-agent_linux_amd64

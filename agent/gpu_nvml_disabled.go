@@ -1,4 +1,4 @@
-//go:build !(windows || (linux && (amd64 || arm64)))
+//go:build no_nvml || !(windows || (linux && (amd64 || arm64)))
 
 package agent
 
@@ -15,4 +15,3 @@ func (c *nvmlCollector) init() error {
 }
 
 func (c *nvmlCollector) start() {}
-
