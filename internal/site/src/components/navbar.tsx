@@ -3,10 +3,10 @@
 import { Trans } from "@lingui/react/macro"
 import { getPagePath } from "@nanostores/router"
 import {
-	BarcodeIcon,
 	ClipboardListIcon,
 	ContainerIcon,
 	DatabaseBackupIcon,
+	GaugeIcon,
 	HardDriveIcon,
 	LogOutIcon,
 	LogsIcon,
@@ -126,16 +126,31 @@ export default function Navbar() {
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Link
-							href={getPagePath($router, "ingest_visualization")}
+							href={getPagePath($router, "ingest_management")}
 							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-							aria-label="入库服务可视化"
-							onMouseEnter={runOnce(() => import("@/components/routes/ingest-visualization"))}
+							aria-label="入库管理"
+							onMouseEnter={runOnce(() => import("@/components/routes/ingest-management"))}
 						>
 							<WorkflowIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
 						</Link>
 					</TooltipTrigger>
 					<TooltipContent>
-						<p>入库服务可视化</p>
+						<p>入库管理</p>
+					</TooltipContent>
+				</Tooltip>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Link
+							href={getPagePath($router, "resource_monitoring")}
+							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+							aria-label="资源监控"
+							onMouseEnter={runOnce(() => import("@/components/routes/resource-monitoring"))}
+						>
+							<GaugeIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
+						</Link>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>资源监控</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>
@@ -150,23 +165,6 @@ export default function Navbar() {
 					</TooltipTrigger>
 					<TooltipContent>
 						<p>S.M.A.R.T.</p>
-					</TooltipContent>
-				</Tooltip>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Link
-							href={getPagePath($router, "item_codes")}
-							className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-							aria-label={t`Item Code 管理`}
-							onMouseEnter={runOnce(() => import("@/components/routes/item-codes"))}
-						>
-							<BarcodeIcon className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.5} />
-						</Link>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>
-							<Trans>Item Code 管理</Trans>
-						</p>
 					</TooltipContent>
 				</Tooltip>
 				<Tooltip>

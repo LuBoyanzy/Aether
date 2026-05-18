@@ -53,6 +53,9 @@ export type IngestMonitorSummaryResponse = {
 	summary: IngestMonitorSummaryCounts
 	recent: IngestMonitorRecord[]
 	failures: IngestMonitorRecord[]
+	trackingSummary: IngestMonitorSummaryCounts
+	trackingRecent: IngestMonitorRecord[]
+	trackingFailures: IngestMonitorRecord[]
 }
 
 export type IngestMonitorDetailResponse = {

@@ -176,7 +176,7 @@ func TestUpdateContainerStatsValues(t *testing.T) {
 	}
 
 	testTime := time.Now()
-	updateContainerStatsValues(stats, 75.5, 1048576, 524288, 262144, testTime)
+	updateContainerStatsValues(stats, 75.5, 1048576, 524288, 262144, 131072, 65536, testTime)
 
 	// Check CPU percentage (should be rounded to 2 decimals)
 	assert.Equal(t, 75.5, stats.Cpu)
@@ -189,6 +189,9 @@ func TestUpdateContainerStatsValues(t *testing.T) {
 
 	// Check network recv (should be converted to MB: 262144 bytes = 0.25 MB)
 	assert.Equal(t, 0.25, stats.NetworkRecv)
+
+	assert.Equal(t, 0.13, stats.DiskReadPs)
+	assert.Equal(t, 0.06, stats.DiskWritePs)
 
 	// Check read time
 	assert.Equal(t, testTime, stats.PrevReadTime)
@@ -361,6 +364,49 @@ func TestCalculateNetworkStats(t *testing.T) {
 	assert.Equal(t, uint64(0), recv)
 }
 
+func TestCalculateDiskIOStats(t *testing.T) {
+	dm := &dockerManager{
+		diskReadTrackers:  make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
+		diskWriteTrackers: make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
+	}
+
+	cacheTimeMs := uint16(30000)
+	readTracker := deltatracker.NewDeltaTracker[string, uint64]()
+	writeTracker := deltatracker.NewDeltaTracker[string, uint64]()
+	readTracker.Set("container1", 1000)
+	writeTracker.Set("container1", 800)
+	readTracker.Cycle()
+	writeTracker.Cycle()
+	dm.diskReadTrackers[cacheTimeMs] = readTracker
+	dm.diskWriteTrackers[cacheTimeMs] = writeTracker
+
+	ctr := &container.ApiInfo{IdShort: "container1"}
+	apiStats := &container.ApiStats{
+		BlkioStats: container.BlkioStats{
+			IoServiceBytesRecursive: []container.BlkioEntry{
+				{Op: "Read", Value: 2500},
+				{Op: "Write", Value: 1800},
+				{Op: "Sync", Value: 999999},
+			},
+		},
+	}
+	stats := &container.Stats{PrevReadTime: time.Now().Add(-time.Second)}
+
+	read, write := dm.calculateDiskIOStats(ctr, apiStats, stats, true, "test-container", cacheTimeMs)
+
+	assert.Greater(t, read, uint64(0))
+	assert.Greater(t, write, uint64(0))
+
+	dm.cycleDiskIODeltasForCacheTime(cacheTimeMs)
+	apiStats.BlkioStats.IoServiceBytesRecursive = []container.BlkioEntry{
+		{Op: "Read", Value: 2500},
+		{Op: "Write", Value: 2300},
+	}
+	read, write = dm.calculateDiskIOStats(ctr, apiStats, stats, true, "test-container", cacheTimeMs)
+	assert.Equal(t, uint64(0), read)
+	assert.Greater(t, write, uint64(0))
+}
+
 func TestDockerManagerCreation(t *testing.T) {
 	// Test that dockerManager can be created without panicking
 	dm := &dockerManager{
@@ -369,6 +415,8 @@ func TestDockerManagerCreation(t *testing.T) {
 		lastCpuReadTime:     make(map[uint16]map[string]time.Time),
 		networkSentTrackers: make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
 		networkRecvTrackers: make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
+		diskReadTrackers:    make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
+		diskWriteTrackers:   make(map[uint16]*deltatracker.DeltaTracker[string, uint64]),
 	}
 
 	assert.NotNil(t, dm)
@@ -376,6 +424,8 @@ func TestDockerManagerCreation(t *testing.T) {
 	assert.NotNil(t, dm.lastCpuSystem)
 	assert.NotNil(t, dm.networkSentTrackers)
 	assert.NotNil(t, dm.networkRecvTrackers)
+	assert.NotNil(t, dm.diskReadTrackers)
+	assert.NotNil(t, dm.diskWriteTrackers)
 }
 
 func TestCycleCpuDeltas(t *testing.T) {
@@ -523,12 +573,14 @@ func TestContainerStatsInitialization(t *testing.T) {
 
 	// Test updating values
 	testTime := time.Now()
-	updateContainerStatsValues(stats, 45.67, 2097152, 1048576, 524288, testTime)
+	updateContainerStatsValues(stats, 45.67, 2097152, 1048576, 524288, 262144, 131072, testTime)
 
 	assert.Equal(t, 45.67, stats.Cpu)
 	assert.Equal(t, 2.0, stats.Mem)
 	assert.Equal(t, 1.0, stats.NetworkSent)
 	assert.Equal(t, 0.5, stats.NetworkRecv)
+	assert.Equal(t, 0.25, stats.DiskReadPs)
+	assert.Equal(t, 0.13, stats.DiskWritePs)
 	assert.Equal(t, testTime, stats.PrevReadTime)
 }
 
@@ -685,12 +737,14 @@ func TestContainerStatsEndToEndWithRealData(t *testing.T) {
 	// Test stats value updates
 	testStats := &container.Stats{}
 	testTime := time.Now()
-	updateContainerStatsValues(testStats, cpuPct, usedMemory, 1000000, 500000, testTime)
+	updateContainerStatsValues(testStats, cpuPct, usedMemory, 1000000, 500000, 250000, 125000, testTime)
 
 	assert.Equal(t, cpuPct, testStats.Cpu)
 	assert.Equal(t, bytesToMegabytes(float64(usedMemory)), testStats.Mem)
 	assert.Equal(t, bytesToMegabytes(1000000), testStats.NetworkSent)
 	assert.Equal(t, bytesToMegabytes(500000), testStats.NetworkRecv)
+	assert.Equal(t, bytesToMegabytes(250000), testStats.DiskReadPs)
+	assert.Equal(t, bytesToMegabytes(125000), testStats.DiskWritePs)
 	assert.Equal(t, testTime, testStats.PrevReadTime)
 }
 

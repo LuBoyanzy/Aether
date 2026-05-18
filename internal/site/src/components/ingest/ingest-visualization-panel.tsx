@@ -25,8 +25,6 @@ import {
 	PackageIcon
 } from "lucide-react"
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { ActiveAlerts } from "@/components/active-alerts"
-import { FooterRepoLink } from "@/components/footer-repo-link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -45,7 +43,7 @@ import {
 	type IngestMonitorRecord,
 	type IngestMonitorSummaryResponse,
 } from "@/lib/ingestMonitor"
-import { BRAND_NAME, formatShortDate, cn } from "@/lib/utils"
+import { formatShortDate, cn } from "@/lib/utils"
 
 const refreshIntervalMs = 15000
 
@@ -203,7 +201,7 @@ function DetailField({ label, value }: { label: string; value: string }) {
 	)
 }
 
-export default memo(() => {
+export default memo(function IngestVisualizationPanel() {
 	const [summaryData, setSummaryData] = useState<IngestMonitorSummaryResponse | null>(null)
 	const [batchListData, setBatchListData] = useState<IngestMonitorBatchListResponse | null>(null)
 	const [loading, setLoading] = useState(true)
@@ -224,10 +222,6 @@ export default memo(() => {
 	const [batchDetailCurrentCursor, setBatchDetailCurrentCursor] = useState("")
 	const [batchDetailCurrentPage, setBatchDetailCurrentPage] = useState(1)
 	const dashboardRequestInFlight = useRef(false)
-
-	useEffect(() => {
-		document.title = `${BRAND_NAME} - 入库服务可视化`
-	}, [])
 
 	const loadDashboard = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
 		if (dashboardRequestInFlight.current) {
@@ -1318,8 +1312,6 @@ export default memo(() => {
 				</DialogContent>
 			</Dialog>
 
-			<ActiveAlerts />
-			<FooterRepoLink />
 		</div>
 	)
 })

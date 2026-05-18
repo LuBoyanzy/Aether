@@ -11,6 +11,7 @@ import {
 	ContainerIcon,
 	DatabaseBackupIcon,
 	FingerprintIcon,
+	GaugeIcon,
 	HardDriveIcon,
 	LogsIcon,
 	MailIcon,
@@ -138,6 +139,32 @@ export default memo(function CommandPalette({ open, setOpen }: { open: boolean; 
 							<span>
 								<Trans>Audit Logs</Trans>
 							</span>
+							<CommandShortcut>
+								<Trans>Page</Trans>
+							</CommandShortcut>
+						</CommandItem>
+						<CommandItem
+							keywords={["ingest", "item code", "itemcode"]}
+							onSelect={() => {
+								navigate(getPagePath($router, "ingest_management"))
+								setOpen(false)
+							}}
+						>
+							<DatabaseBackupIcon className="me-2 size-4" />
+							<span>入库管理</span>
+							<CommandShortcut>
+								<Trans>Page</Trans>
+							</CommandShortcut>
+						</CommandItem>
+						<CommandItem
+							keywords={["resources", "monitoring", "i3d"]}
+							onSelect={() => {
+								navigate(getPagePath($router, "resource_monitoring"))
+								setOpen(false)
+							}}
+						>
+							<GaugeIcon className="me-2 size-4" />
+							<span>资源监控</span>
 							<CommandShortcut>
 								<Trans>Page</Trans>
 							</CommandShortcut>

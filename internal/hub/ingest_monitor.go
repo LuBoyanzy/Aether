@@ -120,10 +120,13 @@ type ingestMonitorRecordDTO struct {
 }
 
 type ingestMonitorSummaryResponse struct {
-	Scope    ingestMonitorScopeDTO         `json:"scope"`
-	Summary  ingestMonitorSummaryCountsDTO `json:"summary"`
-	Recent   []ingestMonitorRecordDTO      `json:"recent"`
-	Failures []ingestMonitorRecordDTO      `json:"failures"`
+	Scope            ingestMonitorScopeDTO         `json:"scope"`
+	Summary          ingestMonitorSummaryCountsDTO `json:"summary"`
+	Recent           []ingestMonitorRecordDTO      `json:"recent"`
+	Failures         []ingestMonitorRecordDTO      `json:"failures"`
+	TrackingSummary  ingestMonitorSummaryCountsDTO `json:"trackingSummary"`
+	TrackingRecent   []ingestMonitorRecordDTO      `json:"trackingRecent"`
+	TrackingFailures []ingestMonitorRecordDTO      `json:"trackingFailures"`
 }
 
 type ingestMonitorDetailResponse struct {
@@ -292,16 +295,19 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 	response := &ingestMonitorSummaryResponse{}
 
 	err := s.withTenantTx(ctx, func(tx *sql.Tx, cfg ingestMonitorConfig, queryCtx context.Context) error {
-		response.Scope = ingestMonitorScopeDTO{
+		scope := ingestMonitorScopeDTO{
 			Tenant:     cfg.Tenant,
 			RecordType: ingestMonitorFormalRecordType,
 		}
 
-		summary, err := getIngestMonitorSummaryCounts(tx, queryCtx)
+		formalSummary, err := getFormalIngestMonitorSummaryCounts(tx, queryCtx)
 		if err != nil {
 			return err
 		}
-		response.Summary = summary
+		trackingSummary, err := getTrackingIngestMonitorSummaryCounts(tx, queryCtx)
+		if err != nil {
+			return err
+		}
 
 		formalRecent, err := listIngestMonitorRecords(tx, queryCtx, "", ingestMonitorRecentLimit)
 		if err != nil {
@@ -311,7 +317,6 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 		if err != nil {
 			return err
 		}
-		response.Recent = mergeIngestMonitorRecords(ingestMonitorRecentLimit, formalRecent, trackedRecent)
 
 		formalFailures, err := listIngestMonitorRecords(tx, queryCtx, ingestMonitorStatusFailure, ingestMonitorFailureLimit)
 		if err != nil {
@@ -321,7 +326,15 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 		if err != nil {
 			return err
 		}
-		response.Failures = mergeIngestMonitorRecords(ingestMonitorFailureLimit, formalFailures, trackedFailures)
+		response = buildIngestMonitorSummaryResponse(
+			scope,
+			formalSummary,
+			trackingSummary,
+			formalRecent,
+			trackedRecent,
+			formalFailures,
+			trackedFailures,
+		)
 		return nil
 	})
 	if err != nil {
@@ -331,40 +344,67 @@ func (s *ingestMonitorService) GetSummary(ctx context.Context) (*ingestMonitorSu
 	return response, nil
 }
 
-func getIngestMonitorSummaryCounts(tx *sql.Tx, ctx context.Context) (ingestMonitorSummaryCountsDTO, error) {
+func buildIngestMonitorSummaryResponse(
+	scope ingestMonitorScopeDTO,
+	formalSummary ingestMonitorSummaryCountsDTO,
+	trackingSummary ingestMonitorSummaryCountsDTO,
+	formalRecent []ingestMonitorRecordDTO,
+	trackingRecent []ingestMonitorRecordDTO,
+	formalFailures []ingestMonitorRecordDTO,
+	trackingFailures []ingestMonitorRecordDTO,
+) *ingestMonitorSummaryResponse {
+	return &ingestMonitorSummaryResponse{
+		Scope:            scope,
+		Summary:          formalSummary,
+		Recent:           nonNilIngestMonitorRecords(mergeIngestMonitorRecords(ingestMonitorRecentLimit, formalRecent)),
+		Failures:         nonNilIngestMonitorRecords(mergeIngestMonitorRecords(ingestMonitorFailureLimit, formalFailures)),
+		TrackingSummary:  trackingSummary,
+		TrackingRecent:   nonNilIngestMonitorRecords(mergeIngestMonitorRecords(ingestMonitorRecentLimit, trackingRecent)),
+		TrackingFailures: nonNilIngestMonitorRecords(mergeIngestMonitorRecords(ingestMonitorFailureLimit, trackingFailures)),
+	}
+}
+
+func nonNilIngestMonitorRecords(records []ingestMonitorRecordDTO) []ingestMonitorRecordDTO {
+	if records == nil {
+		return []ingestMonitorRecordDTO{}
+	}
+	return records
+}
+
+func getFormalIngestMonitorSummaryCounts(tx *sql.Tx, ctx context.Context) (ingestMonitorSummaryCountsDTO, error) {
 	row := tx.QueryRowContext(ctx, `
-WITH formal_records AS (
-	SELECT
-		item_code,
-		monitor_status AS status
-	FROM product_info
-`+ingestMonitorFormalFilter+`
-),
-tracking_records AS (
-	SELECT
-		c.item_code,
-		c.ingest_status AS status
-	FROM cad_file_process_status c
-	LEFT JOIN product_info p
-		ON p.item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
-		AND p.tenant_id = current_setting('app.current_tenant', true)
-		AND COALESCE(p.is_deleted, false) = false
-		AND COALESCE(p.is_temporary, false) = false
-	WHERE c.tenant_id = current_setting('app.current_tenant', true)
-		AND COALESCE(c.is_deleted, 0) = 0
-		AND p.item_code IS NULL
-),
-records AS (
-	SELECT status FROM formal_records
-	UNION ALL
-	SELECT status FROM tracking_records
-)
 SELECT
-	COUNT(*) FILTER (WHERE status = 'success') AS success,
-	COUNT(*) FILTER (WHERE status = 'failure') AS failure,
-	COUNT(*) FILTER (WHERE status = 'processing') AS processing,
+	COUNT(*) FILTER (WHERE monitor_status = 'success') AS success,
+	COUNT(*) FILTER (WHERE monitor_status = 'failure') AS failure,
+	COUNT(*) FILTER (WHERE monitor_status = 'processing') AS processing,
 	COUNT(*) AS total
-FROM records
+FROM product_info
+`+ingestMonitorFormalFilter+`
+`)
+
+	var counts ingestMonitorSummaryCountsDTO
+	if err := row.Scan(&counts.Success, &counts.Failure, &counts.Processing, &counts.Total); err != nil {
+		return ingestMonitorSummaryCountsDTO{}, err
+	}
+	return counts, nil
+}
+
+func getTrackingIngestMonitorSummaryCounts(tx *sql.Tx, ctx context.Context) (ingestMonitorSummaryCountsDTO, error) {
+	row := tx.QueryRowContext(ctx, `
+SELECT
+	COUNT(*) FILTER (WHERE c.ingest_status = 'success') AS success,
+	COUNT(*) FILTER (WHERE c.ingest_status = 'failure') AS failure,
+	COUNT(*) FILTER (WHERE c.ingest_status = 'processing') AS processing,
+	COUNT(*) AS total
+FROM cad_file_process_status c
+LEFT JOIN product_info p
+	ON p.item_code = COALESCE(NULLIF(c.product_item_code, ''), c.item_code)
+	AND p.tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(p.is_deleted, false) = false
+	AND COALESCE(p.is_temporary, false) = false
+WHERE c.tenant_id = current_setting('app.current_tenant', true)
+	AND COALESCE(c.is_deleted, 0) = 0
+	AND p.item_code IS NULL
 `)
 
 	var counts ingestMonitorSummaryCountsDTO

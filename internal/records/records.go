@@ -460,6 +460,8 @@ func (rm *RecordManager) AverageContainerStats(db dbx.Builder, records RecordIds
 			}
 			sums[stat.Name].Cpu += stat.Cpu
 			sums[stat.Name].Mem += stat.Mem
+			sums[stat.Name].DiskReadPs += stat.DiskReadPs
+			sums[stat.Name].DiskWritePs += stat.DiskWritePs
 			sums[stat.Name].NetworkSent += stat.NetworkSent
 			sums[stat.Name].NetworkRecv += stat.NetworkRecv
 		}
@@ -471,6 +473,8 @@ func (rm *RecordManager) AverageContainerStats(db dbx.Builder, records RecordIds
 			Name:        value.Name,
 			Cpu:         twoDecimals(value.Cpu / count),
 			Mem:         twoDecimals(value.Mem / count),
+			DiskReadPs:  twoDecimals(value.DiskReadPs / count),
+			DiskWritePs: twoDecimals(value.DiskWritePs / count),
 			NetworkSent: twoDecimals(value.NetworkSent / count),
 			NetworkRecv: twoDecimals(value.NetworkRecv / count),
 		})

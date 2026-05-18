@@ -35,6 +35,8 @@ type Hub struct {
 	rm            *records.RecordManager
 	sm            *systems.SystemManager
 	ingestMonitor *ingestMonitorService
+	i3dResources  *i3dResourceOverviewCache
+	i3dHistory    *i3dResourceTimeseriesHistory
 	pubKey        string
 	signer        ssh.Signer
 	appURL        string
@@ -50,6 +52,8 @@ func NewHub(app core.App) *Hub {
 	hub.rm = records.NewRecordManager(hub)
 	hub.sm = systems.NewSystemManager(hub)
 	hub.ingestMonitor = newIngestMonitorService(hub)
+	hub.i3dResources = newI3DResourceOverviewCache(5 * time.Second)
+	hub.i3dHistory = newI3DResourceTimeseriesHistory(240)
 	hub.appURL, _ = GetEnv("APP_URL")
 	return hub
 }
@@ -91,6 +95,7 @@ func (h *Hub) StartHub() error {
 		if err := h.sm.Initialize(); err != nil {
 			return err
 		}
+		go h.warmI3DResourceOverviewCache()
 		return e.Next()
 	})
 
@@ -458,6 +463,13 @@ func (h *Hub) registerApiRoutes(se *core.ServeEvent) error {
 	dockerCleanupGroup.GET("/run", h.getDataCleanupRun)
 	dockerCleanupGroup.POST("/retry", h.retryDataCleanupRun)
 	dockerGroup.GET("/audits", h.listDockerAudits)
+	// /i3d/resources routes
+	i3dResourceGroup := apiAuth.Group("/i3d/resources")
+	i3dResourceGroup.GET("/overview", h.getI3DResourceOverview)
+	i3dResourceGroup.GET("/targets", h.listI3DResourceTargets)
+	i3dResourceGroup.GET("/timeseries", h.getI3DResourceTimeseries)
+	i3dResourceGroup.GET("/middleware", h.getI3DResourceMiddleware)
+	i3dResourceGroup.GET("/diagnostics", h.getI3DResourceDiagnostics)
 	// /api-tests routes
 	apiTestsGroup := apiAuth.Group("/api-tests")
 	apiTestsGroup.GET("/schedule", h.getApiTestScheduleConfig)

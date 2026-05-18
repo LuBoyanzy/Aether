@@ -75,7 +75,9 @@ type ApiStats struct {
 	NumProcs    uint32    `json:"num_procs,omitzero"` // Windows specific, not populated on Linux.
 	Networks    map[string]NetworkStats
 	CPUStats    CPUStats    `json:"cpu_stats"`
+	PreCPUStats CPUStats    `json:"precpu_stats"`
 	MemoryStats MemoryStats `json:"memory_stats"`
+	BlkioStats  BlkioStats  `json:"blkio_stats"`
 }
 
 // Docker system info from /info API endpoint
@@ -120,6 +122,8 @@ type CPUStats struct {
 	CPUUsage CPUUsage `json:"cpu_usage"`
 	// System Usage. Linux only.
 	SystemUsage uint64 `json:"system_cpu_usage,omitempty"`
+	// Online CPUs. Linux only.
+	OnlineCPUs int `json:"online_cpus,omitempty"`
 }
 
 type CPUUsage struct {
@@ -150,6 +154,15 @@ type NetworkStats struct {
 	TxBytes uint64 `json:"tx_bytes"`
 }
 
+type BlkioStats struct {
+	IoServiceBytesRecursive []BlkioEntry `json:"io_service_bytes_recursive"`
+}
+
+type BlkioEntry struct {
+	Op    string `json:"op"`
+	Value uint64 `json:"value"`
+}
+
 type prevNetStats struct {
 	Sent uint64
 	Recv uint64
@@ -162,6 +175,8 @@ type Stats struct {
 	Mem         float64 `json:"m" cbor:"2,keyasint"`
 	NetworkSent float64 `json:"ns" cbor:"3,keyasint"`
 	NetworkRecv float64 `json:"nr" cbor:"4,keyasint"`
+	DiskReadPs  float64 `json:"dr" cbor:"10,keyasint,omitempty"`
+	DiskWritePs float64 `json:"dw" cbor:"11,keyasint,omitempty"`
 
 	Status string `json:"-" cbor:"6,keyasint"`
 	Uptime uint64 `json:"u" cbor:"9,keyasint"` // container uptime in seconds
