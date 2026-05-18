@@ -21,7 +21,6 @@ const LoginPage = lazy(() => import("@/components/login/login.tsx"))
 const Home = lazy(() => import("@/components/routes/home.tsx"))
 const Containers = lazy(() => import("@/components/routes/containers.tsx"))
 const AuditLogs = lazy(() => import("@/components/routes/audit-logs.tsx"))
-const ApiTests = lazy(() => import("@/components/routes/api-tests.tsx"))
 const IngestManagement = lazy(() => import("@/components/routes/ingest-management.tsx"))
 const ResourceMonitoring = lazy(() => import("@/components/routes/resource-monitoring.tsx"))
 const Smart = lazy(() => import("@/components/routes/smart.tsx"))
@@ -69,8 +68,6 @@ const App = memo(() => {
 		return <Containers />
 	} else if (page.route === "audit_logs") {
 		return <AuditLogs />
-	} else if (page.route === "api_tests") {
-		return <ApiTests />
 	} else if (page.route === "ingest_management") {
 		return <IngestManagement />
 	} else if (page.route === "resource_monitoring") {

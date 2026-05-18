@@ -1272,7 +1272,7 @@ func listI3DResourceDockerContainers(client *http.Client) ([]i3dResourceDockerCo
 }
 
 func readI3DResourceDockerContainerStats(client *http.Client, containerID string) (*aethercontainer.ApiStats, error) {
-	resp, err := client.Get("http://docker/containers/" + containerID + "/stats?stream=0&one-shot=1")
+	resp, err := client.Get("http://docker/containers/" + containerID + "/stats?stream=0")
 	if err != nil {
 		return nil, err
 	}
@@ -1297,15 +1297,10 @@ func applyI3DResourceDockerAPIStats(stat *i3dResourceContainerStats, containerID
 
 	now := time.Now()
 	i3dResourceDockerStatsCache.Lock()
-	previous, ok := i3dResourceDockerStatsCache.samples[containerID]
-	if ok {
-		if totalCPU > previous.cpuTotal && totalSystem > previous.systemTotal {
-			stat.CPUPercent = calculateI3DResourceDockerCPUPercentFromDeltas(
-				totalCPU-previous.cpuTotal,
-				totalSystem-previous.systemTotal,
-				apiStats.CPUStats.OnlineCPUs,
-			)
-		}
+	if apiStats.PreCPUStats.CPUUsage.TotalUsage > 0 && apiStats.PreCPUStats.SystemUsage > 0 {
+		stat.CPUPercent = calculateI3DResourceDockerCPUPercent(apiStats)
+	}
+	if previous, ok := i3dResourceDockerStatsCache.samples[containerID]; ok {
 		elapsedMs := uint64(now.Sub(previous.readAt).Milliseconds())
 		if elapsedMs > 0 {
 			stat.DiskReadBytesPS = calculateI3DResourceRate(totalRead, previous.readBytes, elapsedMs)

@@ -13,27 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "{0} items deleted"
-#~ msgstr "{0} items deleted"
-
 #. placeholder {0}: table.getFilteredSelectedRowModel().rows.length
 #. placeholder {1}: table.getFilteredRowModel().rows.length
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "{0} of {1} row(s) selected."
 msgstr "{0} of {1} row(s) selected."
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "{0} records"
-#~ msgstr "{0} records"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "{0} records deleted"
-#~ msgstr "{0} records deleted"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "{0} 条记录"
-#~ msgstr "{0} 条记录"
 
 #: src/components/routes/system/info-bar.tsx
 msgid "{cores, plural, one {# core} other {# cores}}"
@@ -140,52 +124,20 @@ msgid "Activation"
 msgstr "Activation"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation content"
-#~ msgstr "Activation content"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Activation content is required"
 msgstr "Activation content is required"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation details"
-#~ msgstr "Activation details"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Activation Details"
 msgstr "Activation Details"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation file"
-#~ msgstr "Activation file"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation imported"
-#~ msgstr "Activation imported"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation payload"
-#~ msgstr "Activation payload"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Activation Payload"
 msgstr "Activation Payload"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation registry"
-#~ msgstr "Activation registry"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Activation Registry"
 msgstr "Activation Registry"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation request"
-#~ msgstr "Activation request"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Activation requests"
-#~ msgstr "Activation requests"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Activation saved"
@@ -206,18 +158,10 @@ msgstr "Active Alerts"
 msgid "Active state"
 msgstr "Active state"
 
-#: src/components/routes/api-tests.tsx
-msgid "Add"
-msgstr "Add"
-
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Add {foo}"
 msgstr "Add {foo}"
-
-#: src/components/add-system.tsx
-#~ msgid "Add <0>System</0>"
-#~ msgstr "Add <0>System</0>"
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -249,17 +193,9 @@ msgstr "Admin"
 msgid "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
 msgstr "Aether integrates with <0>Shoutrrr</0>-compatible notification services and supports WeLink webhooks; documentation is coming soon."
 
-#: src/components/login/auth-form.tsx
-#~ msgid "Aether supports OpenID Connect and many OAuth2 authentication providers."
-#~ msgstr "Aether supports OpenID Connect and many OAuth2 authentication providers."
-
 #: src/components/routes/settings/general.tsx
 msgid "Aether translations are being set up; contribution details will be shared soon."
 msgstr "Aether translations are being set up; contribution details will be shared soon."
-
-#: src/components/routes/settings/notifications.tsx
-#~ msgid "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
-#~ msgstr "Aether uses <0>Shoutrrr</0> to integrate with popular notification services."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "After"
@@ -269,36 +205,16 @@ msgstr "After"
 msgid "Agent"
 msgstr "Agent"
 
-#: src/components/routes/api-tests.tsx
-#~ msgid "Alert"
-#~ msgstr "Alert"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "Alert enabled"
-#~ msgstr "Alert enabled"
-
 #: src/components/command-palette.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Alert History"
 msgstr "Alert History"
 
-#: src/components/routes/api-tests.tsx
-msgid "Alert on recovery"
-msgstr "Alert on recovery"
-
 #: src/components/docker/containers.tsx
 #: src/components/docker/focus-alert-settings-sheet.tsx
 msgid "Alert rules"
 msgstr "Alert rules"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "Alert threshold"
-#~ msgstr "Alert threshold"
-
-#: src/components/routes/api-tests.tsx
-msgid "Alert threshold must be greater than 0"
-msgstr "Alert threshold must be greater than 0"
 
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Alert timing note"
@@ -317,36 +233,9 @@ msgstr "Alerts"
 msgid "Alerts do not repeat every minute."
 msgstr "Alerts do not repeat every minute."
 
-#: src/components/item-codes/audit-logs-dialog.tsx
-#~ msgid "All Actions"
-#~ msgstr "All Actions"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "All cases"
-msgstr "All cases"
-
-#: src/components/routes/api-tests.tsx
-msgid "All cases executed"
-msgstr "All cases executed"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "All collections"
-msgstr "All collections"
-
 #: src/components/containers-table/containers-table.tsx
 msgid "All Containers"
 msgstr "All Containers"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "All generated license.dat artifacts are kept here for export and audit."
-#~ msgstr "All generated license.dat artifacts are kept here for export and audit."
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "All Status"
-#~ msgstr "All Status"
 
 #: src/components/alerts/alerts-sheet.tsx
 #: src/components/audit/audit-logs-table.tsx
@@ -360,13 +249,6 @@ msgstr "All Containers"
 msgid "All Systems"
 msgstr "All Systems"
 
-#: src/components/command-palette.tsx
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
-#: src/components/routes/api-tests.tsx
-msgid "API Tests"
-msgstr "API Tests"
-
 #: src/components/docker/overview.tsx
 msgid "API Version"
 msgstr "API Version"
@@ -379,17 +261,9 @@ msgstr "Apply Filters"
 msgid "Architecture"
 msgstr "Architecture"
 
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Are you sure you want to delete {0} items?"
-#~ msgstr "Are you sure you want to delete {0} items?"
-
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Are you sure you want to delete {name}?"
 msgstr "Are you sure you want to delete {name}?"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Are you sure you want to delete this item?"
-#~ msgstr "Are you sure you want to delete this item?"
 
 #: src/components/routes/settings/alerts-history-data-table.tsx
 msgid "Are you sure?"
@@ -405,14 +279,6 @@ msgstr "Attachable"
 #: src/components/navbar.tsx
 msgid "Audit Logs"
 msgstr "Audit Logs"
-
-#: src/components/routes/api-tests.tsx
-msgid "Auto"
-msgstr "Auto"
-
-#: src/components/routes/api-tests.tsx
-msgid "Auto-run schedule"
-msgstr "Auto-run schedule"
 
 #: src/components/copy-to-clipboard.tsx
 msgid "Automatic copy requires a secure context."
@@ -473,27 +339,10 @@ msgstr "Backups"
 msgid "Bandwidth"
 msgstr "Bandwidth"
 
-#: src/components/routes/api-tests.tsx
-msgid "BASE"
-msgstr "BASE"
-
-#: src/components/routes/api-tests.tsx
-msgid "Base URL"
-msgstr "Base URL"
-
 #. Battery label in systems table header
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Bat"
 msgstr "Bat"
-
-#: src/components/item-codes/audit-logs-dialog.tsx
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Batch Delete"
-#~ msgstr "Batch Delete"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Batch delete failed"
-#~ msgstr "Batch delete failed"
 
 #: src/components/routes/system.tsx
 #: src/lib/alerts.ts
@@ -531,14 +380,6 @@ msgstr "Bits (Kbps, Mbps, Gbps)"
 #: src/components/routes/settings/offline-license.tsx
 msgid "Board Serial"
 msgstr "Board Serial"
-
-#: src/components/routes/api-tests.tsx
-msgid "Body"
-msgstr "Body"
-
-#: src/components/routes/api-tests.tsx
-msgid "Body type"
-msgstr "Body type"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Boot state"
@@ -580,9 +421,6 @@ msgstr "Can stop"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/quiet-hours.tsx
@@ -598,36 +436,6 @@ msgstr "Capabilities"
 #: src/components/routes/system/smart-table.tsx
 msgid "Capacity"
 msgstr "Capacity"
-
-#: src/components/routes/api-tests.tsx
-msgid "Case"
-msgstr "Case"
-
-#: src/components/routes/api-tests.tsx
-msgid "Case deleted"
-msgstr "Case deleted"
-
-#: src/components/routes/api-tests.tsx
-msgid "Case executed"
-msgstr "Case executed"
-
-#: src/components/routes/api-tests.tsx
-msgid "Case name is required"
-msgstr "Case name is required"
-
-#: src/components/routes/api-tests.tsx
-msgid "Case saved"
-msgstr "Case saved"
-
-#: src/components/routes/api-tests.tsx
-msgid "cases"
-msgstr "cases"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Cases"
-msgstr "Cases"
 
 #: src/components/routes/system/network-mounts-card.tsx
 msgid "Category"
@@ -699,14 +507,6 @@ msgid "Choose a database and clean keys by predefined patterns."
 msgstr "Choose a database and clean keys by predefined patterns."
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Choose activation"
-#~ msgstr "Choose activation"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Choose an activation and enter customer before issuing."
-#~ msgstr "Choose an activation and enter customer before issuing."
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Choose one or more models before issuing the license."
 msgstr "Choose one or more models before issuing the license."
 
@@ -750,50 +550,8 @@ msgid "Click to copy"
 msgstr "Click to copy"
 
 #: src/components/docker/data-cleanup.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Close"
 msgstr "Close"
-
-#: src/components/item-codes/item-code-form.tsx
-#: src/components/item-codes/item-code-table.tsx
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Code"
-#~ msgstr "Code"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Code and Name are required"
-#~ msgstr "Code and Name are required"
-
-#: src/components/routes/api-tests.tsx
-msgid "Collection"
-msgstr "Collection"
-
-#: src/components/routes/api-tests.tsx
-msgid "Collection deleted"
-msgstr "Collection deleted"
-
-#: src/components/routes/api-tests.tsx
-msgid "Collection executed"
-msgstr "Collection executed"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Collection is required"
-msgstr "Collection is required"
-
-#: src/components/routes/api-tests.tsx
-msgid "Collection name is required"
-msgstr "Collection name is required"
-
-#: src/components/routes/api-tests.tsx
-msgid "Collection saved"
-msgstr "Collection saved"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Collections"
-msgstr "Collections"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Collections Not Initialized"
@@ -921,18 +679,10 @@ msgstr "Configure the sender and SMTP server details for alert emails."
 msgid "Confirm cleanup"
 msgstr "Confirm cleanup"
 
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Confirm Delete"
-#~ msgstr "Confirm Delete"
-
 #: src/components/login/auth-form.tsx
 #: src/components/login/auth-form.tsx
 msgid "Confirm password"
 msgstr "Confirm password"
-
-#: src/components/routes/api-tests.tsx
-msgid "Conflict strategy"
-msgstr "Conflict strategy"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Conflicts"
@@ -1017,16 +767,8 @@ msgid "Copy text"
 msgstr "Copy text"
 
 #: src/components/add-system.tsx
-#~ msgid "Copy the installation command for the agent below, or register agents automatically with a <0>universal token</0>."
-#~ msgstr "Copy the installation command for the agent below, or register agents automatically with a <0>universal token</0>."
-
-#: src/components/add-system.tsx
 msgid "Copy the installation command for the agent below, or register agents automatically with a <0>universal token</0>. For protected 3D deliveries, download the <1>offline license collector</1> for the customer host."
 msgstr "Copy the installation command for the agent below, or register agents automatically with a <0>universal token</0>. For protected 3D deliveries, download the <1>offline license collector</1> for the customer host."
-
-#: src/components/add-system.tsx
-#~ msgid "Copy the<0>docker-compose.yml</0> content for the agent below, or register agents automatically with a <1>universal token</1>."
-#~ msgstr "Copy the<0>docker-compose.yml</0> content for the agent below, or register agents automatically with a <1>universal token</1>."
 
 #: src/components/add-system.tsx
 msgid "Copy the<0>docker-compose.yml</0> content for the agent below, or register agents automatically with a <1>universal token</1>. For protected 3D deliveries, download the <2>offline license collector</2> for the customer host."
@@ -1141,16 +883,8 @@ msgid "Cumulative Upload"
 msgstr "Cumulative Upload"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Current license"
-#~ msgstr "Current license"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Current License"
 msgstr "Current License"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Current license payload"
-#~ msgstr "Current license payload"
 
 #. Context: Battery state
 #: src/components/routes/system.tsx
@@ -1189,10 +923,6 @@ msgstr "Cycles"
 msgctxt "unit"
 msgid "d"
 msgstr "d"
-
-#: src/lib/utils.ts
-#~ msgid "d"
-#~ msgstr "d"
 
 #: src/components/docker/config.tsx
 msgid "Daemon Configuration"
@@ -1238,8 +968,6 @@ msgstr "Define system-level rules to filter the container list."
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/system/smart-table.tsx
@@ -1250,11 +978,6 @@ msgstr "Delete"
 #: src/components/docker/compose.tsx
 msgid "Delete Compose Project"
 msgstr "Delete Compose Project"
-
-#: src/components/item-codes/item-code-table.tsx
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Delete failed"
-#~ msgstr "Delete failed"
 
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Delete fingerprint"
@@ -1284,48 +1007,21 @@ msgstr "Delete service config?"
 msgid "Delete Template"
 msgstr "Delete Template"
 
-#: src/components/routes/api-tests.tsx
-msgid "Delete this case?"
-msgstr "Delete this case?"
-
-#: src/components/routes/api-tests.tsx
-msgid "Delete this collection?"
-msgstr "Delete this collection?"
-
 #: src/components/docker/volumes.tsx
 msgid "Delete Volume"
 msgstr "Delete Volume"
 
-#: src/components/item-codes/item-code-table.tsx
-#: src/components/item-codes/item-code-table.tsx
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Deleted"
-#~ msgstr "Deleted"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Deleting..."
-#~ msgstr "Deleting..."
-
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Description"
 msgstr "Description"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/containers-table/containers-table.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Detail"
 msgstr "Detail"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Details"
-#~ msgstr "Details"
 
 #: src/components/routes/system/smart-table.tsx
 msgid "Device"
@@ -1424,10 +1120,6 @@ msgid "Download"
 msgstr "Download"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Download collector"
-#~ msgstr "Download collector"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Download Collector"
 msgstr "Download Collector"
 
@@ -1438,31 +1130,14 @@ msgid "Driver"
 msgstr "Driver"
 
 #: src/components/alerts-history-columns.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Duration"
 msgstr "Duration"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "e.g. category = 'obsolete' && status = 'inactive'"
-#~ msgstr "e.g. category = 'obsolete' && status = 'inactive'"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Each row represents a customer device activation. Use row actions to issue licenses and review history."
-#~ msgstr "Each row represents a customer device activation. Use row actions to issue licenses and review history."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
-#~ msgstr "Each row represents a customer device activation. Use row actions to issue or export the current license and review device details."
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Edit"
@@ -1471,18 +1146,6 @@ msgstr "Edit"
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Edit {foo}"
 msgstr "Edit {foo}"
-
-#: src/components/routes/api-tests.tsx
-msgid "Edit case"
-msgstr "Edit case"
-
-#: src/components/routes/api-tests.tsx
-msgid "Edit collection"
-msgstr "Edit collection"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Edit Item Code"
-#~ msgstr "Edit Item Code"
 
 #: src/components/docker/registries.tsx
 msgid "Edit Registry"
@@ -1520,21 +1183,12 @@ msgid "Empty"
 msgstr "Empty"
 
 #: src/components/docker/focus-alert-settings-sheet.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Enable alerts"
 msgstr "Enable alerts"
 
 #: src/components/docker/networks.tsx
 msgid "Enable IPv6"
 msgstr "Enable IPv6"
-
-#: src/components/routes/api-tests.tsx
-msgid "Enable schedule"
-msgstr "Enable schedule"
-
-#: src/components/audit/audit-logs-table.tsx
-#~ msgid "End"
-#~ msgstr "End"
 
 #: src/components/audit/audit-date-range.tsx
 #: src/components/audit/audit-date-range.tsx
@@ -1560,14 +1214,6 @@ msgstr "Engine Details"
 msgid "English"
 msgstr "English"
 
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Enter category"
-#~ msgstr "Enter category"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Enter description"
-#~ msgstr "Enter description"
-
 #: src/components/login/login.tsx
 msgid "Enter email address to reset password"
 msgstr "Enter email address to reset password"
@@ -1575,14 +1221,6 @@ msgstr "Enter email address to reset password"
 #: src/components/routes/settings/notifications.tsx
 msgid "Enter email address..."
 msgstr "Enter email address..."
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Enter item code"
-#~ msgstr "Enter item code"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Enter name"
-#~ msgstr "Enter name"
 
 #: src/components/docker/focus-rules-dialog.tsx
 #: src/components/docker/focus-rules-dialog.tsx
@@ -1596,10 +1234,6 @@ msgstr "Enter your one-time password."
 #: src/components/routes/settings/offline-license.tsx
 msgid "Enterprise License Management"
 msgstr "Enterprise License Management"
-
-#: src/components/routes/api-tests.tsx
-msgid "ENV"
-msgstr "ENV"
 
 #: src/components/docker/compose-templates.tsx
 #: src/components/docker/compose.tsx
@@ -1695,9 +1329,6 @@ msgstr "Environment"
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/login/auth-form.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/config-yaml.tsx
 #: src/components/routes/settings/notifications.tsx
@@ -1732,23 +1363,10 @@ msgstr "Existing systems not defined in <0>config.yml</0> will be deleted. Pleas
 msgid "Exited active"
 msgstr "Exited active"
 
-#: src/components/routes/api-tests.tsx
-msgid "EXPECT"
-msgstr "EXPECT"
-
-#: src/components/routes/api-tests.tsx
-msgid "Expected status"
-msgstr "Expected status"
-
-#: src/components/routes/api-tests.tsx
-msgid "Expected status must be greater than 0"
-msgstr "Expected status must be greater than 0"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Expires"
 msgstr "Expires"
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/alerts-history-data-table.tsx
 #: src/components/routes/settings/offline-license.tsx
 msgid "Export"
@@ -1774,17 +1392,8 @@ msgstr "Export your current systems configuration."
 msgid "Fahrenheit (°F)"
 msgstr "Fahrenheit (°F)"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Fail"
-msgstr "Fail"
-
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/systems-table/systems-table-columns.tsx
 msgid "Failed"
 msgstr "Failed"
@@ -1812,14 +1421,6 @@ msgstr "Failed to create network"
 #: src/components/docker/volumes.tsx
 msgid "Failed to create volume"
 msgstr "Failed to create volume"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to delete case"
-msgstr "Failed to delete case"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to delete collection"
-msgstr "Failed to delete collection"
 
 #: src/components/docker/compose.tsx
 msgid "Failed to delete compose project"
@@ -1853,21 +1454,9 @@ msgstr "Failed to delete volume"
 msgid "Failed to download collector"
 msgstr "Failed to download collector"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to export API tests"
-msgstr "Failed to export API tests"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Failed to export license"
 msgstr "Failed to export license"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Failed to import activation"
-#~ msgstr "Failed to import activation"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to import API tests"
-msgstr "Failed to import API tests"
 
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Failed to import focus rules"
@@ -1885,17 +1474,9 @@ msgstr "Failed to load alert settings"
 msgid "Failed to load audit logs"
 msgstr "Failed to load audit logs"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to load cases"
-msgstr "Failed to load cases"
-
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to load cleanup config"
 msgstr "Failed to load cleanup config"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to load collections"
-msgstr "Failed to load collections"
 
 #: src/components/docker/compose.tsx
 msgid "Failed to load compose projects"
@@ -1943,10 +1524,6 @@ msgstr "Failed to load focus rules"
 #: src/components/docker/images.tsx
 msgid "Failed to load images"
 msgstr "Failed to load images"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Failed to load item codes"
-#~ msgstr "Failed to load item codes"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -1998,14 +1575,6 @@ msgstr "Failed to load registries"
 msgid "Failed to load repository sources"
 msgstr "Failed to load repository sources"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to load run history"
-msgstr "Failed to load run history"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to load schedule"
-msgstr "Failed to load schedule"
-
 #: src/components/docker/service-configs.tsx
 msgid "Failed to load service configs"
 msgstr "Failed to load service configs"
@@ -2038,37 +1607,13 @@ msgstr "Failed to remove image"
 msgid "Failed to retry cleanup"
 msgstr "Failed to retry cleanup"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to run all cases"
-msgstr "Failed to run all cases"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to run case"
-msgstr "Failed to run case"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to run collection"
-msgstr "Failed to run collection"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Failed to save"
-#~ msgstr "Failed to save"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Failed to save activation"
 msgstr "Failed to save activation"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to save case"
-msgstr "Failed to save case"
-
 #: src/components/docker/data-cleanup.tsx
 msgid "Failed to save cleanup config"
 msgstr "Failed to save cleanup config"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to save collection"
-msgstr "Failed to save collection"
 
 #: src/components/docker/compose.tsx
 msgid "Failed to save compose project"
@@ -2081,10 +1626,6 @@ msgstr "Failed to save compose template"
 #: src/components/docker/registries.tsx
 msgid "Failed to save registry"
 msgstr "Failed to save registry"
-
-#: src/components/routes/api-tests.tsx
-msgid "Failed to save schedule"
-msgstr "Failed to save schedule"
 
 #: src/components/docker/service-configs.tsx
 msgid "Failed to save service config"
@@ -2117,10 +1658,6 @@ msgstr "Failed to start cleanup"
 msgid "Failed to update alert"
 msgstr "Failed to update alert"
 
-#: src/components/routes/api-tests.tsx
-msgid "Failed to update case"
-msgstr "Failed to update case"
-
 #: src/components/docker/service-configs.tsx
 msgid "Failed to update config content"
 msgstr "Failed to update config content"
@@ -2142,25 +1679,13 @@ msgstr "Fill in the customer before issuing the license."
 msgid "Fill in the customer before saving this activation."
 msgstr "Fill in the customer before saving this activation."
 
-#: src/components/item-codes/audit-logs-dialog.tsx
-#~ msgid "Filter"
-#~ msgstr "Filter"
-
 #: src/components/docker/containers.tsx
 msgid "Filter containers..."
 msgstr "Filter containers..."
 
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Filter Expression"
-#~ msgstr "Filter Expression"
-
 #: src/components/docker/images.tsx
 msgid "Filter images..."
 msgstr "Filter images..."
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Filter is required"
-#~ msgstr "Filter is required"
 
 #: src/components/docker/networks.tsx
 msgid "Filter networks..."
@@ -2264,14 +1789,6 @@ msgstr "Force removal"
 msgid "Forgot password?"
 msgstr "Forgot password?"
 
-#: src/components/routes/api-tests.tsx
-#~ msgid "Form body"
-#~ msgstr "Form body"
-
-#: src/components/routes/api-tests.tsx
-msgid "Form body is invalid"
-msgstr "Form body is invalid"
-
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgctxt "Button to copy install command"
@@ -2296,10 +1813,6 @@ msgstr "General"
 #: src/components/routes/settings/offline-license.tsx
 msgid "Generate a new signed license for the selected device activation."
 msgstr "Generate a new signed license for the selected device activation."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Generate license"
-#~ msgstr "Generate license"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Generate License"
@@ -2333,27 +1846,6 @@ msgstr "Grid"
 msgctxt "unit"
 msgid "h"
 msgstr "h"
-
-#: src/lib/utils.ts
-#~ msgid "h"
-#~ msgstr "h"
-
-#: src/components/routes/api-tests.tsx
-msgid "Headers"
-msgstr "Headers"
-
-#: src/components/containers-table/containers-table-columns.tsx
-#~ msgid "Health"
-#~ msgstr "Health"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "History"
-msgstr "History"
-
-#: src/components/routes/api-tests.tsx
-msgid "History retention (days)"
-msgstr "History retention (days)"
 
 #: src/components/add-system.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -2426,30 +1918,11 @@ msgstr "Image: use the Image column value (including tag)."
 msgid "Images"
 msgstr "Images"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Import"
-msgstr "Import"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Import activation"
-#~ msgstr "Import activation"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Import Activation Request"
 msgstr "Import Activation Request"
 
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Import activation.req"
-#~ msgstr "Import activation.req"
-
-#: src/components/routes/api-tests.tsx
-msgid "Import API tests"
-msgstr "Import API tests"
-
 #: src/components/docker/focus-rules-dialog.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Import completed"
 msgstr "Import completed"
 
@@ -2481,15 +1954,6 @@ msgstr "Inspect"
 msgid "Internal"
 msgstr "Internal"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Interval (minutes)"
-msgstr "Interval (minutes)"
-
-#: src/components/routes/api-tests.tsx
-msgid "Interval must be greater than 0"
-msgstr "Interval must be greater than 0"
-
 #: src/components/login/auth-form.tsx
 msgid "Invalid email address."
 msgstr "Invalid email address."
@@ -2510,32 +1974,13 @@ msgstr "Invalid test email"
 msgid "Invalid time range"
 msgstr "Invalid time range"
 
-#~ msgid "IPv6"
-#~ msgstr "IPv6"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Issue"
 msgstr "Issue"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issue a new offline license and replace the current license snapshot for the selected activation record."
-#~ msgstr "Issue a new offline license and replace the current license snapshot for the selected activation record."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issue a new offline license for the selected activation record."
-#~ msgstr "Issue a new offline license for the selected activation record."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issue license"
-#~ msgstr "Issue license"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Issue License"
 msgstr "Issue License"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issue license.dat"
-#~ msgstr "Issue license.dat"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
@@ -2543,44 +1988,8 @@ msgid "Issued"
 msgstr "Issued"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issued at"
-#~ msgstr "Issued at"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Issued licenses"
-#~ msgstr "Issued licenses"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Issuing is enabled only after the headquarters signing key and model manifest are loaded."
 msgstr "Issuing is enabled only after the headquarters signing key and model manifest are loaded."
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Item Code"
-#~ msgstr "Item Code"
-
-#: src/components/item-codes/audit-logs-dialog.tsx
-#~ msgid "Item Code Audit Logs"
-#~ msgstr "Item Code Audit Logs"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Item Code created successfully"
-#~ msgstr "Item Code created successfully"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Item Code deleted"
-#~ msgstr "Item Code deleted"
-
-#: src/components/routes/item-codes.tsx
-#~ msgid "Item Code Management"
-#~ msgstr "Item Code Management"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Item Code updated successfully"
-#~ msgstr "Item Code updated successfully"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Item Code 创建成功"
-#~ msgstr "Item Code 创建成功"
 
 #: src/components/item-codes/audit-logs-dialog.tsx
 msgid "Item Code 审计日志"
@@ -2595,36 +2004,12 @@ msgid "Item Code 更新成功"
 msgstr "Item Code 更新成功"
 
 #: src/components/item-codes/item-code-table.tsx
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
-#: src/components/routes/item-codes.tsx
 msgid "Item Code 管理"
 msgstr "Item Code 管理"
-
-#: src/components/item-codes/item-code-table.tsx
-#: src/components/navbar.tsx
-#: src/components/navbar.tsx
-#: src/components/routes/item-codes.tsx
-#~ msgid "Item Codes"
-#~ msgstr "Item Codes"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "JSON body is invalid"
-msgstr "JSON body is invalid"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Keep all manifest models selected to issue the full license scope."
-#~ msgstr "Keep all manifest models selected to issue the full license scope."
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Keep all models selected to issue the full license scope."
 msgstr "Keep all models selected to issue the full license scope."
-
-#. Linux kernel
-#: src/components/routes/system.tsx
-#~ msgid "Kernel"
-#~ msgstr "Kernel"
 
 #: src/components/docker/overview.tsx
 msgid "Kernel Version"
@@ -2660,31 +2045,10 @@ msgstr "Labels (JSON)"
 msgid "Language"
 msgstr "Language"
 
-#: src/components/routes/api-tests.tsx
-msgid "Last error"
-msgstr "Last error"
-
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Last issued"
-#~ msgstr "Last issued"
-
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 msgid "Last Issued"
 msgstr "Last Issued"
-
-#: src/components/routes/api-tests.tsx
-msgid "Last run"
-msgstr "Last run"
-
-#: src/components/routes/api-tests.tsx
-msgid "Last Run"
-msgstr "Last Run"
-
-#: src/components/routes/api-tests.tsx
-msgid "Last Status"
-msgstr "Last Status"
 
 #: src/components/docker/compose.tsx
 msgid "Latest output from compose."
@@ -2711,20 +2075,12 @@ msgid "License exported"
 msgstr "License exported"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "License history"
-#~ msgstr "License history"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "License issued"
 msgstr "License issued"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "License Payload"
 msgstr "License Payload"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Licensed models"
-#~ msgstr "Licensed models"
 
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
@@ -2795,11 +2151,6 @@ msgstr "Load Tables"
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Loading schedule..."
-msgstr "Loading schedule..."
-
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Loading SMTP settings..."
 msgstr "Loading SMTP settings..."
@@ -2830,10 +2181,6 @@ msgstr "Log Out"
 msgid "Logging Driver"
 msgstr "Logging Driver"
 
-#: src/components/login/login.tsx
-#~ msgid "Login"
-#~ msgstr "Login"
-
 #: src/components/login/auth-form.tsx
 #: src/components/login/forgot-pass-form.tsx
 msgid "Login attempt failed"
@@ -2856,15 +2203,6 @@ msgctxt "unit"
 msgid "m"
 msgstr "m"
 
-#: src/lib/utils.ts
-#~ msgid "m"
-#~ msgstr "m"
-
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Machine factors"
-#~ msgstr "Machine factors"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Machine Factors"
 msgstr "Machine Factors"
@@ -2885,15 +2223,6 @@ msgstr "Maintain reusable Docker Compose templates."
 msgid "Maintain service configuration endpoints for the selected system."
 msgstr "Maintain service configuration endpoints for the selected system."
 
-#: src/components/routes/api-tests.tsx
-msgid "Manage and run API cases"
-msgstr "Manage and run API cases"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Manage and run API tests."
-msgstr "Manage and run API tests."
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Manage customer device activations and license snapshots"
 msgstr "Manage customer device activations and license snapshots"
@@ -2913,10 +2242,6 @@ msgstr "Manage Docker networks on the selected system."
 #: src/components/docker/volumes.tsx
 msgid "Manage Docker volumes for persistent storage."
 msgstr "Manage Docker volumes for persistent storage."
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Manage item codes and track changes."
-#~ msgstr "Manage item codes and track changes."
 
 #: src/components/docker/images.tsx
 msgid "Manage local images and registries."
@@ -2942,10 +2267,6 @@ msgstr "Manager"
 #: src/components/routes/settings/tokens-fingerprints.tsx
 msgid "Manual setup instructions"
 msgstr "Manual setup instructions"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Matched {0} records"
-#~ msgstr "Matched {0} records"
 
 #. Chart select field. Please try to keep this short.
 #: src/components/routes/system.tsx
@@ -2978,10 +2299,6 @@ msgstr "Memory Usage"
 msgid "Memory usage of docker containers"
 msgstr "Memory usage of docker containers"
 
-#: src/components/routes/api-tests.tsx
-msgid "Method"
-msgstr "Method"
-
 #: src/components/docker/data-cleanup.tsx
 msgid "MinIO host and port are required"
 msgstr "MinIO host and port are required"
@@ -2993,10 +2310,6 @@ msgstr "MinIO host, port and bucket are required"
 #: src/components/docker/data-cleanup.tsx
 msgid "MinIO port is invalid"
 msgstr "MinIO port is invalid"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Missing required fields"
-#~ msgstr "Missing required fields"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Missing sender address"
@@ -3022,10 +2335,6 @@ msgstr "Mode"
 #: src/components/routes/system/smart-table.tsx
 msgid "Model"
 msgstr "Model"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Model names"
-#~ msgstr "Model names"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Models"
@@ -3073,8 +2382,6 @@ msgstr "MySQL port is invalid"
 #: src/components/docker/registries.tsx
 #: src/components/docker/volumes.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/systemd-table/systemd-table-columns.tsx
@@ -3139,37 +2446,9 @@ msgstr "Network unit"
 msgid "Networks"
 msgstr "Networks"
 
-#: src/components/routes/api-tests.tsx
-msgid "New"
-msgstr "New"
-
-#: src/components/routes/api-tests.tsx
-msgid "New case"
-msgstr "New case"
-
-#: src/components/routes/api-tests.tsx
-msgid "New Case"
-msgstr "New Case"
-
-#: src/components/routes/api-tests.tsx
-msgid "New collection"
-msgstr "New collection"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "New Collection"
-#~ msgstr "New Collection"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "New Item Code"
-#~ msgstr "New Item Code"
-
 #: src/components/audit/audit-logs-table.tsx
 msgid "Next"
 msgstr "Next"
-
-#: src/components/routes/api-tests.tsx
-msgid "Next run"
-msgstr "Next run"
 
 #: src/components/systemd-table/systemd-table.tsx
 #: src/components/systemd-table/systemd-table.tsx
@@ -3181,25 +2460,9 @@ msgstr "No"
 msgid "No activation records"
 msgstr "No activation records"
 
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "No activation records yet."
-#~ msgstr "No activation records yet."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "No activation requests imported yet."
-#~ msgstr "No activation requests imported yet."
-
 #: src/components/audit/audit-logs-table.tsx
 msgid "No audit logs found."
 msgstr "No audit logs found."
-
-#: src/components/routes/api-tests.tsx
-msgid "No cases yet"
-msgstr "No cases yet"
-
-#: src/components/routes/api-tests.tsx
-msgid "No collections yet"
-msgstr "No collections yet"
 
 #: src/components/docker/compose.tsx
 msgid "No compose projects found."
@@ -3211,20 +2474,9 @@ msgstr "No compose projects found."
 msgid "No containers found."
 msgstr "No containers found."
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "No detailed description..."
-msgstr "No detailed description..."
-
 #: src/components/docker/containers.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "No details available."
 msgstr "No details available."
-
-#: src/components/routes/api-tests.tsx
-msgid "No file selected"
-msgstr "No file selected"
 
 #: src/components/docker/containers.tsx
 #: src/components/docker/containers.tsx
@@ -3239,18 +2491,6 @@ msgstr "No focus rules found."
 msgid "No folders loaded."
 msgstr "No folders loaded."
 
-#: src/components/routes/api-tests.tsx
-msgid "No form fields"
-msgstr "No form fields"
-
-#: src/components/routes/api-tests.tsx
-msgid "No headers"
-msgstr "No headers"
-
-#: src/components/routes/api-tests.tsx
-msgid "No history yet"
-msgstr "No history yet"
-
 #: src/components/docker/images.tsx
 msgid "No images found."
 msgstr "No images found."
@@ -3259,21 +2499,9 @@ msgstr "No images found."
 msgid "No indices loaded."
 msgstr "No indices loaded."
 
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "No item codes found."
-#~ msgstr "No item codes found."
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "No license has been issued for this activation yet."
 msgstr "No license has been issued for this activation yet."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "No license history for this activation yet."
-#~ msgstr "No license history for this activation yet."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "No licenses issued yet."
-#~ msgstr "No licenses issued yet."
 
 #: src/components/docker/containers.tsx
 msgid "No logs available."
@@ -3291,10 +2519,6 @@ msgstr "No network mounts detected"
 msgid "No networks found."
 msgstr "No networks found."
 
-#: src/components/routes/api-tests.tsx
-msgid "No params"
-msgstr "No params"
-
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "No password stored"
 msgstr "No password stored"
@@ -3302,10 +2526,6 @@ msgstr "No password stored"
 #: src/components/docker/data-cleanup.tsx
 msgid "No patterns configured."
 msgstr "No patterns configured."
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "No records matched."
-#~ msgstr "No records matched."
 
 #: src/components/docker/registries.tsx
 msgid "No registries found."
@@ -3362,22 +2582,9 @@ msgstr "No volumes found."
 msgid "None"
 msgstr "None"
 
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Not after"
-#~ msgstr "Not after"
-
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Not before"
-#~ msgstr "Not before"
-
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Not checked"
 msgstr "Not checked"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Not ready"
-#~ msgstr "Not ready"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Not Ready"
@@ -3424,11 +2631,6 @@ msgstr "One-time password"
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Only administrators can edit these settings."
 msgstr "Only administrators can edit these settings."
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Only scheduled cases will run"
-msgstr "Only scheduled cases will run"
 
 #: src/components/routes/settings/quiet-hours.tsx
 #: src/components/routes/settings/tokens-fingerprints.tsx
@@ -3491,10 +2693,6 @@ msgstr "Optional labels as JSON"
 msgid "Optional registry"
 msgstr "Optional registry"
 
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Optional, comma-separated. Leave empty to issue all manifest models."
-#~ msgstr "Optional, comma-separated. Leave empty to issue all manifest models."
-
 #: src/components/docker/networks.tsx
 #: src/components/docker/volumes.tsx
 msgid "Options (JSON)"
@@ -3517,10 +2715,6 @@ msgstr "Other"
 msgid "Overview"
 msgstr "Overview"
 
-#: src/components/routes/api-tests.tsx
-msgid "Overwrite existing"
-msgstr "Overwrite existing"
-
 #: src/components/alerts/alerts-sheet.tsx
 msgid "Overwrite existing alerts"
 msgstr "Overwrite existing alerts"
@@ -3529,6 +2723,7 @@ msgstr "Overwrite existing alerts"
 msgid "Package manager sources configured on the server"
 msgstr "Package manager sources configured on the server"
 
+#: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
 #: src/components/command-palette.tsx
@@ -3551,34 +2746,13 @@ msgstr "Page {page}"
 msgid "Pages / Settings"
 msgstr "Pages / Settings"
 
-#: src/components/routes/api-tests.tsx
-msgid "Params"
-msgstr "Params"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Parse & Continue"
 msgstr "Parse & Continue"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Parse activation"
-#~ msgstr "Parse activation"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Parse the activation request file and register the device for offline licensing."
 msgstr "Parse the activation request file and register the device for offline licensing."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Parse the activation request first, then fill in customer information before saving it as a device record."
-#~ msgstr "Parse the activation request first, then fill in customer information before saving it as a device record."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Parsed activation"
-#~ msgstr "Parsed activation"
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Pass"
-msgstr "Pass"
 
 #: src/components/docker/data-cleanup.tsx
 #: src/components/docker/data-cleanup.tsx
@@ -3612,10 +2786,6 @@ msgstr "Past"
 #: src/components/routes/settings/offline-license.tsx
 msgid "Paste activation.req content or choose a file first."
 msgstr "Paste activation.req content or choose a file first."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Paste activation.req content or load the file generated on the customer host."
-#~ msgstr "Paste activation.req content or load the file generated on the customer host."
 
 #: src/components/docker/config.tsx
 msgid "Paste daemon.json content"
@@ -3714,10 +2884,6 @@ msgstr "Please enter an SMTP host."
 msgid "Please log in again"
 msgstr "Please log in again"
 
-#: src/components/login/auth-form.tsx
-#~ msgid "Please see <0>the documentation</0> for instructions."
-#~ msgstr "Please see <0>the documentation</0> for instructions."
-
 #: src/components/docker/empty-state.tsx
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Please select a system to continue."
@@ -3748,10 +2914,6 @@ msgstr "Port is required"
 msgid "Ports"
 msgstr "Ports"
 
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "PostgreSQL 同步失败: {0}"
-#~ msgstr "PostgreSQL 同步失败: {0}"
-
 #. Power On Time
 #: src/components/routes/system/smart-table.tsx
 msgid "Power On"
@@ -3770,18 +2932,6 @@ msgstr "Preferred Language"
 msgid "Prev"
 msgstr "Prev"
 
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Preview"
-#~ msgstr "Preview"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Preview failed"
-#~ msgstr "Preview failed"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "Previewing..."
-#~ msgstr "Previewing..."
-
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Process started"
 msgstr "Process started"
@@ -3798,11 +2948,6 @@ msgstr "Project"
 #: src/components/routes/settings/offline-license.tsx
 msgid "Project / Site"
 msgstr "Project / Site"
-
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Project name"
-#~ msgstr "Project name"
 
 #: src/components/docker/compose.tsx
 msgid "Provide a full docker-compose.yml content for deployment."
@@ -3831,16 +2976,6 @@ msgstr "Push"
 #: src/components/docker/images.tsx
 msgid "Push Image"
 msgstr "Push Image"
-
-#: src/components/item-codes/audit-logs-dialog.tsx
-#: src/components/item-codes/query-delete-dialog.tsx
-#: src/components/routes/item-codes.tsx
-#~ msgid "Query Delete"
-#~ msgstr "Query Delete"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "Query params"
-#~ msgstr "Query params"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Quiet Hours"
@@ -3902,7 +3037,6 @@ msgstr "Redis port is invalid"
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/volumes.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/smart-table.tsx
 msgid "Refresh"
 msgstr "Refresh"
@@ -3970,10 +3104,6 @@ msgstr "Request ID"
 msgid "Request OTP"
 msgstr "Request OTP"
 
-#: src/components/routes/api-tests.tsx
-msgid "Request URL is required"
-msgstr "Request URL is required"
-
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Required by"
 msgstr "Required by"
@@ -4000,10 +3130,6 @@ msgstr "Resolved"
 msgid "Resource"
 msgstr "Resource"
 
-#: src/components/routes/api-tests.tsx
-msgid "Response snippet"
-msgstr "Response snippet"
-
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 msgid "Restart"
@@ -4021,10 +3147,6 @@ msgstr "Restarts"
 msgid "Resume"
 msgstr "Resume"
 
-#: src/components/routes/api-tests.tsx
-msgid "Retention must be greater than 0"
-msgstr "Retention must be greater than 0"
-
 #: src/components/docker/data-cleanup.tsx
 msgid "Retry"
 msgstr "Retry"
@@ -4032,14 +3154,6 @@ msgstr "Retry"
 #: src/components/docker/service-configs.tsx
 msgid "Review and update config content for the selected service."
 msgstr "Review and update config content for the selected service."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Review device information and export the license history for this activation."
-#~ msgstr "Review device information and export the license history for this activation."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Review device information and manage the current license snapshot for this activation."
-#~ msgstr "Review device information and manage the current license snapshot for this activation."
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Review device information and manage the current license."
@@ -4083,27 +3197,6 @@ msgstr "Rule type is required"
 msgid "Rules are exact matches. Use the values shown in the container list or details."
 msgstr "Rules are exact matches. Use the values shown in the container list or details."
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Run"
-msgstr "Run"
-
-#: src/components/routes/api-tests.tsx
-msgid "Run All"
-msgstr "Run All"
-
-#: src/components/routes/api-tests.tsx
-msgid "Run Collection"
-msgstr "Run Collection"
-
-#: src/components/routes/api-tests.tsx
-msgid "Run Now"
-msgstr "Run Now"
-
-#: src/components/routes/api-tests.tsx
-msgid "Run result"
-msgstr "Run result"
-
 #: src/components/routes/settings/offline-license.tsx
 msgid "Run the script on the customer host to generate activation.req and device keys."
 msgstr "Run the script on the customer host to generate activation.req and device keys."
@@ -4132,16 +3225,9 @@ msgstr "S.M.A.R.T. Self-Test"
 #: src/components/docker/registries.tsx
 #: src/components/docker/service-configs.tsx
 #: src/components/docker/service-configs.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "Save"
 msgstr "Save"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Save activation"
-#~ msgstr "Save activation"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Save Activation"
@@ -4169,33 +3255,9 @@ msgstr "Save system"
 msgid "Saved"
 msgstr "Saved"
 
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "Saving..."
-#~ msgstr "Saving..."
-
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule"
 msgstr "Schedule"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "Schedule enabled"
-#~ msgstr "Schedule enabled"
-
-#: src/components/routes/api-tests.tsx
-#~ msgid "Schedule minutes"
-#~ msgstr "Schedule minutes"
-
-#: src/components/routes/api-tests.tsx
-msgid "Schedule minutes must be greater than 0"
-msgstr "Schedule minutes must be greater than 0"
-
-#: src/components/routes/api-tests.tsx
-msgid "Schedule not loaded"
-msgstr "Schedule not loaded"
 
 #: src/components/routes/settings/quiet-hours.tsx
 msgid "Schedule quiet hours where notifications will not be sent, such as during maintenance periods."
@@ -4205,20 +3267,9 @@ msgstr "Schedule quiet hours where notifications will not be sent, such as durin
 msgid "Schedule quiet hours where notifications will not be sent."
 msgstr "Schedule quiet hours where notifications will not be sent."
 
-#: src/components/routes/api-tests.tsx
-msgid "Schedule saved"
-msgstr "Schedule saved"
-
-#~ msgid "Scope"
-#~ msgstr "Scope"
-
 #: src/components/navbar.tsx
 msgid "Search"
 msgstr "Search"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "Search code or name..."
-#~ msgstr "Search code or name..."
 
 #: src/components/command-palette.tsx
 msgid "Search for systems or settings..."
@@ -4268,17 +3319,9 @@ msgstr "Select a system to manage Docker resources."
 msgid "Select at least one model"
 msgstr "Select at least one model"
 
-#: src/components/routes/api-tests.tsx
-msgid "Select body type"
-msgstr "Select body type"
-
 #: src/components/docker/data-cleanup.tsx
 msgid "Select bucket"
 msgstr "Select bucket"
-
-#: src/components/routes/api-tests.tsx
-msgid "Select collection"
-msgstr "Select collection"
 
 #: src/components/docker/data-cleanup.tsx
 msgid "Select database"
@@ -4288,22 +3331,9 @@ msgstr "Select database"
 msgid "Select DB"
 msgstr "Select DB"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Select JSON file"
-msgstr "Select JSON file"
-
-#: src/components/routes/api-tests.tsx
-msgid "Select method"
-msgstr "Select method"
-
 #: src/components/docker/focus-rules-dialog.tsx
 msgid "Select rule type"
 msgstr "Select rule type"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Selected activation"
-#~ msgstr "Selected activation"
 
 #: src/components/docker/focus-alert-settings-sheet.tsx
 msgid "Send recovery alerts after this many seconds of stability."
@@ -4376,7 +3406,6 @@ msgstr "Set percentage thresholds for meter colors."
 #: src/components/command-palette.tsx
 #: src/components/navbar.tsx
 #: src/components/navbar.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/layout.tsx
 msgid "Settings"
 msgstr "Settings"
@@ -4400,33 +3429,16 @@ msgid "Sign in"
 msgstr "Sign in"
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "Signing readiness"
-#~ msgstr "Signing readiness"
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "Signing Readiness"
 msgstr "Signing Readiness"
-
-#: src/components/item-codes/audit-logs-dialog.tsx
-#~ msgid "Single Delete"
-#~ msgstr "Single Delete"
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "Site"
 msgstr "Site"
 
-#: src/components/routes/settings/offline-license.tsx
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Site name"
-#~ msgstr "Site name"
-
 #: src/components/docker/images.tsx
 msgid "Size"
 msgstr "Size"
-
-#: src/components/routes/api-tests.tsx
-msgid "Skip existing"
-msgstr "Skip existing"
 
 #: src/components/routes/settings/smtp-settings-dialog.tsx
 msgid "SMTP auth method"
@@ -4465,12 +3477,6 @@ msgstr "SMTP username"
 msgid "Sort By"
 msgstr "Sort By"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-msgid "Sort order"
-msgstr "Sort order"
-
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-mounts-card.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "Source"
@@ -4520,9 +3526,6 @@ msgstr "State"
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
 #: src/components/docker/data-cleanup.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/settings/offline-license.tsx
 #: src/components/routes/system/repo-sources-card.tsx
@@ -4533,10 +3536,6 @@ msgstr "State"
 #: src/lib/alerts.ts
 msgid "Status"
 msgstr "Status"
-
-#: src/components/routes/api-tests.tsx
-msgid "STATUS"
-msgstr "STATUS"
 
 #: src/components/docker/compose.tsx
 #: src/components/docker/containers.tsx
@@ -4565,20 +3564,12 @@ msgstr "Stored password available"
 msgid "Stored secret available"
 msgstr "Stored secret available"
 
-#: src/components/systemd-table/systemd-table-columns.tsx
-#~ msgid "Sub State"
-#~ msgstr "Sub State"
-
 #: src/components/docker/networks.tsx
 msgid "Subnet"
 msgstr "Subnet"
 
 #: src/components/audit/audit-logs-table.tsx
 #: src/components/docker/data-cleanup.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Success"
 msgstr "Success"
 
@@ -4634,14 +3625,8 @@ msgid "Table"
 msgstr "Table"
 
 #: src/components/docker/images.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Tags"
 msgstr "Tags"
-
-#: src/components/item-codes/audit-logs-dialog.tsx
-#~ msgid "Target IDs"
-#~ msgstr "Target IDs"
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Tasks"
@@ -4698,16 +3683,8 @@ msgid "The 1-minute setting only checks the current value."
 msgstr "The 1-minute setting only checks the current value."
 
 #: src/components/routes/settings/offline-license.tsx
-#~ msgid "The activation request has been stored and is ready for issuing."
-#~ msgstr "The activation request has been stored and is ready for issuing."
-
-#: src/components/routes/settings/offline-license.tsx
 msgid "The device record has been added to the offline license registry."
 msgstr "The device record has been added to the offline license registry."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "The server manifest and signing key are read from hub environment variables."
-#~ msgstr "The server manifest and signing key are read from hub environment variables."
 
 #: src/components/routes/settings/offline-license.tsx
 msgid "The signed license.dat has been downloaded."
@@ -4770,8 +3747,6 @@ msgid "Throughput of root filesystem"
 msgstr "Throughput of root filesystem"
 
 #: src/components/docker/networks.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 msgid "Time"
 msgstr "Time"
 
@@ -4782,14 +3757,6 @@ msgstr "Time format"
 #: src/components/audit/audit-date-range.tsx
 msgid "Time Range"
 msgstr "Time Range"
-
-#: src/components/routes/api-tests.tsx
-msgid "Timeout (ms)"
-msgstr "Timeout (ms)"
-
-#: src/components/routes/api-tests.tsx
-msgid "Timeout must be greater than 0"
-msgstr "Timeout must be greater than 0"
 
 #: src/components/routes/settings/notifications.tsx
 msgid "To email(s)"
@@ -4852,10 +3819,6 @@ msgstr "Tokens and fingerprints are used to authenticate WebSocket connections t
 #: src/components/ui/chart.tsx
 msgid "Total"
 msgstr "Total"
-
-#: src/components/routes/api-tests.tsx
-msgid "Total cases"
-msgstr "Total cases"
 
 #: src/components/routes/system/network-sheet.tsx
 msgid "Total data received for each interface"
@@ -4966,9 +3929,6 @@ msgstr "Universal token"
 
 #. Context: Battery state
 #: src/components/audit/audit-logs-table.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/lib/i18n.ts
 msgid "Unknown"
 msgstr "Unknown"
@@ -5024,7 +3984,6 @@ msgstr "Updated"
 msgid "Updated every 10 minutes."
 msgstr "Updated every 10 minutes."
 
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/system/network-sheet.tsx
 msgid "Upload"
 msgstr "Upload"
@@ -5039,8 +3998,6 @@ msgstr "Upload Activation File"
 msgid "Uptime"
 msgstr "Uptime"
 
-#: src/components/routes/api-tests.tsx
-#: src/components/routes/api-tests.tsx
 #: src/components/routes/settings/notifications.tsx
 #: src/components/routes/system/repo-sources-card.tsx
 msgid "URL"
@@ -5070,14 +4027,6 @@ msgstr "Use stored password"
 #: src/components/docker/data-cleanup.tsx
 msgid "Use stored secret"
 msgstr "Use stored secret"
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Use the headquarters hub to download the collector, import activation requests, issue a signed license.dat, and export it back to the customer host."
-#~ msgstr "Use the headquarters hub to download the collector, import activation requests, issue a signed license.dat, and export it back to the customer host."
-
-#: src/components/routes/settings/offline-license.tsx
-#~ msgid "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
-#~ msgstr "Use the headquarters hub to download the collector, register device activations, issue a signed license.dat, and export it back to the customer host."
 
 #: src/components/charts/mem-chart.tsx
 #: src/components/charts/swap-chart.tsx
@@ -5162,10 +4111,6 @@ msgstr "Volumes"
 #: src/components/routes/system.tsx
 msgid "Waiting for enough records to display"
 msgstr "Waiting for enough records to display"
-
-#: src/components/routes/settings/general.tsx
-#~ msgid "Want to help improve our translations? Check <0>Crowdin</0> for details."
-#~ msgstr "Want to help improve our translations? Check <0>Crowdin</0> for details."
 
 #: src/components/systemd-table/systemd-table.tsx
 msgid "Wants"
@@ -5302,10 +4247,6 @@ msgid "下载状态"
 msgstr "下载状态"
 
 #: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "例如：category = 'obsolete' && status = 'inactive'"
-#~ msgstr "例如：category = 'obsolete' && status = 'inactive'"
-
-#: src/components/item-codes/query-delete-dialog.tsx
 msgid "例如：DELETE FROM product_info WHERE category_name = 'obsolete' AND is_deleted = false"
 msgstr "例如：DELETE FROM product_info WHERE category_name = 'obsolete' AND is_deleted = false"
 
@@ -5326,6 +4267,7 @@ msgid "修改 Item Code 的基本信息。"
 msgstr "修改 Item Code 的基本信息。"
 
 #: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "停用"
@@ -5410,6 +4352,7 @@ msgid "名称"
 msgstr "名称"
 
 #: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "启用"
@@ -5450,10 +4393,6 @@ msgstr "宽"
 msgid "密码"
 msgstr "密码"
 
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "已创建"
-#~ msgstr "已创建"
-
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/query-delete-dialog.tsx
@@ -5475,6 +4414,7 @@ msgid "已更新"
 msgstr "已更新"
 
 #: src/components/item-codes/item-code-detail.tsx
+#: src/components/item-codes/item-code-form.tsx
 #: src/components/item-codes/item-code-table.tsx
 #: src/components/item-codes/item-code-table.tsx
 msgid "废弃"
@@ -5520,14 +4460,6 @@ msgstr "文件信息"
 #: src/components/item-codes/item-code-detail.tsx
 msgid "文件路径"
 msgstr "文件路径"
-
-#: src/components/item-codes/item-code-table.tsx
-#~ msgid "新建"
-#~ msgstr "新建"
-
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "新建 Item Code"
-#~ msgstr "新建 Item Code"
 
 #: src/components/item-codes/item-code-detail.tsx
 #: src/components/item-codes/item-code-detail.tsx
@@ -5639,14 +4571,6 @@ msgstr "第 {page} 页"
 msgid "筛选条件"
 msgstr "筛选条件"
 
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "筛选条件为必填项"
-#~ msgstr "筛选条件为必填项"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "筛选表达式"
-#~ msgstr "筛选表达式"
-
 #: src/components/item-codes/item-code-detail.tsx
 msgid "管径"
 msgstr "管径"
@@ -5686,10 +4610,6 @@ msgstr "详情"
 msgid "请输入管理员账号和密码以继续操作。"
 msgstr "请输入管理员账号和密码以继续操作。"
 
-#: src/components/item-codes/item-code-form.tsx
-#~ msgid "警告"
-#~ msgstr "警告"
-
 #: src/components/item-codes/item-code-detail.tsx
 msgid "转换后路径"
 msgstr "转换后路径"
@@ -5710,17 +4630,9 @@ msgstr "输入名称"
 msgid "输入描述"
 msgstr "输入描述"
 
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "输入筛选表达式以批量删除匹配的 Item Code。"
-#~ msgstr "输入筛选表达式以批量删除匹配的 Item Code。"
-
 #: src/components/item-codes/item-code-form.tsx
 msgid "输入编码"
 msgstr "输入编码"
-
-#: src/components/containers-table/containers-table-columns.tsx
-#~ msgid "运行时间"
-#~ msgstr "运行时间"
 
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "运行预览"
@@ -5763,14 +4675,6 @@ msgstr "零件号"
 #: src/components/item-codes/item-code-detail.tsx
 msgid "预估包装尺寸"
 msgstr "预估包装尺寸"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "预览"
-#~ msgstr "预览"
-
-#: src/components/item-codes/query-delete-dialog.tsx
-#~ msgid "预览中..."
-#~ msgstr "预览中..."
 
 #: src/components/item-codes/query-delete-dialog.tsx
 msgid "预览失败"

@@ -664,7 +664,7 @@ func TestCalculateI3DResourceDockerAPIStats(t *testing.T) {
 	}
 }
 
-func TestApplyI3DResourceDockerAPIStatsDoesNotUseLifetimeCPUWhenPreCPUIsMissing(t *testing.T) {
+func TestApplyI3DResourceDockerAPIStatsDoesNotEstimateCPUWhenPreCPUIsMissing(t *testing.T) {
 	i3dResourceDockerStatsCache.Lock()
 	i3dResourceDockerStatsCache.samples = map[string]i3dResourceDockerCumulativeSample{}
 	i3dResourceDockerStatsCache.Unlock()
@@ -691,12 +691,12 @@ func TestApplyI3DResourceDockerAPIStatsDoesNotUseLifetimeCPUWhenPreCPUIsMissing(
 	}
 	stat = i3dResourceContainerStats{}
 	applyI3DResourceDockerAPIStats(&stat, "container-a", second)
-	if stat.CPUPercent != 4 {
-		t.Fatalf("second one-shot sample should use cached CPU deltas, got %.2f", stat.CPUPercent)
+	if stat.CPUPercent != 0 {
+		t.Fatalf("sample with empty precpu should not estimate CPU from local cache, got %.2f", stat.CPUPercent)
 	}
 }
 
-func TestApplyI3DResourceDockerAPIStatsIgnoresDockerPreCPUForFirstSample(t *testing.T) {
+func TestApplyI3DResourceDockerAPIStatsUsesDockerPreCPUWhenPresent(t *testing.T) {
 	i3dResourceDockerStatsCache.Lock()
 	i3dResourceDockerStatsCache.samples = map[string]i3dResourceDockerCumulativeSample{}
 	i3dResourceDockerStatsCache.Unlock()
@@ -714,8 +714,8 @@ func TestApplyI3DResourceDockerAPIStatsIgnoresDockerPreCPUForFirstSample(t *test
 	}
 	stat := i3dResourceContainerStats{}
 	applyI3DResourceDockerAPIStats(&stat, "container-with-precpu", first)
-	if stat.CPUPercent != 0 {
-		t.Fatalf("first docker sample should wait for local cached delta instead of docker precpu, got %.2f", stat.CPUPercent)
+	if stat.CPUPercent != 1600 {
+		t.Fatalf("docker sample should prefer docker precpu delta when present, got %.2f", stat.CPUPercent)
 	}
 }
 

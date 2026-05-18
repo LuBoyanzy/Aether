@@ -4,7 +4,6 @@ const routes = {
 	home: "/",
 	containers: "/containers",
 	audit_logs: "/audit-logs",
-	api_tests: "/api-tests",
 	ingest_management: "/ingest-management",
 	resource_monitoring: "/resource-monitoring",
 	smart: "/smart",
