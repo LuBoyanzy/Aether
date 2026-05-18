@@ -38,6 +38,12 @@ import { BRAND_NAME, cn, decimalString, formatSecondsToHuman, formatShortDate } 
 
 const refreshIntervalMs = 15000
 
+function tooltipValueDescSorter(a: { value?: unknown }, b: { value?: unknown }) {
+	const left = typeof a.value === "number" ? a.value : Number(a.value ?? 0)
+	const right = typeof b.value === "number" ? b.value : Number(b.value ?? 0)
+	return right - left
+}
+
 function environmentLabel(environment: I3DResourceOverview["environment"]) {
 	return environment === "release" ? "交付 Docker" : "本地开发"
 }
@@ -73,7 +79,7 @@ function ResourceStatCard({
 }: {
 	title: string
 	value: string
-	description: string
+	description?: string
 	icon: typeof CpuIcon
 	tone?: "default" | "danger"
 }) {
@@ -85,7 +91,7 @@ function ResourceStatCard({
 			</CardHeader>
 			<CardContent>
 				<div className="text-2xl font-semibold tabular-nums">{value}</div>
-				<p className="mt-1 text-xs text-muted-foreground">{description}</p>
+				{description && <p className="mt-1 text-xs text-muted-foreground">{description}</p>}
 			</CardContent>
 		</Card>
 	)
@@ -262,6 +268,8 @@ function ResourceTrendCard({
 							<ChartTooltip
 								animationEasing="ease-out"
 								animationDuration={150}
+								// @ts-expect-error
+								itemSorter={tooltipValueDescSorter}
 								content={
 									<ChartTooltipContent
 										labelFormatter={(_, data) => formatShortDate(data[0].payload.created)}
@@ -344,9 +352,7 @@ function ResourceTrendSection({
 			<div className="flex flex-wrap items-start justify-between gap-3">
 				<div>
 					<h2 className="text-xl font-semibold">资源趋势</h2>
-					<p className="mt-1 text-sm text-muted-foreground">
-						基于资源监控采样历史展示总量变化，当前仅统计显式声明的服务集群、基础设施和监控组件。
-					</p>
+					<p className="mt-1 text-sm text-muted-foreground">查看最近采样的资源变化。</p>
 				</div>
 				<div className="flex rounded-md border border-border/60 p-1">
 					<Button type="button" size="sm" variant={breakdown === "group" ? "secondary" : "ghost"} onClick={() => setBreakdown("group")}>
@@ -366,7 +372,7 @@ function ResourceTrendSection({
 				<div className="grid xl:grid-cols-2 gap-4">
 						<ResourceTrendCard
 							title="CPU 趋势"
-							description={breakdown === "target" ? "按声明服务拆分 CPU 占用" : "服务集群、基础设施和监控组件 CPU 占用求和"}
+							description={breakdown === "target" ? "按服务查看 CPU 占用" : "按分组查看 CPU 占用"}
 							points={points}
 							series={cpuSeries}
 							valueFormatter={cpuFormatter}
@@ -376,7 +382,7 @@ function ResourceTrendSection({
 					/>
 						<ResourceTrendCard
 							title="内存趋势"
-							description={breakdown === "target" ? "按声明服务拆分内存占用" : "服务集群、基础设施和监控组件内存占用求和"}
+							description={breakdown === "target" ? "按服务查看内存占用" : "按分组查看内存占用"}
 							points={points}
 							series={memorySeries}
 							valueFormatter={bytesFormatter}
@@ -385,7 +391,7 @@ function ResourceTrendSection({
 						/>
 						<ResourceTrendCard
 							title="GPU 显存趋势"
-							description={breakdown === "target" ? "按声明服务拆分 GPU 显存占用" : "声明目标匹配到的 GPU 进程显存求和"}
+							description={breakdown === "target" ? "按服务查看 GPU 显存占用" : "按分组查看 GPU 显存占用"}
 							points={points}
 							series={gpuSeries}
 							valueFormatter={bytesFormatter}
@@ -394,7 +400,7 @@ function ResourceTrendSection({
 						/>
 					<ResourceTrendCard
 						title="磁盘 IO"
-						description="声明目标的磁盘读写吞吐"
+						description="磁盘读写吞吐"
 						points={points}
 						series={[
 							{ key: "disk_read_bps", name: "读", color: "var(--chart-1)", opacity: 0.3 },
@@ -406,7 +412,7 @@ function ResourceTrendSection({
 					/>
 					<ResourceTrendCard
 						title="网络 IO"
-						description="声明目标的网络收发吞吐"
+						description="网络收发吞吐"
 						points={points}
 						series={[
 							{ key: "network_rx_bps", name: "收", color: "var(--chart-2)", opacity: 0.3 },
@@ -494,7 +500,7 @@ export default memo(function ResourceMonitoringPage() {
 									<CardTitle>资源监控</CardTitle>
 								</div>
 								<CardDescription className="mt-2">
-									只统计显式声明的服务集群、基础设施和监控组件，不纳入桌面端、VSCode、Codex、浏览器和无关容器。
+									关注 i3d 服务、中间件和监控组件的资源占用。
 								</CardDescription>
 							</div>
 							<div className="flex items-center gap-2">
@@ -528,13 +534,12 @@ export default memo(function ResourceMonitoringPage() {
 									<ResourceStatCard
 										title="i3d CPU 总占用"
 										value={`${decimalString(summary?.cpu_percent ?? 0, 1)}%`}
-										description={`${decimalString(summary?.cpu_cores_used ?? 0, 2)} 核，来自声明目标求和`}
+										description={`${decimalString(summary?.cpu_cores_used ?? 0, 2)} 核`}
 										icon={CpuIcon}
 									/>
 									<ResourceStatCard
 										title="i3d 内存总占用"
 										value={formatI3DBytesValue(summary?.memory_bytes ?? 0)}
-										description="声明目标内存求和"
 										icon={MemoryStickIcon}
 									/>
 									<ResourceStatCard
@@ -552,13 +557,13 @@ export default memo(function ResourceMonitoringPage() {
 									<ResourceStatCard
 										title="i3d GPU 显存"
 										value={formatI3DBytesValue(summary?.gpu_memory_bytes ?? 0)}
-										description="仅统计匹配到声明目标的 GPU 进程"
+										description="显存占用"
 										icon={ServerIcon}
 									/>
 									<ResourceStatCard
 										title="异常目标"
 										value={`${summary?.abnormal_count ?? 0}`}
-										description="未运行、未知或健康异常"
+										description="需要关注的目标"
 										icon={AlertTriangleIcon}
 										tone={(summary?.abnormal_count ?? 0) > 0 ? "danger" : "default"}
 									/>
