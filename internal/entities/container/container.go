@@ -78,6 +78,7 @@ type ApiStats struct {
 	PreCPUStats CPUStats    `json:"precpu_stats"`
 	MemoryStats MemoryStats `json:"memory_stats"`
 	BlkioStats  BlkioStats  `json:"blkio_stats"`
+	PidsStats   PidsStats   `json:"pids_stats"`
 }
 
 // Docker system info from /info API endpoint
@@ -143,8 +144,24 @@ type MemoryStats struct {
 }
 
 type MemoryStatsStats struct {
-	Cache        uint64 `json:"cache,omitempty"`
-	InactiveFile uint64 `json:"inactive_file,omitempty"`
+	Cache             uint64 `json:"cache,omitempty"`
+	TotalCache        uint64 `json:"total_cache,omitempty"`
+	InactiveFile      uint64 `json:"inactive_file,omitempty"`
+	TotalInactiveFile uint64 `json:"total_inactive_file,omitempty"`
+	ActiveAnon        uint64 `json:"active_anon,omitempty"`
+	InactiveAnon      uint64 `json:"inactive_anon,omitempty"`
+	TotalActiveAnon   uint64 `json:"total_active_anon,omitempty"`
+	TotalInactiveAnon uint64 `json:"total_inactive_anon,omitempty"`
+	Anon              uint64 `json:"anon,omitempty"`
+	RSS               uint64 `json:"rss,omitempty"`
+	TotalRSS          uint64 `json:"total_rss,omitempty"`
+	File              uint64 `json:"file,omitempty"`
+	ActiveFile        uint64 `json:"active_file,omitempty"`
+	TotalActiveFile   uint64 `json:"total_active_file,omitempty"`
+}
+
+type PidsStats struct {
+	Current uint64 `json:"current,omitempty"`
 }
 
 type NetworkStats struct {

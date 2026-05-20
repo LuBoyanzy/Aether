@@ -20,19 +20,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, pinnedAxisDomain } from "@/components/ui/chart"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
+	buildI3DResourceChartPoints,
+	hasI3DResourceChartData,
+	type I3DResourceChartPoint,
+	targetChartKey,
+} from "@/lib/i3dResourceCharts"
+import { formatI3DBytesPerSecond, formatI3DBytesValue } from "@/lib/i3dResourceFormatters"
+import {
 	fetchI3DResourceOverview,
 	fetchI3DResourceTimeseries,
 	type I3DResourceOverview,
 	type I3DResourceTarget,
 	type I3DResourceTimeseries,
 } from "@/lib/i3dResources"
-import {
-	buildI3DResourceChartPoints,
-	hasI3DResourceChartData,
-	targetChartKey,
-	type I3DResourceChartPoint,
-} from "@/lib/i3dResourceCharts"
-import { formatI3DBytesPerSecond, formatI3DBytesValue } from "@/lib/i3dResourceFormatters"
 import { buildI3DResourceTreeRows, type I3DResourceTreeRow, visibleI3DResourceTreeRows } from "@/lib/i3dResourceTree"
 import { BRAND_NAME, cn, decimalString, formatSecondsToHuman, formatShortDate } from "@/lib/utils"
 
@@ -68,6 +68,28 @@ function statusBadgeClass(status: I3DResourceTarget["status"]) {
 		default:
 			return "border-yellow-500/30 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300"
 	}
+}
+
+function memoryDetailText(row: I3DResourceTreeRow) {
+	const parts: string[] = []
+	if (row.memory_rss_bytes > 0) {
+		parts.push(`常驻 ${formatI3DBytesValue(row.memory_rss_bytes)}`)
+	}
+	if (row.memory_cache_bytes > 0) {
+		parts.push(`缓存 ${formatI3DBytesValue(row.memory_cache_bytes)}`)
+	}
+	return parts.length > 0 ? parts.join(" / ") : ""
+}
+
+function unitDetailText(row: I3DResourceTreeRow) {
+	const parts: string[] = []
+	if (row.pids > 0) {
+		parts.push(row.kind === "target" && row.target?.kind === "process" ? `进程 ${row.pids}` : `进程/线程 ${row.pids}`)
+	}
+	if (row.threads > 0) {
+		parts.push(`线程 ${row.threads}`)
+	}
+	return parts.length > 0 ? parts.join(" / ") : ""
 }
 
 function ResourceStatCard({
@@ -135,66 +157,78 @@ function ResourceTreeTable({
 						<TableHead className="min-w-52">名称</TableHead>
 						<TableHead>状态</TableHead>
 						<TableHead className="text-right">CPU</TableHead>
-						<TableHead className="text-right">内存</TableHead>
+						<TableHead className="min-w-44 text-right">内存</TableHead>
 						<TableHead className="text-right">GPU 显存</TableHead>
 						<TableHead className="text-right">磁盘 IO</TableHead>
-							<TableHead className="text-right">网络 IO</TableHead>
-							<TableHead className="text-right">实例</TableHead>
-							<TableHead className="text-right">运行时长</TableHead>
-						</TableRow>
-					</TableHeader>
+						<TableHead className="text-right">网络 IO</TableHead>
+						<TableHead className="min-w-28 text-right">实例</TableHead>
+						<TableHead className="text-right">运行时长</TableHead>
+					</TableRow>
+				</TableHeader>
 				<TableBody>
-						{rows.length === 0 ? (
-							<TableRow>
-								<TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
-									暂无采集目标
+					{rows.length === 0 ? (
+						<TableRow>
+							<TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+								暂无采集目标
 							</TableCell>
 						</TableRow>
 					) : (
 						rows.map((row) => {
 							const isCollapsed = row.kind === "group" && collapsedGroupIDs.has(row.id)
 							return (
-							<TableRow
-								key={row.id}
-								className={cn(row.kind === "group" && "cursor-pointer bg-muted/45 hover:bg-muted/60")}
-								onClick={row.kind === "group" ? () => onToggleGroup(row.id) : undefined}
-							>
-								<TableCell>
-									<div className={cn("flex items-center gap-2 font-medium", row.level === 1 && "ps-6")}>
-										{row.kind === "group" && (
-											<ChevronRightIcon
-												className={cn("h-4 w-4 text-muted-foreground transition-transform", !isCollapsed && "rotate-90")}
-											/>
+								<TableRow
+									key={row.id}
+									className={cn(row.kind === "group" && "cursor-pointer bg-muted/45 hover:bg-muted/60")}
+									onClick={row.kind === "group" ? () => onToggleGroup(row.id) : undefined}
+								>
+									<TableCell>
+										<div className={cn("flex items-center gap-2 font-medium", row.level === 1 && "ps-6")}>
+											{row.kind === "group" && (
+												<ChevronRightIcon
+													className={cn(
+														"h-4 w-4 text-muted-foreground transition-transform",
+														!isCollapsed && "rotate-90"
+													)}
+												/>
+											)}
+											<span>{row.name}</span>
+										</div>
+										<div className={cn("text-xs text-muted-foreground", row.level === 1 && "ps-6")}>
+											{row.kind === "group"
+												? `${isCollapsed ? "已收起" : "已展开"} · ${row.unit_count} 个实例`
+												: row.id}
+										</div>
+									</TableCell>
+									<TableCell>{statusCell(row)}</TableCell>
+									<TableCell className="text-right tabular-nums">
+										{decimalString(row.cpu_percent || 0, row.cpu_percent >= 10 ? 1 : 2)}%
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										<div>{formatI3DBytesValue(row.memory_bytes)}</div>
+										{memoryDetailText(row) && (
+											<div className="text-xs text-muted-foreground">{memoryDetailText(row)}</div>
 										)}
-										<span>{row.name}</span>
-									</div>
-									<div className={cn("text-xs text-muted-foreground", row.level === 1 && "ps-6")}>
-										{row.kind === "group" ? `${isCollapsed ? "已收起" : "已展开"} · ${row.unit_count} 个实例` : row.id}
-									</div>
-								</TableCell>
-								<TableCell>{statusCell(row)}</TableCell>
-								<TableCell className="text-right tabular-nums">
-									{decimalString(row.cpu_percent || 0, row.cpu_percent >= 10 ? 1 : 2)}%
-								</TableCell>
-								<TableCell className="text-right tabular-nums">
-									{formatI3DBytesValue(row.memory_bytes)}
-								</TableCell>
-								<TableCell className="text-right tabular-nums">
-									{formatI3DBytesValue(row.target?.gpu_memory_bytes ?? 0)}
-								</TableCell>
-								<TableCell className="text-right tabular-nums">
-									<div>{formatI3DBytesPerSecond(row.disk_read_bps + row.disk_write_bps)}</div>
-									<div className="text-xs text-muted-foreground">
-										读 {formatI3DBytesPerSecond(row.disk_read_bps)} / 写 {formatI3DBytesPerSecond(row.disk_write_bps)}
-									</div>
-								</TableCell>
-								<TableCell className="text-right tabular-nums">
-									<div>{formatI3DBytesPerSecond(row.network_rx_bps + row.network_tx_bps)}</div>
-									<div className="text-xs text-muted-foreground">
-										收 {formatI3DBytesPerSecond(row.network_rx_bps)} / 发 {formatI3DBytesPerSecond(row.network_tx_bps)}
-									</div>
-								</TableCell>
-								<TableCell className="text-right tabular-nums">{row.unit_count || 0}</TableCell>
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										{formatI3DBytesValue(row.target?.gpu_memory_bytes ?? 0)}
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										<div>{formatI3DBytesPerSecond(row.disk_read_bps + row.disk_write_bps)}</div>
+										<div className="text-xs text-muted-foreground">
+											读 {formatI3DBytesPerSecond(row.disk_read_bps)} / 写 {formatI3DBytesPerSecond(row.disk_write_bps)}
+										</div>
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										<div>{formatI3DBytesPerSecond(row.network_rx_bps + row.network_tx_bps)}</div>
+										<div className="text-xs text-muted-foreground">
+											收 {formatI3DBytesPerSecond(row.network_rx_bps)} / 发{" "}
+											{formatI3DBytesPerSecond(row.network_tx_bps)}
+										</div>
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										<div>{row.unit_count || 0}</div>
+										{unitDetailText(row) && <div className="text-xs text-muted-foreground">{unitDetailText(row)}</div>}
+									</TableCell>
 									<TableCell className="text-right tabular-nums">
 										{row.target?.uptime_seconds ? formatSecondsToHuman(row.target.uptime_seconds) : "-"}
 									</TableCell>
@@ -300,13 +334,7 @@ function ResourceTrendCard({
 	)
 }
 
-function ResourceTrendSection({
-	timeseries,
-	loading,
-}: {
-	timeseries: I3DResourceTimeseries | null
-	loading: boolean
-}) {
+function ResourceTrendSection({ timeseries, loading }: { timeseries: I3DResourceTimeseries | null; loading: boolean }) {
 	const [breakdown, setBreakdown] = useState<"group" | "target">("group")
 	const points = useMemo(() => buildI3DResourceChartPoints(timeseries), [timeseries])
 	const hasData = hasI3DResourceChartData(timeseries)
@@ -320,8 +348,20 @@ function ResourceTrendSection({
 			{ key: "monitor_cpu_percent", name: "监控组件", color: "var(--chart-5)", opacity: 0.25, stackId: "cpu" },
 		],
 		memory: [
-			{ key: "business_memory_bytes", name: "智能检索服务集群", color: "var(--chart-1)", opacity: 0.35, stackId: "memory" },
-			{ key: "middleware_memory_bytes", name: "基础设施组件", color: "var(--chart-2)", opacity: 0.3, stackId: "memory" },
+			{
+				key: "business_memory_bytes",
+				name: "智能检索服务集群",
+				color: "var(--chart-1)",
+				opacity: 0.35,
+				stackId: "memory",
+			},
+			{
+				key: "middleware_memory_bytes",
+				name: "基础设施组件",
+				color: "var(--chart-2)",
+				opacity: 0.3,
+				stackId: "memory",
+			},
 			{ key: "monitor_memory_bytes", name: "监控组件", color: "var(--chart-5)", opacity: 0.25, stackId: "memory" },
 		],
 		gpu: [{ key: "gpu_memory_bytes", name: "i3d 服务 GPU 显存", color: "var(--chart-4)", opacity: 0.35 }],
@@ -355,10 +395,20 @@ function ResourceTrendSection({
 					<p className="mt-1 text-sm text-muted-foreground">查看最近采样的资源变化。</p>
 				</div>
 				<div className="flex rounded-md border border-border/60 p-1">
-					<Button type="button" size="sm" variant={breakdown === "group" ? "secondary" : "ghost"} onClick={() => setBreakdown("group")}>
+					<Button
+						type="button"
+						size="sm"
+						variant={breakdown === "group" ? "secondary" : "ghost"}
+						onClick={() => setBreakdown("group")}
+					>
 						按分组
 					</Button>
-					<Button type="button" size="sm" variant={breakdown === "target" ? "secondary" : "ghost"} onClick={() => setBreakdown("target")}>
+					<Button
+						type="button"
+						size="sm"
+						variant={breakdown === "target" ? "secondary" : "ghost"}
+						onClick={() => setBreakdown("target")}
+					>
 						按服务
 					</Button>
 				</div>
@@ -370,34 +420,34 @@ function ResourceTrendSection({
 				</div>
 			) : (
 				<div className="grid xl:grid-cols-2 gap-4">
-						<ResourceTrendCard
-							title="CPU 趋势"
-							description={breakdown === "target" ? "按服务查看 CPU 占用" : "按分组查看 CPU 占用"}
-							points={points}
-							series={cpuSeries}
-							valueFormatter={cpuFormatter}
-							yTickFormatter={cpuFormatter}
+					<ResourceTrendCard
+						title="CPU 趋势"
+						description={breakdown === "target" ? "按服务查看 CPU 占用" : "按分组查看 CPU 占用"}
+						points={points}
+						series={cpuSeries}
+						valueFormatter={cpuFormatter}
+						yTickFormatter={cpuFormatter}
 						domain={pinnedAxisDomain() as [number, (dataMax: number) => number]}
 						showTotal={true}
 					/>
-						<ResourceTrendCard
-							title="内存趋势"
-							description={breakdown === "target" ? "按服务查看内存占用" : "按分组查看内存占用"}
-							points={points}
-							series={memorySeries}
-							valueFormatter={bytesFormatter}
-							yTickFormatter={bytesFormatter}
-							showTotal={true}
-						/>
-						<ResourceTrendCard
-							title="GPU 显存趋势"
-							description={breakdown === "target" ? "按服务查看 GPU 显存占用" : "按分组查看 GPU 显存占用"}
-							points={points}
-							series={gpuSeries}
-							valueFormatter={bytesFormatter}
-							yTickFormatter={bytesFormatter}
-							showTotal={true}
-						/>
+					<ResourceTrendCard
+						title="内存趋势"
+						description={breakdown === "target" ? "按服务查看内存占用" : "按分组查看内存占用"}
+						points={points}
+						series={memorySeries}
+						valueFormatter={bytesFormatter}
+						yTickFormatter={bytesFormatter}
+						showTotal={true}
+					/>
+					<ResourceTrendCard
+						title="GPU 显存趋势"
+						description={breakdown === "target" ? "按服务查看 GPU 显存占用" : "按分组查看 GPU 显存占用"}
+						points={points}
+						series={gpuSeries}
+						valueFormatter={bytesFormatter}
+						yTickFormatter={bytesFormatter}
+						showTotal={true}
+					/>
 					<ResourceTrendCard
 						title="磁盘 IO"
 						description="磁盘读写吞吐"
@@ -465,16 +515,31 @@ export default memo(function ResourceMonitoringPage() {
 		}
 	}, [])
 
-	useEffect(() => {
-		document.title = `资源监控 - ${BRAND_NAME}`
-		void loadData()
-		const timer = window.setInterval(() => void loadData(true), refreshIntervalMs)
-		return () => window.clearInterval(timer)
+	const refreshData = useCallback(() => {
+		loadData(true).catch((err) => console.error("refresh i3d resource overview failed", err))
 	}, [loadData])
 
+	useEffect(() => {
+		document.title = `资源监控 - ${BRAND_NAME}`
+		loadData().catch((err) => console.error("load i3d resource overview failed", err))
+		const timer = window.setInterval(refreshData, refreshIntervalMs)
+		return () => window.clearInterval(timer)
+	}, [loadData, refreshData])
+
 	const summary = data?.summary
+	const summaryMemoryDetail = summary
+		? [
+				summary.memory_rss_bytes ? `常驻 ${formatI3DBytesValue(summary.memory_rss_bytes)}` : "",
+				summary.memory_cache_bytes ? `缓存 ${formatI3DBytesValue(summary.memory_cache_bytes)}` : "",
+			]
+				.filter(Boolean)
+				.join(" / ")
+		: ""
 	const treeRows = useMemo(() => buildI3DResourceTreeRows(data?.items ?? []), [data?.items])
-	const visibleTreeRows = useMemo(() => visibleI3DResourceTreeRows(treeRows, collapsedGroupIDs), [treeRows, collapsedGroupIDs])
+	const visibleTreeRows = useMemo(
+		() => visibleI3DResourceTreeRows(treeRows, collapsedGroupIDs),
+		[treeRows, collapsedGroupIDs]
+	)
 	const toggleGroup = useCallback((id: string) => {
 		setCollapsedGroupIDs((current) => {
 			const next = new Set(current)
@@ -499,14 +564,12 @@ export default memo(function ResourceMonitoringPage() {
 									<ActivityIcon className="h-5 w-5 text-primary" />
 									<CardTitle>资源监控</CardTitle>
 								</div>
-								<CardDescription className="mt-2">
-									关注 i3d 服务、中间件和监控组件的资源占用。
-								</CardDescription>
+								<CardDescription className="mt-2">关注 i3d 服务、中间件和监控组件的资源占用。</CardDescription>
 							</div>
 							<div className="flex items-center gap-2">
 								<Badge variant="outline">{data ? environmentLabel(data.environment) : "环境识别中"}</Badge>
 								<Badge variant="secondary">15 秒自动刷新</Badge>
-								<Button variant="outline" size="sm" onClick={() => void loadData(true)} disabled={loading || refreshing}>
+								<Button variant="outline" size="sm" onClick={refreshData} disabled={loading || refreshing}>
 									{refreshing ? (
 										<LoaderCircleIcon className="me-2 h-4 w-4 animate-spin" />
 									) : (
@@ -540,6 +603,7 @@ export default memo(function ResourceMonitoringPage() {
 									<ResourceStatCard
 										title="i3d 内存总占用"
 										value={formatI3DBytesValue(summary?.memory_bytes ?? 0)}
+										description={summaryMemoryDetail || undefined}
 										icon={MemoryStickIcon}
 									/>
 									<ResourceStatCard
@@ -569,7 +633,11 @@ export default memo(function ResourceMonitoringPage() {
 									/>
 								</div>
 
-								<ResourceTreeTable rows={visibleTreeRows} collapsedGroupIDs={collapsedGroupIDs} onToggleGroup={toggleGroup} />
+								<ResourceTreeTable
+									rows={visibleTreeRows}
+									collapsedGroupIDs={collapsedGroupIDs}
+									onToggleGroup={toggleGroup}
+								/>
 							</>
 						)}
 					</CardContent>

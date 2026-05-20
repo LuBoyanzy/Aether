@@ -22,7 +22,9 @@ func TestDefaultI3DResourceTargetsReleaseAreExact(t *testing.T) {
 		"release.file.consumer",
 		"release.file.worker",
 		"release.cad.web",
-		"release.cad.worker",
+		"release.cad.batch_worker",
+		"release.cad.query_worker",
+		"release.cad.compare_worker",
 		"release.middleware.postgres",
 		"release.middleware.redis",
 		"release.middleware.rabbitmq",
@@ -112,6 +114,29 @@ func TestDefaultI3DResourceTargetsReleaseUsesExplicitContainerPrefix(t *testing.
 	if byID["release.middleware.postgres"].ContainerName != "customer-i3d-postgres" {
 		t.Fatalf("release postgres container should follow CONTAINER_PREFIX, got %s", byID["release.middleware.postgres"].ContainerName)
 	}
+	if byID["release.aether"].Kind != i3dResourceKindProcess {
+		t.Fatalf("release aether should be tracked as a host process, got %s", byID["release.aether"].Kind)
+	}
+	if byID["release.aether"].ContainerName != "" {
+		t.Fatalf("release aether should not expect a docker container, got %s", byID["release.aether"].ContainerName)
+	}
+	if byID["release.aether"].Ports[0] != 19101 {
+		t.Fatalf("release aether should default to port 19101, got %#v", byID["release.aether"].Ports)
+	}
+}
+
+func TestDefaultI3DResourceTargetsReleaseUsesExplicitAetherPort(t *testing.T) {
+	t.Setenv("AETHER_HOST_PORT", "19199")
+
+	targets := defaultI3DResourceTargets("release")
+	byID := map[string]i3dResourceTarget{}
+	for _, target := range targets {
+		byID[target.ID] = target
+	}
+
+	if byID["release.aether"].Ports[0] != 19199 {
+		t.Fatalf("release aether should follow AETHER_HOST_PORT, got %#v", byID["release.aether"].Ports)
+	}
 }
 
 func TestDefaultI3DResourceTargetsLocalUsesExplicitMiddlewareContainerPrefix(t *testing.T) {
@@ -154,6 +179,11 @@ func TestBuildI3DResourceOverviewOnlyCountsConfiguredTargets(t *testing.T) {
 			Status:           "running",
 			CPUPercent:       120.5,
 			MemoryBytes:      1024,
+			MemoryUsageBytes: 1400,
+			MemoryRSSBytes:   900,
+			MemoryCacheBytes: 300,
+			MemoryAnonBytes:  850,
+			PIDCount:         4,
 			NetworkRxBytesPS: 100,
 			NetworkTxBytesPS: 20,
 			UptimeSeconds:    10,
@@ -163,6 +193,11 @@ func TestBuildI3DResourceOverviewOnlyCountsConfiguredTargets(t *testing.T) {
 			Status:           "running",
 			CPUPercent:       30,
 			MemoryBytes:      2048,
+			MemoryUsageBytes: 2600,
+			MemoryRSSBytes:   1200,
+			MemoryCacheBytes: 500,
+			MemoryAnonBytes:  1100,
+			PIDCount:         6,
 			NetworkRxBytesPS: 200,
 			NetworkTxBytesPS: 40,
 			UptimeSeconds:    20,
@@ -188,6 +223,12 @@ func TestBuildI3DResourceOverviewOnlyCountsConfiguredTargets(t *testing.T) {
 	}
 	if response.Summary.MemoryBytes != 3072 {
 		t.Fatalf("summary memory should only include configured targets, got %d", response.Summary.MemoryBytes)
+	}
+	if response.Summary.MemoryUsageBytes != 4000 || response.Summary.MemoryRSSBytes != 2100 || response.Summary.MemoryCacheBytes != 800 || response.Summary.MemoryAnonBytes != 1950 {
+		t.Fatalf("summary memory breakdown should only include configured targets, got %#v", response.Summary)
+	}
+	if response.Summary.PIDCount != 10 {
+		t.Fatalf("summary pids should only include configured targets, got %d", response.Summary.PIDCount)
 	}
 	if response.Summary.NetworkRxBytesPS != 300 || response.Summary.NetworkTxBytesPS != 60 {
 		t.Fatalf("summary network should only include configured targets, got rx=%d tx=%d", response.Summary.NetworkRxBytesPS, response.Summary.NetworkTxBytesPS)
@@ -229,6 +270,9 @@ func TestBuildI3DResourceOverviewSumsEveryDisplayedTargetExactly(t *testing.T) {
 			Status:           "running",
 			CPUPercent:       25.5,
 			MemoryBytes:      1000,
+			MemoryRSSBytes:   700,
+			MemoryCacheBytes: 150,
+			PIDCount:         3,
 			DiskReadBytesPS:  10,
 			DiskWriteBytesPS: 20,
 			NetworkRxBytesPS: 30,
@@ -239,6 +283,9 @@ func TestBuildI3DResourceOverviewSumsEveryDisplayedTargetExactly(t *testing.T) {
 			Status:           "running",
 			CPUPercent:       5,
 			MemoryBytes:      2000,
+			MemoryRSSBytes:   1600,
+			MemoryCacheBytes: 200,
+			PIDCount:         4,
 			DiskReadBytesPS:  50,
 			DiskWriteBytesPS: 60,
 			NetworkRxBytesPS: 70,
@@ -261,11 +308,14 @@ func TestBuildI3DResourceOverviewSumsEveryDisplayedTargetExactly(t *testing.T) {
 			Status:           i3dResourceStatusUp,
 			CPUPercent:       10,
 			MemoryBytes:      3000,
+			MemoryRSSBytes:   3000,
 			DiskReadBytesPS:  90,
 			DiskWriteBytesPS: 100,
 			NetworkRxBytesPS: 110,
 			NetworkTxBytesPS: 120,
 			UnitCount:        1,
+			ThreadCount:      8,
+			PIDs:             []int32{101, 102},
 		},
 		{
 			TargetID:         "local.codex",
@@ -291,6 +341,12 @@ func TestBuildI3DResourceOverviewSumsEveryDisplayedTargetExactly(t *testing.T) {
 	if response.Summary.MemoryBytes != 6000 {
 		t.Fatalf("summary memory should equal configured target sum, got %d", response.Summary.MemoryBytes)
 	}
+	if response.Summary.MemoryRSSBytes != 5300 || response.Summary.MemoryCacheBytes != 350 {
+		t.Fatalf("summary memory breakdown should equal configured target sum, got %#v", response.Summary)
+	}
+	if response.Summary.PIDCount != 9 || response.Summary.ThreadCount != 8 {
+		t.Fatalf("summary process counts should equal configured target sum, got pids=%d threads=%d", response.Summary.PIDCount, response.Summary.ThreadCount)
+	}
 	if response.Summary.DiskReadBytesPS != 150 || response.Summary.DiskWriteBytesPS != 180 {
 		t.Fatalf("summary disk should equal configured target sum, got read=%d write=%d", response.Summary.DiskReadBytesPS, response.Summary.DiskWriteBytesPS)
 	}
@@ -304,6 +360,9 @@ func TestBuildI3DResourceOverviewSumsEveryDisplayedTargetExactly(t *testing.T) {
 	}
 	if groups[i3dResourceGroupBusiness].CPUPercent != 25.5 || groups[i3dResourceGroupBusiness].MemoryBytes != 1000 {
 		t.Fatalf("business group should only include business target, got %#v", groups[i3dResourceGroupBusiness])
+	}
+	if groups[i3dResourceGroupBusiness].MemoryRSSBytes != 700 || groups[i3dResourceGroupBusiness].PIDCount != 3 {
+		t.Fatalf("business group should include business memory details, got %#v", groups[i3dResourceGroupBusiness])
 	}
 	if groups[i3dResourceGroupMiddleware].CPUPercent != 5 || groups[i3dResourceGroupMiddleware].MemoryBytes != 2000 {
 		t.Fatalf("middleware group should only include middleware target, got %#v", groups[i3dResourceGroupMiddleware])
@@ -344,6 +403,37 @@ func TestBuildI3DResourceOverviewKeepsMissingConfiguredTargetDown(t *testing.T) 
 	}
 }
 
+func TestBuildI3DResourceOverviewCountsMetricDiagnosticAsAbnormal(t *testing.T) {
+	targets := []i3dResourceTarget{
+		{
+			ID:            "release.search.web",
+			Name:          "检索服务",
+			Group:         i3dResourceGroupBusiness,
+			Kind:          i3dResourceKindDocker,
+			ContainerName: "i3d-release-search-service",
+		},
+	}
+	containers := []i3dResourceContainerStats{
+		{
+			Name:       "i3d-release-search-service",
+			Status:     "running",
+			Diagnostic: "Docker stats 采集失败",
+		},
+	}
+
+	response := buildI3DResourceOverview("release", targets, containers, nil, nil)
+
+	if response.Items[0].Status != i3dResourceStatusUp {
+		t.Fatalf("running container should still report service status up, got %s", response.Items[0].Status)
+	}
+	if response.Items[0].Diagnostic == "" {
+		t.Fatalf("metric diagnostic should be exposed on the resource item")
+	}
+	if response.Summary.AbnormalCount != 1 {
+		t.Fatalf("metric diagnostic should count as abnormal, got %d", response.Summary.AbnormalCount)
+	}
+}
+
 func TestBuildI3DResourceOverviewCountsOnlyConfiguredProcessTargets(t *testing.T) {
 	targets := []i3dResourceTarget{
 		{
@@ -360,9 +450,12 @@ func TestBuildI3DResourceOverviewCountsOnlyConfiguredProcessTargets(t *testing.T
 			Status:           i3dResourceStatusUp,
 			CPUPercent:       80,
 			MemoryBytes:      4096,
+			MemoryRSSBytes:   4096,
 			DiskReadBytesPS:  10,
 			DiskWriteBytesPS: 20,
 			UnitCount:        2,
+			ThreadCount:      12,
+			PIDs:             []int32{10, 11},
 			UptimeSeconds:    30,
 		},
 		{
@@ -390,6 +483,9 @@ func TestBuildI3DResourceOverviewCountsOnlyConfiguredProcessTargets(t *testing.T
 	}
 	if response.Items[0].UnitCount != 2 {
 		t.Fatalf("expected process tree unit count 2, got %d", response.Items[0].UnitCount)
+	}
+	if response.Items[0].PIDCount != 2 || response.Items[0].ThreadCount != 12 || response.Items[0].MemoryRSSBytes != 4096 {
+		t.Fatalf("expected process detail fields to be exposed, got %#v", response.Items[0])
 	}
 }
 
@@ -514,6 +610,68 @@ func TestMergeI3DResourceContainerTrafficUsesDirectionalHistory(t *testing.T) {
 	}
 }
 
+func TestI3DResourceDockerStatsTimeoutAllowsConcurrentSnapshots(t *testing.T) {
+	if i3dResourceDockerStatsTimeout < 8*time.Second {
+		t.Fatalf("docker stats timeout should allow concurrent stream=false snapshots, got %s", i3dResourceDockerStatsTimeout)
+	}
+}
+
+func TestApplyI3DResourceDockerAPIStatsUsesPreviousSampleWhenPreCPUIsMissing(t *testing.T) {
+	i3dResourceDockerStatsCache.Lock()
+	i3dResourceDockerStatsCache.samples = map[string]i3dResourceDockerCumulativeSample{}
+	i3dResourceDockerStatsCache.Unlock()
+
+	containerID := "abc123"
+	first := &aethercontainer.ApiStats{}
+	first.CPUStats.CPUUsage.TotalUsage = 100
+	first.CPUStats.SystemUsage = 1000
+	first.CPUStats.OnlineCPUs = 2
+	first.MemoryStats.Usage = 2048
+	first.MemoryStats.Stats.InactiveFile = 512
+	first.MemoryStats.Stats.Cache = 768
+	first.MemoryStats.Stats.RSS = 1024
+	first.MemoryStats.Stats.ActiveAnon = 900
+	first.MemoryStats.Stats.InactiveAnon = 100
+	first.PidsStats.Current = 7
+
+	stat := i3dResourceContainerStats{}
+	applyI3DResourceDockerAPIStats(&stat, containerID, first)
+	if stat.CPUPercent != 0 {
+		t.Fatalf("first sample without precpu should not invent CPU percent, got %.2f", stat.CPUPercent)
+	}
+	if stat.MemoryBytes != 1536 {
+		t.Fatalf("memory should use docker stats CLI cache-adjusted usage, got %d", stat.MemoryBytes)
+	}
+	if stat.MemoryUsageBytes != 2048 || stat.MemoryRSSBytes != 1024 || stat.MemoryCacheBytes != 768 || stat.MemoryAnonBytes != 1000 {
+		t.Fatalf("memory breakdown should be exposed, got usage=%d rss=%d cache=%d anon=%d", stat.MemoryUsageBytes, stat.MemoryRSSBytes, stat.MemoryCacheBytes, stat.MemoryAnonBytes)
+	}
+	if stat.PIDCount != 7 {
+		t.Fatalf("pids_stats current should be exposed, got %d", stat.PIDCount)
+	}
+
+	second := &aethercontainer.ApiStats{}
+	second.CPUStats.CPUUsage.TotalUsage = 300
+	second.CPUStats.SystemUsage = 3000
+	second.CPUStats.OnlineCPUs = 2
+
+	stat = i3dResourceContainerStats{}
+	applyI3DResourceDockerAPIStats(&stat, containerID, second)
+	if stat.CPUPercent != 20 {
+		t.Fatalf("second one-shot sample should use cached CPU deltas, got %.2f", stat.CPUPercent)
+	}
+}
+
+func TestCalculateI3DResourceProcessCPUPercentUsesShortWindowDelta(t *testing.T) {
+	start := map[int32]float64{10: 1.0, 11: 2.0}
+	end := map[int32]float64{10: 1.25, 11: 2.25}
+
+	got := calculateI3DResourceProcessCPUPercent(start, end, 500*time.Millisecond)
+
+	if got != 100 {
+		t.Fatalf("expected two processes to consume one CPU core over the window, got %.2f", got)
+	}
+}
+
 func TestResolveI3DResourcePIDFileUsesWorkspaceRoot(t *testing.T) {
 	root := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(root, "i3d-search-service", "run"), 0755); err != nil {
@@ -630,8 +788,16 @@ func TestCalculateI3DResourceDockerAPIStats(t *testing.T) {
 		},
 		MemoryStats: aethercontainer.MemoryStats{
 			Usage: 2048,
-			Stats: aethercontainer.MemoryStatsStats{InactiveFile: 512},
+			Stats: aethercontainer.MemoryStatsStats{
+				InactiveFile:      512,
+				Cache:             768,
+				RSS:               1024,
+				ActiveAnon:        900,
+				InactiveAnon:      100,
+				TotalInactiveFile: 256,
+			},
 		},
+		PidsStats: aethercontainer.PidsStats{Current: 6},
 		BlkioStats: aethercontainer.BlkioStats{
 			IoServiceBytesRecursive: []aethercontainer.BlkioEntry{
 				{Op: "Read", Value: 100},
@@ -648,8 +814,13 @@ func TestCalculateI3DResourceDockerAPIStats(t *testing.T) {
 	if got := calculateI3DResourceDockerCPUPercent(stats); got != 1600 {
 		t.Fatalf("cpu percent should include online cpu multiplier, got %.2f", got)
 	}
-	if got := calculateI3DResourceDockerMemoryBytes(stats); got != 1536 {
+	if got := calculateI3DResourceDockerMemoryBytes(stats); got != 1792 {
 		t.Fatalf("memory should subtract inactive file cache, got %d", got)
+	}
+	stat := i3dResourceContainerStats{}
+	applyI3DResourceDockerMemoryStats(&stat, stats)
+	if stat.MemoryUsageBytes != 2048 || stat.MemoryRSSBytes != 1024 || stat.MemoryCacheBytes != 768 || stat.MemoryAnonBytes != 1000 || stat.MemoryInactiveFileBytes != 256 {
+		t.Fatalf("memory breakdown mismatch: %#v", stat)
 	}
 	read, write := calculateI3DResourceDockerDiskTotals(stats)
 	if read != 100 || write != 200 {
@@ -664,7 +835,7 @@ func TestCalculateI3DResourceDockerAPIStats(t *testing.T) {
 	}
 }
 
-func TestApplyI3DResourceDockerAPIStatsDoesNotEstimateCPUWhenPreCPUIsMissing(t *testing.T) {
+func TestApplyI3DResourceDockerAPIStatsUsesCachedDeltaWhenPreCPUIsMissing(t *testing.T) {
 	i3dResourceDockerStatsCache.Lock()
 	i3dResourceDockerStatsCache.samples = map[string]i3dResourceDockerCumulativeSample{}
 	i3dResourceDockerStatsCache.Unlock()
@@ -691,8 +862,8 @@ func TestApplyI3DResourceDockerAPIStatsDoesNotEstimateCPUWhenPreCPUIsMissing(t *
 	}
 	stat = i3dResourceContainerStats{}
 	applyI3DResourceDockerAPIStats(&stat, "container-a", second)
-	if stat.CPUPercent != 0 {
-		t.Fatalf("sample with empty precpu should not estimate CPU from local cache, got %.2f", stat.CPUPercent)
+	if stat.CPUPercent != 4 {
+		t.Fatalf("second one-shot sample should use local cumulative CPU delta, got %.2f", stat.CPUPercent)
 	}
 }
 

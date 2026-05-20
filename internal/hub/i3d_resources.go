@@ -37,6 +37,9 @@ const (
 	i3dResourceStatusUp      = "up"
 	i3dResourceStatusDown    = "down"
 	i3dResourceStatusUnknown = "unknown"
+
+	i3dResourceDockerStatsTimeout = 8 * time.Second
+	i3dResourceProcessCPUInterval = 250 * time.Millisecond
 )
 
 type i3dResourceTarget struct {
@@ -53,18 +56,25 @@ type i3dResourceTarget struct {
 }
 
 type i3dResourceContainerStats struct {
-	Name             string
-	ContainerID      string
-	Status           string
-	CPUPercent       float64
-	MemoryBytes      uint64
-	DiskReadBytesPS  uint64
-	DiskWriteBytesPS uint64
-	NetworkRxBytesPS uint64
-	NetworkTxBytesPS uint64
-	GPUMemoryBytes   uint64
-	UptimeSeconds    uint64
-	UpdatedAt        string
+	Name                    string
+	ContainerID             string
+	Status                  string
+	CPUPercent              float64
+	MemoryBytes             uint64
+	MemoryUsageBytes        uint64
+	MemoryRSSBytes          uint64
+	MemoryCacheBytes        uint64
+	MemoryAnonBytes         uint64
+	MemoryInactiveFileBytes uint64
+	DiskReadBytesPS         uint64
+	DiskWriteBytesPS        uint64
+	NetworkRxBytesPS        uint64
+	NetworkTxBytesPS        uint64
+	GPUMemoryBytes          uint64
+	PIDCount                int
+	UptimeSeconds           uint64
+	UpdatedAt               string
+	Diagnostic              string
 }
 
 type i3dResourceContainerHistoryPoint struct {
@@ -92,12 +102,14 @@ type i3dResourceProcessStats struct {
 	Status           string
 	CPUPercent       float64
 	MemoryBytes      uint64
+	MemoryRSSBytes   uint64
 	DiskReadBytesPS  uint64
 	DiskWriteBytesPS uint64
 	NetworkRxBytesPS uint64
 	NetworkTxBytesPS uint64
 	GPUMemoryBytes   uint64
 	UnitCount        int
+	ThreadCount      int
 	UptimeSeconds    uint64
 	UpdatedAt        string
 	Diagnostic       string
@@ -113,51 +125,72 @@ type i3dResourceGPUProcessStats struct {
 }
 
 type i3dResourceSummaryDTO struct {
-	CPUPercent       float64 `json:"cpu_percent"`
-	CPUCoresUsed     float64 `json:"cpu_cores_used"`
-	MemoryBytes      uint64  `json:"memory_bytes"`
-	DiskReadBytesPS  uint64  `json:"disk_read_bps"`
-	DiskWriteBytesPS uint64  `json:"disk_write_bps"`
-	NetworkRxBytesPS uint64  `json:"network_rx_bps"`
-	NetworkTxBytesPS uint64  `json:"network_tx_bps"`
-	GPUUtilPercent   float64 `json:"gpu_util_percent"`
-	GPUMemoryBytes   uint64  `json:"gpu_memory_bytes"`
-	AbnormalCount    int     `json:"abnormal_count"`
+	CPUPercent              float64 `json:"cpu_percent"`
+	CPUCoresUsed            float64 `json:"cpu_cores_used"`
+	MemoryBytes             uint64  `json:"memory_bytes"`
+	MemoryUsageBytes        uint64  `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64  `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64  `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64  `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64  `json:"memory_inactive_file_bytes"`
+	DiskReadBytesPS         uint64  `json:"disk_read_bps"`
+	DiskWriteBytesPS        uint64  `json:"disk_write_bps"`
+	NetworkRxBytesPS        uint64  `json:"network_rx_bps"`
+	NetworkTxBytesPS        uint64  `json:"network_tx_bps"`
+	GPUUtilPercent          float64 `json:"gpu_util_percent"`
+	GPUMemoryBytes          uint64  `json:"gpu_memory_bytes"`
+	PIDCount                int     `json:"pids"`
+	ThreadCount             int     `json:"threads"`
+	AbnormalCount           int     `json:"abnormal_count"`
 }
 
 type i3dResourceTargetDTO struct {
-	ID               string   `json:"id"`
-	Name             string   `json:"name"`
-	Group            string   `json:"group"`
-	Kind             string   `json:"kind"`
-	Status           string   `json:"status"`
-	HealthStatus     string   `json:"health_status"`
-	CPUPercent       float64  `json:"cpu_percent"`
-	CPUCoresUsed     float64  `json:"cpu_cores_used"`
-	MemoryBytes      uint64   `json:"memory_bytes"`
-	MemoryPercent    float64  `json:"memory_percent"`
-	DiskReadBytesPS  uint64   `json:"disk_read_bps"`
-	DiskWriteBytesPS uint64   `json:"disk_write_bps"`
-	NetworkRxBytesPS uint64   `json:"network_rx_bps"`
-	NetworkTxBytesPS uint64   `json:"network_tx_bps"`
-	GPUMemoryBytes   uint64   `json:"gpu_memory_bytes"`
-	UnitCount        int      `json:"unit_count"`
-	UptimeSeconds    uint64   `json:"uptime_seconds"`
-	RestartCount     int      `json:"restart_count"`
-	ContainerName    string   `json:"container_name,omitempty"`
-	PIDFile          string   `json:"pid_file,omitempty"`
-	Ports            []uint32 `json:"ports,omitempty"`
-	WorkingDir       string   `json:"working_dir,omitempty"`
-	CommandIncludes  []string `json:"command_includes,omitempty"`
-	UpdatedAt        string   `json:"updated_at"`
-	Diagnostic       string   `json:"diagnostic,omitempty"`
+	ID                      string   `json:"id"`
+	Name                    string   `json:"name"`
+	Group                   string   `json:"group"`
+	Kind                    string   `json:"kind"`
+	Status                  string   `json:"status"`
+	HealthStatus            string   `json:"health_status"`
+	CPUPercent              float64  `json:"cpu_percent"`
+	CPUCoresUsed            float64  `json:"cpu_cores_used"`
+	MemoryBytes             uint64   `json:"memory_bytes"`
+	MemoryUsageBytes        uint64   `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64   `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64   `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64   `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64   `json:"memory_inactive_file_bytes"`
+	MemoryPercent           float64  `json:"memory_percent"`
+	DiskReadBytesPS         uint64   `json:"disk_read_bps"`
+	DiskWriteBytesPS        uint64   `json:"disk_write_bps"`
+	NetworkRxBytesPS        uint64   `json:"network_rx_bps"`
+	NetworkTxBytesPS        uint64   `json:"network_tx_bps"`
+	GPUMemoryBytes          uint64   `json:"gpu_memory_bytes"`
+	UnitCount               int      `json:"unit_count"`
+	PIDCount                int      `json:"pids"`
+	ThreadCount             int      `json:"threads"`
+	UptimeSeconds           uint64   `json:"uptime_seconds"`
+	RestartCount            int      `json:"restart_count"`
+	ContainerName           string   `json:"container_name,omitempty"`
+	PIDFile                 string   `json:"pid_file,omitempty"`
+	Ports                   []uint32 `json:"ports,omitempty"`
+	WorkingDir              string   `json:"working_dir,omitempty"`
+	CommandIncludes         []string `json:"command_includes,omitempty"`
+	UpdatedAt               string   `json:"updated_at"`
+	Diagnostic              string   `json:"diagnostic,omitempty"`
 }
 
 type i3dResourceGroupDTO struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	CPUPercent  float64 `json:"cpu_percent"`
-	MemoryBytes uint64  `json:"memory_bytes"`
+	ID                      string  `json:"id"`
+	Name                    string  `json:"name"`
+	CPUPercent              float64 `json:"cpu_percent"`
+	MemoryBytes             uint64  `json:"memory_bytes"`
+	MemoryUsageBytes        uint64  `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64  `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64  `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64  `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64  `json:"memory_inactive_file_bytes"`
+	PIDCount                int     `json:"pids"`
+	ThreadCount             int     `json:"threads"`
 }
 
 type i3dResourceOverviewDTO struct {
@@ -347,14 +380,16 @@ func defaultI3DResourceTargets(environment string) []i3dResourceTarget {
 	case i3dResourceEnvironmentRelease:
 		prefix := i3dResourceContainerPrefix(i3dResourceEnvironmentRelease)
 		return []i3dResourceTarget{
-			{ID: "release.aether", Name: "Aether 监控", Group: i3dResourceGroupMonitor, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "aether-monitor")},
+			{ID: "release.aether", Name: "Aether 监控", Group: i3dResourceGroupMonitor, Kind: i3dResourceKindProcess, Ports: []uint32{i3dResourceAetherPort(19101)}},
 			{ID: "release.search.web", Name: "检索服务", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "search-service")},
 			{ID: "release.inference.web", Name: "推理服务", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "inference-service")},
 			{ID: "release.file.web", Name: "文件服务 API", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "file-service")},
 			{ID: "release.file.consumer", Name: "文件服务事件消费者", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "file-service-consumer")},
 			{ID: "release.file.worker", Name: "文件服务 Worker", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "file-service-worker")},
 			{ID: "release.cad.web", Name: "CAD 作业服务 API", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "cad-job-service")},
-			{ID: "release.cad.worker", Name: "CAD 作业服务 Worker", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "cad-job-service-worker")},
+			{ID: "release.cad.batch_worker", Name: "CAD 批量入库 Worker", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "cad-job-service-worker")},
+			{ID: "release.cad.query_worker", Name: "CAD 查询上传 Worker", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "cad-job-service-query-worker")},
+			{ID: "release.cad.compare_worker", Name: "CAD 对比 Worker", Group: i3dResourceGroupBusiness, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "cad-job-service-compare-worker")},
 			{ID: "release.middleware.postgres", Name: "PostgreSQL + pgvector", Group: i3dResourceGroupMiddleware, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "postgres")},
 			{ID: "release.middleware.redis", Name: "Redis", Group: i3dResourceGroupMiddleware, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "redis")},
 			{ID: "release.middleware.rabbitmq", Name: "RabbitMQ", Group: i3dResourceGroupMiddleware, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "rabbitmq")},
@@ -381,6 +416,16 @@ func defaultI3DResourceTargets(environment string) []i3dResourceTarget {
 			{ID: "local.middleware.xxl_admin", Name: "XXL-Job Admin", Group: i3dResourceGroupMiddleware, Kind: i3dResourceKindDocker, ContainerName: i3dResourceContainerName(prefix, "xxl-job-admin")},
 		}
 	}
+}
+
+func i3dResourceAetherPort(defaultPort uint32) uint32 {
+	if value, ok := GetEnv("AETHER_HOST_PORT"); ok {
+		port, err := strconv.ParseUint(strings.TrimSpace(value), 10, 32)
+		if err == nil && port > 0 && port <= 65535 {
+			return uint32(port)
+		}
+	}
+	return defaultPort
 }
 
 func i3dResourceContainerPrefix(environment string) string {
@@ -459,13 +504,20 @@ func buildI3DResourceOverview(environment string, targets []i3dResourceTarget, c
 				item.CPUPercent = container.CPUPercent
 				item.CPUCoresUsed = container.CPUPercent / 100
 				item.MemoryBytes = container.MemoryBytes
+				item.MemoryUsageBytes = container.MemoryUsageBytes
+				item.MemoryRSSBytes = container.MemoryRSSBytes
+				item.MemoryCacheBytes = container.MemoryCacheBytes
+				item.MemoryAnonBytes = container.MemoryAnonBytes
+				item.MemoryInactiveFileBytes = container.MemoryInactiveFileBytes
 				item.DiskReadBytesPS = container.DiskReadBytesPS
 				item.DiskWriteBytesPS = container.DiskWriteBytesPS
 				item.NetworkRxBytesPS = container.NetworkRxBytesPS
 				item.NetworkTxBytesPS = container.NetworkTxBytesPS
 				item.GPUMemoryBytes = container.GPUMemoryBytes
 				item.UptimeSeconds = container.UptimeSeconds
+				item.Diagnostic = container.Diagnostic
 				item.UnitCount = 1
+				item.PIDCount = container.PIDCount
 				if container.UpdatedAt != "" {
 					item.UpdatedAt = container.UpdatedAt
 				}
@@ -477,12 +529,15 @@ func buildI3DResourceOverview(environment string, targets []i3dResourceTarget, c
 			item.CPUPercent = processStats.CPUPercent
 			item.CPUCoresUsed = processStats.CPUPercent / 100
 			item.MemoryBytes = processStats.MemoryBytes
+			item.MemoryRSSBytes = processStats.MemoryRSSBytes
 			item.DiskReadBytesPS = processStats.DiskReadBytesPS
 			item.DiskWriteBytesPS = processStats.DiskWriteBytesPS
 			item.NetworkRxBytesPS = processStats.NetworkRxBytesPS
 			item.NetworkTxBytesPS = processStats.NetworkTxBytesPS
 			item.GPUMemoryBytes = processStats.GPUMemoryBytes
 			item.UnitCount = processStats.UnitCount
+			item.PIDCount = len(processStats.PIDs)
+			item.ThreadCount = processStats.ThreadCount
 			item.UptimeSeconds = processStats.UptimeSeconds
 			item.Diagnostic = processStats.Diagnostic
 			if processStats.UpdatedAt != "" {
@@ -492,17 +547,24 @@ func buildI3DResourceOverview(environment string, targets []i3dResourceTarget, c
 			item.Diagnostic = "未找到声明的 PID 文件或进程"
 		}
 
-		if item.Status != i3dResourceStatusUp {
+		if item.Status != i3dResourceStatusUp || strings.TrimSpace(item.Diagnostic) != "" {
 			summary.AbnormalCount++
 		}
 		summary.CPUPercent += item.CPUPercent
 		summary.CPUCoresUsed += item.CPUCoresUsed
 		summary.MemoryBytes += item.MemoryBytes
+		summary.MemoryUsageBytes += item.MemoryUsageBytes
+		summary.MemoryRSSBytes += item.MemoryRSSBytes
+		summary.MemoryCacheBytes += item.MemoryCacheBytes
+		summary.MemoryAnonBytes += item.MemoryAnonBytes
+		summary.MemoryInactiveFileBytes += item.MemoryInactiveFileBytes
 		summary.DiskReadBytesPS += item.DiskReadBytesPS
 		summary.DiskWriteBytesPS += item.DiskWriteBytesPS
 		summary.NetworkRxBytesPS += item.NetworkRxBytesPS
 		summary.NetworkTxBytesPS += item.NetworkTxBytesPS
 		summary.GPUMemoryBytes += item.GPUMemoryBytes
+		summary.PIDCount += item.PIDCount
+		summary.ThreadCount += item.ThreadCount
 
 		group := groupsByID[target.Group]
 		if group == nil {
@@ -511,6 +573,13 @@ func buildI3DResourceOverview(environment string, targets []i3dResourceTarget, c
 		}
 		group.CPUPercent += item.CPUPercent
 		group.MemoryBytes += item.MemoryBytes
+		group.MemoryUsageBytes += item.MemoryUsageBytes
+		group.MemoryRSSBytes += item.MemoryRSSBytes
+		group.MemoryCacheBytes += item.MemoryCacheBytes
+		group.MemoryAnonBytes += item.MemoryAnonBytes
+		group.MemoryInactiveFileBytes += item.MemoryInactiveFileBytes
+		group.PIDCount += item.PIDCount
+		group.ThreadCount += item.ThreadCount
 		items = append(items, item)
 	}
 
@@ -788,31 +857,33 @@ func collectI3DResourceProcessTarget(target i3dResourceTarget, workspaceRoot str
 	seen := map[int32]bool{}
 	for _, pid := range pids {
 		root, err := psutilprocess.NewProcess(pid)
-		if err != nil || root == nil || seen[pid] {
+		if err != nil || root == nil {
 			continue
 		}
-		seen[pid] = true
-		processes = append(processes, root)
-		if children, err := root.Children(); err == nil {
-			for _, child := range children {
-				if child == nil || seen[child.Pid] {
-					continue
-				}
-				seen[child.Pid] = true
-				stat.PIDs = append(stat.PIDs, child.Pid)
-				processes = append(processes, child)
-			}
-		}
+		collectI3DResourceProcessTree(root, seen, &processes)
 	}
+	stat.PIDs = i3dResourceSortedPIDs(seen)
+
+	cpuStart := collectI3DResourceProcessCPUSeconds(processes)
+	cpuStartAt := time.Now()
+	time.Sleep(i3dResourceProcessCPUInterval)
+	cpuElapsed := time.Since(cpuStartAt)
+	stat.CPUPercent = calculateI3DResourceProcessCPUPercent(
+		cpuStart,
+		collectI3DResourceProcessCPUSeconds(processes),
+		cpuElapsed,
+	)
+
 	for _, proc := range processes {
 		if proc == nil {
 			continue
 		}
-		if cpuPercent, err := proc.CPUPercent(); err == nil && cpuPercent > 0 {
-			stat.CPUPercent += cpuPercent
-		}
 		if memInfo, err := proc.MemoryInfo(); err == nil && memInfo != nil {
 			stat.MemoryBytes += memInfo.RSS
+			stat.MemoryRSSBytes += memInfo.RSS
+		}
+		if threads, err := proc.NumThreads(); err == nil && threads > 0 {
+			stat.ThreadCount += int(threads)
 		}
 		if createTime, err := proc.CreateTime(); err == nil && createTime > 0 {
 			uptime := uint64(time.Since(time.UnixMilli(createTime)).Seconds())
@@ -827,6 +898,63 @@ func collectI3DResourceProcessTarget(target i3dResourceTarget, workspaceRoot str
 		stat.Diagnostic = ""
 	}
 	return stat
+}
+
+func collectI3DResourceProcessTree(root *psutilprocess.Process, seen map[int32]bool, processes *[]*psutilprocess.Process) {
+	if root == nil || seen[root.Pid] {
+		return
+	}
+	seen[root.Pid] = true
+	*processes = append(*processes, root)
+	children, err := root.Children()
+	if err != nil {
+		return
+	}
+	for _, child := range children {
+		collectI3DResourceProcessTree(child, seen, processes)
+	}
+}
+
+func i3dResourceSortedPIDs(seen map[int32]bool) []int32 {
+	pids := make([]int32, 0, len(seen))
+	for pid := range seen {
+		pids = append(pids, pid)
+	}
+	sort.Slice(pids, func(i, j int) bool { return pids[i] < pids[j] })
+	return pids
+}
+
+func collectI3DResourceProcessCPUSeconds(processes []*psutilprocess.Process) map[int32]float64 {
+	samples := make(map[int32]float64, len(processes))
+	for _, proc := range processes {
+		if proc == nil || proc.Pid <= 0 {
+			continue
+		}
+		times, err := proc.Times()
+		if err != nil || times == nil {
+			continue
+		}
+		samples[proc.Pid] = times.User + times.System
+	}
+	return samples
+}
+
+func calculateI3DResourceProcessCPUPercent(start map[int32]float64, end map[int32]float64, elapsed time.Duration) float64 {
+	if elapsed <= 0 {
+		return 0
+	}
+	totalDelta := 0.0
+	for pid, startCPU := range start {
+		endCPU, ok := end[pid]
+		if !ok || endCPU <= startCPU {
+			continue
+		}
+		totalDelta += endCPU - startCPU
+	}
+	if totalDelta <= 0 {
+		return 0
+	}
+	return totalDelta / elapsed.Seconds() * 100
 }
 
 func resolveI3DResourceTargetPIDs(target i3dResourceTarget, workspaceRoot string) ([]int32, string, bool) {
@@ -1187,6 +1315,8 @@ func collectI3DResourceDockerStats(targets []i3dResourceTarget) ([]i3dResourceCo
 				apiStats, err := readI3DResourceDockerContainerStats(client, item.ID)
 				if err == nil {
 					applyI3DResourceDockerAPIStats(&stat, item.ID, apiStats)
+				} else {
+					stat.Diagnostic = i3dResourceDiagnostic("Docker stats 采集失败", err)
 				}
 			}
 			resultCh <- stat
@@ -1246,7 +1376,7 @@ func newI3DResourceDockerClient() (*http.Client, error) {
 		return nil, err
 	}
 	return &http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: i3dResourceDockerStatsTimeout,
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
 				return (&net.Dialer{}).DialContext(ctx, "unix", socketPath)
@@ -1272,7 +1402,19 @@ func listI3DResourceDockerContainers(client *http.Client) ([]i3dResourceDockerCo
 }
 
 func readI3DResourceDockerContainerStats(client *http.Client, containerID string) (*aethercontainer.ApiStats, error) {
-	resp, err := client.Get("http://docker/containers/" + containerID + "/stats?stream=0")
+	stats, err := readI3DResourceDockerContainerStatsURL(client, containerID, "stream=0")
+	if err == nil {
+		return stats, nil
+	}
+	fallbackStats, fallbackErr := readI3DResourceDockerContainerStatsURL(client, containerID, "stream=false&one-shot=true")
+	if fallbackErr == nil {
+		return fallbackStats, nil
+	}
+	return nil, fmt.Errorf("stream=0: %v; one-shot: %w", err, fallbackErr)
+}
+
+func readI3DResourceDockerContainerStatsURL(client *http.Client, containerID string, query string) (*aethercontainer.ApiStats, error) {
+	resp, err := client.Get("http://docker/containers/" + containerID + "/stats?" + query)
 	if err != nil {
 		return nil, err
 	}
@@ -1289,7 +1431,8 @@ func readI3DResourceDockerContainerStats(client *http.Client, containerID string
 
 func applyI3DResourceDockerAPIStats(stat *i3dResourceContainerStats, containerID string, apiStats *aethercontainer.ApiStats) {
 	stat.CPUPercent = 0
-	stat.MemoryBytes = calculateI3DResourceDockerMemoryBytes(apiStats)
+	applyI3DResourceDockerMemoryStats(stat, apiStats)
+	stat.PIDCount = int(apiStats.PidsStats.Current)
 	totalCPU := apiStats.CPUStats.CPUUsage.TotalUsage
 	totalSystem := apiStats.CPUStats.SystemUsage
 	totalRead, totalWrite := calculateI3DResourceDockerDiskTotals(apiStats)
@@ -1301,6 +1444,13 @@ func applyI3DResourceDockerAPIStats(stat *i3dResourceContainerStats, containerID
 		stat.CPUPercent = calculateI3DResourceDockerCPUPercent(apiStats)
 	}
 	if previous, ok := i3dResourceDockerStatsCache.samples[containerID]; ok {
+		if stat.CPUPercent == 0 && previous.cpuTotal > 0 && previous.systemTotal > 0 && totalCPU > previous.cpuTotal && totalSystem > previous.systemTotal {
+			stat.CPUPercent = calculateI3DResourceDockerCPUPercentFromDeltas(
+				totalCPU-previous.cpuTotal,
+				totalSystem-previous.systemTotal,
+				apiStats.CPUStats.OnlineCPUs,
+			)
+		}
 		elapsedMs := uint64(now.Sub(previous.readAt).Milliseconds())
 		if elapsedMs > 0 {
 			stat.DiskReadBytesPS = calculateI3DResourceRate(totalRead, previous.readBytes, elapsedMs)
@@ -1319,6 +1469,20 @@ func applyI3DResourceDockerAPIStats(stat *i3dResourceContainerStats, containerID
 		readAt:      now,
 	}
 	i3dResourceDockerStatsCache.Unlock()
+}
+
+func i3dResourceDiagnostic(prefix string, err error) string {
+	message := strings.TrimSpace(prefix)
+	if err != nil {
+		if message != "" {
+			message += ": "
+		}
+		message += strings.TrimSpace(err.Error())
+	}
+	if len(message) > 240 {
+		message = message[:240] + "..."
+	}
+	return message
 }
 
 func calculateI3DResourceDockerCPUPercent(apiStats *aethercontainer.ApiStats) float64 {
@@ -1347,14 +1511,61 @@ func calculateI3DResourceDockerCPUPercentFromDeltas(cpuDelta uint64, systemDelta
 }
 
 func calculateI3DResourceDockerMemoryBytes(apiStats *aethercontainer.ApiStats) uint64 {
-	cache := apiStats.MemoryStats.Stats.InactiveFile
+	cache := firstNonZeroUint64(
+		apiStats.MemoryStats.Stats.TotalInactiveFile,
+		apiStats.MemoryStats.Stats.InactiveFile,
+	)
 	if cache == 0 {
-		cache = apiStats.MemoryStats.Stats.Cache
+		cache = firstNonZeroUint64(
+			apiStats.MemoryStats.Stats.TotalCache,
+			apiStats.MemoryStats.Stats.Cache,
+			apiStats.MemoryStats.Stats.File,
+		)
 	}
 	if apiStats.MemoryStats.Usage > cache {
 		return apiStats.MemoryStats.Usage - cache
 	}
 	return apiStats.MemoryStats.Usage
+}
+
+func applyI3DResourceDockerMemoryStats(stat *i3dResourceContainerStats, apiStats *aethercontainer.ApiStats) {
+	memoryStats := apiStats.MemoryStats.Stats
+	stat.MemoryUsageBytes = apiStats.MemoryStats.Usage
+	stat.MemoryInactiveFileBytes = firstNonZeroUint64(memoryStats.TotalInactiveFile, memoryStats.InactiveFile)
+	stat.MemoryCacheBytes = firstNonZeroUint64(memoryStats.TotalCache, memoryStats.Cache, memoryStats.File)
+	stat.MemoryRSSBytes = firstNonZeroUint64(memoryStats.TotalRSS, memoryStats.RSS, memoryStats.Anon)
+	stat.MemoryAnonBytes = calculateI3DResourceDockerAnonBytes(memoryStats)
+	stat.MemoryBytes = calculateI3DResourceDockerMemoryBytes(apiStats)
+}
+
+func calculateI3DResourceDockerAnonBytes(memoryStats aethercontainer.MemoryStatsStats) uint64 {
+	if memoryStats.Anon > 0 {
+		return memoryStats.Anon
+	}
+	if value := sumNonZeroUint64(memoryStats.TotalActiveAnon, memoryStats.TotalInactiveAnon); value > 0 {
+		return value
+	}
+	if value := sumNonZeroUint64(memoryStats.ActiveAnon, memoryStats.InactiveAnon); value > 0 {
+		return value
+	}
+	return firstNonZeroUint64(memoryStats.TotalRSS, memoryStats.RSS)
+}
+
+func firstNonZeroUint64(values ...uint64) uint64 {
+	for _, value := range values {
+		if value > 0 {
+			return value
+		}
+	}
+	return 0
+}
+
+func sumNonZeroUint64(values ...uint64) uint64 {
+	var total uint64
+	for _, value := range values {
+		total += value
+	}
+	return total
 }
 
 func calculateI3DResourceDockerDiskTotals(apiStats *aethercontainer.ApiStats) (uint64, uint64) {

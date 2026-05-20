@@ -4,12 +4,19 @@ export interface I3DResourceSummary {
 	cpu_percent: number
 	cpu_cores_used: number
 	memory_bytes: number
+	memory_usage_bytes: number
+	memory_rss_bytes: number
+	memory_cache_bytes: number
+	memory_anon_bytes: number
+	memory_inactive_file_bytes: number
 	disk_read_bps: number
 	disk_write_bps: number
 	network_rx_bps: number
 	network_tx_bps: number
 	gpu_util_percent: number
 	gpu_memory_bytes: number
+	pids: number
+	threads: number
 	abnormal_count: number
 }
 
@@ -18,6 +25,13 @@ export interface I3DResourceGroup {
 	name: string
 	cpu_percent: number
 	memory_bytes: number
+	memory_usage_bytes: number
+	memory_rss_bytes: number
+	memory_cache_bytes: number
+	memory_anon_bytes: number
+	memory_inactive_file_bytes: number
+	pids: number
+	threads: number
 }
 
 export interface I3DResourceTarget {
@@ -30,6 +44,11 @@ export interface I3DResourceTarget {
 	cpu_percent: number
 	cpu_cores_used: number
 	memory_bytes: number
+	memory_usage_bytes: number
+	memory_rss_bytes: number
+	memory_cache_bytes: number
+	memory_anon_bytes: number
+	memory_inactive_file_bytes: number
 	memory_percent: number
 	disk_read_bps: number
 	disk_write_bps: number
@@ -37,6 +56,8 @@ export interface I3DResourceTarget {
 	network_tx_bps: number
 	gpu_memory_bytes: number
 	unit_count: number
+	pids: number
+	threads: number
 	uptime_seconds: number
 	restart_count: number
 	container_name?: string
@@ -67,16 +88,22 @@ export interface I3DResourceTimeseriesPoint {
 	network_rx_bps: number
 	network_tx_bps: number
 	gpu_memory_bytes: number
-	groups?: Record<string, {
-		cpu_percent: number
-		memory_bytes: number
-	}>
-	targets?: Record<string, {
-		name: string
-		cpu_percent: number
-		memory_bytes: number
-		gpu_memory_bytes: number
-	}>
+	groups?: Record<
+		string,
+		{
+			cpu_percent: number
+			memory_bytes: number
+		}
+	>
+	targets?: Record<
+		string,
+		{
+			name: string
+			cpu_percent: number
+			memory_bytes: number
+			gpu_memory_bytes: number
+		}
+	>
 }
 
 export interface I3DResourceTimeseries {
