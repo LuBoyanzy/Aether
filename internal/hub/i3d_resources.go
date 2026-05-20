@@ -276,17 +276,22 @@ func (c *i3dResourceOverviewCache) get(
 }
 
 type i3dResourceTimeseriesPointDTO struct {
-	Timestamp        string                                         `json:"timestamp"`
-	CPUPercent       float64                                        `json:"cpu_percent"`
-	CPUCoresUsed     float64                                        `json:"cpu_cores_used"`
-	MemoryBytes      uint64                                         `json:"memory_bytes"`
-	DiskReadBytesPS  uint64                                         `json:"disk_read_bps"`
-	DiskWriteBytesPS uint64                                         `json:"disk_write_bps"`
-	NetworkRxBytesPS uint64                                         `json:"network_rx_bps"`
-	NetworkTxBytesPS uint64                                         `json:"network_tx_bps"`
-	GPUMemoryBytes   uint64                                         `json:"gpu_memory_bytes"`
-	Groups           map[string]i3dResourceGroupTimeseriesPointDTO  `json:"groups"`
-	Targets          map[string]i3dResourceTargetTimeseriesPointDTO `json:"targets"`
+	Timestamp               string                                         `json:"timestamp"`
+	CPUPercent              float64                                        `json:"cpu_percent"`
+	CPUCoresUsed            float64                                        `json:"cpu_cores_used"`
+	MemoryBytes             uint64                                         `json:"memory_bytes"`
+	MemoryUsageBytes        uint64                                         `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64                                         `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64                                         `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64                                         `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64                                         `json:"memory_inactive_file_bytes"`
+	DiskReadBytesPS         uint64                                         `json:"disk_read_bps"`
+	DiskWriteBytesPS        uint64                                         `json:"disk_write_bps"`
+	NetworkRxBytesPS        uint64                                         `json:"network_rx_bps"`
+	NetworkTxBytesPS        uint64                                         `json:"network_tx_bps"`
+	GPUMemoryBytes          uint64                                         `json:"gpu_memory_bytes"`
+	Groups                  map[string]i3dResourceGroupTimeseriesPointDTO  `json:"groups"`
+	Targets                 map[string]i3dResourceTargetTimeseriesPointDTO `json:"targets"`
 }
 
 type i3dResourceTimeseriesDTO struct {
@@ -295,15 +300,25 @@ type i3dResourceTimeseriesDTO struct {
 }
 
 type i3dResourceGroupTimeseriesPointDTO struct {
-	CPUPercent  float64 `json:"cpu_percent"`
-	MemoryBytes uint64  `json:"memory_bytes"`
+	CPUPercent              float64 `json:"cpu_percent"`
+	MemoryBytes             uint64  `json:"memory_bytes"`
+	MemoryUsageBytes        uint64  `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64  `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64  `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64  `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64  `json:"memory_inactive_file_bytes"`
 }
 
 type i3dResourceTargetTimeseriesPointDTO struct {
-	Name           string  `json:"name"`
-	CPUPercent     float64 `json:"cpu_percent"`
-	MemoryBytes    uint64  `json:"memory_bytes"`
-	GPUMemoryBytes uint64  `json:"gpu_memory_bytes"`
+	Name                    string  `json:"name"`
+	CPUPercent              float64 `json:"cpu_percent"`
+	MemoryBytes             uint64  `json:"memory_bytes"`
+	MemoryUsageBytes        uint64  `json:"memory_usage_bytes"`
+	MemoryRSSBytes          uint64  `json:"memory_rss_bytes"`
+	MemoryCacheBytes        uint64  `json:"memory_cache_bytes"`
+	MemoryAnonBytes         uint64  `json:"memory_anon_bytes"`
+	MemoryInactiveFileBytes uint64  `json:"memory_inactive_file_bytes"`
+	GPUMemoryBytes          uint64  `json:"gpu_memory_bytes"`
 }
 
 type i3dResourceTimeseriesHistory struct {
@@ -328,30 +343,45 @@ func (h *i3dResourceTimeseriesHistory) record(overview i3dResourceOverviewDTO) {
 	}
 	environment := normalizeI3DResourceEnvironment(overview.Environment)
 	point := i3dResourceTimeseriesPointDTO{
-		Timestamp:        overview.UpdatedAt,
-		CPUPercent:       overview.Summary.CPUPercent,
-		CPUCoresUsed:     overview.Summary.CPUCoresUsed,
-		MemoryBytes:      overview.Summary.MemoryBytes,
-		DiskReadBytesPS:  overview.Summary.DiskReadBytesPS,
-		DiskWriteBytesPS: overview.Summary.DiskWriteBytesPS,
-		NetworkRxBytesPS: overview.Summary.NetworkRxBytesPS,
-		NetworkTxBytesPS: overview.Summary.NetworkTxBytesPS,
-		GPUMemoryBytes:   overview.Summary.GPUMemoryBytes,
-		Groups:           make(map[string]i3dResourceGroupTimeseriesPointDTO, len(overview.Groups)),
-		Targets:          make(map[string]i3dResourceTargetTimeseriesPointDTO, len(overview.Items)),
+		Timestamp:               overview.UpdatedAt,
+		CPUPercent:              overview.Summary.CPUPercent,
+		CPUCoresUsed:            overview.Summary.CPUCoresUsed,
+		MemoryBytes:             overview.Summary.MemoryBytes,
+		MemoryUsageBytes:        overview.Summary.MemoryUsageBytes,
+		MemoryRSSBytes:          overview.Summary.MemoryRSSBytes,
+		MemoryCacheBytes:        overview.Summary.MemoryCacheBytes,
+		MemoryAnonBytes:         overview.Summary.MemoryAnonBytes,
+		MemoryInactiveFileBytes: overview.Summary.MemoryInactiveFileBytes,
+		DiskReadBytesPS:         overview.Summary.DiskReadBytesPS,
+		DiskWriteBytesPS:        overview.Summary.DiskWriteBytesPS,
+		NetworkRxBytesPS:        overview.Summary.NetworkRxBytesPS,
+		NetworkTxBytesPS:        overview.Summary.NetworkTxBytesPS,
+		GPUMemoryBytes:          overview.Summary.GPUMemoryBytes,
+		Groups:                  make(map[string]i3dResourceGroupTimeseriesPointDTO, len(overview.Groups)),
+		Targets:                 make(map[string]i3dResourceTargetTimeseriesPointDTO, len(overview.Items)),
 	}
 	for _, group := range overview.Groups {
 		point.Groups[group.ID] = i3dResourceGroupTimeseriesPointDTO{
-			CPUPercent:  group.CPUPercent,
-			MemoryBytes: group.MemoryBytes,
+			CPUPercent:              group.CPUPercent,
+			MemoryBytes:             group.MemoryBytes,
+			MemoryUsageBytes:        group.MemoryUsageBytes,
+			MemoryRSSBytes:          group.MemoryRSSBytes,
+			MemoryCacheBytes:        group.MemoryCacheBytes,
+			MemoryAnonBytes:         group.MemoryAnonBytes,
+			MemoryInactiveFileBytes: group.MemoryInactiveFileBytes,
 		}
 	}
 	for _, item := range overview.Items {
 		point.Targets[item.ID] = i3dResourceTargetTimeseriesPointDTO{
-			Name:           item.Name,
-			CPUPercent:     item.CPUPercent,
-			MemoryBytes:    item.MemoryBytes,
-			GPUMemoryBytes: item.GPUMemoryBytes,
+			Name:                    item.Name,
+			CPUPercent:              item.CPUPercent,
+			MemoryBytes:             item.MemoryBytes,
+			MemoryUsageBytes:        item.MemoryUsageBytes,
+			MemoryRSSBytes:          item.MemoryRSSBytes,
+			MemoryCacheBytes:        item.MemoryCacheBytes,
+			MemoryAnonBytes:         item.MemoryAnonBytes,
+			MemoryInactiveFileBytes: item.MemoryInactiveFileBytes,
+			GPUMemoryBytes:          item.GPUMemoryBytes,
 		}
 	}
 
@@ -623,6 +653,11 @@ func buildI3DResourceTimeseries(environment string, targets []i3dResourceTarget,
 			item.CPUPercent += container.CPUPercent
 			item.CPUCoresUsed += container.CPUPercent / 100
 			item.MemoryBytes += container.MemoryBytes
+			item.MemoryUsageBytes += firstNonZeroUint64(container.MemoryUsageBytes, container.MemoryBytes)
+			item.MemoryRSSBytes += firstNonZeroUint64(container.MemoryRSSBytes, container.MemoryAnonBytes, container.MemoryBytes)
+			item.MemoryCacheBytes += container.MemoryCacheBytes
+			item.MemoryAnonBytes += container.MemoryAnonBytes
+			item.MemoryInactiveFileBytes += container.MemoryInactiveFileBytes
 			item.DiskReadBytesPS += container.DiskReadBytesPS
 			item.DiskWriteBytesPS += container.DiskWriteBytesPS
 			item.NetworkRxBytesPS += container.NetworkRxBytesPS

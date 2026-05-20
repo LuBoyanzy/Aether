@@ -510,8 +510,28 @@ func TestBuildI3DResourceTimeseriesOnlyCountsConfiguredTargets(t *testing.T) {
 		{
 			Timestamp: "2026-05-17T10:00:00Z",
 			Containers: []i3dResourceContainerStats{
-				{Name: "i3d-release-search-service", CPUPercent: 10, MemoryBytes: 100, NetworkRxBytesPS: 1, NetworkTxBytesPS: 2},
-				{Name: "i3d-release-redis", CPUPercent: 20, MemoryBytes: 200, DiskReadBytesPS: 5, DiskWriteBytesPS: 6, NetworkRxBytesPS: 3, NetworkTxBytesPS: 4},
+				{
+					Name:             "i3d-release-search-service",
+					CPUPercent:       10,
+					MemoryBytes:      100,
+					MemoryUsageBytes: 180,
+					MemoryRSSBytes:   70,
+					MemoryCacheBytes: 80,
+					NetworkRxBytesPS: 1,
+					NetworkTxBytesPS: 2,
+				},
+				{
+					Name:             "i3d-release-redis",
+					CPUPercent:       20,
+					MemoryBytes:      200,
+					MemoryUsageBytes: 260,
+					MemoryRSSBytes:   160,
+					MemoryCacheBytes: 60,
+					DiskReadBytesPS:  5,
+					DiskWriteBytesPS: 6,
+					NetworkRxBytesPS: 3,
+					NetworkTxBytesPS: 4,
+				},
 				{Name: "browser", CPUPercent: 900, MemoryBytes: 999999, DiskReadBytesPS: 999, DiskWriteBytesPS: 999, NetworkRxBytesPS: 999, NetworkTxBytesPS: 999},
 			},
 		},
@@ -528,6 +548,9 @@ func TestBuildI3DResourceTimeseriesOnlyCountsConfiguredTargets(t *testing.T) {
 	}
 	if point.MemoryBytes != 300 {
 		t.Fatalf("timeseries memory should only include configured targets, got %d", point.MemoryBytes)
+	}
+	if point.MemoryUsageBytes != 440 || point.MemoryRSSBytes != 230 || point.MemoryCacheBytes != 140 {
+		t.Fatalf("timeseries memory breakdown should only include configured targets, got %#v", point)
 	}
 	if point.DiskReadBytesPS != 5 || point.DiskWriteBytesPS != 6 {
 		t.Fatalf("timeseries disk should only include configured targets, got read=%d write=%d", point.DiskReadBytesPS, point.DiskWriteBytesPS)
@@ -1039,18 +1062,21 @@ func TestI3DResourceTimeseriesHistoryRecordsOverviewSnapshots(t *testing.T) {
 			CPUPercent:       12.5,
 			CPUCoresUsed:     0.125,
 			MemoryBytes:      1024,
+			MemoryUsageBytes: 1400,
+			MemoryRSSBytes:   700,
+			MemoryCacheBytes: 500,
 			DiskReadBytesPS:  10,
 			DiskWriteBytesPS: 20,
 			NetworkRxBytesPS: 30,
 			NetworkTxBytesPS: 40,
 		},
 		Groups: []i3dResourceGroupDTO{
-			{ID: i3dResourceGroupBusiness, Name: "业务服务", CPUPercent: 7.5, MemoryBytes: 512},
-			{ID: i3dResourceGroupMiddleware, Name: "中间件", CPUPercent: 5, MemoryBytes: 512},
+			{ID: i3dResourceGroupBusiness, Name: "业务服务", CPUPercent: 7.5, MemoryBytes: 512, MemoryUsageBytes: 800, MemoryRSSBytes: 300, MemoryCacheBytes: 400},
+			{ID: i3dResourceGroupMiddleware, Name: "中间件", CPUPercent: 5, MemoryBytes: 512, MemoryUsageBytes: 600, MemoryRSSBytes: 400, MemoryCacheBytes: 100},
 		},
 		Items: []i3dResourceTargetDTO{
-			{ID: "local.inference.web", Name: "推理服务", CPUPercent: 7.5, MemoryBytes: 512, GPUMemoryBytes: 256},
-			{ID: "local.middleware.redis", Name: "Redis", CPUPercent: 5, MemoryBytes: 512},
+			{ID: "local.inference.web", Name: "推理服务", CPUPercent: 7.5, MemoryBytes: 512, MemoryUsageBytes: 800, MemoryRSSBytes: 300, MemoryCacheBytes: 400, GPUMemoryBytes: 256},
+			{ID: "local.middleware.redis", Name: "Redis", CPUPercent: 5, MemoryBytes: 512, MemoryUsageBytes: 600, MemoryRSSBytes: 400, MemoryCacheBytes: 100},
 		},
 	}
 	second := first
@@ -1074,8 +1100,17 @@ func TestI3DResourceTimeseriesHistoryRecordsOverviewSnapshots(t *testing.T) {
 	if response.Items[1].Groups[i3dResourceGroupBusiness].CPUPercent != 15 {
 		t.Fatalf("group CPU should be recorded for chart breakdown, got %#v", response.Items[1].Groups)
 	}
+	if response.Items[0].MemoryRSSBytes != 700 || response.Items[0].MemoryCacheBytes != 500 {
+		t.Fatalf("summary memory details should be recorded from overview snapshots, got %#v", response.Items[0])
+	}
+	if response.Items[0].Groups[i3dResourceGroupBusiness].MemoryRSSBytes != 300 {
+		t.Fatalf("group memory details should be recorded for chart breakdown, got %#v", response.Items[0].Groups)
+	}
 	if response.Items[0].Targets["local.inference.web"].GPUMemoryBytes != 256 {
 		t.Fatalf("target GPU memory should be recorded for service breakdown, got %#v", response.Items[0].Targets)
+	}
+	if response.Items[0].Targets["local.inference.web"].MemoryRSSBytes != 300 {
+		t.Fatalf("target memory details should be recorded for service breakdown, got %#v", response.Items[0].Targets)
 	}
 }
 

@@ -27,6 +27,12 @@ import {
 } from "@/lib/i3dResourceCharts"
 import { formatI3DBytesPerSecond, formatI3DBytesValue } from "@/lib/i3dResourceFormatters"
 import {
+	type I3DResourceMemoryMetrics,
+	i3dResourceMemoryCacheBytes,
+	i3dResourceMemoryPressureBytes,
+	i3dResourceMemoryStatTotalBytes,
+} from "@/lib/i3dResourceMemory"
+import {
 	fetchI3DResourceOverview,
 	fetchI3DResourceTimeseries,
 	type I3DResourceOverview,
@@ -70,13 +76,16 @@ function statusBadgeClass(status: I3DResourceTarget["status"]) {
 	}
 }
 
-function memoryDetailText(row: I3DResourceTreeRow) {
+function memoryDetailText(metrics: I3DResourceMemoryMetrics) {
 	const parts: string[] = []
-	if (row.memory_rss_bytes > 0) {
-		parts.push(`常驻 ${formatI3DBytesValue(row.memory_rss_bytes)}`)
+	const pressureBytes = i3dResourceMemoryPressureBytes(metrics)
+	const cacheBytes = i3dResourceMemoryCacheBytes(metrics)
+	const statTotalBytes = i3dResourceMemoryStatTotalBytes(metrics)
+	if (cacheBytes > 0) {
+		parts.push(`文件缓存 ${formatI3DBytesValue(cacheBytes)}`)
 	}
-	if (row.memory_cache_bytes > 0) {
-		parts.push(`缓存 ${formatI3DBytesValue(row.memory_cache_bytes)}`)
+	if (statTotalBytes > 0 && statTotalBytes !== pressureBytes) {
+		parts.push(`统计总计 ${formatI3DBytesValue(statTotalBytes)}`)
 	}
 	return parts.length > 0 ? parts.join(" / ") : ""
 }
@@ -157,7 +166,7 @@ function ResourceTreeTable({
 						<TableHead className="min-w-52">名称</TableHead>
 						<TableHead>状态</TableHead>
 						<TableHead className="text-right">CPU</TableHead>
-						<TableHead className="min-w-44 text-right">内存</TableHead>
+						<TableHead className="min-w-44 text-right">进程内存</TableHead>
 						<TableHead className="text-right">GPU 显存</TableHead>
 						<TableHead className="text-right">磁盘 IO</TableHead>
 						<TableHead className="text-right">网络 IO</TableHead>
@@ -204,7 +213,7 @@ function ResourceTreeTable({
 										{decimalString(row.cpu_percent || 0, row.cpu_percent >= 10 ? 1 : 2)}%
 									</TableCell>
 									<TableCell className="text-right tabular-nums">
-										<div>{formatI3DBytesValue(row.memory_bytes)}</div>
+										<div>{formatI3DBytesValue(i3dResourceMemoryPressureBytes(row))}</div>
 										{memoryDetailText(row) && (
 											<div className="text-xs text-muted-foreground">{memoryDetailText(row)}</div>
 										)}
@@ -349,20 +358,26 @@ function ResourceTrendSection({ timeseries, loading }: { timeseries: I3DResource
 		],
 		memory: [
 			{
-				key: "business_memory_bytes",
+				key: "business_memory_pressure_bytes",
 				name: "智能检索服务集群",
 				color: "var(--chart-1)",
 				opacity: 0.35,
 				stackId: "memory",
 			},
 			{
-				key: "middleware_memory_bytes",
+				key: "middleware_memory_pressure_bytes",
 				name: "基础设施组件",
 				color: "var(--chart-2)",
 				opacity: 0.3,
 				stackId: "memory",
 			},
-			{ key: "monitor_memory_bytes", name: "监控组件", color: "var(--chart-5)", opacity: 0.25, stackId: "memory" },
+			{
+				key: "monitor_memory_pressure_bytes",
+				name: "监控组件",
+				color: "var(--chart-5)",
+				opacity: 0.25,
+				stackId: "memory",
+			},
 		],
 		gpu: [{ key: "gpu_memory_bytes", name: "i3d 服务 GPU 显存", color: "var(--chart-4)", opacity: 0.35 }],
 	}
@@ -378,7 +393,7 @@ function ResourceTrendSection({ timeseries, loading }: { timeseries: I3DResource
 			const color = `var(--chart-${(index % 5) + 1})`
 			return {
 				cpu: { key: `${key}_cpu_percent`, name, color, opacity: 0.24, stackId: "cpu-target" },
-				memory: { key: `${key}_memory_bytes`, name, color, opacity: 0.24, stackId: "memory-target" },
+				memory: { key: `${key}_memory_pressure_bytes`, name, color, opacity: 0.24, stackId: "memory-target" },
 				gpu: { key: `${key}_gpu_memory_bytes`, name, color, opacity: 0.28, stackId: "gpu-target" },
 			}
 		})
@@ -431,8 +446,8 @@ function ResourceTrendSection({ timeseries, loading }: { timeseries: I3DResource
 						showTotal={true}
 					/>
 					<ResourceTrendCard
-						title="内存趋势"
-						description={breakdown === "target" ? "按服务查看内存占用" : "按分组查看内存占用"}
+						title="进程内存趋势"
+						description={breakdown === "target" ? "按服务查看进程常驻内存" : "按分组查看进程常驻内存"}
 						points={points}
 						series={memorySeries}
 						valueFormatter={bytesFormatter}
@@ -527,14 +542,7 @@ export default memo(function ResourceMonitoringPage() {
 	}, [loadData, refreshData])
 
 	const summary = data?.summary
-	const summaryMemoryDetail = summary
-		? [
-				summary.memory_rss_bytes ? `常驻 ${formatI3DBytesValue(summary.memory_rss_bytes)}` : "",
-				summary.memory_cache_bytes ? `缓存 ${formatI3DBytesValue(summary.memory_cache_bytes)}` : "",
-			]
-				.filter(Boolean)
-				.join(" / ")
-		: ""
+	const summaryMemoryDetail = summary ? memoryDetailText(summary) : ""
 	const treeRows = useMemo(() => buildI3DResourceTreeRows(data?.items ?? []), [data?.items])
 	const visibleTreeRows = useMemo(
 		() => visibleI3DResourceTreeRows(treeRows, collapsedGroupIDs),
@@ -601,8 +609,8 @@ export default memo(function ResourceMonitoringPage() {
 										icon={CpuIcon}
 									/>
 									<ResourceStatCard
-										title="i3d 内存总占用"
-										value={formatI3DBytesValue(summary?.memory_bytes ?? 0)}
+										title="i3d 进程内存"
+										value={formatI3DBytesValue(i3dResourceMemoryPressureBytes(summary))}
 										description={summaryMemoryDetail || undefined}
 										icon={MemoryStickIcon}
 									/>

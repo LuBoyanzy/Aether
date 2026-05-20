@@ -4,11 +4,11 @@ export interface I3DResourceSummary {
 	cpu_percent: number
 	cpu_cores_used: number
 	memory_bytes: number
-	memory_usage_bytes: number
-	memory_rss_bytes: number
-	memory_cache_bytes: number
-	memory_anon_bytes: number
-	memory_inactive_file_bytes: number
+	memory_usage_bytes?: number
+	memory_rss_bytes?: number
+	memory_cache_bytes?: number
+	memory_anon_bytes?: number
+	memory_inactive_file_bytes?: number
 	disk_read_bps: number
 	disk_write_bps: number
 	network_rx_bps: number
@@ -83,6 +83,11 @@ export interface I3DResourceTimeseriesPoint {
 	cpu_percent: number
 	cpu_cores_used: number
 	memory_bytes: number
+	memory_usage_bytes: number
+	memory_rss_bytes: number
+	memory_cache_bytes: number
+	memory_anon_bytes: number
+	memory_inactive_file_bytes: number
 	disk_read_bps: number
 	disk_write_bps: number
 	network_rx_bps: number
@@ -93,6 +98,11 @@ export interface I3DResourceTimeseriesPoint {
 		{
 			cpu_percent: number
 			memory_bytes: number
+			memory_usage_bytes?: number
+			memory_rss_bytes?: number
+			memory_cache_bytes?: number
+			memory_anon_bytes?: number
+			memory_inactive_file_bytes?: number
 		}
 	>
 	targets?: Record<
@@ -101,6 +111,11 @@ export interface I3DResourceTimeseriesPoint {
 			name: string
 			cpu_percent: number
 			memory_bytes: number
+			memory_usage_bytes?: number
+			memory_rss_bytes?: number
+			memory_cache_bytes?: number
+			memory_anon_bytes?: number
+			memory_inactive_file_bytes?: number
 			gpu_memory_bytes: number
 		}
 	>

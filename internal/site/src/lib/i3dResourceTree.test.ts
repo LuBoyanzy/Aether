@@ -2,13 +2,20 @@ import { describe, expect, test } from "bun:test"
 import type { I3DResourceTarget } from "./i3dResources"
 import { buildI3DResourceTreeRows, visibleI3DResourceTreeRows } from "./i3dResourceTree"
 
-const target = (item: Partial<I3DResourceTarget> & Pick<I3DResourceTarget, "id" | "name" | "group">): I3DResourceTarget => ({
+const target = (
+	item: Partial<I3DResourceTarget> & Pick<I3DResourceTarget, "id" | "name" | "group">
+): I3DResourceTarget => ({
 	kind: "process",
 	status: "up",
 	health_status: "up",
 	cpu_percent: 0,
 	cpu_cores_used: 0,
 	memory_bytes: 0,
+	memory_usage_bytes: 0,
+	memory_rss_bytes: 0,
+	memory_cache_bytes: 0,
+	memory_anon_bytes: 0,
+	memory_inactive_file_bytes: 0,
 	memory_percent: 0,
 	disk_read_bps: 0,
 	disk_write_bps: 0,
@@ -28,7 +35,13 @@ describe("i3d resource tree rows", () => {
 			target({ id: "local.search.web", name: "检索服务", group: "business", cpu_percent: 1, memory_bytes: 100 }),
 			target({ id: "local.middleware.redis", name: "Redis", group: "middleware", cpu_percent: 2, memory_bytes: 200 }),
 			target({ id: "local.aether", name: "本地 Aether", group: "monitor", cpu_percent: 3, memory_bytes: 300 }),
-			target({ id: "local.frontend.webviews", name: "前端 Web Views dev server", group: "frontend", cpu_percent: 99, memory_bytes: 999 }),
+			target({
+				id: "local.frontend.webviews",
+				name: "前端 Web Views dev server",
+				group: "frontend",
+				cpu_percent: 99,
+				memory_bytes: 999,
+			}),
 		])
 
 		expect(rows.map((row) => row.id)).toEqual([
@@ -63,7 +76,13 @@ describe("i3d resource tree rows", () => {
 
 	test("does not mark parent groups abnormal for running health status when target status is up", () => {
 		const rows = buildI3DResourceTreeRows([
-			target({ id: "local.middleware.redis", name: "Redis", group: "middleware", status: "up", health_status: "running" }),
+			target({
+				id: "local.middleware.redis",
+				name: "Redis",
+				group: "middleware",
+				status: "up",
+				health_status: "running",
+			}),
 		])
 
 		expect(rows.find((row) => row.id === "resource-group.infrastructure")?.abnormal_count).toBe(0)
